@@ -2268,6 +2268,10 @@ sub progress {
 		my $resize = qx{ sh -c 'resize 2>/dev/null' };
 		$resize =~ /COLUMNS=(\d+);/ and do { $columns = $1; };
 	    }
+	    if(not $columns) {
+		my $stty = qx{ stty -a </dev/tty };
+		$stty =~ /(\d+) columns/ and do { $columns = $1; }
+	    }
 	    $columns ||= 80;
 	}
 	return $columns;
