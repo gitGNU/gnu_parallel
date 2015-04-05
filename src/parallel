@@ -2258,19 +2258,28 @@ sub progress {
     my ($columns,$last_column_time);
 
     sub terminal_columns {
-	# Get the number of columns of the display
+	# Get the number of columns of the terminal.
+        # Only update once per second.
 	# Returns:
 	#   number of columns of the screen
 	if(not $columns or $last_column_time < time) {
 	    $last_column_time = time;
 	    $columns = $ENV{'COLUMNS'};
 	    if(not $columns) {
-		my $resize = qx{ sh -c 'resize 2>/dev/null' };
-		$resize =~ /COLUMNS=(\d+);/ and do { $columns = $1; };
+		my $stty = qx{ stty -a </dev/tty };
+		# FreeBSD/OpenBSD/NetBSD/Dragonfly/MirOS
+		# MacOSX/IRIX/AIX/Tru64
+		$stty =~ /(\d+) columns/ and do { $columns = $1; };
+		# GNU/Linux/Solaris
+		$stty =~ /columns (\d+)/ and do { $columns = $1; };
+		# Solaris-x86/HPUX/SCOsysV/UnixWare/OpenIndiana
+		$stty =~ /columns = (\d+)/ and do { $columns = $1; };
+		# QNX
+		$stty =~ /rows=\d+,(\d+)/ and do { $columns = $1; };
 	    }
 	    if(not $columns) {
-		my $stty = qx{ stty -a </dev/tty };
-		$stty =~ /(\d+) columns/ and do { $columns = $1; }
+		my $resize = qx{ sh -c 'resize 2>/dev/null' };
+		$resize =~ /COLUMNS=(\d+);/ and do { $columns = $1; };
 	    }
 	    $columns ||= 80;
 	}
@@ -2985,6 +2994,10 @@ sub reaper {
         $Global::total_running--;
         delete $Global::running{$stiff};
 	start_more_jobs();
+	if($opt::progress) {
+	    my %progress = progress();
+	    ::status("\r",$progress{'status'});
+	}
     }
     debug("run", "done ");
     return $children_reaped;
