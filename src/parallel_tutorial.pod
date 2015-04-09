@@ -452,28 +452,28 @@ When predefined replacement strings are not flexible enough a perl
 expression can be used instead. One example is to remove two
 extensions: foo.tar.gz -> foo
 
-   parallel echo '{= s:\.[^.]+$::;s:\.[^.]+$::; =}' ::: foo.tar.gz
+  parallel echo '{= s:\.[^.]+$::;s:\.[^.]+$::; =}' ::: foo.tar.gz
 
 Output:
 
-   foo
+  foo
 
 If the strings B<{=> and B<=}> cause problems they can be replaced with --parens:
 
-   parallel --parens ,,,, echo ',, s:\.[^.]+$::;s:\.[^.]+$::; ,,' ::: foo.tar.gz
+  parallel --parens ,,,, echo ',, s:\.[^.]+$::;s:\.[^.]+$::; ,,' ::: foo.tar.gz
 
 Output: Same as above.
 
 To define a short hand replacement string use B<--rpl>:
 
-   parallel --rpl '.. s:\.[^.]+$::;s:\.[^.]+$::;' echo '..' ::: foo.tar.gz
+  parallel --rpl '.. s:\.[^.]+$::;s:\.[^.]+$::;' echo '..' ::: foo.tar.gz
 
 Output: Same as above.
 
 If the short hand starts with '{' it can be used as a positional
 replacement string, too:
 
-   parallel --rpl '{..} s:\.[^.]+$::;s:\.[^.]+$::;' echo '{..}' ::: foo.tar.gz
+  parallel --rpl '{..} s:\.[^.]+$::;s:\.[^.]+$::;' echo '{..}' ::: foo.tar.gz
 
 Output: Same as above.
 
@@ -532,16 +532,16 @@ Output (the order may be different):
 To use a perl expression as a positional replacement string simply
 prepend the perl expression with number and space:
 
-   parallel echo '{=2 s:\.[^.]+$::;s:\.[^.]+$::; =} {1}' ::: bar ::: foo.tar.gz
+  parallel echo '{=2 s:\.[^.]+$::;s:\.[^.]+$::; =} {1}' ::: bar ::: foo.tar.gz
 
 Output:
 
-   foo bar
+  foo bar
 
 If a defined short hand starts with '{' it can be used as a positional
 replacement string, too:
 
-   parallel --rpl '{..} s:\.[^.]+$::;s:\.[^.]+$::;' echo '{2..} {1}' ::: bar ::: foo.tar.gz
+  parallel --rpl '{..} s:\.[^.]+$::;s:\.[^.]+$::;' echo '{2..} {1}' ::: bar ::: foo.tar.gz
 
 Output: Same as above.
 
@@ -838,10 +838,10 @@ Output:
 
 To get the output immediately use --ungroup:
 
-  parallel -j2 --ungroup 'printf "%s-start\n%s" {} {};sleep {};printf "%s\n" -middle;echo {}-end' ::: 4 2 1      
+  parallel -j2 --ungroup 'printf "%s-start\n%s" {} {};sleep {};printf "%s\n" -middle;echo {}-end' ::: 4 2 1
 
 Output:
-           
+
   4-start
   42-start
   2-middle
@@ -1052,14 +1052,15 @@ Output:
 
 
 If jobs taking more than a certain amount of time are known to fail,
-they can be stopped with --timeout:
+they can be stopped with --timeout. The accuracy of --timeout is 2
+seconds:
 
-  parallel --timeout 2.1 sleep {}\; echo {} ::: 1 2 3 4
+  parallel --timeout 4.1 sleep {}\; echo {} ::: 2 4 6 8
 
 Output:
 
-  1
   2
+  4
 
 GNU Parallel can compute the median runtime for jobs and kill those
 that take more than 200% of the median runtime:
@@ -1484,7 +1485,7 @@ arguments. --nonall is a no argument --onall:
   parallel --nonall -S $SERVER1,$SERVER2 echo foo bar
 
 Output:
-      
+
   foo bar
   foo bar
 

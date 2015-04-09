@@ -2,7 +2,7 @@
 
 # SSH only allowed to localhost/lo
 # --retries if ssh dies
-cat <<'EOF' | sed -e s/\$SERVER1/$SERVER1/\;s/\$SERVER2/$SERVER2/ | parallel -vj7 --retries 2 -k --joblog /tmp/jl-`basename $0` -L1
+cat <<'EOF' | sed -e s/\$SERVER1/$SERVER1/\;s/\$SERVER2/$SERVER2/ | parallel -vj1 --retries 2 -k --joblog /tmp/jl-`basename $0` -L1
 echo '### zsh'
   ssh zsh@lo 'fun="() { echo function from zsh to zsh \$*; }"; 
               export fun; 

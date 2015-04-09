@@ -9,8 +9,8 @@ par_tmux() {
     (stdout parallel --timeout 3 --tmux --delay .3 echo '{}{=$_="\\"x$_=}'; echo $?) | par_tmux_filter
 }
 export -f par_tmux
-
-cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj8 --retries 2 -k --joblog /tmp/jl-`basename $0` -L1
+#j8
+cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj0 --retries 2 -k --joblog /tmp/jl-`basename $0` -L1
 echo '### tmux1.9'
   seq 000 100 | TMUX=tmux1.9 par_tmux
   seq 100 200 | TMUX=tmux1.9 par_tmux
@@ -67,3 +67,5 @@ echo '### Test critical lengths. Must not block'
   seq 280 425 | TMUX=tmux1.9 stdout parallel --tmux echo '{}{=$_="a"x$_=}' | par_tmux_filter
 
 EOF
+
+rm -f /tmp/paralocal7*;                                                                                                     

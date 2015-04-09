@@ -49,29 +49,28 @@ if($Global::max_number_of_args) {
 
 my @command = @ARGV;
 
-my @fhlist;
+my @input_source_fh;
 if($opt::pipepart) {
-    @fhlist = map { open_or_exit($_) } "/dev/null";
+    @input_source_fh = map { open_or_exit($_) } "/dev/null";
 } else {
-    @fhlist = map { open_or_exit($_) } @opt::a;
-    if(not @fhlist and not $opt::pipe) {
-	@fhlist = (*STDIN);
+    @input_source_fh = map { open_or_exit($_) } @opt::a;
+    if(not @input_source_fh and not $opt::pipe) {
+	@input_source_fh = (*STDIN);
     }
 }
 
 if($opt::skip_first_line) {
     # Skip the first line for the first file handle
-    my $fh = $fhlist[0];
+    my $fh = $input_source_fh[0];
     <$fh>;
 }
 if($opt::header and not $opt::pipe) {
-    my $fh = $fhlist[0];
     # split with colsep or \t
     # $header force $colsep = \t if undef?
     my $delimiter = $opt::colsep;
-    $delimiter ||= "\$";
+    $delimiter ||= "\t";
     my $id = 1;
-    for my $fh (@fhlist) {
+    for my $fh (@input_source_fh) {
 	my $line = <$fh>;
 	chomp($line);
 	::debug("init", "Delimiter: '$delimiter'");
@@ -89,7 +88,7 @@ if($opt::header and not $opt::pipe) {
     }
 } else {
     my $id = 1;
-    for my $fh (@fhlist) {
+    for my $fh (@input_source_fh) {
 	$Global::input_source_header{$id} = $id;
 	$id++;
     }
@@ -101,7 +100,7 @@ if($opt::filter_hosts and (@opt::sshlogin or @opt::sshloginfile)) {
 }
 
 if($opt::nonall or $opt::onall) {
-    onall(@command);
+    onall(\@input_source_fh,@command);
     wait_and_exit(min(undef_as_zero($Global::exitstatus),254));
 }
 
@@ -109,7 +108,7 @@ if($opt::nonall or $opt::onall) {
 # multiple --transfer and --basefile with different /./
 
 $Global::JobQueue = JobQueue->new(
-    \@command,\@fhlist,$Global::ContextReplace,$number_of_args,\@Global::ret_files);
+    \@command,\@input_source_fh,$Global::ContextReplace,$number_of_args,\@Global::ret_files);
 
 if($opt::eta or $opt::bar) {
     # Count the number of jobs before starting any
@@ -1052,7 +1051,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150329;
+    $Global::version = 20150403;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1086,7 +1085,6 @@ sub init_globals {
 	);
     # Modifiable copy of %Global::replace
     %Global::rpl = %Global::replace;
-    $Global::parens = "{==}";
     $/ = "\n";
     $Global::ignore_empty = 0;
     $Global::interactive = 0;
@@ -1109,6 +1107,24 @@ sub init_globals {
 
 sub parse_replacement_string_options {
     # Deal with --rpl
+    # Uses:
+    #   %Global::rpl
+    #   $Global::parensleft
+    #   $Global::parensright
+    #   $opt::parens
+    #   $Global::parensleft
+    #   $Global::parensright
+    #   $opt::plus
+    #   %Global::plus
+    #   $opt::I
+    #   $opt::U
+    #   $opt::i
+    #   $opt::basenamereplace
+    #   $opt::dirnamereplace
+    #   $opt::seqreplace
+    #   $opt::slotreplace
+    #   $opt::basenameextensionreplace
+
     sub rpl {
 	# Modify %Global::rpl
 	# Replace $old with $new
@@ -1118,10 +1134,11 @@ sub parse_replacement_string_options {
 	    delete $Global::rpl{$old};
 	}
     }
-    if(defined $opt::parens) { $Global::parens = $opt::parens; }
-    my $parenslen = 0.5*length $Global::parens;
-    $Global::parensleft = substr($Global::parens,0,$parenslen);
-    $Global::parensright = substr($Global::parens,$parenslen);
+    my $parens = "{==}";
+    if(defined $opt::parens) { $parens = $opt::parens; }
+    my $parenslen = 0.5*length $parens;
+    $Global::parensleft = substr($parens,0,$parenslen);
+    $Global::parensright = substr($parens,$parenslen);
     if(defined $opt::plus) { %Global::rpl = (%Global::plus,%Global::rpl); }
     if(defined $opt::I) { rpl('{}',$opt::I); }
     if(defined $opt::U) { rpl('{.}',$opt::U); }
@@ -1145,6 +1162,23 @@ sub parse_semaphore {
     # Semaphore defaults
     # Must be done before computing number of processes and max_line_length
     # because when running as a semaphore GNU Parallel does not read args
+    # Uses:
+    #   $opt::semaphore
+    #   $Global::semaphore
+    #   $opt::semaphoretimeout
+    #   $Semaphore::timeout
+    #   $opt::semaphorename
+    #   $Semaphore::name
+    #   $opt::fg
+    #   $Semaphore::fg
+    #   $opt::wait
+    #   $Semaphore::wait
+    #   $opt::bg
+    #   @opt::a
+    #   @Global::unget_argv
+    #   $Global::default_simultaneous_sshlogins
+    #   $opt::jobs
+    #   $Global::interactive
     $Global::semaphore ||= ($0 =~ m:(^|/)sem$:); # called as 'sem'
     if(defined $opt::semaphore) { $Global::semaphore = 1; }
     if(defined $opt::semaphoretimeout) { $Global::semaphore = 1; }
@@ -1175,18 +1209,6 @@ sub parse_semaphore {
             ::wait_and_exit(255);
 	}
     }
-}
-
-sub env_quote {
-    # Input:
-    #   $v = value to quote
-    # Returns:
-    #   $v = value quoted as environment variable
-    my $v = $_[0];
-    $v =~ s/([\\])/\\$1/g;
-    $v =~ s/([\[\] \#\'\&\<\>\(\)\;\{\}\t\"\$\`\*\174\!\?\~])/\\$1/g;
-    $v =~ s/\n/"\n"/g;
-    return $v;
 }
 
 sub record_env {
@@ -1495,8 +1517,8 @@ sub read_args_from_command_line {
 
 sub cleanup {
     # Returns: N/A
-    if(@opt::basefile) { cleanup_basefile(); }
     unlink keys %Global::unlink;
+    if(@opt::basefile) { cleanup_basefile(); }
 }
 
 sub __QUOTING_ARGUMENTS_FOR_SHELL__ {}
@@ -2798,14 +2820,14 @@ sub onall {
 	close $fh;
 	return $tmpfile;
     }
-    my @command = @_;
+    my ($input_source_fh_ref,@command) = @_;
     if($Global::quoting) {
        @command = shell_quote_empty(@command);
     }
 
-    # Copy all @fhlist (-a and :::) into tempfiles
+    # Copy all @input_source_fh (-a and :::) into tempfiles
     my @argfiles = ();
-    for my $fh (@fhlist) {
+    for my $fh (@$input_source_fh_ref) {
 	my ($outfh, $name) = ::tmpfile(SUFFIX => ".all", UNLINK => 1);
 	print $outfh (<$fh>);
 	close $outfh;
@@ -2893,10 +2915,14 @@ sub save_original_signal_handler {
     # Uses:
     #   %Global::original_sig
     # Returns: N/A
-    $SIG{INT} = sub { if($opt::tmux) { qx { tmux kill-session -t p$$ }; }
-		      unlink keys %Global::unlink; exit -1  };
-    $SIG{TERM} = sub { if($opt::tmux) { qx { tmux kill-session -t p$$ }; }
-		      unlink keys %Global::unlink; exit -1  };
+    $SIG{INT} = sub {
+	if($opt::tmux) { qx { tmux kill-session -t p$$ }; }
+	wait_and_exit(255);
+    };
+    $SIG{TERM} = sub {
+	if($opt::tmux) { qx { tmux kill-session -t p$$ }; }
+	wait_and_exit(255);
+    };
     %Global::original_sig = %SIG;
     $SIG{TERM} = sub {}; # Dummy until jobs really start
     $SIG{ALRM} = 'IGNORE';
@@ -3009,11 +3035,11 @@ sub wait_and_exit {
     # If we do not wait, we sometimes get segfault
     # Returns: N/A
     my $error = shift;
+    unlink keys %Global::unlink;
     if($error) {
 	# Kill all without printing
 	for my $job (values %Global::running) {
-	    $job->kill("TERM");
-	    $job->kill("TERM");
+	    $job->kill();
 	}
     }
     for (keys %Global::unkilled_children) {
@@ -3193,10 +3219,16 @@ sub bibtex {
 	    if(open (my $fh, ">", $ENV{'HOME'}."/.parallel/will-cite")) {
 		close $fh;
 		print "\nThank you for your support. It is much appreciated. The citation\n",
-		"notice is now silenced. You may also use '--will-cite'.\n";
+		"notice is now silenced. You may also use '--will-cite'.\n",
+		"If you use '--will-cite' in scripts you are expected to pay\n",
+		"the 10000 EUR, because you are making it harder to see the\n",
+		"citation notice.\n\n";
 	    } else {
 		print "\nThank you for your support. It is much appreciated. The citation\n",
-		"cannot permanently be disabled. Use --will-cite instead.\n";
+		"cannot permanently be silenced. Use '--will-cite' instead.\n",
+		"If you use '--will-cite' in scripts you are expected to pay\n",
+		"the 10000 EUR, because you are making it harder to see the\n",
+		"citation notice.\n\n";
 		last;
 	    }
 	}
@@ -5637,12 +5669,13 @@ sub empty_input_detector {
     # If some input: Pass input as input to pipe
     # This avoids starting the $read command if there is no input.
     # Returns:
-    #   $cmd = script to prepend to '($real command)'
+    #   $cmd = script to prepend to '| ($real command)'
 
     # The $tmpfile might exist if run on a remote system - we accept that risk
     my ($dummy_fh, $tmpfile) = ::tmpfile(SUFFIX => ".chr");
     # Unlink to avoid leaving files if --dry-run or --sshlogin
     unlink $tmpfile;
+    $Global::unlink{$tmpfile} = 1;
     my $cmd =
 	# Exit value:
 	#   empty input = true
@@ -5650,7 +5683,7 @@ sub empty_input_detector {
 	# sh -c needed as csh cannot hide stderr
 	qq{ sh -c 'dd bs=1 count=1 of=$tmpfile 2>/dev/null'; }.
 	qq{ test \! -s "$tmpfile" && rm -f "$tmpfile" && exec true; }.
-	qq{ (cat $tmpfile; rm $tmpfile; cat - ) | };
+	qq{ (cat $tmpfile; rm $tmpfile; cat - ) };
     return $cmd;
 }
 
@@ -5663,7 +5696,7 @@ sub filter_through_compress {
 
     for my $fdno (1,2) {
 	my $wpid = open(my $fdw,"|-", empty_input_detector().
-			"($opt::compress_program) >>".
+			"| ($opt::compress_program) >>".
 			$self->fh($fdno,'name')) || die $?;
 	$self->set_fh($fdno,'w',$fdw);
 	$self->set_fh($fdno,'wpid',$wpid);
@@ -5890,7 +5923,7 @@ sub kill {
     # Record this jobs as failed
     $self->set_exitstatus(-1);
     # Send two TERMs to give time to clean up
-    ::debug("run", "Kill seq ", $self->seq(), "\n");
+    ::debug("run", "Kill seq ", $self->seq(), " signal '@signals'\n");
     my @send_signals = @signals || ("TERM", "TERM", "KILL");
     for my $signal (@send_signals) {
 	my $alive = 0;
@@ -5899,6 +5932,7 @@ sub kill {
 		# The job still running
 		kill $signal, $pid;
 		$alive = 1;
+		::debug("run","$pid is alive\n");
 	    }
 	}
 	# If a signal was given as input, do not do the sleep below
@@ -6119,7 +6153,7 @@ sub wrapped {
 	    $command = (shift @Global::cat_partials). " | ($command)";
 	} elsif($opt::pipe) {
 	    # Prepend EOF-detector to avoid starting $command if EOF.
-	    $command = empty_input_detector(). "($command);";
+	    $command = empty_input_detector(). "| ($command);";
 	}
 	if($opt::tmux) {
 	    # Wrap command with 'tmux'
@@ -6761,7 +6795,7 @@ sub print_dryrun_and_verbose {
 	my $actual_command = shift;
 	# Temporary file name. Used for fifo to communicate exit val
 	my ($fh, $tmpfile) = ::tmpfile(SUFFIX => ".tmx");
-	$Global::unlink{$tmpfile}=1;
+	$Global::unlink{$tmpfile} = 1;
 	close $fh;
 	unlink $tmpfile;
 	my $visual_command = $self->replaced();
@@ -8213,11 +8247,11 @@ sub tmux_length {
 	for my $l (1, 2020, 16320, 100000, $len) {
 	    my ($fh, $tmpfile) = ::tmpfile(SUFFIX => ".tmb");
 	    close $fh;
-	    $Global::unlink{$tmpfile} = 1;
 	    unlink $tmpfile;
 	    my $tmuxcmd = "sh -c '".$ENV{'TMUX'}." -S $tmpfile new-session -d -n echo $l".
-		("x"x$l). " 2>/dev/null' && echo $l";
+		("x"x$l). " 2>/dev/null' && echo $l; rm -f $tmpfile";
 	    push @out, qx{ $tmuxcmd };
+	    unlink $tmpfile;
 	}
 	::debug("tmux","tmux-length ",@out);
 	chomp @out;

@@ -2,28 +2,28 @@ testsuite: 3
 	true
 
 3: ../src/parallel tests-to-run/* wanted-results/* startdb prereqlocal prereqremote
-	TRIES=3 time sh Start.sh - mem || true
+	TRIES=3 time bash Start.sh - mem || true
 	touch ~/.parallel/will-cite
 	make stopvm
 
 1: ../src/parallel tests-to-run/* wanted-results/* prereqlocal startdb prereqremote
-	time sh Start.sh - mem || true
+	time bash Start.sh - mem || true
 	touch ~/.parallel/will-cite
 	make stopvm
 
 mem: ../src/parallel tests-to-run/*mem* wanted-results/*mem* prereqlocal
-	time sh Start.sh mem NONE || true
+	time bash Start.sh mem NONE || true
 	touch ~/.parallel/will-cite
 	make stopvm
 
 testdb: ../src/parallel tests-to-run/*sql* wanted-results/*sql* prereqdb
-	time sh Start.sh sql NONE
+	time bash Start.sh sql NONE
 
 local:	testlocal
 	true
 
 testlocal: ../src/parallel tests-to-run/*local* wanted-results/*local* prereqlocal installparallel
-	time sh Start.sh local NONE
+	time bash Start.sh local NONE
 
 prereqlocal: installparallel
 	tcsh -c echo tcsh installed || (echo tcsh is required for testsuite; /bin/false)
@@ -40,7 +40,7 @@ prereqlocal: installparallel
 	which timeout || (echo timeout is required for testsuite; /bin/false)
 
 prereqremote: installparallel startvm
-	parallel --tag ssh parallel@parallel-server{} parallel --minversion 20121021 ::: 1 2 3 || (echo parallel on remote required for testsuite; /bin/true)
+	parallel --timeout 5 --tag ssh parallel@parallel-server{} parallel --minversion 20121021 ::: 1 2 3 || (echo parallel on remote required for testsuite; /bin/true)
 
 startvm:
 	# Make sure we can reach the virtual machines

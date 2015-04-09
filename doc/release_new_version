@@ -209,9 +209,9 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20150422 ('') released
+Subject: GNU Parallel 20150422 ('Germanwings') released
 
-GNU Parallel 20150422 ('') has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20150422 ('Germanwings') has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
 Haiku of the month:
 
@@ -220,6 +220,8 @@ Haiku of the month:
 New in this release:
 
 * GNU Parallel now has a DOI: https://dx.doi.org/10.5281/zenodo.16303
+
+* GNU Parallel was cited in: Scaling Machine Learning for Target Prediction in Drug Discovery using Apache Spark https://cris.cumulus.vub.ac.be/portal/files/5147244/spark.pdf
 
 * GNU Parallel was cited in: Bayesian inference of protein structure from chemical shift data https://peerj.com/articles/861/
 
@@ -254,6 +256,8 @@ taxator-tk http://algbio.cs.uni-duesseldorf.de/webapps/wa-download/ (check it)
 * Add an ENVI header to JAXA Global Mangrove Watch PALSAR tiles https://spectraldifferences.wordpress.com/2015/03/24/add-an-envi-header-to-jaxa-global-mangrove-watch-palsar-tiles/
 
 * GNU Parallel (Sebuah Uji Coba) http://kaka.prakasa.my.id/2014/09/04/gnu-parallel-sebuah-uji-coba/
+
+* 你见过的最牛逼的命令行程序是什么？ http://www.zhihu.com/question/29257300
 
 * Bug fixes and man page updates.
 

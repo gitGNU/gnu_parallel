@@ -32,7 +32,8 @@ is CentOS 3.9 and Perl 5.8.0.
 GNU B<parallel> busy waits. This is because the reason why a job is
 not started may be due to load average, and thus it will not make
 sense to wait for a job to finish. Instead the load average must be
-checked again. Load average is not the only reason.
+checked again. Load average is not the only reason: --timeout has a
+similar problem.
 
 To not burn up too up too much CPU GNU B<parallel> sleeps
 exponentially longer and longer if nothing happens, maxing out at 1
@@ -282,17 +283,17 @@ too. Take B<--nice> as an example:
 will work just fine. But when run remotely, you need to move the nice
 command so it is being run on the server:
 
-  parallel --S server nice command ...
+  parallel -S server nice command ...
 
 And this will again work just fine, as long as you are running a
 single command. When you are running a composed command you need nice
 to apply to the whole command, and it gets harder still:
 
-  parallel --S server --q nice bash -c 'command1 ...; command2 | command3'
+  parallel -S server -q nice bash -c 'command1 ...; command2 | command3'
 
 It is not impossible, but by using B<--nice> GNU B<parallel> will do
 the right thing for you. Similarly when transferring files: It starts
-to get hard when the file names contain space, :, ‘, *, or other
+to get hard when the file names contain space, :, `, *, or other
 special characters.
 
 To run the commands in a B<tmux> session you basically just need to
@@ -324,7 +325,7 @@ post-shellshock versions of B<bash>.
 
 =head2 Remote Ctrl-C and standard error (stderr)
 
-If the user presses Ctrl-C the user expect jobs to stop. This works
+If the user presses Ctrl-C the user expects jobs to stop. This works
 out of the box if the jobs are run locally. Unfortunately it is not so
 simple if the jobs are run remotely.
 
@@ -366,7 +367,7 @@ stderr. The wrapper looks like this:
 
 =head2 Transferring of variables and functions
 
-Transferring of variables and functions given by B<-env> is done by
+Transferring of variables and functions given by B<--env> is done by
 running a Perl script remotely that calls the actual command. The Perl
 script sets $ENV{variable} to the correct value before exec'ing the a
 shell that runs the function definition followed by the actual
@@ -378,7 +379,7 @@ B<parallel_bash_environment>. This variable is picked up by GNU
 B<parallel> and used to create the Perl script mentioned above.
 
 
-=head2 Base64 encode bzip2
+=head2 Base64 encoded bzip2
 
 B<csh> limits words of commands to 1024 chars. This is often too little
 when GNU B<parallel> encodes environment variables and wraps the

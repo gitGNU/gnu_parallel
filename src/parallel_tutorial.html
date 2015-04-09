@@ -553,27 +553,27 @@
 
 <p>When predefined replacement strings are not flexible enough a perl expression can be used instead. One example is to remove two extensions: foo.tar.gz -&gt; foo</p>
 
-<pre><code>   parallel echo &#39;{= s:\.[^.]+$::;s:\.[^.]+$::; =}&#39; ::: foo.tar.gz</code></pre>
+<pre><code>  parallel echo &#39;{= s:\.[^.]+$::;s:\.[^.]+$::; =}&#39; ::: foo.tar.gz</code></pre>
 
 <p>Output:</p>
 
-<pre><code>   foo</code></pre>
+<pre><code>  foo</code></pre>
 
 <p>If the strings <b>{=</b> and <b>=}</b> cause problems they can be replaced with --parens:</p>
 
-<pre><code>   parallel --parens ,,,, echo &#39;,, s:\.[^.]+$::;s:\.[^.]+$::; ,,&#39; ::: foo.tar.gz</code></pre>
+<pre><code>  parallel --parens ,,,, echo &#39;,, s:\.[^.]+$::;s:\.[^.]+$::; ,,&#39; ::: foo.tar.gz</code></pre>
 
 <p>Output: Same as above.</p>
 
 <p>To define a short hand replacement string use <b>--rpl</b>:</p>
 
-<pre><code>   parallel --rpl &#39;.. s:\.[^.]+$::;s:\.[^.]+$::;&#39; echo &#39;..&#39; ::: foo.tar.gz</code></pre>
+<pre><code>  parallel --rpl &#39;.. s:\.[^.]+$::;s:\.[^.]+$::;&#39; echo &#39;..&#39; ::: foo.tar.gz</code></pre>
 
 <p>Output: Same as above.</p>
 
 <p>If the short hand starts with &#39;{&#39; it can be used as a positional replacement string, too:</p>
 
-<pre><code>   parallel --rpl &#39;{..} s:\.[^.]+$::;s:\.[^.]+$::;&#39; echo &#39;{..}&#39; ::: foo.tar.gz</code></pre>
+<pre><code>  parallel --rpl &#39;{..} s:\.[^.]+$::;s:\.[^.]+$::;&#39; echo &#39;{..}&#39; ::: foo.tar.gz</code></pre>
 
 <p>Output: Same as above.</p>
 
@@ -628,15 +628,15 @@
 
 <p>To use a perl expression as a positional replacement string simply prepend the perl expression with number and space:</p>
 
-<pre><code>   parallel echo &#39;{=2 s:\.[^.]+$::;s:\.[^.]+$::; =} {1}&#39; ::: bar ::: foo.tar.gz</code></pre>
+<pre><code>  parallel echo &#39;{=2 s:\.[^.]+$::;s:\.[^.]+$::; =} {1}&#39; ::: bar ::: foo.tar.gz</code></pre>
 
 <p>Output:</p>
 
-<pre><code>   foo bar</code></pre>
+<pre><code>  foo bar</code></pre>
 
 <p>If a defined short hand starts with &#39;{&#39; it can be used as a positional replacement string, too:</p>
 
-<pre><code>   parallel --rpl &#39;{..} s:\.[^.]+$::;s:\.[^.]+$::;&#39; echo &#39;{2..} {1}&#39; ::: bar ::: foo.tar.gz</code></pre>
+<pre><code>  parallel --rpl &#39;{..} s:\.[^.]+$::;s:\.[^.]+$::;&#39; echo &#39;{2..} {1}&#39; ::: bar ::: foo.tar.gz</code></pre>
 
 <p>Output: Same as above.</p>
 
@@ -918,7 +918,7 @@
 
 <p>To get the output immediately use --ungroup:</p>
 
-<pre><code>  parallel -j2 --ungroup &#39;printf &quot;%s-start\n%s&quot; {} {};sleep {};printf &quot;%s\n&quot; -middle;echo {}-end&#39; ::: 4 2 1      </code></pre>
+<pre><code>  parallel -j2 --ungroup &#39;printf &quot;%s-start\n%s&quot; {} {};sleep {};printf &quot;%s\n&quot; -middle;echo {}-end&#39; ::: 4 2 1</code></pre>
 
 <p>Output:</p>
 
@@ -1117,14 +1117,14 @@
   Starting 3
   Thu Aug 15 16:24:38 CEST 2013</code></pre>
 
-<p>If jobs taking more than a certain amount of time are known to fail, they can be stopped with --timeout:</p>
+<p>If jobs taking more than a certain amount of time are known to fail, they can be stopped with --timeout. The accuracy of --timeout is 2 seconds:</p>
 
-<pre><code>  parallel --timeout 2.1 sleep {}\; echo {} ::: 1 2 3 4</code></pre>
+<pre><code>  parallel --timeout 4.1 sleep {}\; echo {} ::: 2 4 6 8</code></pre>
 
 <p>Output:</p>
 
-<pre><code>  1
-  2</code></pre>
+<pre><code>  2
+  4</code></pre>
 
 <p>GNU Parallel can compute the median runtime for jobs and kill those that take more than 200% of the median runtime:</p>
 

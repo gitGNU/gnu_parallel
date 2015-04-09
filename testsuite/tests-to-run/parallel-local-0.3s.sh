@@ -94,3 +94,6 @@ echo '### TMUX not found'
   TMUX=not-existing parallel --tmux echo ::: 1
 
 EOF
+echo '### 1 .par file from --files expected'
+ls /tmp/par*.par /var/tmp/par*.par /tmp/*.tms /tmp/*.tmx 2>/dev/null | wc -l
+find /tmp/par*.par /var/tmp/par*.par /tmp/*.tms /tmp/*.tmx -mmin -10 2>/dev/null | parallel rm

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # Argument can be substring of tests (such as 'local')
 
@@ -7,26 +7,37 @@ SHFILE=/tmp/unittest-parallel.sh
 MAX_SEC_PER_TEST=900
 export TIMEOUT=$MAX_SEC_PER_TEST
 
-if [ "$TRIES" = "3" ] ; then
-  # Try a failing test thrice
-  echo Retrying 3 times
-  ls -t tests-to-run/*${1}*.sh |
-    grep -v ${2} |
-    perl -pe 's:(.*/(.*)).sh:bash $1.sh > actual-results/$2; diff -Naur wanted-results/$2 actual-results/$2 >/dev/null || bash $1.sh > actual-results/$2; diff -Naur wanted-results/$2 actual-results/$2 >/dev/null || bash $1.sh > actual-results/$2; diff -Naur wanted-results/$2 actual-results/$2 || touch $1.sh: ' \
-    >$SHFILE
-else
-  # Run a failing test once
-  echo Not retrying
-  ls -t tests-to-run/*${1}*.sh |
-    grep -v ${2} |
-    perl -pe 's:(.*/(.*)).sh:bash $1.sh > actual-results/$2; diff -Naur wanted-results/$2 actual-results/$2 || touch $1.sh:' \
-    >$SHFILE
-fi
+run_test() {
+  script="$1"
+  base=`basename "$script" .sh`
+  if [ "$TRIES" = "3" ] ; then
+    # Try 3 times
+    bash $script > actual-results/$base
+    diff -Naur wanted-results/$base actual-results/$base >/dev/null ||
+      bash $script > actual-results/$base
+    diff -Naur wanted-results/$base actual-results/$base >/dev/null ||
+      bash $script > actual-results/$base
+    diff -Naur wanted-results/$base actual-results/$base ||
+      (touch $script && echo touch $script)
+  else
+    # Run only once
+    bash $script > actual-results/$base
+    diff -Naur wanted-results/$base actual-results/$base ||
+      (touch $script && echo touch $script)
+  fi
+
+  # Check if it was cleaned up
+  find /tmp -maxdepth 1 |
+    perl -ne '/\.(tmb|chr|tms|par)$/ and ++$a and print "TMP NOT CLEAN. FOUND: $_".`touch '$script'`;'
+  # May be owned by other users
+  sudo rm -f /tmp/*.{tmb,chr,tms,par}
+}
+export -f run_test
 
 date
 mkdir -p actual-results
-stdout sh -x $SHFILE | tee testsuite.log
-rm $SHFILE
+ls -t tests-to-run/*${1}*.sh | grep -v ${2} |
+  stdout parallel --tty -tj1 run_test | tee testsuite.log
 # If testsuite.log contains @@ then there is a diff
 if grep -q '@@' testsuite.log ; then
   false

@@ -1,7 +1,8 @@
 #!/bin/bash
 
 cd testsuite 2>/dev/null
-mkdir -p tmp
+rm -rf tmp
+mkdir tmp
 cd tmp
 echo '### test parallel_tutorial'
 rm -f /tmp/runs
@@ -14,8 +15,10 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
             s/zenity/zenity --timeout=12/;
             s:/usr/bin/time:/usr/bin/time -f %e:;
             s:ignored_vars:ignored_vars|sort:;
+            # When parallelized: Sleep to make sure the abc-files are made
+            /%head1/ and $_.="sleep .3\n\n"x10;
 ' |
-  stdout bash -x |
+  stdout parallel -j7 -vd'\n\n' |
   perl -pe '$|=1;
             # --files and --tmux
             s:/tmp/par......(...):/tmp/parXXXXX.$1:;
@@ -42,4 +45,6 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
             # + command_X | (Bash outputs these in random order)
             s/.*command_[ABC].*\n//;
 '
-# parallel -d'\n\n' 
+# 3+3 .par files (from --files), 1 .tms-file from tmux attach
+ls /tmp/par*.par /var/tmp/par*.par /tmp/*.tms /tmp/*.tmx 2>/dev/null | wc -l
+find /tmp/par*.par /var/tmp/par*.par /tmp/*.tms /tmp/*.tmx -mmin -10 2>/dev/null | parallel rm
