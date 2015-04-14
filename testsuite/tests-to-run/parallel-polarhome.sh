@@ -16,7 +16,6 @@ echo '### Tests on polarhome machines'
 echo 'Setup on polarhome machines'
 stdout parallel -kj0 ssh -oLogLevel=quiet {} mkdir -p bin ::: $POLAR &
 
-
 test_empty_cmd() {
     echo '### Test if empty command in process list causes problems'
     perl -e '$0=" ";sleep 1' &
@@ -36,7 +35,8 @@ copy_and_test() {
       perl -pe 's:/[a-z0-9_]+.arg:/XXXXXXXX.arg:gi; s/\d\d\d\d/0000/gi;'
 }
 export -f copy_and_test
-stdout parallel -j0 -k --retries 5 --timeout 80 --delay 0.1 --tag  -v copy_and_test {} ::: $POLAR
+# 20150414 --timeout 80 -> 40
+stdout parallel -j0 -k --retries 5 --timeout 40 --delay 0.1 --tag  -v copy_and_test {} ::: $POLAR
 
 cat /tmp/test_empty_cmd
 rm /tmp/test_empty_cmd

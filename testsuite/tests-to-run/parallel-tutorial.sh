@@ -15,6 +15,8 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
             s/zenity/zenity --timeout=12/;
             s:/usr/bin/time:/usr/bin/time -f %e:;
             s:ignored_vars:ignored_vars|sort:;
+            # Remove \n to join all joblogs into the previous block
+            s:cat /tmp/log\n:cat /tmp/log;:;
             # When parallelized: Sleep to make sure the abc-files are made
             /%head1/ and $_.="sleep .3\n\n"x10;
 ' |

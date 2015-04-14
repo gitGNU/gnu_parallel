@@ -3031,6 +3031,72 @@ sub reaper {
 
 sub __USAGE__ {}
 
+sub killall {
+    # Kill all jobs
+    # Send all jobs TERM
+    # Wait
+    # Send all jobs TERM
+    # Wait
+    # Send all jobs KILL
+    # Send all (grand*)children KILL
+
+    $Global::start_no_new_jobs ||= 1;
+    # pids of the all children and (grand*)children
+    # before we start the blood bath
+    my @family_pids = family_pids(keys %Global::running);
+    # Send jobs TERM
+    kill "TERM", keys %Global::running;
+    # Wait up to 200 ms
+    # Send jobs TERM (again)
+    my $sleepsum = 0;
+    my $sleep = 0;
+    for (; kill(0, keys %Global::running) and $sleepsum < 200;
+	 $sleepsum += $sleep) {
+	# This can change %Global::running
+	$sleep = ::reap_usleep($sleep);
+    }
+    kill "TERM", keys %Global::running;
+    # Wait up to 200 ms
+    # Send jobs KILL
+    $sleepsum = 0;
+    $sleep = 0;
+    for (; kill(0, keys %Global::running) and $sleepsum < 200;
+	 $sleepsum += $sleep) {
+	# This can change %Global::running
+	$sleep = ::reap_usleep($sleep);
+    }
+    kill "KILL", keys %Global::running;
+    # Send all (grand*)children KILL (if there are any left)
+    kill "KILL", @family_pids;
+}
+
+sub family_pids {
+    # Find the pids with this->pid as (grand)*parent
+    # Input:
+    #   @parents = pids of parents
+    # Returns:
+    #   @pids = pids of (grand)*children
+    my @parents = @_;
+    my @pids;
+
+    my ($children_of_ref, $parent_of_ref, $name_of_ref) = ::pid_table();
+
+    my @more = @parents;
+    # While more (grand)*children
+    while(@more) {
+	my @m;
+	push @pids, @more;
+	for my $parent (@more) {
+	    if($children_of_ref->{$parent}) {
+		# add the children of this parent
+		push @m, @{$children_of_ref->{$parent}};
+	    }
+	}
+	@more = @m;
+    }
+    return (@pids);
+}
+
 sub wait_and_exit {
     # If we do not wait, we sometimes get segfault
     # Returns: N/A
@@ -3038,9 +3104,7 @@ sub wait_and_exit {
     unlink keys %Global::unlink;
     if($error) {
 	# Kill all without printing
-	for my $job (values %Global::running) {
-	    $job->kill();
-	}
+	killall();
     }
     for (keys %Global::unkilled_children) {
         kill 9, $_;
@@ -3359,13 +3423,14 @@ sub multiply_binary_prefix {
 }
 
 {
-    my ($disk_full_fh, $b8193, $name);
+    my ($disk_full_fh, $b8193, $error_printed);
     sub exit_if_disk_full {
 	# Checks if $TMPDIR is full by writing 8kb to a tmpfile
 	# If the disk is full: Exit immediately.
 	# Returns:
 	#   N/A
 	if(not $disk_full_fh) {
+	    my $name;
 	    ($disk_full_fh, $name) = ::tmpfile(SUFFIX => ".df");
 	    # Separate unlink due to NFS dealing badly with File::Temp
 	    unlink $name;
@@ -3392,8 +3457,11 @@ sub multiply_binary_prefix {
 	   or
 	   tell $disk_full_fh != 8193) {
 	    # On raspbian the disk can be full except for 10 chars.
-	    ::error("Output is incomplete. Cannot append to buffer file in $ENV{'TMPDIR'}. Is the disk full?\n");
-	    ::error("Change \$TMPDIR with --tmpdir or use --compress.\n");
+	    if(not $error_printed) {
+		::error("Output is incomplete. Cannot append to buffer file in $ENV{'TMPDIR'}. Is the disk full?\n");
+		::error("Change \$TMPDIR with --tmpdir or use --compress.\n");
+		$error_printed = 1;
+	    }
 	    ::wait_and_exit(255);
 	}
 	truncate $disk_full_fh, 0;
