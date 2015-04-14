@@ -1051,7 +1051,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150403;
+    $Global::version = 20150415;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -2986,7 +2986,7 @@ sub reaper {
         $job or next;
         $job->set_exitstatus($? >> 8);
         $job->set_exitsignal($? & 127);
-        debug("run", "died (", $job->exitstatus(), "): ", $job->seq());
+        debug("run", "seq ",$job->seq()," died (", $job->exitstatus(), ")");
         $job->set_endtime(::now());
         if($stiff == $Global::tty_taken) {
             # The process that died had the tty => release it
@@ -3507,6 +3507,9 @@ sub which {
 	    # Filter for SysV-style `ps`
 	    my $sysv = q( ps -ef | perl -ane '1..1 and /^(.*)CO?MM?A?N?D/ and $s=length $1;).
 		q(s/^.{$s}//; print "@F[1,2] $_"' );
+	    # Crazy msys: ' is not accepted on the cmd line, but " are treated as '
+	    my $msys = q( ps -ef | perl -ane "1..1 and /^(.*)CO?MM?A?N?D/ and $s=length $1;).
+		q(s/^.{$s}//; print qq{@F[1,2] $_}" );
 	    # BSD-style `ps`
 	    my $bsd = q(ps -o pid,ppid,command -ax);
 	    %pid_parentpid_cmd =
@@ -3521,7 +3524,7 @@ sub which {
 	     'hpux' => $sysv,
 	     'linux' => $sysv,
 	     'mirbsd' => $bsd,
-	     'msys' => $sysv,
+	     'msys' => $msys,
 	     'MSWin32' => $sysv,
 	     'netbsd' => $bsd,
 	     'nto' => $sysv,
@@ -4441,8 +4444,10 @@ sub compute_number_of_processes {
 	    # The child takes one process slot
 	    # It will be killed later
 	    $SIG{TERM} = $Global::original_sig{TERM};
-	    sleep 10000000;
-	    exit(0);
+	    # Exec 'sleep' to save RAM
+	    # 32000 seconds should be plenty, and should be supported
+	    # on all platforms.
+	    exec("sleep","32000");
 	} else {
 	    # Failed to spawn
             $max_system_proc_reached = 1;
@@ -5532,7 +5537,7 @@ sub slot {
 			-e $unlink_file and unlink $unlink_file;
 
 			if($first_round) {
-			    # Do not start command if there is no input
+			    # Only start the command if there any input to process
 			    $first_round = 0;
 			    open(OUT,"|-",$cmd) || die("cattail: Cannot run $cmd");
 			}
@@ -5920,6 +5925,7 @@ sub kill {
     my $self = shift;
     my @signals = @_;
     my @family_pids = $self->family_pids();
+
     # Record this jobs as failed
     $self->set_exitstatus(-1);
     # Send two TERMs to give time to clean up
@@ -6992,7 +6998,7 @@ sub print {
 	    }
 	    next;
 	}
-	::debug("print", "File descriptor $fdno (", $self->fh($fdno,"name"), "):");
+	::debug("print", "File descriptor $fdno (", $self->fh($fdno,"name"), "):\n");
 	if($opt::files) {
 	    $self->files_print($fdno,$in_fh,$out_fd);
 	} elsif($opt::linebuffer) {
