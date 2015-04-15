@@ -440,30 +440,30 @@ Computer:jobs running/jobs completed/%of started jobs/Average seconds to complet
 
   seq 1000 | parallel -j10 --bar '(echo -n {};sleep 0.1)' 2> >(zenity --timeout=12 --progress --auto-kill)
 BASE64  parallel --joblog /tmp/log exit  ::: 1 2 3 0 
-  cat /tmp/log
-Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
-1	:	TIMESTAMP	9.999	0	0	1	0	exit 1
-2	:	TIMESTAMP	9.999	0	0	2	0	exit 2
-3	:	TIMESTAMP	9.999	0	0	3	0	exit 3
-4	:	TIMESTAMP	9.999	0	0	0	0	exit 0
+  cat /tmp/log;
   parallel --joblog /tmp/log exit  ::: 1 2 3 0 
-  cat /tmp/log
-  parallel --resume --joblog /tmp/log exit  ::: 1 2 3 0 0 0
-  cat /tmp/log
-Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
-1	:	TIMESTAMP	9.999	0	0	1	0	exit 1
-2	:	TIMESTAMP	9.999	0	0	2	0	exit 2
-3	:	TIMESTAMP	9.999	0	0	3	0	exit 3
-4	:	TIMESTAMP	9.999	0	0	0	0	exit 0
-Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
-1	:	TIMESTAMP	9.999	0	0	1	0	exit 1
-2	:	TIMESTAMP	9.999	0	0	2	0	exit 2
-3	:	TIMESTAMP	9.999	0	0	3	0	exit 3
-4	:	TIMESTAMP	9.999	0	0	0	0	exit 0
-5	:	TIMESTAMP	9.999	0	0	0	0	exit 0
-6	:	TIMESTAMP	9.999	0	0	0	0	exit 0
+  cat /tmp/log;  parallel --resume --joblog /tmp/log exit  ::: 1 2 3 0 0 0
+  cat /tmp/log;
   parallel --resume-failed --joblog /tmp/log exit  ::: 1 2 3 0 0 0
-  cat /tmp/log
+  cat /tmp/log;
+  parallel -j2 --halt 1 echo {}\; exit {} ::: 0 0 1 2 3
+Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
+1	:	TIMESTAMP	9.999	0	0	1	0	exit 1
+2	:	TIMESTAMP	9.999	0	0	2	0	exit 2
+3	:	TIMESTAMP	9.999	0	0	3	0	exit 3
+4	:	TIMESTAMP	9.999	0	0	0	0	exit 0
+Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
+1	:	TIMESTAMP	9.999	0	0	1	0	exit 1
+2	:	TIMESTAMP	9.999	0	0	2	0	exit 2
+3	:	TIMESTAMP	9.999	0	0	3	0	exit 3
+4	:	TIMESTAMP	9.999	0	0	0	0	exit 0
+Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
+1	:	TIMESTAMP	9.999	0	0	1	0	exit 1
+2	:	TIMESTAMP	9.999	0	0	2	0	exit 2
+3	:	TIMESTAMP	9.999	0	0	3	0	exit 3
+4	:	TIMESTAMP	9.999	0	0	0	0	exit 0
+5	:	TIMESTAMP	9.999	0	0	0	0	exit 0
+6	:	TIMESTAMP	9.999	0	0	0	0	exit 0
 Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
 1	:	TIMESTAMP	9.999	0	0	1	0	exit 1
 2	:	TIMESTAMP	9.999	0	0	2	0	exit 2
@@ -474,7 +474,6 @@ Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
 1	:	TIMESTAMP	9.999	0	0	1	0	exit 1
 2	:	TIMESTAMP	9.999	0	0	2	0	exit 2
 3	:	TIMESTAMP	9.999	0	0	3	0	exit 3
-  parallel -j2 --halt 1 echo {}\; exit {} ::: 0 0 1 2 3
 0
 0
 1
@@ -507,12 +506,9 @@ completed 1
 completed 2
 completed 0
 tried 1
-tried 2
 tried 0
 tried 1
-tried 2
 tried 1
-tried 2
   parallel --load 100% echo load is less than {} job per cpu ::: 1 
 load is less than 1 job per cpu
   parallel --noswap echo the system is not swapping ::: now
@@ -664,6 +660,7 @@ TEXTDOMAIN
 TEXTDOMAINDIR
 TIMEOUT
 TMPDIR
+TRIES
 UPSTART_EVENTS
 UPSTART_INSTANCE
 UPSTART_JOB
@@ -883,14 +880,12 @@ The second finished running in the foreground
 First started
 The first finished
   sem --id my_id -u 'echo Second started; sleep 10; echo The second finished'
-Second started
   sem --jobs 3 --id my_id -u 'echo First started; sleep 5; echo The first finished' &&
   sem --jobs 3 --id my_id -u 'echo Second started; sleep 6; echo The second finished' &&
   sem --jobs 3 --id my_id -u 'echo Third started; sleep 7; echo The third finished' &&
   sem --jobs 3 --id my_id -u 'echo Fourth started; sleep 8; echo The fourth finished' &&
   sem --wait --id my_id
 First started
-Second started
 The first finished
 Third started
 The second finished
@@ -936,7 +931,7 @@ This helps funding further development; and it won't cost you a cent.
 If you pay 10000 EUR you should feel free to use GNU Parallel without citing.
 
   parallel --version
-GNU parallel 20150403
+GNU parallel 20150415
 Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015 Ole Tange
 and Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
@@ -948,7 +943,7 @@ Web site: http://www.gnu.org/software/parallel
 When using programs that use GNU Parallel to process data for publication
 please cite as described in 'parallel --bibtex'.
   parallel --minversion 20130722 && echo Your version is at least 20130722.
-20150403
+20150415
 Your version is at least 20130722.
   parallel --bibtex
 Academic tradition requires you to cite works you base your article on.

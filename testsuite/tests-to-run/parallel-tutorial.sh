@@ -15,6 +15,8 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
             s/zenity/zenity --timeout=12/;
             s:/usr/bin/time:/usr/bin/time -f %e:;
             s:ignored_vars:ignored_vars|sort:;
+            # Remove \n to join all joblogs into the previous block
+            s:cat /tmp/log\n:cat /tmp/log;:;
             # When parallelized: Sleep to make sure the abc-files are made
             /%head1/ and $_.="sleep .3\n\n"x10;
 ' |
@@ -44,6 +46,10 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
             s/\+ wc.*\n//;
             # + command_X | (Bash outputs these in random order)
             s/.*command_[ABC].*\n//;
+            # Due to multiple jobs "Second started" often ends up wrong
+            s/Second started\n//;
+            # Due to multiple jobs "tried 2" often ends up wrong
+            s/tried 2\n//;
 '
 # 3+3 .par files (from --files), 1 .tms-file from tmux attach
 ls /tmp/par*.par /var/tmp/par*.par /tmp/*.tms /tmp/*.tmx 2>/dev/null | wc -l

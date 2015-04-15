@@ -1051,7 +1051,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150409;
+    $Global::version = 20150416;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -2986,7 +2986,7 @@ sub reaper {
         $job or next;
         $job->set_exitstatus($? >> 8);
         $job->set_exitsignal($? & 127);
-        debug("run", "died (", $job->exitstatus(), "): ", $job->seq());
+        debug("run", "seq ",$job->seq()," died (", $job->exitstatus(), ")");
         $job->set_endtime(::now());
         if($stiff == $Global::tty_taken) {
             # The process that died had the tty => release it
@@ -3031,6 +3031,72 @@ sub reaper {
 
 sub __USAGE__ {}
 
+sub killall {
+    # Kill all jobs
+    # Send all jobs TERM
+    # Wait
+    # Send all jobs TERM
+    # Wait
+    # Send all jobs KILL
+    # Send all (grand*)children KILL
+
+    $Global::start_no_new_jobs ||= 1;
+    # pids of the all children and (grand*)children
+    # before we start the blood bath
+    my @family_pids = family_pids(keys %Global::running);
+    # Send jobs TERM
+    kill "TERM", keys %Global::running;
+    # Wait up to 200 ms
+    # Send jobs TERM (again)
+    my $sleepsum = 0;
+    my $sleep = 0;
+    for (; kill(0, keys %Global::running) and $sleepsum < 200;
+	 $sleepsum += $sleep) {
+	# This can change %Global::running
+	$sleep = ::reap_usleep($sleep);
+    }
+    kill "TERM", keys %Global::running;
+    # Wait up to 200 ms
+    # Send jobs KILL
+    $sleepsum = 0;
+    $sleep = 0;
+    for (; kill(0, keys %Global::running) and $sleepsum < 200;
+	 $sleepsum += $sleep) {
+	# This can change %Global::running
+	$sleep = ::reap_usleep($sleep);
+    }
+    kill "KILL", keys %Global::running;
+    # Send all (grand*)children KILL (if there are any left)
+    kill "KILL", @family_pids;
+}
+
+sub family_pids {
+    # Find the pids with this->pid as (grand)*parent
+    # Input:
+    #   @parents = pids of parents
+    # Returns:
+    #   @pids = pids of (grand)*children
+    my @parents = @_;
+    my @pids;
+
+    my ($children_of_ref, $parent_of_ref, $name_of_ref) = ::pid_table();
+
+    my @more = @parents;
+    # While more (grand)*children
+    while(@more) {
+	my @m;
+	push @pids, @more;
+	for my $parent (@more) {
+	    if($children_of_ref->{$parent}) {
+		# add the children of this parent
+		push @m, @{$children_of_ref->{$parent}};
+	    }
+	}
+	@more = @m;
+    }
+    return (@pids);
+}
+
 sub wait_and_exit {
     # If we do not wait, we sometimes get segfault
     # Returns: N/A
@@ -3038,9 +3104,7 @@ sub wait_and_exit {
     unlink keys %Global::unlink;
     if($error) {
 	# Kill all without printing
-	for my $job (values %Global::running) {
-	    $job->kill();
-	}
+	killall();
     }
     for (keys %Global::unkilled_children) {
         kill 9, $_;
@@ -3359,13 +3423,14 @@ sub multiply_binary_prefix {
 }
 
 {
-    my ($disk_full_fh, $b8193, $name);
+    my ($disk_full_fh, $b8193, $error_printed);
     sub exit_if_disk_full {
 	# Checks if $TMPDIR is full by writing 8kb to a tmpfile
 	# If the disk is full: Exit immediately.
 	# Returns:
 	#   N/A
 	if(not $disk_full_fh) {
+	    my $name;
 	    ($disk_full_fh, $name) = ::tmpfile(SUFFIX => ".df");
 	    # Separate unlink due to NFS dealing badly with File::Temp
 	    unlink $name;
@@ -3392,8 +3457,11 @@ sub multiply_binary_prefix {
 	   or
 	   tell $disk_full_fh != 8193) {
 	    # On raspbian the disk can be full except for 10 chars.
-	    ::error("Output is incomplete. Cannot append to buffer file in $ENV{'TMPDIR'}. Is the disk full?\n");
-	    ::error("Change \$TMPDIR with --tmpdir or use --compress.\n");
+	    if(not $error_printed) {
+		::error("Output is incomplete. Cannot append to buffer file in $ENV{'TMPDIR'}. Is the disk full?\n");
+		::error("Change \$TMPDIR with --tmpdir or use --compress.\n");
+		$error_printed = 1;
+	    }
 	    ::wait_and_exit(255);
 	}
 	truncate $disk_full_fh, 0;
@@ -3507,6 +3575,9 @@ sub which {
 	    # Filter for SysV-style `ps`
 	    my $sysv = q( ps -ef | perl -ane '1..1 and /^(.*)CO?MM?A?N?D/ and $s=length $1;).
 		q(s/^.{$s}//; print "@F[1,2] $_"' );
+	    # Crazy msys: ' is not accepted on the cmd line, but " are treated as '
+	    my $msys = q( ps -ef | perl -ane "1..1 and /^(.*)CO?MM?A?N?D/ and $s=length $1;).
+		q(s/^.{$s}//; print qq{@F[1,2] $_}" );
 	    # BSD-style `ps`
 	    my $bsd = q(ps -o pid,ppid,command -ax);
 	    %pid_parentpid_cmd =
@@ -3521,7 +3592,7 @@ sub which {
 	     'hpux' => $sysv,
 	     'linux' => $sysv,
 	     'mirbsd' => $bsd,
-	     'msys' => $sysv,
+	     'msys' => $msys,
 	     'MSWin32' => $sysv,
 	     'netbsd' => $bsd,
 	     'nto' => $sysv,
@@ -4441,8 +4512,10 @@ sub compute_number_of_processes {
 	    # The child takes one process slot
 	    # It will be killed later
 	    $SIG{TERM} = $Global::original_sig{TERM};
-	    sleep 10000000;
-	    exit(0);
+	    # Exec 'sleep' to save RAM
+	    # 32000 seconds should be plenty, and should be supported
+	    # on all platforms.
+	    exec("sleep","32000");
 	} else {
 	    # Failed to spawn
             $max_system_proc_reached = 1;
@@ -5702,8 +5775,8 @@ sub filter_through_compress {
 	# The tmpfile is used to tell the reader that the writer has started,
 	# so unlink it to start with.
 	unlink $self->fh($fdno,'name');
-	my $wpid = open(my $fdw,"|-", empty_input_detector().
-			"| ($opt::compress_program) >>".
+        my $wpid = open(my $fdw,"|-", "(".empty_input_detector().
+			"| ($opt::compress_program)) >>".
 			$self->fh($fdno,'name')) || die $?;
 	$self->set_fh($fdno,'w',$fdw);
 	$self->set_fh($fdno,'wpid',$wpid);
@@ -5927,6 +6000,7 @@ sub kill {
     my $self = shift;
     my @signals = @_;
     my @family_pids = $self->family_pids();
+
     # Record this jobs as failed
     $self->set_exitstatus(-1);
     # Send two TERMs to give time to clean up
@@ -6999,7 +7073,7 @@ sub print {
 	    }
 	    next;
 	}
-	::debug("print", "File descriptor $fdno (", $self->fh($fdno,"name"), "):");
+	::debug("print", "File descriptor $fdno (", $self->fh($fdno,"name"), "):\n");
 	if($opt::files) {
 	    $self->files_print($fdno,$in_fh,$out_fd);
 	} elsif($opt::linebuffer) {
@@ -7024,14 +7098,18 @@ sub files_print {
     my $self = shift;
     my ($fdno,$in_fh,$out_fd) = @_;
 
-    # If --compress: $in_fh must be closed first.
+    # If the job is dead: close printing fh. Needed for --compress
     close $self->fh($fdno,"w");
     if($? and $opt::compress) {
-	::error($opt::decompress_program." failed.\n");
+	::error($opt::compress_program." failed.\n");
 	$self->set_exitstatus(255);
     }
+    if($opt::compress) {
+	# Kill the decompressor which will not be needed
+	CORE::kill "TERM", $self->fh($fdno,"rpid");
+    }
     close $in_fh;
-    # TODO if $?: die(?)
+
     if($opt::pipe and $self->virgin()) {
 	# Nothing was printed to this job:
 	# cleanup unused tmp files if --files was set
@@ -7054,7 +7132,7 @@ sub linebuffer_print {
 	# If the job is dead: close printing fh. Needed for --compress
 	close $self->fh($fdno,"w");
 	if($? and $opt::compress) {
-	    ::error($opt::decompress_program." failed.\n");
+	    ::error($opt::compress_program." failed.\n");
 	    $self->set_exitstatus(255);
 	}
 	if($opt::compress) {
@@ -7123,7 +7201,10 @@ sub linebuffer_print {
 	} else {
 	    # decompress done: close fh
 	    close $in_fh;
-	    # TODO if $?: die(?)
+	    if($? and $opt::compress) {
+		::error($opt::decompress_program." failed.\n");
+		$self->set_exitstatus(255);
+	    }
 	}
     }
 }
@@ -7134,7 +7215,7 @@ sub tag_print {
     my $buf;
     close $self->fh($fdno,"w");
     if($? and $opt::compress) {
-	::error($opt::decompress_program." failed.\n");
+	::error($opt::compress_program." failed.\n");
 	$self->set_exitstatus(255);
     }
     seek $in_fh, 0, 0;
@@ -7163,6 +7244,10 @@ sub tag_print {
 	$self->add_returnsize($outputlength);
     }
     close $in_fh;
+    if($? and $opt::compress) {
+	::error($opt::decompress_program." failed.\n");
+	$self->set_exitstatus(255);
+    }
 }
 
 sub normal_print {
@@ -7171,7 +7256,7 @@ sub normal_print {
     my $buf;
     close $self->fh($fdno,"w");
     if($? and $opt::compress) {
-	::error($opt::decompress_program." failed.\n");
+	::error($opt::compress_program." failed.\n");
 	$self->set_exitstatus(255);
     }
     seek $in_fh, 0, 0;
@@ -7193,6 +7278,10 @@ sub normal_print {
 	$self->add_returnsize($outputlength);
     }
     close $in_fh;
+    if($? and $opt::compress) {
+	::error($opt::decompress_program." failed.\n");
+	$self->set_exitstatus(255);
+    }
 }
 
 sub print_joblog {

@@ -8,16 +8,6 @@ NICEPAR="nice nice parallel"
 export NICEPAR
 
 cat <<'EOF' | sed -e s/\$SERVER1/$SERVER1/\;s/\$SERVER2/$SERVER2/ | stdout parallel -vj4 -k --joblog /tmp/jl-`basename $0` -L1
-echo 'bug #44250: pxz complains File format not recognized but decompresses anyway'
-  # The first line dumps core if run from make file. Why?!
-  stdout parallel --compress --compress-program pxz ls /{} ::: OK-if-missing-file
-  stdout parallel --compress --compress-program pixz --decompress-program 'pixz -d' ls /{}  ::: OK-if-missing-file
-  stdout parallel --compress --compress-program pixz --decompress-program 'pixz -d' true ::: OK-if-no-output
-  stdout parallel --compress --compress-program pxz true ::: OK-if-no-output
-
-echo 'bug #41613: --compress --line-buffer no newline';
-  perl -e 'print "It worked"'| $NICEPAR --pipe --compress --line-buffer cat; echo
-
 echo 'bug #41613: --compress --line-buffer no --tagstring';
   diff 
     <(nice perl -e 'for("x011".."x110"){print "$_\t", ("\n", map { rand } (1..100000)) }'| 
@@ -39,24 +29,6 @@ echo 'bug #41613: --compress --line-buffer with --tagstring';
       pv -qL 1000000 | perl -pe 's/(....).*/$1/') 
     >/dev/null 
   || (echo 'Good: --line-buffer matters'; false) && echo 'Bad: --line-buffer not working'
-
-echo 'bug #41613: --compress --line-buffer - no newline';
-  echo 'pipe compress tagstring'
-  perl -e 'print "O"'| $NICEPAR --compress --tagstring {#} --pipe --line-buffer cat;  echo "K"
-  echo 'pipe compress notagstring'
-  perl -e 'print "O"'| $NICEPAR --compress --pipe --line-buffer cat;  echo "K"
-  echo 'pipe nocompress tagstring'
-  perl -e 'print "O"'| $NICEPAR --tagstring {#} --pipe --line-buffer cat;  echo "K"
-  echo 'pipe nocompress notagstring'
-  perl -e 'print "O"'| $NICEPAR --pipe --line-buffer cat;  echo "K"
-  echo 'nopipe compress tagstring'
-  $NICEPAR --compress --tagstring {#} --line-buffer echo {} O ::: -n;  echo "K"
-  echo 'nopipe compress notagstring'
-  $NICEPAR --compress --line-buffer echo {} O ::: -n;  echo "K"
-  echo 'nopipe nocompress tagstring'
-  $NICEPAR --tagstring {#} --line-buffer echo {} O ::: -n;  echo "K"
-  echo 'nopipe nocompress notagstring'
-  $NICEPAR --line-buffer echo {} O ::: -n;  echo "K"
 
 echo 'bug #41412: --timeout + --delay causes deadlock';
   seq 10 | parallel -j10 --timeout 1 --delay .3 echo;
