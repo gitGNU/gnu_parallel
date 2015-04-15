@@ -1,17 +1,3 @@
-echo 'bug #44250: pxz complains File format not recognized but decompresses anyway'
-bug #44250: pxz complains File format not recognized but decompresses anyway
-  # The first line dumps core if run from make file. Why?!
-  stdout parallel --compress --compress-program pxz ls /{} ::: OK-if-missing-file
-Segmentation fault (core dumped)
-parallel: Error: pxz -dc failed.
-  stdout parallel --compress --compress-program pixz --decompress-program 'pixz -d' ls /{}  ::: OK-if-missing-file
-ls: cannot access /OK-if-missing-file: No such file or directory
-  stdout parallel --compress --compress-program pixz --decompress-program 'pixz -d' true ::: OK-if-no-output
-  stdout parallel --compress --compress-program pxz true ::: OK-if-no-output
-echo 'bug #41613: --compress --line-buffer no newline';
-bug #41613: --compress --line-buffer no newline
-  perl -e 'print "It worked"'| $NICEPAR --pipe --compress --line-buffer cat; echo
-It worked
 echo 'bug #41613: --compress --line-buffer no --tagstring';
 bug #41613: --compress --line-buffer no --tagstring
   diff     <(nice perl -e 'for("x011".."x110"){print "$_\t", ("\n", map { rand } (1..100000)) }'|       $NICEPAR -N10 -L1 --pipe -j6 --block 20M --compress       pv -qL 1000000 | perl -pe 's/(....).*/$1/')     <(nice perl -e 'for("x011".."x110"){print "$_\t", ("\n", map { rand } (1..100000)) }'|       $NICEPAR -N10 -L1 --pipe -j6 --block 20M --compress --line-buffer       pv -qL 1000000 | perl -pe 's/(....).*/$1/')     >/dev/null   || (echo 'Good: --line-buffer matters'; false) && echo 'Bad: --line-buffer not working'
@@ -20,40 +6,6 @@ echo 'bug #41613: --compress --line-buffer with --tagstring';
 bug #41613: --compress --line-buffer with --tagstring
   diff     <(nice perl -e 'for("x011".."x110"){print "$_\t", ("\n", map { rand } (1..100000)) }'|       $NICEPAR -N10 -L1 --pipe -j6 --block 20M --compress --tagstring {#}       pv -qL 1000000 | perl -pe 's/(....).*/$1/')     <(nice perl -e 'for("x011".."x110"){print "$_\t", ("\n", map { rand } (1..100000)) }'|       $NICEPAR -N10 -L1 --pipe -j6 --block 20M --compress --tagstring {#} --line-buffer       pv -qL 1000000 | perl -pe 's/(....).*/$1/')     >/dev/null   || (echo 'Good: --line-buffer matters'; false) && echo 'Bad: --line-buffer not working'
 Good: --line-buffer matters
-echo 'bug #41613: --compress --line-buffer - no newline';
-bug #41613: --compress --line-buffer - no newline
-  echo 'pipe compress tagstring'
-pipe compress tagstring
-  perl -e 'print "O"'| $NICEPAR --compress --tagstring {#} --pipe --line-buffer cat;  echo "K"
-1	OK
-  echo 'pipe compress notagstring'
-pipe compress notagstring
-  perl -e 'print "O"'| $NICEPAR --compress --pipe --line-buffer cat;  echo "K"
-OK
-  echo 'pipe nocompress tagstring'
-pipe nocompress tagstring
-  perl -e 'print "O"'| $NICEPAR --tagstring {#} --pipe --line-buffer cat;  echo "K"
-1	OK
-  echo 'pipe nocompress notagstring'
-pipe nocompress notagstring
-  perl -e 'print "O"'| $NICEPAR --pipe --line-buffer cat;  echo "K"
-OK
-  echo 'nopipe compress tagstring'
-nopipe compress tagstring
-  $NICEPAR --compress --tagstring {#} --line-buffer echo {} O ::: -n;  echo "K"
-1	OK
-  echo 'nopipe compress notagstring'
-nopipe compress notagstring
-  $NICEPAR --compress --line-buffer echo {} O ::: -n;  echo "K"
-OK
-  echo 'nopipe nocompress tagstring'
-nopipe nocompress tagstring
-  $NICEPAR --tagstring {#} --line-buffer echo {} O ::: -n;  echo "K"
-1	OK
-  echo 'nopipe nocompress notagstring'
-nopipe nocompress notagstring
-  $NICEPAR --line-buffer echo {} O ::: -n;  echo "K"
-OK
 echo 'bug #41412: --timeout + --delay causes deadlock';
 bug #41412: --timeout + --delay causes deadlock
   seq 10 | parallel -j10 --timeout 1 --delay .3 echo;

@@ -104,30 +104,177 @@ echo '### bug #44546: If --compress-program fails: fail'
 ### bug #44546: If --compress-program fails: fail
   parallel --line-buffer --compress-program false echo \;ls ::: /no-existing; echo $?
 1
-parallel: Error: false -dc failed.
-parallel: Error: false -dc failed.
+parallel: Error: false failed.
+parallel: Error: false failed.
   parallel --tag --line-buffer --compress-program false echo \;ls ::: /no-existing; echo $?
 1
-parallel: Error: false -dc failed.
-parallel: Error: false -dc failed.
+parallel: Error: false failed.
+parallel: Error: false failed.
   (parallel --files --tag --line-buffer --compress-program false echo \;sleep 1\;ls ::: /no-existing; echo $?) | tail -n1
 1
-parallel: Error: false -dc failed.
-parallel: Error: false -dc failed.
-parallel: Error: false -dc failed.
-parallel: Error: false -dc failed.
+parallel: Error: false failed.
+parallel: Error: false failed.
+parallel: Error: false failed.
+parallel: Error: false failed.
   parallel --tag --compress-program false echo \;ls ::: /no-existing; echo $?
 1
-parallel: Error: false -dc failed.
-parallel: Error: false -dc failed.
+parallel: Error: false failed.
+parallel: Error: false failed.
   parallel --line-buffer --compress-program false echo \;ls ::: /no-existing; echo $?
 1
-parallel: Error: false -dc failed.
-parallel: Error: false -dc failed.
+parallel: Error: false failed.
+parallel: Error: false failed.
   parallel --compress-program false echo \;ls ::: /no-existing; echo $?
 1
-parallel: Error: false -dc failed.
-parallel: Error: false -dc failed.
+parallel: Error: false failed.
+parallel: Error: false failed.
+echo 'bug #41613: --compress --line-buffer - no newline';   echo 'pipe compress tagstring'
+bug #41613: --compress --line-buffer - no newline
+pipe compress tagstring
+  perl -e 'print "O"'| parallel --compress --tagstring {#} --pipe --line-buffer cat;  echo "K"
+1	OK
+  echo 'pipe compress notagstring'
+pipe compress notagstring
+  perl -e 'print "O"'| parallel --compress --pipe --line-buffer cat;  echo "K"
+OK
+  echo 'pipe nocompress tagstring'
+pipe nocompress tagstring
+  perl -e 'print "O"'| parallel --tagstring {#} --pipe --line-buffer cat;  echo "K"
+1	OK
+  echo 'pipe nocompress notagstring'
+pipe nocompress notagstring
+  perl -e 'print "O"'| parallel --pipe --line-buffer cat;  echo "K"
+OK
+  echo 'nopipe compress tagstring'
+nopipe compress tagstring
+  parallel --compress --tagstring {#} --line-buffer echo {} O ::: -n;  echo "K"
+1	OK
+  echo 'nopipe compress notagstring'
+nopipe compress notagstring
+  parallel --compress --line-buffer echo {} O ::: -n;  echo "K"
+OK
+  echo 'nopipe nocompress tagstring'
+nopipe nocompress tagstring
+  parallel --tagstring {#} --line-buffer echo {} O ::: -n;  echo "K"
+1	OK
+  echo 'nopipe nocompress notagstring'
+nopipe nocompress notagstring
+  parallel --line-buffer echo {} O ::: -n;  echo "K"
+OK
+echo 'Compress with failing (de)compressor'
+Compress with failing (de)compressor
+  parallel -k --tag --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: tag true true
+tag	tag
+true	true
+true	true
+  parallel -k --tag --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: tag false true
+tag	tag
+false	false
+true	true
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+  parallel -k --tag --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: tag false false
+tag	tag
+false	false
+false	false
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+  parallel -k --tag --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: tag true false
+tag	tag
+true	true
+false	false
+  parallel -k --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: true true
+true
+true
+  parallel -k --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: false true
+false
+true
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+  parallel -k --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: false false
+false
+false
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+  parallel -k --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: true false
+true
+false
+  parallel -k --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: line-buffer true true
+line-buffer
+true
+true
+  parallel -k --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: line-buffer false true
+line-buffer
+false
+true
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+  parallel -k --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: line-buffer false false
+line-buffer
+false
+false
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+  parallel -k --tag --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: tag line-buffer true false
+tag	tag
+line-buffer	line-buffer
+true	true
+false	false
+  parallel -k --tag --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: tag line-buffer true true
+tag	tag
+line-buffer	line-buffer
+true	true
+true	true
+  parallel -k --tag --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: tag line-buffer false true
+tag	tag
+line-buffer	line-buffer
+false	false
+true	true
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+  parallel -k --tag --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: tag line-buffer false false
+tag	tag
+line-buffer	line-buffer
+false	false
+false	false
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+  parallel -k --tag --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: tag line-buffer true false
+tag	tag
+line-buffer	line-buffer
+true	true
+false	false
+  parallel -k --files --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: files true true   | parallel rm
+  parallel -k --files --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: files false true  | parallel rm
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+  parallel -k --files --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: files false false | parallel rm
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+parallel: Error: cat;false failed.
+  parallel -k --files --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: files true false  | parallel rm
+echo 'bug #44250: pxz complains File format not recognized but decompresses anyway'
+bug #44250: pxz complains File format not recognized but decompresses anyway
+  # The first line dumps core if run from make file. Why?!
+  stdout parallel --compress --compress-program pxz ls /{} ::: OK-if-missing-file
+Segmentation fault (core dumped)
+parallel: Error: pxz failed.
+  stdout parallel --compress --compress-program pixz --decompress-program 'pixz -d' ls /{}  ::: OK-if-missing-file
+ls: cannot access /OK-if-missing-file: No such file or directory
+  stdout parallel --compress --compress-program pixz --decompress-program 'pixz -d' true ::: OK-if-no-output
+  stdout parallel --compress --compress-program pxz true ::: OK-if-no-output
+echo 'bug #41613: --compress --line-buffer no newline';   perl -e 'print "It worked"'| parallel --pipe --compress --line-buffer cat; echo
+bug #41613: --compress --line-buffer no newline
+It worked
 echo '### bug #44614: --pipepart --header off by one'
 ### bug #44614: --pipepart --header off by one
   seq 10 >/tmp/parallel_44616;     parallel --pipepart -a /tmp/parallel_44616 -k --block 5 'echo foo; cat';     parallel --pipepart -a /tmp/parallel_44616 -k --block 2 --regexp --recend 3'\n' 'echo foo; cat';     rm /tmp/parallel_44616

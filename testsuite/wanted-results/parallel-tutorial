@@ -506,12 +506,9 @@ completed 1
 completed 2
 completed 0
 tried 1
-tried 2
 tried 0
 tried 1
-tried 2
 tried 1
-tried 2
   parallel --load 100% echo load is less than {} job per cpu ::: 1 
 load is less than 1 job per cpu
   parallel --noswap echo the system is not swapping ::: now
@@ -663,6 +660,7 @@ TEXTDOMAIN
 TEXTDOMAINDIR
 TIMEOUT
 TMPDIR
+TRIES
 UPSTART_EVENTS
 UPSTART_INSTANCE
 UPSTART_JOB
@@ -882,14 +880,12 @@ The second finished running in the foreground
 First started
 The first finished
   sem --id my_id -u 'echo Second started; sleep 10; echo The second finished'
-Second started
   sem --jobs 3 --id my_id -u 'echo First started; sleep 5; echo The first finished' &&
   sem --jobs 3 --id my_id -u 'echo Second started; sleep 6; echo The second finished' &&
   sem --jobs 3 --id my_id -u 'echo Third started; sleep 7; echo The third finished' &&
   sem --jobs 3 --id my_id -u 'echo Fourth started; sleep 8; echo The fourth finished' &&
   sem --wait --id my_id
 First started
-Second started
 The first finished
 Third started
 The second finished

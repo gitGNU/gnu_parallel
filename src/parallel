@@ -5576,18 +5576,26 @@ sub slot {
 	#   $cattail = perl program for: cattail "decompress program" writerpid [file_to_decompress or stdin] [file_to_unlink]
 	if(not $cattail) {
 	    $cattail = q{
-		# cat followed by tail.
+		# cat followed by tail (possibly with rm as soon at the file is opened)
 		# If $writerpid dead: finish after this round
 		use Fcntl;
 
 		$|=1;
 
 		my ($cmd, $writerpid, $read_file, $unlink_file) = @ARGV;
+		while(defined $unlink_file and not -e $unlink_file) {
+		    # Writer has not opened file, so we cannot open it
+		    $sleep = ($sleep < 30) ? ($sleep * 1.001 + 0.01) : ($sleep);
+		    usleep($sleep);
+		}
+
 		if($read_file) {
 		    open(IN,"<",$read_file) || die("cattail: Cannot open $read_file");
 		} else {
 		    *IN = *STDIN;
 		}
+		# The writer and we have both opened the file, so it is safe to unlink it
+		unlink $unlink_file;
 
 		my $first_round = 1;
 		my $flags;
@@ -5601,9 +5609,6 @@ sub slot {
 		    my $writer_running = kill 0, $writerpid;
 		    $read = sysread(IN,$buf,32768);
 		    if($read) {
-			# We can unlink the file now: The writer has written something
-			-e $unlink_file and unlink $unlink_file;
-
 			if($first_round) {
 			    # Only start the command if there any input to process
 			    $first_round = 0;
@@ -5621,7 +5626,6 @@ sub slot {
 		    } else {
 			if(eof(IN) and not $writer_running) {
 			    # Writer dead: There will never be more to read => exit
-			    -e $unlink_file and unlink $unlink_file;
 			    exit;
 			}
 			# TODO This could probably be done more efficiently using select(2)
@@ -5768,8 +5772,11 @@ sub filter_through_compress {
     my $cattail = cattail();
 
     for my $fdno (1,2) {
-	my $wpid = open(my $fdw,"|-", empty_input_detector().
-			"| ($opt::compress_program) >>".
+	# The tmpfile is used to tell the reader that the writer has started,
+	# so unlink it to start with.
+	unlink $self->fh($fdno,'name');
+        my $wpid = open(my $fdw,"|-", "(".empty_input_detector().
+			"| ($opt::compress_program)) >>".
 			$self->fh($fdno,'name')) || die $?;
 	$self->set_fh($fdno,'w',$fdw);
 	$self->set_fh($fdno,'wpid',$wpid);
@@ -7091,14 +7098,18 @@ sub files_print {
     my $self = shift;
     my ($fdno,$in_fh,$out_fd) = @_;
 
-    # If --compress: $in_fh must be closed first.
+    # If the job is dead: close printing fh. Needed for --compress
     close $self->fh($fdno,"w");
     if($? and $opt::compress) {
-	::error($opt::decompress_program." failed.\n");
+	::error($opt::compress_program." failed.\n");
 	$self->set_exitstatus(255);
     }
+    if($opt::compress) {
+	# Kill the decompressor which will not be needed
+	CORE::kill "TERM", $self->fh($fdno,"rpid");
+    }
     close $in_fh;
-    # TODO if $?: die(?)
+
     if($opt::pipe and $self->virgin()) {
 	# Nothing was printed to this job:
 	# cleanup unused tmp files if --files was set
@@ -7121,7 +7132,7 @@ sub linebuffer_print {
 	# If the job is dead: close printing fh. Needed for --compress
 	close $self->fh($fdno,"w");
 	if($? and $opt::compress) {
-	    ::error($opt::decompress_program." failed.\n");
+	    ::error($opt::compress_program." failed.\n");
 	    $self->set_exitstatus(255);
 	}
 	if($opt::compress) {
@@ -7190,7 +7201,10 @@ sub linebuffer_print {
 	} else {
 	    # decompress done: close fh
 	    close $in_fh;
-	    # TODO if $?: die(?)
+	    if($? and $opt::compress) {
+		::error($opt::decompress_program." failed.\n");
+		$self->set_exitstatus(255);
+	    }
 	}
     }
 }
@@ -7201,7 +7215,7 @@ sub tag_print {
     my $buf;
     close $self->fh($fdno,"w");
     if($? and $opt::compress) {
-	::error($opt::decompress_program." failed.\n");
+	::error($opt::compress_program." failed.\n");
 	$self->set_exitstatus(255);
     }
     seek $in_fh, 0, 0;
@@ -7230,6 +7244,10 @@ sub tag_print {
 	$self->add_returnsize($outputlength);
     }
     close $in_fh;
+    if($? and $opt::compress) {
+	::error($opt::decompress_program." failed.\n");
+	$self->set_exitstatus(255);
+    }
 }
 
 sub normal_print {
@@ -7238,7 +7256,7 @@ sub normal_print {
     my $buf;
     close $self->fh($fdno,"w");
     if($? and $opt::compress) {
-	::error($opt::decompress_program." failed.\n");
+	::error($opt::compress_program." failed.\n");
 	$self->set_exitstatus(255);
     }
     seek $in_fh, 0, 0;
@@ -7260,6 +7278,10 @@ sub normal_print {
 	$self->add_returnsize($outputlength);
     }
     close $in_fh;
+    if($? and $opt::compress) {
+	::error($opt::decompress_program." failed.\n");
+	$self->set_exitstatus(255);
+    }
 }
 
 sub print_joblog {
