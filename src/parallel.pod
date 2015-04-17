@@ -765,6 +765,8 @@ B<my_grp1_arg> may be run on either B<myserver1> or B<myserver2>,
 B<third_arg> may be run on either B<myserver1> or B<myserver3>,
 but B<arg_for_grp2> will only be run on B<myserver2>.
 
+See also: B<--sshlogin>.
+
 
 =item B<-I> I<replace-str>
 
@@ -1629,7 +1631,11 @@ seconds.
 
 =item B<-S> I<[@hostgroups/][ncpu/]sshlogin[,[@hostgroups/][ncpu/]sshlogin[,...]]>
 
+=item B<-S> I<@hostgroup>
+
 =item B<--sshlogin> I<[@hostgroups/][ncpu/]sshlogin[,[@hostgroups/][ncpu/]sshlogin[,...]]>
+
+=item B<--sshlogin> I<@hostgroup>
 
 Distribute jobs to remote computers. The jobs will be run on a list of
 remote computers.
@@ -1638,8 +1644,8 @@ If I<hostgroups> is given, the I<sshlogin> will be added to that
 hostgroup. Multiple hostgroups are separated by '+'. The I<sshlogin>
 will always be added to a hostgroup named the same as I<sshlogin>.
 
-If only the I<hostgroups> is given, only the sshlogins in those
-hostgroups will be used.
+If only the I<@hostgroup> is given, only the sshlogins in that
+hostgroup will be used. Multiple I<@hostgroup> can be given.
 
 GNU B<parallel> will determine the number of CPU cores on the remote
 computers and run the number of jobs as specified by B<-j>.  If the

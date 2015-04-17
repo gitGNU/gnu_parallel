@@ -5579,23 +5579,22 @@ sub slot {
 		# cat followed by tail (possibly with rm as soon at the file is opened)
 		# If $writerpid dead: finish after this round
 		use Fcntl;
-
 		$|=1;
 
-		my ($cmd, $writerpid, $read_file, $unlink_file) = @ARGV;
-		while(defined $unlink_file and not -e $unlink_file) {
-		    # Writer has not opened file, so we cannot open it
-		    $sleep = ($sleep < 30) ? ($sleep * 1.001 + 0.01) : ($sleep);
-		    usleep($sleep);
-		}
-
+		my ($comfile, $cmd, $writerpid, $read_file, $unlink_file) = @ARGV;
 		if($read_file) {
 		    open(IN,"<",$read_file) || die("cattail: Cannot open $read_file");
 		} else {
 		    *IN = *STDIN;
 		}
+		while(! -s $comfile) {
+		    # Writer has not opened the buffer file, so we cannot remove it yet
+		    $sleep = ($sleep < 30) ? ($sleep * 1.001 + 0.01) : ($sleep);
+		    usleep($sleep);
+		}
 		# The writer and we have both opened the file, so it is safe to unlink it
 		unlink $unlink_file;
+		unlink $comfile;
 
 		my $first_round = 1;
 		my $flags;
@@ -5630,8 +5629,8 @@ sub slot {
 			}
 			# TODO This could probably be done more efficiently using select(2)
 			# Nothing read: Wait longer before next read
-			# Up to 30 milliseconds
-			$sleep = ($sleep < 30) ? ($sleep * 1.001 + 0.01) : ($sleep);
+			# Up to 100 milliseconds
+			$sleep = ($sleep < 100) ? ($sleep * 1.001 + 0.01) : ($sleep);
 			usleep($sleep);
 		    }
 		}
@@ -5741,27 +5740,29 @@ sub grouped {
     }
 }
 
-sub empty_input_detector {
-    # If no input: exec true
-    # If some input: Pass input as input to pipe
-    # This avoids starting the $read command if there is no input.
+sub empty_input_wrapper {
+    # If no input: exit(0)
+    # If some input: Pass input as input to command on STDIN
+    # This avoids starting the command if there is no input.
+    # Input:
+    #   $command = command to pipe data to
     # Returns:
-    #   $cmd = script to prepend to '| ($real command)'
-
-    # The $tmpfile might exist if run on a remote system - we accept that risk
-    my ($dummy_fh, $tmpfile) = ::tmpfile(SUFFIX => ".chr");
-    # Unlink to avoid leaving files if --dry-run or --sshlogin
-    unlink $tmpfile;
-    $Global::unlink{$tmpfile} = 1;
-    my $cmd =
-	# Exit value:
-	#   empty input = true
-	#   some input = exit val from command
-	# sh -c needed as csh cannot hide stderr
-	qq{ sh -c 'dd bs=1 count=1 of=$tmpfile 2>/dev/null'; }.
-	qq{ test \! -s "$tmpfile" && rm -f "$tmpfile" && exec true; }.
-	qq{ (cat $tmpfile; rm $tmpfile; cat - ) };
-    return $cmd;
+    #   $wrapped_command = the wrapped command
+    my $command = shift;
+    my $script = '$c="'.::perl_quote_scalar($command).'";'.
+	::spacefree(0,q{
+	    if(sysread(STDIN, $buf, 1)) {
+		open($fh, "|-", $c) || die;
+		syswrite($fh, $buf);
+		while($read = sysread(STDIN, $buf, 32768)) {
+		    syswrite($fh, $buf);
+		}
+		close $fh;
+		exit ($?&127 ? 128+($?&127) : 1+$?>>8)
+	    }
+		  });
+    ::debug("run",'Empty wrap: perl -e '.::shell_quote_scalar($script)."\n");
+    return 'perl -e '.::shell_quote_scalar($script);
 }
 
 sub filter_through_compress {
@@ -5772,15 +5773,18 @@ sub filter_through_compress {
     my $cattail = cattail();
 
     for my $fdno (1,2) {
-	# The tmpfile is used to tell the reader that the writer has started,
-	# so unlink it to start with.
-	unlink $self->fh($fdno,'name');
-        my $wpid = open(my $fdw,"|-", "(".empty_input_detector().
-			"| ($opt::compress_program)) >>".
+	# Make a communication file.
+	my ($fh, $comfile) = ::tmpfile(SUFFIX => ".pac");
+	close $fh;
+	# Compressor: (echo > $comfile; compress pipe) > output
+	# When the echo is written to $comfile, it is known that output file is opened,
+	# thus output file can then be removed by the decompressor.
+        my $wpid = open(my $fdw,"|-", "(echo > $comfile; ".empty_input_wrapper($opt::compress_program).") >".
 			$self->fh($fdno,'name')) || die $?;
 	$self->set_fh($fdno,'w',$fdw);
 	$self->set_fh($fdno,'wpid',$wpid);
-	my $rpid = open(my $fdr, "-|", "perl", "-e", $cattail,
+	# Decompressor: open output; -s $comfile > 0: rm $comfile output; decompress output > stdout
+	my $rpid = open(my $fdr, "-|", "perl", "-e", $cattail, $comfile,
 			$opt::decompress_program, $wpid,
 			$self->fh($fdno,'name'),$self->fh($fdno,'unlink')) || die $?;
 	$self->set_fh($fdno,'r',$fdr);
@@ -6233,8 +6237,8 @@ sub wrapped {
 	    # }'  0 0 0 11 |
 	    $command = (shift @Global::cat_partials). " | ($command)";
 	} elsif($opt::pipe) {
-	    # Prepend EOF-detector to avoid starting $command if EOF.
-	    $command = empty_input_detector(). "| ($command);";
+	    # Wrap with EOF-detector to avoid starting $command if EOF.
+	    $command = empty_input_wrapper($command);
 	}
 	if($opt::tmux) {
 	    # Wrap command with 'tmux'

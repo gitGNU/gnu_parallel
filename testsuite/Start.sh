@@ -28,9 +28,9 @@ run_test() {
 
   # Check if it was cleaned up
   find /tmp -maxdepth 1 |
-    perl -ne '/\.(tmb|chr|tms|par)$/ and ++$a and print "TMP NOT CLEAN. FOUND: $_".`touch '$script'`;'
+    perl -ne '/\.(tmx|pac|arg|all|log|swp|loa|ssh|df|pip|tmb|chr|tms|par)$/ and ++$a and print "TMP NOT CLEAN. FOUND: $_".`touch '$script'`;'
   # May be owned by other users
-  sudo rm -f /tmp/*.{tmb,chr,tms,par}
+  sudo rm -f /tmp/*.{tmx,pac,arg,all,log,swp,loa,ssh,df,pip,tmb,chr,tms,par}
 }
 export -f run_test
 

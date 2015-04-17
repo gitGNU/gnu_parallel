@@ -215,9 +215,18 @@ GNU Parallel 20150422 ('Germanwings') has been released. It is available for dow
 
 Haiku of the month:
 
-  <<>>
+  SSH set up?
+  Instant cluster needed now?
+  Use GNU Parallel.
+    -- Ole Tange
 
 New in this release:
+
+* Security fix. An attacker on the local system could make you overwrite one of your own files with a single byte. The problem requires:
+
+  - you using --compress or --tmux
+  - the attacker must figure out the randomly chosen file name
+  - the attacker to create a symlink within a time window of 15 ms
 
 * GNU Parallel now has a DOI: https://dx.doi.org/10.5281/zenodo.16303
 
