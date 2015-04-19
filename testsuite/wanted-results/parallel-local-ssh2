@@ -44,7 +44,7 @@ shellshock-hardened to non-shellshock-hardened
 Function non-shellshock-hardened
 echo '### bug #42999: --pipepart with remote does not work'
 ### bug #42999: --pipepart with remote does not work
-  seq 100 > /tmp/bug42999; chmod 600 /tmp/bug42999;   parallel --sshdelay 0.3 --pipepart --block 31 -a /tmp/bug42999 -k -S parallel@lo wc | perl -pe s:/tmp/.........pip:/tmp/XXXX: ;   parallel --sshdelay 0.2 --pipepart --block 31 -a /tmp/bug42999 -k --fifo -S parallel@lo wc | perl -pe s:/tmp/.........pip:/tmp/XXXX: ;   parallel --sshdelay 0.1 --pipepart --block 31 -a /tmp/bug42999 -k --cat -S parallel@lo wc | perl -pe s:/tmp/.........pip:/tmp/XXXX: ;   rm /tmp/bug42999
+  seq 100 > /tmp/bug42999; chmod 600 /tmp/bug42999;   parallel --sshdelay 0.3 --pipepart --block 31 -a /tmp/bug42999 -k -S parallel@lo wc;   parallel --sshdelay 0.2 --pipepart --block 31 -a /tmp/bug42999 -k --fifo -S parallel@lo wc | perl -pe 's:/tmp/fifo\d+:/tmp/fifo0000:' ;   parallel --sshdelay 0.1 --pipepart --block 31 -a /tmp/bug42999 -k --cat -S parallel@lo wc | perl -pe 's:/tmp/cat\d+:/tmp/cat0000:' ;   rm /tmp/bug42999
      14      14      33
      11      11      33
      11      11      33
@@ -54,24 +54,24 @@ echo '### bug #42999: --pipepart with remote does not work'
      11      11      33
      11      11      33
       9       9      28
-     14      14      33 /tmp/XXXX
-     11      11      33 /tmp/XXXX
-     11      11      33 /tmp/XXXX
-     11      11      33 /tmp/XXXX
-     11      11      33 /tmp/XXXX
-     11      11      33 /tmp/XXXX
-     11      11      33 /tmp/XXXX
-     11      11      33 /tmp/XXXX
-      9       9      28 /tmp/XXXX
-14 14 33 /tmp/XXXX
-11 11 33 /tmp/XXXX
-11 11 33 /tmp/XXXX
-11 11 33 /tmp/XXXX
-11 11 33 /tmp/XXXX
-11 11 33 /tmp/XXXX
-11 11 33 /tmp/XXXX
-11 11 33 /tmp/XXXX
- 9  9 28 /tmp/XXXX
+     14      14      33 /tmp/fifo0000
+     11      11      33 /tmp/fifo0000
+     11      11      33 /tmp/fifo0000
+     11      11      33 /tmp/fifo0000
+     11      11      33 /tmp/fifo0000
+     11      11      33 /tmp/fifo0000
+     11      11      33 /tmp/fifo0000
+     11      11      33 /tmp/fifo0000
+      9       9      28 /tmp/fifo0000
+14 14 33 /tmp/cat0000
+11 11 33 /tmp/cat0000
+11 11 33 /tmp/cat0000
+11 11 33 /tmp/cat0000
+11 11 33 /tmp/cat0000
+11 11 33 /tmp/cat0000
+11 11 33 /tmp/cat0000
+11 11 33 /tmp/cat0000
+ 9  9 28 /tmp/cat0000
 echo '### --cat gives incorrect exit value in csh'
 ### --cat gives incorrect exit value in csh
   echo false | parallel --pipe --cat   -Scsh@lo 'cat {}; false' ; echo $?;   echo false | parallel --pipe --cat  -Stcsh@lo 'cat {}; false' ; echo $?;   echo true  | parallel --pipe --cat   -Scsh@lo 'cat {}; true' ; echo $?;   echo true  | parallel --pipe --cat  -Stcsh@lo 'cat {}; true' ; echo $?; echo '### --cat and --fifo exit value in bash'

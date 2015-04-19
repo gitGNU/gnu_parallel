@@ -43,25 +43,25 @@ echo '### bug #42041: Implement $PARALLEL_JOBSLOT'
 2
 echo '### bug #42363: --pipepart and --fifo/--cat does not work'
 ### bug #42363: --pipepart and --fifo/--cat does not work
-  seq 100 > /tmp/bug42363;   parallel --pipepart --block 31 -a /tmp/bug42363 -k --fifo wc | perl -pe s:/tmp/.........pip:/tmp/XXXX: ;   parallel --pipepart --block 31 -a /tmp/bug42363 -k --cat  wc | perl -pe s:/tmp/.........pip:/tmp/XXXX: ;   rm /tmp/bug42363
-     14      14      33 /tmp/XXXX
-     11      11      33 /tmp/XXXX
-     11      11      33 /tmp/XXXX
-     11      11      33 /tmp/XXXX
-     11      11      33 /tmp/XXXX
-     11      11      33 /tmp/XXXX
-     11      11      33 /tmp/XXXX
-     11      11      33 /tmp/XXXX
-      9       9      28 /tmp/XXXX
-14 14 33 /tmp/XXXX
-11 11 33 /tmp/XXXX
-11 11 33 /tmp/XXXX
-11 11 33 /tmp/XXXX
-11 11 33 /tmp/XXXX
-11 11 33 /tmp/XXXX
-11 11 33 /tmp/XXXX
-11 11 33 /tmp/XXXX
- 9  9 28 /tmp/XXXX
+  seq 100 > /tmp/bug42363;   parallel --pipepart --block 31 -a /tmp/bug42363 -k --fifo wc | perl -pe 's:/tmp/fifo\d+:/tmp/fifo0000:';   parallel --pipepart --block 31 -a /tmp/bug42363 -k --cat  wc | perl -pe 's:/tmp/cat\d+:/tmp/cat0000:';   rm /tmp/bug42363
+     14      14      33 /tmp/fifo0000
+     11      11      33 /tmp/fifo0000
+     11      11      33 /tmp/fifo0000
+     11      11      33 /tmp/fifo0000
+     11      11      33 /tmp/fifo0000
+     11      11      33 /tmp/fifo0000
+     11      11      33 /tmp/fifo0000
+     11      11      33 /tmp/fifo0000
+      9       9      28 /tmp/fifo0000
+14 14 33 /tmp/cat0000
+11 11 33 /tmp/cat0000
+11 11 33 /tmp/cat0000
+11 11 33 /tmp/cat0000
+11 11 33 /tmp/cat0000
+11 11 33 /tmp/cat0000
+11 11 33 /tmp/cat0000
+11 11 33 /tmp/cat0000
+ 9  9 28 /tmp/cat0000
 echo '### bug #42055: --pipepart -a bigfile should not require sequential reading of bigfile'
 ### bug #42055: --pipepart -a bigfile should not require sequential reading of bigfile
   parallel --pipepart -a /etc/passwd -L 1 should not be run
@@ -353,5 +353,5 @@ Send	Receive	Exitval
 Send	Receive	Exitval
 echo '### --tmux test - check termination'
 ### --tmux test - check termination
-  perl -e 'map {printf "$_%o%c\n",$_,$_}1..255' |     stdout parallel --tmux echo {} :::: - ::: a b |     perl -pe 's:tmp.par.*tms:tmp/parXXXXX.tms:; s/\d+/0/g'
+  perl -e 'map {printf "$_%o%c\n",$_,$_}1..255' |     stdout parallel --tmux echo {} :::: - ::: a b |     perl -pe 's:/tmp/par......tms:/tmp/parXXXXX.tms:;'
 See output with: tmux -S /tmp/parXXXXX.tms attach

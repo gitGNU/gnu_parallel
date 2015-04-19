@@ -82,11 +82,14 @@ See output with: tmux1.8 -S /tmp/parXXXXX.tms attach
   seq 151 200 | TMUX=tmux1.8 par_tmux
 See output with: tmux1.8 -S /tmp/parXXXXX.tms attach
 0
-  seq 201 233 | TMUX=tmux1.8 par_tmux
+  seq 201 232 | TMUX=tmux1.8 par_tmux
 See output with: tmux1.8 -S /tmp/parXXXXX.tms attach
 0
 echo '### tmux1.8 fails'
 ### tmux1.8 fails
+  echo 233 | TMUX=tmux1.8 par_tmux
+See output with: tmux1.8 -S /tmp/parXXXXX.tms attach
+0
   echo 234 | TMUX=tmux1.8 par_tmux
 See output with: tmux1.8 -S /tmp/parXXXXX.tms attach
 command too long

@@ -46,8 +46,8 @@ echo '### bug #42041: Implement $PARALLEL_JOBSLOT'
 
 echo '### bug #42363: --pipepart and --fifo/--cat does not work'
   seq 100 > /tmp/bug42363; 
-  parallel --pipepart --block 31 -a /tmp/bug42363 -k --fifo wc | perl -pe s:/tmp/.........pip:/tmp/XXXX: ; 
-  parallel --pipepart --block 31 -a /tmp/bug42363 -k --cat  wc | perl -pe s:/tmp/.........pip:/tmp/XXXX: ;
+  parallel --pipepart --block 31 -a /tmp/bug42363 -k --fifo wc | perl -pe 's:/tmp/fifo\d+:/tmp/fifo0000:'; 
+  parallel --pipepart --block 31 -a /tmp/bug42363 -k --cat  wc | perl -pe 's:/tmp/cat\d+:/tmp/cat0000:'; 
   rm /tmp/bug42363
 
 echo '### bug #42055: --pipepart -a bigfile should not require sequential reading of bigfile'
@@ -120,7 +120,7 @@ echo '### added transfersize/returnsize to local jobs'
 echo '### --tmux test - check termination'
   perl -e 'map {printf "$_%o%c\n",$_,$_}1..255' | 
     stdout parallel --tmux echo {} :::: - ::: a b | 
-    perl -pe 's:tmp.par.*tms:tmp/parXXXXX.tms:; s/\d+/0/g'
+    perl -pe 's:/tmp/par......tms:/tmp/parXXXXX.tms:;'
 
 EOF
 

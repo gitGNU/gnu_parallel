@@ -41,8 +41,9 @@ echo '### tmux1.8'
   seq 51 100 | TMUX=tmux1.8 par_tmux
   seq 101 150 | TMUX=tmux1.8 par_tmux
   seq 151 200 | TMUX=tmux1.8 par_tmux
-  seq 201 233 | TMUX=tmux1.8 par_tmux
+  seq 201 232 | TMUX=tmux1.8 par_tmux
 echo '### tmux1.8 fails'
+  echo 233 | TMUX=tmux1.8 par_tmux
   echo 234 | TMUX=tmux1.8 par_tmux
   echo 235 | TMUX=tmux1.8 par_tmux
   echo 236 | TMUX=tmux1.8 par_tmux

@@ -406,7 +406,7 @@ B D
   parallel --use-cpus-instead-of-cores -N0 sleep 1 :::: num8
 
   seq 10 20 | parallel --tmux 'echo start {}; sleep {}; echo done {}'
-See output with: tmux -S /tmp/parXXXXX.tms attach
+See output with: tmux -S /tmp/parXXXXX.tmux attach
   tmux -S /tmp/parXXXXX.tms attach
 no sessions
   parallel --delay 2.5 echo Starting {}\;date ::: 1 2 3

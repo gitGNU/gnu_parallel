@@ -34,6 +34,9 @@ run_test() {
 }
 export -f run_test
 
+# Create a monitor script
+echo forever pstree -lp $$ >/tmp/monitor
+chmod 755 /tmp/monitor
 date
 mkdir -p actual-results
 ls -t tests-to-run/*${1}*.sh | grep -v ${2} |

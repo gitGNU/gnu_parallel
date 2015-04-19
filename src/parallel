@@ -1518,6 +1518,7 @@ sub read_args_from_command_line {
 sub cleanup {
     # Returns: N/A
     unlink keys %Global::unlink;
+    map { rmdir $_ } keys %Global::unlink;
     if(@opt::basefile) { cleanup_basefile(); }
 }
 
@@ -3319,6 +3320,45 @@ sub tmpfile {
     return ::tempfile(DIR=>$ENV{'TMPDIR'}, TEMPLATE => 'parXXXXX', @_);
 }
 
+
+{
+    my($tmpdir,$fifo);
+
+    sub tmpname {
+	# Select a name that does not exist
+	# Do not create the file as that may cause problems
+	# if you ssh to localhost (or a shared file system) under a different name
+	my $name = shift;
+	my($tmpname);
+	do {
+	    $tmpname = $ENV{'TMPDIR'}."/".$name.int(rand(9999));
+	} while($Global::unlink{$tmpname}++ or -e $tmpname);
+#	$Global::unlink{$tmpdir} ||= 1;
+	return $tmpname;
+    }
+
+    sub rmtmpname {
+	# Clean up mktmpname
+	my $tmpname = shift;
+	delete $Global::unlink{$tmpname};
+	unlink $tmpname;
+	rmdir $tmpdir;
+    }
+
+    sub tmpfifo {
+	# Securely make a fifo by securely making a dir with a fifo in it
+	use POSIX qw(mkfifo);
+	my $tmpfifo = tmpname("fifo",@_);
+	mkfifo($tmpfifo,0600);
+	return $tmpfifo;
+    }
+
+    sub rmtmpfifo {
+	# Clean up mktmpfifo
+	rmtmpname(@_);
+    }
+}
+
 sub uniq {
     # Remove duplicates and return unique values
     return keys %{{ map { $_ => 1 } @_ }};
@@ -3506,8 +3546,8 @@ sub which {
     #   @full_path = full paths to @programs. Nothing if not found
     my @which;
     for my $prg (@_) {
-	push @which, grep { not -d $_ and -x $_ } 
-	map { $_."/".$prg } split(":",$ENV{'PATH'});
+	push(@which, grep { not -d $_ and -x $_ }
+	     map { $_."/".$prg } split(":",$ENV{'PATH'}));
     }
     return @which;
 }
@@ -6879,10 +6919,16 @@ sub print_dryrun_and_verbose {
 	my $self = shift;
 	my $actual_command = shift;
 	# Temporary file name. Used for fifo to communicate exit val
-	my ($fh, $tmpfile) = ::tmpfile(SUFFIX => ".tmx");
-	$Global::unlink{$tmpfile} = 1;
+	my ($fh, $tmpfifo) = ::tmpfile(SUFFIX => ".tmx");
+	$Global::unlink{$tmpfifo} = 1;
 	close $fh;
-	unlink $tmpfile;
+	unlink $tmpfifo;
+#	# FIFO for communicating exit val
+#	my $tmpfifo = ::tmpfifo();
+	if(length($tmpfifo) >=100) {
+	    ::error("tmux does not support sockets with path > 100\n");
+	    ::wait_and_exit(255);
+	}
 	my $visual_command = $self->replaced();
 	my $title = $visual_command;
 	if($visual_command =~ /\0/) {
@@ -6920,6 +6966,7 @@ sub print_dryrun_and_verbose {
 	my $tmux;
 	$ENV{'TMUX'} ||= "tmux";
 	if(not $tmuxsocket) {
+#	    $tmuxsocket = ::tmpname("tmux");
 	    (undef, $tmuxsocket) = ::tmpfile(SUFFIX => ".tms");
 	    $Global::unlink{$tmuxsocket} = 1;
 	    unlink $tmuxsocket;
@@ -6933,20 +6980,20 @@ sub print_dryrun_and_verbose {
 		$Limits::Command::line_max_len, " tot ",
 		$l_tot, "\n");
 
-	return "mkfifo $tmpfile; $tmux ".
+	return "mkfifo $tmpfifo; $tmux ".
 	    # Run in tmux
 	    ::shell_quote_scalar
 	    (
 	     "(".$actual_command.');'.
 	     # The triple print is needed - otherwise the testsuite fails
-	     q[ perl -e 'while($t++<3){ print $ARGV[0],"\n" }' $?h/$status >> ].$tmpfile."&".
+	     q[ perl -e 'while($t++<3){ print $ARGV[0],"\n" }' $?h/$status >> ].$tmpfifo."&".
 	     "echo $title; echo \007Job finished at: `date`;sleep 10"
 	    ).
 	    # Run outside tmux
 	    # Read a / separated line: 0h/2 for csh, 2/0 for bash.
 	    # If csh the first will be 0h, so use the second as exit value.
 	    # Otherwise just use the first value as exit value.
-	    q{; exec perl -e '$/="/";$_=<>;$c=<>;unlink $ARGV; /(\d+)h/ and exit($1);exit$c' }.$tmpfile;
+	    q{; exec perl -e '$/="/";$_=<>;$c=<>;unlink $ARGV; /(\d+)h/ and exit($1);exit$c' }.$tmpfifo;
     }
 }
 
@@ -7493,15 +7540,16 @@ sub populate {
     my $next_arg;
     my $max_len = $Global::minimal_command_line_length || Limits::Command::max_length();
 
-    if($opt::cat or $opt::fifo) {
+    if($opt::cat) {
 	# Generate a tempfile name that will be used as {}
-	my($outfh,$name) = ::tmpfile(SUFFIX => ".pip");
-	close $outfh;
-	# Unlink is needed if: ssh otheruser@localhost
-	unlink $name;
-	$Global::JobQueue->{'commandlinequeue'}->{'arg_queue'}->unget([Arg->new($name)]);
+	$Global::JobQueue->{'commandlinequeue'}->{'arg_queue'}->
+	    unget([Arg->new(::tmpname("cat"))]);
     }
-
+    if($opt::fifo) {
+	# Generate a tempfile name that will be used as {}
+	$Global::JobQueue->{'commandlinequeue'}->{'arg_queue'}->
+	    unget([Arg->new(::tmpname("fifo"))]);
+    }
     while (not $self->{'arg_queue'}->empty()) {
 	$next_arg = $self->{'arg_queue'}->get();
 	if(not defined $next_arg) {

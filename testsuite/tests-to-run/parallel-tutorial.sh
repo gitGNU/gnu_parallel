@@ -22,7 +22,9 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
 ' |
   stdout parallel -j7 -vd'\n\n' |
   perl -pe '$|=1;
-            # --files and --tmux
+            # --tmux
+            s:/tmp/........../t\d+:/tmp/tmuxtmp:;
+            # --files
             s:/tmp/par......(...):/tmp/parXXXXX.$1:;
             # --eta --progress
             s/ETA.*//g; s/local:.*//g;
