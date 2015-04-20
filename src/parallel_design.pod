@@ -234,7 +234,7 @@ You can map the bad limits using:
 perl -e 'map { $a=$_; print map { "$a,$_\n" } (1..17000) } (1..17000)' | shuf > ab;
 
 cat ab | parallel --colsep , --tagstring '{1}{=$_="\t"=}{2}'
-tmux -S /tmp/p{%} new-session -d -n '{=1 $_="O"x$_ =}' true'\ {=2 $_="O"x$_ =};echo $?;rm /tmp/p{%}'
+tmux -S /tmp/p{%}-'{=1 $_="O"x(rand(200)) =}' new-session -d -n '{=1 $_="O"x$_ =}' true'\ {=2 $_="O"x$_ =};echo $?;rm /tmp/p{%}-O*'
 > value.csv 2>/dev/null
 
 R -e 'a<-read.table("value.csv");X11();plot(a[,1],a[,2],col=a[,3]+5,cex=0.1);Sys.sleep(1000)'

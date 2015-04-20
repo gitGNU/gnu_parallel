@@ -1051,7 +1051,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150416;
+    $Global::version = 20150419;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -3046,28 +3046,47 @@ sub killall {
     # before we start the blood bath
     my @family_pids = family_pids(keys %Global::running);
     # Send jobs TERM
+    ::debug("kill","TERM ", join(' ',keys %Global::running),"\n");
     kill "TERM", keys %Global::running;
     # Wait up to 200 ms
-    # Send jobs TERM (again)
     my $sleepsum = 0;
-    my $sleep = 0;
+    my $sleep = 0.001;
     for (; kill(0, keys %Global::running) and $sleepsum < 200;
 	 $sleepsum += $sleep) {
 	# This can change %Global::running
-	$sleep = ::reap_usleep($sleep);
+	    ::debug("kill","Slept $sleepsum\n");
+	if((my $stiff = waitpid(-1, &WNOHANG)) > 0) {
+	    ::debug("kill","reaped $stiff\n");
+
+	    $Global::total_running--;
+	    delete $Global::running{$stiff};
+	    $sleep = $sleep/2+0.001;
+	}
+	$sleep *= 1.1;
+	::usleep($sleep);
     }
+    # Send jobs TERM (again)
+    ::debug("kill","TERM ", join(' ',keys %Global::running),"\n");
     kill "TERM", keys %Global::running;
     # Wait up to 200 ms
-    # Send jobs KILL
-    $sleepsum = 0;
-    $sleep = 0;
+     $sleepsum = 0;
+    $sleep = 0.001;
     for (; kill(0, keys %Global::running) and $sleepsum < 200;
 	 $sleepsum += $sleep) {
 	# This can change %Global::running
-	$sleep = ::reap_usleep($sleep);
+	if((my $stiff = waitpid(-1, &WNOHANG)) > 0) {
+	    $Global::total_running--;
+	    delete $Global::running{$stiff};
+	    $sleep = $sleep/2+0.001;
+	}
+	$sleep *= 1.1;
+	::usleep($sleep);
     }
+    # Send jobs KILL
+    ::debug("kill","KILL ", join(' ',keys %Global::running),"\n");
     kill "KILL", keys %Global::running;
     # Send all (grand*)children KILL (if there are any left)
+    ::debug("kill","KILL @family_pids\n");
     kill "KILL", @family_pids;
 }
 
@@ -7410,55 +7429,63 @@ sub set_exitsignal {
 }
 
 
+{
+    my $status_printed;
 
-sub should_we_halt {
-    # Should we halt? Immediately? Gracefully?
-    # Returns: N/A
-    my $job = shift;
-    if($job->exitstatus()) {
-	$Global::exitstatus++;
-	$Global::total_failed++;
-        if($opt::halt) {
-	    if($opt::halt == 1
-	       or
-	       ($opt::halt > 0 and $opt::halt < 1 and $Global::total_failed > 3
-		and
-		$Global::total_failed / $Global::total_started > $opt::halt)) {
-		# If halt on error == 1 or --halt 10%
-		# we should gracefully exit
-		::status
-		    ("$Global::progname: Starting no more jobs. ",
-		     "Waiting for ", scalar(keys %Global::running),
-		     " jobs to finish. This job failed:\n",
-		     $job->replaced(),"\n");
-		$Global::start_no_new_jobs ||= 1;
-		$Global::halt_exitstatus = $job->exitstatus();
-	    } elsif($opt::halt == 2) {
-		# If halt on error == 2 we should exit immediately
-		::status
-		    ("$Global::progname: This job failed:\n",
-		     $job->replaced(),"\n");
-		exit ($job->exitstatus());
+    sub should_we_halt {
+	# Should we halt? Immediately? Gracefully?
+	# Returns: N/A
+	my $job = shift;
+	if($job->exitstatus() or $job->exitsignal()) {
+	    $Global::exitstatus++;
+	    $Global::total_failed++;
+	    if($opt::halt) {
+		if($opt::halt == 1
+		   or
+		   ($opt::halt > 0 and $opt::halt < 1 and $Global::total_failed > 3
+		    and
+		    $Global::total_failed / $Global::total_started > $opt::halt)) {
+		    # If halt on error == 1 or --halt 10%
+		    # we should gracefully exit
+		    ::status
+			("$Global::progname: Starting no more jobs. ",
+			 "Waiting for ", scalar(keys %Global::running),
+			 " jobs to finish. This job failed:\n",
+			 $job->replaced(),"\n");
+		    $Global::start_no_new_jobs ||= 1;
+		    $Global::halt_exitstatus = $job->exitstatus();
+		} elsif($opt::halt == 2) {
+		    # If halt on error == 2 we should exit immediately
+		    if(not $status_printed++) {
+			::status
+			    ("$Global::progname: This job failed:\n",
+			     $job->replaced(),"\n");
+		    }
+		    my $status = $job->exitstatus();
+		    ::killall();
+		    ::wait_and_exit($status);
+		}
 	    }
-	}
-    } else {
-        if($opt::halt) {
-	    if($opt::halt == -1) {
-		# If halt on error == -1
-		# we should gracefully exit
-		::status
-		    ("$Global::progname: Starting no more jobs. ",
-		     "Waiting for ", scalar(keys %Global::running),
-		     " jobs to finish. This job succeeded:\n",
-		     $job->replaced(),"\n");
-		$Global::start_no_new_jobs ||= 1;
-		$Global::halt_exitstatus = $job->exitstatus();
-	    } elsif($opt::halt == -2) {
-		# If halt on error == -2 we should exit immediately
-		::status
-		    ("$Global::progname: This job succeeded:\n",
-		     $job->replaced(),"\n");
-		exit ($job->exitstatus());
+	} else {
+	    if($opt::halt) {
+		if($opt::halt == -1) {
+		    # If halt on error == -1
+		    # we should gracefully exit
+		    ::status
+			("$Global::progname: Starting no more jobs. ",
+			 "Waiting for ", scalar(keys %Global::running),
+			 " jobs to finish. This job succeeded:\n",
+			 $job->replaced(),"\n");
+		    $Global::start_no_new_jobs ||= 1;
+		    $Global::halt_exitstatus = $job->exitstatus();
+		} elsif($opt::halt == -2) {
+		    # If halt on error == -2 we should exit immediately
+		    ::status
+			("$Global::progname: This job succeeded:\n",
+			 $job->replaced(),"\n");
+		    ::killall();
+		    ::wait_and_exit($job->exitstatus());
+		}
 	    }
 	}
     }
@@ -8404,9 +8431,10 @@ sub tmux_length {
 	::debug("tmux","tmux-length ",@out);
 	chomp @out;
 	# The arguments is given 3 times on the command line
-	# and the wrapping is around 50 chars
+	# and the wrapping is around 30 chars
+	# (29 for tmux1.9, 33 for tmux1.8)
 	my $tmux_len = (::max(@out));
-	$len = ::min($len,int($tmux_len/4-28));
+	$len = ::min($len,int($tmux_len/4-33));
 	::debug("tmux","tmux-length ",$len);
     }
     return $len;

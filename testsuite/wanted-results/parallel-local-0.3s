@@ -307,5 +307,15 @@ echo '### TMUX not found'
 ### TMUX not found
   TMUX=not-existing parallel --tmux echo ::: 1
 parallel: Error: not-existing not found in $PATH.
+echo '**'
+**
+parallel --halt 2 ::: 'sleep 1' burnP6 false; killall burnP6 && echo ERROR: burnP6 should be killed
+parallel: This job failed:
+false
+burnP6: no process found
+parallel --halt -2 ::: 'sleep 1' burnP5 true; killall burnP5 && echo ERROR: burnP5 should be killed
+parallel: This job succeeded:
+true
+burnP5: no process found
 ### 1 .par file from --files expected
 1

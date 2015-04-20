@@ -23,9 +23,9 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
   stdout parallel -j7 -vd'\n\n' |
   perl -pe '$|=1;
             # --tmux
-            s:/tmp/........../t\d+:/tmp/tmuxtmp:;
+            s:(/tmp\S+par).....(/tms):$1XXXXX$2:;
             # --files
-            s:/tmp/par......(...):/tmp/parXXXXX.$1:;
+            s:(/tmp\S+par).....(....):$1XXXXX$2:;
             # --eta --progress
             s/ETA.*//g; s/local:.*//g;
             # Sat Apr  4 11:55:40 CEST 2015

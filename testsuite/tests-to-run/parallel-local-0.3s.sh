@@ -143,7 +143,13 @@ echo '### bug #44614: --pipepart --header off by one'
 echo '### TMUX not found'
   TMUX=not-existing parallel --tmux echo ::: 1
 
+echo '**'
+
+parallel --halt 2 ::: 'sleep 1' burnP6 false; killall burnP6 && echo ERROR: burnP6 should be killed
+parallel --halt -2 ::: 'sleep 1' burnP5 true; killall burnP5 && echo ERROR: burnP5 should be killed
+
 EOF
 echo '### 1 .par file from --files expected'
-ls /tmp/par*.par /var/tmp/par*.par /tmp/*.tms /tmp/*.tmx 2>/dev/null | wc -l
-find /tmp/par*.par /var/tmp/par*.par /tmp/*.tms /tmp/*.tmx -mmin -10 2>/dev/null | parallel rm
+find /tmp{/*,}/*.{par,tms,tmx} 2>/dev/null -mmin -10 | wc -l
+find /tmp{/*,}/*.{par,tms,tmx} 2>/dev/null -mmin -10 | parallel rm
+

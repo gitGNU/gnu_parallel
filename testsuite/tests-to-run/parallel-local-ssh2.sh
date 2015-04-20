@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# /tmp/parallel-local-ssh2 will by default be owned by me and should be writable by *@localhost
+chmod 777 "$TMPDIR" 2>/dev/null
+
 cat <<'EOF' | sed -e s/\$SERVER1/$SERVER1/\;s/\$SERVER2/$SERVER2/ | stdout parallel -vj5 -k --joblog /tmp/jl-`basename $0` -L1
 echo "### bug #43518: GNU Parallel doesn't obey servers' jobs capacity when an ssh login file is reloaded"
   # Pre-20141106 Would reset the number of jobs run on all sshlogin if --slf changed
@@ -42,8 +45,8 @@ echo '2bug #43358: shellshock breaks exporting functions using --env'
 echo '### bug #42999: --pipepart with remote does not work'
   seq 100 > /tmp/bug42999; chmod 600 /tmp/bug42999; 
   parallel --sshdelay 0.3 --pipepart --block 31 -a /tmp/bug42999 -k -S parallel@lo wc; 
-  parallel --sshdelay 0.2 --pipepart --block 31 -a /tmp/bug42999 -k --fifo -S parallel@lo wc | perl -pe 's:/tmp/fifo\d+:/tmp/fifo0000:' ; 
-  parallel --sshdelay 0.1 --pipepart --block 31 -a /tmp/bug42999 -k --cat -S parallel@lo wc | perl -pe 's:/tmp/cat\d+:/tmp/cat0000:' ; 
+  parallel --sshdelay 0.2 --pipepart --block 31 -a /tmp/bug42999 -k --fifo -S parallel@lo wc | perl -pe 's:(/tmp\S+fifo)\d+:${1}0000:' ; 
+  parallel --sshdelay 0.1 --pipepart --block 31 -a /tmp/bug42999 -k --cat -S parallel@lo wc | perl -pe 's:(/tmp\S+cat)\d+:${1}0000:' ; 
   rm /tmp/bug42999
 
 echo '### --cat gives incorrect exit value in csh'

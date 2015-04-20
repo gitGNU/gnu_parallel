@@ -9,7 +9,6 @@ par_tmux() {
     (stdout parallel --timeout 3 --tmux --delay .3 echo '{}{=$_="\\"x$_=}'; echo $?) | par_tmux_filter
 }
 export -f par_tmux
-#j8
 cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj0 --retries 2 -k --joblog /tmp/jl-`basename $0` -L1
 echo '### tmux1.9'
   seq 000 100 | TMUX=tmux1.9 par_tmux
@@ -32,8 +31,11 @@ echo '### tmux1.9'
   seq 1700 1800 | TMUX=tmux1.9 par_tmux
   seq 1800 1900 | TMUX=tmux1.9 par_tmux
   seq 1900 2000 | TMUX=tmux1.9 par_tmux
-  seq 2000 2021 | TMUX=tmux1.9 par_tmux
+  seq 2000 2018 | TMUX=tmux1.9 par_tmux
 echo '### tmux1.9 fails'
+  echo 2019 | TMUX=tmux1.9 par_tmux
+  echo 2020 | TMUX=tmux1.9 par_tmux
+  echo 2021 | TMUX=tmux1.9 par_tmux
   echo 2022 | TMUX=tmux1.9 par_tmux
 
 echo '### tmux1.8'
@@ -41,8 +43,9 @@ echo '### tmux1.8'
   seq 51 100 | TMUX=tmux1.8 par_tmux
   seq 101 150 | TMUX=tmux1.8 par_tmux
   seq 151 200 | TMUX=tmux1.8 par_tmux
-  seq 201 232 | TMUX=tmux1.8 par_tmux
+  seq 201 231 | TMUX=tmux1.8 par_tmux
 echo '### tmux1.8 fails'
+  echo 232 | TMUX=tmux1.8 par_tmux
   echo 233 | TMUX=tmux1.8 par_tmux
   echo 234 | TMUX=tmux1.8 par_tmux
   echo 235 | TMUX=tmux1.8 par_tmux

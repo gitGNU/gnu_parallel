@@ -345,9 +345,9 @@ echo C
 1-middle
 1-end
   parallel --files echo ::: A B C
-/tmp/parXXXXX.par
-/tmp/parXXXXX.par
-/tmp/parXXXXX.par
+/tmp/parallel-tutorial/parXXXXX.par
+/tmp/parallel-tutorial/parXXXXX.par
+/tmp/parallel-tutorial/parXXXXX.par
   parallel --tmpdir /var/tmp --files echo ::: A B C
 /var/tmp/parXXXXX.par
 /var/tmp/parXXXXX.par
@@ -406,7 +406,7 @@ B D
   parallel --use-cpus-instead-of-cores -N0 sleep 1 :::: num8
 
   seq 10 20 | parallel --tmux 'echo start {}; sleep {}; echo done {}'
-See output with: tmux -S /tmp/parXXXXX.tmux attach
+See output with: tmux -S /tmp/parallel-tutorial/parXXXXX.tms attach
   tmux -S /tmp/parXXXXX.tms attach
 no sessions
   parallel --delay 2.5 echo Starting {}\;date ::: 1 2 3
