@@ -109,5 +109,9 @@ hpux-ia64.polarhome.com	 at bin/parallel line 0000
 copy_and_test syllable.polarhome.com
 syllable.polarhome.com	### Run the test on syllable.polarhome.com
 syllable.polarhome.com	chmod: changing permissions of `bin/p.tmp': Function not implemented
+copy_and_test pidora.polarhome.com
+pidora.polarhome.com	### Run the test on pidora.polarhome.com
+pidora.polarhome.com	Works on pidora.polarhome.com
+pidora.polarhome.com	Error in tempfile() using template /XXXXXXXX.arg: Could not create temp file /XXXXXXXX.arg: Permission denied at bin/parallel line 0000.
 macosx.polarhome.com	### Test if empty command in process list causes problems
 macosx.polarhome.com	OK_with_empty_cmd
