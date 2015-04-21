@@ -4571,10 +4571,8 @@ sub compute_number_of_processes {
 	    # The child takes one process slot
 	    # It will be killed later
 	    $SIG{TERM} = $Global::original_sig{TERM};
-	    # Exec 'sleep' to save RAM
-	    # 32000 seconds should be plenty, and should be supported
-	    # on all platforms.
-	    exec("sleep","32000");
+            sleep 10000000;
+            exit(0);
 	} else {
 	    # Failed to spawn
             $max_system_proc_reached = 1;
