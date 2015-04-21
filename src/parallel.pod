@@ -1616,6 +1616,14 @@ Does not run the command but quotes it. Useful for making quoted
 composed commands for GNU B<parallel>.
 
 
+=item B<--shuf> (alpha testing)
+
+Shuffle jobs. When having multiple input sources it is hard to
+randomize jobs. --shuf will generate all jobs, and shuffle them before
+running them. This is useful to get a quick preview of the results
+before running the full batch.
+
+
 =item B<--skip-first-line>
 
 Do not use the first line of input (used by GNU B<parallel> itself

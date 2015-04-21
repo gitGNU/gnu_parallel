@@ -110,8 +110,9 @@ if($opt::nonall or $opt::onall) {
 $Global::JobQueue = JobQueue->new(
     \@command,\@input_source_fh,$Global::ContextReplace,$number_of_args,\@Global::ret_files);
 
-if($opt::eta or $opt::bar) {
-    # Count the number of jobs before starting any
+if($opt::eta or $opt::bar or $opt::shuf) {
+    # Count the number of jobs or shuffle all jobs
+    # before starting any
     $Global::JobQueue->total_jobs();
 }
 if($opt::pipepart) {
@@ -757,6 +758,7 @@ sub options_hash {
 	 "progress" => \$opt::progress,
 	 "eta" => \$opt::eta,
 	 "bar" => \$opt::bar,
+	 "shuf" => \$opt::shuf,
 	 "arg-sep|argsep=s" => \$opt::arg_sep,
 	 "arg-file-sep|argfilesep=s" => \$opt::arg_file_sep,
 	 "trim=s" => \$opt::trim,
@@ -5555,6 +5557,7 @@ sub total_jobs {
 		::warning("Reading all arguments takes longer than 10 seconds.\n");
 		$opt::eta && ::warning("Consider removing --eta.\n");
 		$opt::bar && ::warning("Consider removing --bar.\n");
+		$opt::shuf && ::warning("Consider removing --shuf.\n");
 		last;
 	    }
             push @queue, $job;
@@ -5562,8 +5565,18 @@ sub total_jobs {
         while($job = $self->get()) {
             push @queue, $job;
         }
-
-        $self->unget(@queue);
+	if($opt::shuf) {
+	    my $i = @queue;
+	    while (--$i) {
+		my $j = int rand($i+1);
+		@queue[$i,$j] = @queue[$j,$i];
+	    }
+	    my $seq = 1;
+	    for my $job (@queue) {
+		$job->{'commandline'}->set_seq($seq++);
+	    }
+	}
+	$self->unget(@queue);
         $self->{'total_jobs'} = $#queue+1;
     }
     return $self->{'total_jobs'};
@@ -5618,6 +5631,11 @@ sub replaced {
 sub seq {
     my $self = shift;
     return $self->{'commandline'}->seq();
+}
+
+sub set_seq {
+    my $self = shift;
+    return $self->{'commandline'}->set_seq(shift);
 }
 
 sub slot {
@@ -7459,9 +7477,8 @@ sub set_exitsignal {
 			    ("$Global::progname: This job failed:\n",
 			     $job->replaced(),"\n");
 		    }
-		    my $status = $job->exitstatus();
 		    ::killall();
-		    ::wait_and_exit($status);
+		    ::wait_and_exit($job->exitstatus());
 		}
 	    }
 	} else {
@@ -7525,6 +7542,11 @@ sub new {
 sub seq {
     my $self = shift;
     return $self->{'seq'};
+}
+
+sub set_seq {
+    my $self = shift;
+    $self->{'seq'} = shift;
 }
 
 {
