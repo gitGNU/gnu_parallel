@@ -58,6 +58,7 @@ pushd
 == Upload ==
 
 export YYYYMMDD=`yyyymmdd`
+eval `gpg-agent --daemon`
 make upload
 
 # Only needed for alpha:
