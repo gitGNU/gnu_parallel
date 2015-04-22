@@ -231,10 +231,15 @@ are added to the title to force it to be outside the limits.
 
 You can map the bad limits using:
 
-perl -e 'map { $a=$_; print map { "$a,$_\n" } (1..17000) } (1..17000)' | shuf > ab;
 
-cat ab | parallel --colsep , --tagstring '{1}{=$_="\t"=}{2}'
-tmux -S /tmp/p{%}-'{=1 $_="O"x(rand(200)) =}' new-session -d -n '{=1 $_="O"x$_ =}' true'\ {=2 $_="O"x$_ =};echo $?;rm /tmp/p{%}-O*'
+perl -e 'sub r { int(rand(shift)).($_[0] && "\t".r(@_)) } print map { r(@ARGV)."\n" } 1..10000' 1600 1500 90 |
+  perl -ane '$F[0]+$F[1]+$F[2] < 2037 and print ' | 
+  parallel --colsep '\t' --tagstring '{1}\t{2}\t{3}' tmux -S /tmp/p{%}-'{=3 $_="O"x$_ =}' \
+    new-session -d -n '{=1 $_="O"x$_ =}' true'\ {=2 $_="O"x$_ =};echo $?;rm -f /tmp/p{%}-O*' 
+
+perl -e 'sub r { int(rand(shift)).($_[0] && "\t".r(@_)) } print map { r(@ARGV)."\n" } 1..10000' 17000 17000 90 |
+  parallel --colsep '\t' --tagstring '{1}\t{2}\t{3}' \
+tmux -S /tmp/p{%}-'{=3 $_="O"x$_ =}' new-session -d -n '{=1 $_="O"x$_ =}' true'\ {=2 $_="O"x$_ =};echo $?;rm /tmp/p{%}-O*'
 > value.csv 2>/dev/null
 
 R -e 'a<-read.table("value.csv");X11();plot(a[,1],a[,2],col=a[,3]+5,cex=0.1);Sys.sleep(1000)'

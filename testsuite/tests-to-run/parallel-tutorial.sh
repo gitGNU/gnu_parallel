@@ -1,5 +1,6 @@
 #!/bin/bash
 
+find {$TMPDIR,/var/tmp,/tmp}/{fif,tms,par[^a]}* -mmin -10 2>/dev/null | parallel rm
 cd testsuite 2>/dev/null
 rm -rf tmp
 mkdir tmp
@@ -23,9 +24,9 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
   stdout parallel -j7 -vd'\n\n' |
   perl -pe '$|=1;
             # --tmux
-            s:(/tmp\S+par).....(/tms):$1XXXXX$2:;
+            s:(/tmp\S+)(/tms).....:$1XXXXX$2:;
             # --files
-            s:(/tmp\S+par).....(....):$1XXXXX$2:;
+            s:(/tmp\S+par).....(\....):$1XXXXX$2:;
             # --eta --progress
             s/ETA.*//g; s/local:.*//g;
             # Sat Apr  4 11:55:40 CEST 2015
@@ -54,5 +55,5 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
             s/tried 2\n//;
 '
 # 3+3 .par files (from --files), 1 .tms-file from tmux attach
-ls /tmp/par*.par /var/tmp/par*.par /tmp/*.tms /tmp/*.tmx 2>/dev/null | wc -l
-find /tmp/par*.par /var/tmp/par*.par /tmp/*.tms /tmp/*.tmx -mmin -10 2>/dev/null | parallel rm
+find {$TMPDIR,/var/tmp,/tmp}/{fif,tms,par[^a]}* -mmin -10 2>/dev/null | wc -l
+find {$TMPDIR,/var/tmp,/tmp}/{fif,tms,par[^a]}* -mmin -10 2>/dev/null | parallel rm

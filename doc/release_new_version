@@ -222,11 +222,7 @@ Haiku of the month:
 
 New in this release:
 
-* Security fix. An attacker on the local system could make you overwrite one of your own files with a single byte. The problem requires:
-
-  - you using --compress or --tmux
-  - the attacker must figure out the randomly chosen file name
-  - the attacker to create a symlink within a time window of 15 ms
+* Security fix. An attacker on the local system could make you overwrite one of your own files with a single byte. The problem exist when you use --compress or --tmux or --pipe or --cat or --fifo. The attacker must figure out the randomly chosen file name and create a symlink within a time window of 15 ms.
 
 * GNU Parallel now has a DOI: https://dx.doi.org/10.5281/zenodo.16303
 
@@ -248,6 +244,8 @@ New in this release:
 
 taxator-tk http://algbio.cs.uni-duesseldorf.de/webapps/wa-download/ (check it)
 
+* << afventer svar fra Rachel >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
+
 * GNU Parallel was used in: landsat-gifworks https://github.com/KAPPS-/landsat-gifworks
 
 * GNU Parallel was used in: https://github.com/exascience/elprep
@@ -257,8 +255,6 @@ taxator-tk http://algbio.cs.uni-duesseldorf.de/webapps/wa-download/ (check it)
 * GNU Parallel was used in: http://search.cpan.org/~ajpage/Bio-Roary-2.0.7/lib/Bio/Roary/JobRunner/Parallel.pm
 
 * GNU Parallel was used in: Rapid haploid SNP calling https://github.com/tseemann/snippy
-
-* << afventer svar fra Rachel >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
 
 * Pictures and Metadata http://www.ozzy.no/2015/02/05/pictures-and-metadata/
 

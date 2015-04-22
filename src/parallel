@@ -1053,7 +1053,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150419;
+    $Global::version = 20150422;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -3341,43 +3341,25 @@ sub tmpfile {
     return ::tempfile(DIR=>$ENV{'TMPDIR'}, TEMPLATE => 'parXXXXX', @_);
 }
 
+sub tmpname {
+    # Select a name that does not exist
+    # Do not create the file as that may cause problems
+    # if you ssh to localhost (or a shared file system) under a different name
+    my $name = shift;
+    my($tmpname);
+    do {
+	$tmpname = $ENV{'TMPDIR'}."/".$name.
+	    join"", map { (0..9,"a".."z","A".."Z")[rand(62)] } (1..5);
+    } while($Global::unlink{$tmpname}++ or -e $tmpname);
+    return $tmpname;
+}
 
-{
-    my($tmpdir,$fifo);
-
-    sub tmpname {
-	# Select a name that does not exist
-	# Do not create the file as that may cause problems
-	# if you ssh to localhost (or a shared file system) under a different name
-	my $name = shift;
-	my($tmpname);
-	do {
-	    $tmpname = $ENV{'TMPDIR'}."/".$name.int(rand(9999));
-	} while($Global::unlink{$tmpname}++ or -e $tmpname);
-#	$Global::unlink{$tmpdir} ||= 1;
-	return $tmpname;
-    }
-
-    sub rmtmpname {
-	# Clean up mktmpname
-	my $tmpname = shift;
-	delete $Global::unlink{$tmpname};
-	unlink $tmpname;
-	rmdir $tmpdir;
-    }
-
-    sub tmpfifo {
-	# Securely make a fifo by securely making a dir with a fifo in it
-	use POSIX qw(mkfifo);
-	my $tmpfifo = tmpname("fifo",@_);
-	mkfifo($tmpfifo,0600);
-	return $tmpfifo;
-    }
-
-    sub rmtmpfifo {
-	# Clean up mktmpfifo
-	rmtmpname(@_);
-    }
+sub tmpfifo {
+    # Securely make a fifo by securely making a dir with a fifo in it
+    use POSIX qw(mkfifo);
+    my $tmpfifo = tmpname("fif",@_);
+    mkfifo($tmpfifo,0600);
+    return $tmpfifo;
 }
 
 sub uniq {
@@ -5554,7 +5536,7 @@ sub total_jobs {
 	my $start = time;
         while($job = $self->get()) {
 	    if(time - $start > 10) {
-		::warning("Reading all arguments takes longer than 10 seconds.\n");
+		::warning("Reading ".scalar(@queue)." arguments took longer than 10 seconds.\n");
 		$opt::eta && ::warning("Consider removing --eta.\n");
 		$opt::bar && ::warning("Consider removing --bar.\n");
 		$opt::shuf && ::warning("Consider removing --shuf.\n");
@@ -7001,10 +6983,7 @@ sub print_dryrun_and_verbose {
 	my $tmux;
 	$ENV{'TMUX'} ||= "tmux";
 	if(not $tmuxsocket) {
-#	    $tmuxsocket = ::tmpname("tmux");
-	    (undef, $tmuxsocket) = ::tmpfile(SUFFIX => ".tms");
-	    $Global::unlink{$tmuxsocket} = 1;
-	    unlink $tmuxsocket;
+	    $tmuxsocket = ::tmpname("tms");
 	    ::status("See output with: $ENV{'TMUX'} -S $tmuxsocket attach\n");
 	}
 	# TODO sh -c wrapper for >&
@@ -7595,7 +7574,7 @@ sub populate {
     if($opt::fifo) {
 	# Generate a tempfile name that will be used as {}
 	$Global::JobQueue->{'commandlinequeue'}->{'arg_queue'}->
-	    unget([Arg->new(::tmpname("fifo"))]);
+	    unget([Arg->new(::tmpname("fif"))]);
     }
     while (not $self->{'arg_queue'}->empty()) {
 	$next_arg = $self->{'arg_queue'}->get();
@@ -8324,22 +8303,6 @@ sub quote_args {
     return $self->{'command'};
 }
 
-sub size {
-    my $self = shift;
-    if(not $self->{'size'}) {
-	my @all_lines = ();
-	while(not $self->{'arg_queue'}->empty()) {
-	    push @all_lines, CommandLine->new($self->{'command'},
-					      $self->{'arg_queue'},
-					      $self->{'context_replace'},
-					      $self->{'max_number_of_args'});
-	}
-	$self->{'size'} = @all_lines;
-	$self->unget(@all_lines);
-    }
-    return $self->{'size'};
-}
-
 
 package Limits::Command;
 
@@ -8440,9 +8403,7 @@ sub tmux_length {
 	}
 	my @out;
 	for my $l (1, 2020, 16320, 100000, $len) {
-	    my ($fh, $tmpfile) = ::tmpfile(SUFFIX => ".tmb");
-	    close $fh;
-	    unlink $tmpfile;
+	    my $tmpfile = ::tmpname("tms");
 	    my $tmuxcmd = "sh -c '".$ENV{'TMUX'}." -S $tmpfile new-session -d -n echo $l".
 		("x"x$l). " 2>/dev/null' && echo $l; rm -f $tmpfile";
 	    push @out, qx{ $tmuxcmd };

@@ -406,7 +406,7 @@ B D
   parallel --use-cpus-instead-of-cores -N0 sleep 1 :::: num8
 
   seq 10 20 | parallel --tmux 'echo start {}; sleep {}; echo done {}'
-See output with: tmux -S /tmp/parallel-tutorial/parXXXXX.tms attach
+See output with: tmux -S /tmp/parallel-tutorialXXXXX/tms attach
   tmux -S /tmp/parXXXXX.tms attach
 no sessions
   parallel --delay 2.5 echo Starting {}\;date ::: 1 2 3
@@ -931,7 +931,7 @@ This helps funding further development; and it won't cost you a cent.
 If you pay 10000 EUR you should feel free to use GNU Parallel without citing.
 
   parallel --version
-GNU parallel 20150416
+GNU parallel 20150419
 Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015 Ole Tange
 and Free Software Foundation, Inc.
 License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
@@ -943,7 +943,7 @@ Web site: http://www.gnu.org/software/parallel
 When using programs that use GNU Parallel to process data for publication
 please cite as described in 'parallel --bibtex'.
   parallel --minversion 20130722 && echo Your version is at least 20130722.
-20150416
+20150419
 Your version is at least 20130722.
   parallel --bibtex
 Academic tradition requires you to cite works you base your article on.
