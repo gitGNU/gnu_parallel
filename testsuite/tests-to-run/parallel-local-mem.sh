@@ -1,7 +1,7 @@
 #!/bin/bash
 
 make stopvm
-
+mkdir -p $TMPDIR
 # Jobs that eat more than 2 GB RAM
 cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj1 -k --joblog /tmp/jl-`basename $0` -L1
 echo '### Trouble reading a record > 2 GB for certain versions of Perl (substr($a,0,2G+1)="fails")'

@@ -3719,7 +3719,7 @@ sub reap_usleep {
 	$SIG{CHLD} = sub { kill "ALRM", $$ };
 	usleep($ms);
 	# --compress needs $SIG{CHLD} undefined
-	$SIG{CHLD} = undef;
+	delete $SIG{CHLD};
 	exit_if_disk_full();
 	if($opt::linebuffer) {
 	    for my $job (values %Global::running) {
