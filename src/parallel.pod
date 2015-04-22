@@ -1674,8 +1674,8 @@ The sshlogin '..' is special, it read sshlogins from ~/.parallel/sshloginfile
 The sshlogin '-' is special, too, it read sshlogins from stdin
 (standard input).
 
-To specify more sshlogins separate the sshlogins by comma or repeat
-the options multiple times.
+To specify more sshlogins separate the sshlogins by comma, newline (in
+the same string), or repeat the options multiple times.
 
 For examples: see B<--sshloginfile>.
 

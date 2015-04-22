@@ -2472,7 +2472,7 @@ sub parse_sshlogin {
     if(not @Global::sshlogin) { @Global::sshlogin = (":"); }
     for my $sshlogin (@Global::sshlogin) {
         # Split up -S sshlogin,sshlogin
-        for my $s (split /,/, $sshlogin) {
+        for my $s (split /,|\n/, $sshlogin) {
             if ($s eq ".." or $s eq "-") {
 		# This may add to @Global::sshlogin - possibly bug
 		read_sshloginfile(expand_slf_shorthand($s));
