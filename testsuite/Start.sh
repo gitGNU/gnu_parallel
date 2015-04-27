@@ -10,21 +10,22 @@ export TIMEOUT=$MAX_SEC_PER_TEST
 run_test() {
   script="$1"
   base=`basename "$script" .sh`
-  export TMPDIR=/tmp/$base
+  export TMPDIR=/tmp/"$base"
+  mkdir -p "$TMPDIR"
   if [ "$TRIES" = "3" ] ; then
     # Try 3 times
-    bash $script > actual-results/$base
-    diff -Naur wanted-results/$base actual-results/$base >/dev/null ||
-      bash $script > actual-results/$base
-    diff -Naur wanted-results/$base actual-results/$base >/dev/null ||
-      bash $script > actual-results/$base
-    diff -Naur wanted-results/$base actual-results/$base ||
-      (touch $script && echo touch $script)
+    bash "$script" > actual-results/"$base"
+    diff -Naur wanted-results/"$base" actual-results/"$base" >/dev/null ||
+      bash "$script" > actual-results/"$base"
+    diff -Naur wanted-results/"$base" actual-results/"$base" >/dev/null ||
+      bash "$script" > actual-results/"$base"
+    diff -Naur wanted-results/"$base" actual-results/"$base" ||
+      (touch "$script" && echo touch "$script")
   else
     # Run only once
-    bash $script > actual-results/$base
-    diff -Naur wanted-results/$base actual-results/$base ||
-      (touch $script && echo touch $script)
+    bash "$script" > actual-results/"$base"
+    diff -Naur wanted-results/"$base" actual-results/"$base" ||
+      (touch "$script" && echo touch "$script")
   fi
 
   # Check if it was cleaned up

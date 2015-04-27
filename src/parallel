@@ -161,7 +161,7 @@ for(keys %Global::sshmaster) {
     kill "TERM", $_;
 }
 ::debug("init", "Halt\n");
-if($opt::halt) {
+if($opt::halt and $Global::halt_when ne "never") {
     wait_and_exit($Global::halt_exitstatus);
 } else {
     wait_and_exit(min(undef_as_zero($Global::exitstatus),254));
@@ -920,8 +920,6 @@ sub parse_options {
     }
     $opt::memfree = multiply_binary_prefix($opt::memfree);
     if(defined $opt::controlmaster) { $opt::noctrlc = 1; }
-    if(defined $opt::halt and
-       $opt::halt =~ /%/) { $opt::halt /= 100; }
     if(defined $opt::timeout and $opt::timeout !~ /^\d+(\.\d+)?%?$/) {
 	::error("--timeout must be seconds or percentage\n");
 	wait_and_exit(255);
@@ -1036,6 +1034,7 @@ sub parse_options {
     }
     citation_notice();
 
+    parse_halt();
     parse_sshlogin();
     parse_env_var();
 
@@ -1105,6 +1104,53 @@ sub init_globals {
 	# $ENV{HOME} is sometimes not set if called from PHP
 	::warning("\$HOME not set. Using /tmp\n");
 	$ENV{HOME} = "/tmp";
+    }
+}
+
+sub parse_halt {
+    # $opt::halt flavours
+    # Uses:
+    #   $opt::halt
+    #   $Global::halt_when
+    #   $Global::halt_fail
+    #   $Global::halt_success
+    #   $Global::halt_pct
+    #   $Global::halt_count
+    if(defined $opt::halt) {
+	my %halt_expansion = (
+	    "0" => "never",
+	    "1" => "soon,fail=1",
+	    "2" => "now,fail=1",
+	    "-1" => "soon,success=1",
+	    "-2" => "now,success=1",
+	);
+	# Expand -2,-1,0,1,2 into long form
+	$opt::halt = $halt_expansion{$opt::halt} || $opt::halt;
+	# --halt 5% == --halt soon,fail=5%
+	$opt::halt =~ s/^(\d+)%$/soon,fail=$1%/;
+	# Split: soon,fail=5%
+	my ($when,$fail_success,$pct_count) = split /[,=]/, $opt::halt;
+	if(not grep { $when eq $_ } qw(never soon now)) {
+	    ::error("--halt must have 'never', 'soon', or 'now'");
+	}
+	$Global::halt_when = $when;
+	if($when ne "never") {
+	    if($fail_success eq "fail") {
+		$Global::halt_fail = 1;
+	    } elsif($fail_success eq "success") {
+		$Global::halt_success = 1;
+	    } else {
+		::error("--halt $when must be followed by ,success or ,fail\n");
+	    }
+	    if($pct_count =~ /^(\d+)%$/) {
+		$Global::halt_pct = $1/100;
+	    } elsif($pct_count =~ /^(\d+)$/) {
+		$Global::halt_count = $1;
+	    } else {
+		::error("--halt $when,$fail_success ",
+			"must be followed by ,number or ,percent%\n");
+	    }
+	}
     }
 }
 
@@ -1738,6 +1784,7 @@ sub init_run_jobs {
     # Returns: N/A
     $Global::total_running = 0;
     $Global::total_started = 0;
+    $Global::total_completed = 0;
     $Global::tty_taken = 0;
     $SIG{USR1} = \&list_running_jobs;
     $SIG{USR2} = \&toggle_progress;
@@ -2229,8 +2276,7 @@ sub progress {
 	#   $avgtime = averaged time
 	#   $eta = smoothed eta
 	$total ||= $Global::JobQueue->total_jobs();
-	my $completed = 0;
-        for(values %Global::host) { $completed += $_->jobs_completed() }
+	my $completed = $Global::total_completed;
 	my $left = $total - $completed;
 	if(not $completed) {
 	    return($total, $completed, $left, 0, 0, 0);
@@ -3005,18 +3051,15 @@ sub reaper {
 		# Update average runtime for timeout
 		$Global::timeoutq->update_median_runtime($job->runtime());
 	    }
-            # Force printing now if --halt forces us to exit
-            my $print_now =
-		($opt::halt and
-		 (($opt::halt == 2 and $job->exitstatus())
-		  or
-		  ($opt::halt == -2 and not $job->exitstatus())));
-	    if($opt::keeporder and not $print_now) {
+	    if($opt::keeporder) {
 		$job->print_earlier_jobs();
 	    } else {
-                $job->print();
+		$job->print();
+	    }
+	    if($job->should_we_halt() eq "now") {
+		    ::killall();
+		    ::wait_and_exit($Global::exitstatus);
             }
-	    $job->should_we_halt();
         }
         my $sshlogin = $job->sshlogin();
         $sshlogin->dec_jobs_running();
@@ -3974,6 +4017,7 @@ sub hostgroups {
 sub inc_jobs_completed {
     my $self = shift;
     $self->{'jobs_completed'}++;
+    $Global::total_completed++;
 }
 
 sub set_max_jobs_running {
@@ -7433,56 +7477,57 @@ sub set_exitsignal {
 	# Returns: N/A
 	my $job = shift;
 	if($job->exitstatus() or $job->exitsignal()) {
+	    # Job failed
 	    $Global::exitstatus++;
 	    $Global::total_failed++;
-	    if($opt::halt) {
-		if($opt::halt == 1
-		   or
-		   ($opt::halt > 0 and $opt::halt < 1 and $Global::total_failed > 3
-		    and
-		    $Global::total_failed / $Global::total_started > $opt::halt)) {
-		    # If halt on error == 1 or --halt 10%
-		    # we should gracefully exit
-		    ::status
-			("$Global::progname: Starting no more jobs. ",
-			 "Waiting for ", scalar(keys %Global::running),
-			 " jobs to finish. This job failed:\n",
+	    if($Global::halt_fail) {
+		::status("$Global::progname: This job failed:\n",
 			 $job->replaced(),"\n");
-		    $Global::start_no_new_jobs ||= 1;
+		if(($Global::halt_count and
+		    $Global::halt_count <= $Global::total_failed)
+		   or
+		   ($Global::halt_pct and
+		    $Global::halt_pct <= 
+		    $Global::total_failed / $Global::total_started
+		    and $Global::total_failed > 3)) {
+		    # More than N jobs or more than N% failed 
 		    $Global::halt_exitstatus = $job->exitstatus();
-		} elsif($opt::halt == 2) {
-		    # If halt on error == 2 we should exit immediately
-		    if(not $status_printed++) {
+		    if($Global::halt_when eq "soon") {
 			::status
-			    ("$Global::progname: This job failed:\n",
-			     $job->replaced(),"\n");
+			    ("$Global::progname: Starting no more jobs. ",
+			     "Waiting for ", scalar(keys %Global::running),
+			     " jobs to finish.\n");
+			$Global::start_no_new_jobs ||= 1;
 		    }
-		    ::killall();
-		    ::wait_and_exit($job->exitstatus());
+		    return($Global::halt_when);
 		}
 	    }
 	} else {
-	    if($opt::halt) {
-		if($opt::halt == -1) {
-		    # If halt on error == -1
-		    # we should gracefully exit
-		    ::status
-			("$Global::progname: Starting no more jobs. ",
-			 "Waiting for ", scalar(keys %Global::running),
-			 " jobs to finish. This job succeeded:\n",
+	    if($Global::halt_success) {
+		::status("$Global::progname: This job succeeded:\n",
 			 $job->replaced(),"\n");
-		    $Global::start_no_new_jobs ||= 1;
+		if(($Global::halt_count and
+		    $Global::halt_count <=
+		    1+$Global::total_completed-$Global::total_failed)
+		   or
+		   ($Global::halt_pct and
+		    $Global::halt_pct <=
+		    (1+$Global::total_completed-$Global::total_failed)
+		    / $Global::total_completed
+		    and ($Global::total_completed-$Global::total_failed) > 3)) {
 		    $Global::halt_exitstatus = $job->exitstatus();
-		} elsif($opt::halt == -2) {
-		    # If halt on error == -2 we should exit immediately
-		    ::status
-			("$Global::progname: This job succeeded:\n",
-			 $job->replaced(),"\n");
-		    ::killall();
-		    ::wait_and_exit($job->exitstatus());
+		    if($Global::halt_when eq "soon") {
+			::status
+			    ("$Global::progname: Starting no more jobs. ",
+			     "Waiting for ", scalar(keys %Global::running),
+			     " jobs to finish.\n");
+			$Global::start_no_new_jobs ||= 1;
+		    }
+		    return($Global::halt_when);
 		}
 	    }
 	}
+	return "";
     }
 }
 
