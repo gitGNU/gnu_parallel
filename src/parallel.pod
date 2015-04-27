@@ -488,7 +488,7 @@ I<regexp> is a Perl Regular Expression:
 http://perldoc.perl.org/perlre.html
 
 
-=item B<--compress> (beta testing)
+=item B<--compress>
 
 Compress temporary files. If the output is big and very compressible
 this will take up less disk space in $TMPDIR and possibly be faster
@@ -499,9 +499,9 @@ B<plzip>, B<bzip2>, B<lzma>, B<lzip>, B<xz> in that order, and use the
 first available.
 
 
-=item B<--compress-program> I<prg> (beta testing)
+=item B<--compress-program> I<prg>
 
-=item B<--decompress-program> I<prg> (beta testing)
+=item B<--decompress-program> I<prg>
 
 Use I<prg> for (de)compressing temporary files. It is assumed that I<prg
 -dc> will decompress stdin (standard input) to stdout (standard
@@ -514,9 +514,9 @@ If receiving SIGNING, GNU B<parallel> will send SIGINT to tasks
 running on remote computers thus killing them.
 
 
-=item B<--delimiter> I<delim> (beta testing)
+=item B<--delimiter> I<delim>
 
-=item B<-d> I<delim> (beta testing)
+=item B<-d> I<delim>
 
 Input items are terminated by I<delim>.  Quotes and backslash are not
 special; every character in the input is taken literally.  Disables
@@ -568,7 +568,7 @@ If I<eof-str> is omitted, there is no end of file string.  If neither
 B<-E> nor B<-e> is used, no end of file string is used.
 
 
-=item B<--env> I<var> (alpha testing)
+=item B<--env> I<var> (beta testing)
 
 Copy environment variable I<var>. This will copy I<var> to the
 environment that the command is run in. This is especially useful for
@@ -782,7 +782,7 @@ specified, and for B<-I>{} otherwise.  This option is deprecated;
 use B<-I> instead.
 
 
-=item B<--joblog> I<logfile> (beta testing)
+=item B<--joblog> I<logfile>
 
 Logfile for executed jobs. Save a list of the executed jobs to
 I<logfile> in the following TAB separated format: sequence number,
@@ -1039,9 +1039,9 @@ of each job is saved in a file and the filename is then printed.
 
 See also: B<--results>
 
-=item B<--pipe> (beta testing)
+=item B<--pipe>
 
-=item B<--spreadstdin> (beta testing)
+=item B<--spreadstdin>
 
 Spread input to jobs on stdin (standard input). Read a block of data
 from stdin (standard input) and give one block of data as input to one
@@ -1068,7 +1068,7 @@ B<--files> is often used with B<--pipe>.
 See also: B<--recstart>, B<--recend>, B<--fifo>, B<--cat>, B<--pipepart>.
 
 
-=item B<--pipepart> (alpha testing)
+=item B<--pipepart> (beta testing)
 
 Pipe parts of a physical file. B<--pipepart> works similar to
 B<--pipe>, but is much faster. It has a few limitations:
@@ -1162,13 +1162,13 @@ exit (used by GNU B<parallel> itself to determine the line length
 on remote computers).
 
 
-=item B<--number-of-cpus> (beta testing)
+=item B<--number-of-cpus>
 
 Print the number of physical CPUs and exit (used by GNU B<parallel>
 itself to determine the number of physical CPUs on remote computers).
 
 
-=item B<--number-of-cores> (beta testing)
+=item B<--number-of-cores>
 
 Print the number of CPU cores and exit (used by GNU B<parallel> itself
 to determine the number of CPU cores on remote computers).
@@ -1180,7 +1180,7 @@ Overrides an earlier B<--keep-order> (e.g. if set in
 B<~/.parallel/config>).
 
 
-=item B<--nice> I<niceness> (beta testing)
+=item B<--nice> I<niceness>
 
 Run the command at this niceness. For simple commands you can just add
 B<nice> in front of the command. But if the command consists of more
@@ -1441,7 +1441,7 @@ B<--keep-order> will not work with B<--round-robin> as it is
 impossible to track which input block corresponds to which output.
 
 
-=item B<--rpl> 'I<tag> I<perl expression>' (beta testing)
+=item B<--rpl> 'I<tag> I<perl expression>'
 
 Use I<tag> as a replacement string for I<perl expression>. This makes
 it possible to define your own replacement strings. GNU B<parallel>'s
@@ -1616,7 +1616,7 @@ Does not run the command but quotes it. Useful for making quoted
 composed commands for GNU B<parallel>.
 
 
-=item B<--shuf> (alpha testing)
+=item B<--shuf> (beta testing)
 
 Shuffle jobs. When having multiple input sources it is hard to
 randomize jobs. --shuf will generate all jobs, and shuffle them before
@@ -1781,7 +1781,7 @@ the lines will be prepended with the sshlogin instead.
 B<--tag> is ignored when using B<-u>.
 
 
-=item B<--tagstring> I<str> (beta testing)
+=item B<--tagstring> I<str>
 
 Tag lines with a string. Each output line will be prepended with
 I<str> and TAB (\t). I<str> can contain replacement strings such as
@@ -1798,7 +1798,7 @@ different dir for the files. Setting B<--tmpdir> is equivalent to
 setting $TMPDIR.
 
 
-=item B<--tmux> (beta testing)
+=item B<--tmux>
 
 Use B<tmux> for output. Start a B<tmux> session and run each job in a
 window in that session. No other output will be produced.
