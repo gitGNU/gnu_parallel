@@ -14,6 +14,7 @@ echo '**'
 echo '### Test --halt-on-error 0'; 
   (echo "sleep 1;true"; echo "sleep 2;false";echo "sleep 3;true") | parallel -j10 --halt-on-error 0; 
   echo $?; 
+
   (echo "sleep 1;true"; echo "sleep 2;false";echo "sleep 3;true";echo "sleep 4; non_exist") | parallel -j10 --halt 0; 
   echo $?
 
@@ -22,6 +23,7 @@ echo '**'
 echo '### Test --halt-on-error 1'; 
   (echo "sleep 1;true"; echo "sleep 2;false";echo "sleep 3;true") | parallel -j10 --halt-on-error 1; 
   echo $?; 
+
   (echo "sleep 1;true"; echo "sleep 2;false";echo "sleep 3;true";echo "sleep 4; non_exist") | parallel -j10 --halt 1; 
   echo $?
 
@@ -30,6 +32,7 @@ echo '**'
 echo '### Test --halt-on-error 2'; 
   (echo "sleep 1;true"; echo "sleep 2;false";echo "sleep 3;true") | parallel -j10 --halt-on-error 2; 
   echo $?; 
+
   (echo "sleep 1;true"; echo "sleep 2;false";echo "sleep 3;true";echo "sleep 4; non_exist") | parallel -j10 --halt 2; 
   echo $?
 
@@ -38,6 +41,7 @@ echo '**'
 echo '### Test --halt -1'; 
   (echo "sleep 1;false"; echo "sleep 2;true";echo "sleep 3;false") | parallel -j10 --halt-on-error -1; 
   echo $?; 
+
   (echo "sleep 1;false"; echo "sleep 2;true";echo "sleep 3;false";echo "sleep 4; non_exist") | parallel -j10 --halt -1; 
   echo $?
 
@@ -46,6 +50,7 @@ echo '**'
 echo '### Test --halt -2'; 
   (echo "sleep 1;false"; echo "sleep 2;true";echo "sleep 3;false") | parallel -j10 --halt-on-error -2; 
   echo $?; 
+
   (echo "sleep 1;false"; echo "sleep 2;true";echo "sleep 3;false";echo "sleep 4; non_exist") | parallel -j10 --halt -2; 
   echo $?
 

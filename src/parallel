@@ -1053,7 +1053,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150424;
+    $Global::version = 20150426;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -3032,8 +3032,11 @@ sub reaper {
             next;
         }
         my $job = $Global::running{$stiff};
+
 	# '-a <(seq 10)' will give us a pid not in %Global::running
         $job or next;
+        delete $Global::running{$stiff};
+        $Global::total_running--;
         $job->set_exitstatus($? >> 8);
         $job->set_exitsignal($? & 127);
         debug("run", "seq ",$job->seq()," died (", $job->exitstatus(), ")");
@@ -3042,7 +3045,9 @@ sub reaper {
             # The process that died had the tty => release it
             $Global::tty_taken = 0;
         }
-
+        my $sshlogin = $job->sshlogin();
+        $sshlogin->dec_jobs_running();
+        $sshlogin->inc_jobs_completed();
         if(not $job->should_be_retried()) {
 	    # The job is done
 	    # Free the jobslot
@@ -3057,15 +3062,10 @@ sub reaper {
 		$job->print();
 	    }
 	    if($job->should_we_halt() eq "now") {
-		    ::killall();
-		    ::wait_and_exit($Global::exitstatus);
+		::killall();
+		::wait_and_exit($Global::halt_exitstatus);
             }
         }
-        my $sshlogin = $job->sshlogin();
-        $sshlogin->dec_jobs_running();
-        $sshlogin->inc_jobs_completed();
-        $Global::total_running--;
-        delete $Global::running{$stiff};
 	start_more_jobs();
 	if($opt::progress) {
 	    my %progress = progress();
@@ -7490,9 +7490,16 @@ sub set_exitsignal {
 		    $Global::halt_pct <= 
 		    $Global::total_failed / $Global::total_started
 		    and $Global::total_failed > 3)) {
-		    # More than N jobs or more than N% failed 
-		    $Global::halt_exitstatus = $job->exitstatus();
-		    if($Global::halt_when eq "soon") {
+		    # At least N jobs had failed
+		    # or at least N% had failed and more than 3
+		    if($Global::halt_count and $Global::halt_count == 1) {
+			$Global::halt_exitstatus = $job->exitstatus();
+		    } else {
+			$Global::halt_exitstatus = $Global::total_failed;
+		    }
+		    ::debug("halt","Pct: ",$Global::halt_pct,"<=",$Global::total_failed / $Global::total_started," count: ",$Global::halt_count,"\n");
+		    if($Global::halt_when eq "soon"
+		       and scalar(keys %Global::running) > 0) {
 			::status
 			    ("$Global::progname: Starting no more jobs. ",
 			     "Waiting for ", scalar(keys %Global::running),
@@ -7504,19 +7511,23 @@ sub set_exitsignal {
 	    }
 	} else {
 	    if($Global::halt_success) {
+		$Global::halt_exitstatus = $Global::total_failed;
 		::status("$Global::progname: This job succeeded:\n",
 			 $job->replaced(),"\n");
 		if(($Global::halt_count and
 		    $Global::halt_count <=
-		    1+$Global::total_completed-$Global::total_failed)
+		    $Global::total_completed-$Global::total_failed)
 		   or
 		   ($Global::halt_pct and
 		    $Global::halt_pct <=
-		    (1+$Global::total_completed-$Global::total_failed)
+		    ($Global::total_completed-$Global::total_failed)
 		    / $Global::total_completed
 		    and ($Global::total_completed-$Global::total_failed) > 3)) {
-		    $Global::halt_exitstatus = $job->exitstatus();
-		    if($Global::halt_when eq "soon") {
+		    # At least N jobs had success
+		    # or at least N% had success and more than 3
+		    $Global::halt_exitstatus = 0;
+		    if($Global::halt_when eq "soon"
+		       and scalar(keys %Global::running) > 0) {
 			::status
 			    ("$Global::progname: Starting no more jobs. ",
 			     "Waiting for ", scalar(keys %Global::running),
@@ -8845,18 +8856,20 @@ sub new {
     }, ref($class) || $class;
 }
 
-sub replace {
-    # Calculates the corresponding value for a given perl expression
-    # Returns:
-    #   The calculated string (quoted if asked for)
-    my $self = shift;
-    my $perlexpr = shift; # E.g. $_=$_ or s/.gz//
-    my $quote = (shift) ? 1 : 0; # should the string be quoted?
-    # This is actually a CommandLine-object,
-    # but it looks nice to be able to say {= $job->slot() =}
-    my $job = shift;
-    $perlexpr =~ s/^-?\d+ //; # Positional replace treated as normal replace
-    if(not defined $self->{"rpl",0,$perlexpr}) {
+{
+    my %perleval;
+
+    sub replace {
+	# Calculates the corresponding value for a given perl expression
+	# Returns:
+	#   The calculated string (quoted if asked for)
+	my $self = shift;
+	my $perlexpr = shift; # E.g. $_=$_ or s/.gz//
+	my $quote = (shift) ? 1 : 0; # should the string be quoted?
+	# This is actually a CommandLine-object,
+	# but it looks nice to be able to say {= $job->slot() =}
+	my $job = shift;
+	$perlexpr =~ s/^-?\d+ +//; # Positional replace treated as normal replace
 	local $_;
 	if($Global::trim eq "n") {
 	    $_ = $self->{'orig'};
@@ -8864,10 +8877,10 @@ sub replace {
 	    $_ = trim_of($self->{'orig'});
 	}
 	::debug("replace", "eval ", $perlexpr, " ", $_, "\n");
-	if(not $Global::perleval{$perlexpr}) {
+	if(not $perleval{$perlexpr}) {
 	    # Make an anonymous function of the $perlexpr
 	    # And more importantly: Compile it only once
-	    if($Global::perleval{$perlexpr} =
+	    if($perleval{$perlexpr} =
 	       eval('sub { no strict; no warnings; my $job = shift; '.
 		    $perlexpr.' }')) {
 		# All is good
@@ -8878,14 +8891,9 @@ sub replace {
 	    }
 	}
 	# Execute the function
-	$Global::perleval{$perlexpr}->($job);
-	$self->{"rpl",0,$perlexpr} = $_;
+	$perleval{$perlexpr}->($job);
+	return $quote ? ::shell_quote_scalar($_) : $_;
     }
-    if(not defined $self->{"rpl",$quote,$perlexpr}) {
-	$self->{"rpl",1,$perlexpr} =
-	    ::shell_quote_scalar($self->{"rpl",0,$perlexpr});
-    }
-    return $self->{"rpl",$quote,$perlexpr};
 }
 
 sub orig {

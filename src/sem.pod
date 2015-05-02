@@ -161,10 +161,17 @@ available.
 pod2html creates two files: pod2htmd.tmp and pod2htmi.tmp which it
 does not clean up. It uses these two files for a short time. But if
 you run multiple pod2html in parallel (e.g. in a Makefile with make
--j) you need to protect pod2html from running twice at the same
-time. B<sem> running as a mutex will do just that:
+-j) there is a risk that two different instances of pod2html will
+write to the files at the same time:
 
-  sem --fg --id pod2html pod2html foo.pod > foo.html
+  # This may fail due to shared pod2htmd.tmp/pod2htmi.tmp files
+  pod2html foo.pod --outfile foo.html & pod2html bar.pod --outfile bar.html
+
+You need to protect pod2html from running twice at the same time.
+B<sem> running as a mutex will make sure only one runs:
+
+  sem --id pod2html pod2html foo.pod --outfile foo.html
+  sem --id pod2html pod2html bar.pod --outfile bar.html
   sem --fg --id pod2html rm -f pod2htmd.tmp pod2htmi.tmp
 
 

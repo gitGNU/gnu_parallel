@@ -226,12 +226,13 @@ New in this release:
 
 * <<afventer opdatering>> CIDER: a pipeline for detecting waves of coordinated transcriptional regulation in gene expression time-course data http://biorxiv.org/content/biorxiv/early/2015/03/17/012518.full.pdf
 
-
 * <<afventer opdatering>> GNU Parallel was used (unfortunately without citation) in: MUGBAS: a species free gene-based programme suite for post-GWAS analysis http://www.ncbi.nlm.nih.gov/pubmed/25765345
 
 taxator-tk http://algbio.cs.uni-duesseldorf.de/webapps/wa-download/ (check it)
 
 * << afventer svar fra Rachel >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
+
+* GNU Parallel was cited in: Toward Enhanced Metadata Quality of Large-Scale Digital Libraries: Estimating Volume Time Range https://www.ideals.illinois.edu/bitstream/handle/2142/73656/186_ready.pdf
 
 * GNU Parallel was cited in: Sequencing the cap-snatching repertoire of H1N1 influenza provides insight into the mechanism of viral transcription initiation http://nar.oxfordjournals.org/content/early/2015/04/20/nar.gkv333.full.pdf
 
@@ -246,6 +247,10 @@ taxator-tk http://algbio.cs.uni-duesseldorf.de/webapps/wa-download/ (check it)
 * Execute commands on multiple computers using GNU Parallel (setting up a cluster on the cheap) https://spectraldifferences.wordpress.com/2015/04/26/execute-commands-on-multiple-computers-using-gnu-parallel-setting-up-a-cluster-on-the-cheap/
 
 * Functions and GNU parallel for effective cluster load management http://genomespot.blogspot.dk/2015/04/functions-and-gnu-parallel-for.html
+
+* Use parallel processing to save time importing databases http://drupalsun.com/node/41854
+
+* Run multiple ssh commands in parallel with GNU Parallel http://www.ameir.net/blog/archives/380-run-multiple-ssh-commands-in-parallel-with-gnu-parallel.html
 
 * Bug fixes and man page updates.
 
