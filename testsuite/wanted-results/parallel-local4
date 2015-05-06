@@ -1,6 +1,6 @@
 echo '### bug #36595: silent loss of input with --pipe and --sshlogin'
 ### bug #36595: silent loss of input with --pipe and --sshlogin
-  seq 10000 | xargs | parallel --pipe -S 10/localhost cat | wc
+  seq 10000 | xargs | parallel --pipe -S 10/localhost cat 2>/dev/null | wc
       1   10000   48894
 echo 'bug #36707: --controlmaster eats jobs'
 bug #36707: --controlmaster eats jobs

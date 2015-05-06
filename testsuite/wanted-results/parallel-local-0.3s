@@ -317,5 +317,14 @@ parallel --halt -2 ::: 'sleep 1' burnP5 true; killall burnP5 && echo ERROR: burn
 parallel: This job succeeded:
 true
 burnP5: no process found
+echo '**'
+**
+echo '### bug #44995: parallel echo {#} ::: 1 2 ::: 1 2'
+### bug #44995: parallel echo {#} ::: 1 2 ::: 1 2
+parallel -k echo {#} ::: 1 2 ::: 1 2
+1
+2
+3
+4
 ### 1 .par file from --files expected
 1

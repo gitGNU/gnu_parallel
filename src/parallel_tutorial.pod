@@ -1965,10 +1965,28 @@ This technique can be used for:
 GNU Parallel can work as a counting semaphore. This is slower and less
 efficient than its normal mode.
 
-An alias for 'parallel --semaphore' is 'sem'. The default is to allow
-only one program to run at a time (technically called a mutex). The
-program is started in the background. Use --wait for all 'sem's to
-finish:
+A counting semaphore is like a row of toilets. People needing a toilet
+can use any toilet, but if there are more people than toilets, they
+will have to wait for one of the toilets to be available.
+
+An alias for 'parallel --semaphore' is 'sem'.
+
+'sem' will follow a person to the toilets, wait until a toilet is
+available, leave the person in the toilet and exit.
+
+'sem --fg' will follow a person to the toilets, wait until a toilet is
+available, stay with the person in the toilet and exit when the person
+exits.
+
+'sem --wait' will wait for all persons to leave the toilets.
+
+'sem' does not have a queue discipline, so the next person is chosen
+randomly.
+
+-j sets the number of toilets. The default is to have only one toilet
+(technically this is called a mutex). The program is started in the
+background and 'sem' exits immediately. Use --wait to wait for all
+'sem's to finish:
 
   sem 'sleep 1; echo The first finished' &&
     echo The first is now running in the background &&
@@ -1983,7 +2001,8 @@ Output:
   The second is now running in the background
   The second finished
 
-The command can be run in the foreground with --fg:
+The command can be run in the foreground with --fg, which will only
+exit when the command completes:
 
   sem --fg 'sleep 1; echo The first finished' &&
     echo The first finished running in the foreground &&

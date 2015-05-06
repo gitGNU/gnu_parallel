@@ -148,6 +148,12 @@ echo '**'
 parallel --halt 2 ::: 'sleep 1' burnP6 false; killall burnP6 && echo ERROR: burnP6 should be killed
 parallel --halt -2 ::: 'sleep 1' burnP5 true; killall burnP5 && echo ERROR: burnP5 should be killed
 
+echo '**'
+
+echo '### bug #44995: parallel echo {#} ::: 1 2 ::: 1 2'
+
+parallel -k echo {#} ::: 1 2 ::: 1 2
+
 EOF
 echo '### 1 .par file from --files expected'
 find /tmp{/*,}/*.{par,tms,tmx} 2>/dev/null -mmin -10 | wc -l

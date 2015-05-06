@@ -1053,7 +1053,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150426;
+    $Global::version = 20150503;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1131,7 +1131,7 @@ sub parse_halt {
 	# Split: soon,fail=5%
 	my ($when,$fail_success,$pct_count) = split /[,=]/, $opt::halt;
 	if(not grep { $when eq $_ } qw(never soon now)) {
-	    ::error("--halt must have 'never', 'soon', or 'now'");
+	    ::error("--halt must have 'never', 'soon', or 'now'\n");
 	}
 	$Global::halt_when = $when;
 	if($when ne "never") {
@@ -7495,7 +7495,7 @@ sub set_exitsignal {
 		    if($Global::halt_count and $Global::halt_count == 1) {
 			$Global::halt_exitstatus = $job->exitstatus();
 		    } else {
-			$Global::halt_exitstatus = $Global::total_failed;
+			$Global::halt_exitstatus = ::min($Global::total_failed,254);
 		    }
 		    ::debug("halt","Pct: ",$Global::halt_pct,"<=",$Global::total_failed / $Global::total_started," count: ",$Global::halt_count,"\n");
 		    if($Global::halt_when eq "soon"

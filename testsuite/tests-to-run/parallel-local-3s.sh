@@ -74,6 +74,19 @@ echo '### Test last dying print --halt-on-error -2';
 
 echo '**'
 
+testhalt() { 
+  echo '### testhalt --halt '$1; 
+  (yes 0 | head -n 10; seq 10) | stdout parallel -kj4 --halt $1 'sleep {= $_*=0.3 =}; exit {}'; echo $?; 
+  (seq 10; yes 0 | head -n 10) | stdout parallel -kj4 --halt $1 'sleep {= $_*=0.3 =}; exit {}'; echo $?; 
+}; 
+export -f testhalt; 
+  parallel -kj0 testhalt ::: now,fail=0 now,fail=1 now,fail=2 now,fail=30%  now,fail=70% 
+    soon,fail=0 soon,fail=1 soon,fail=2 soon,fail=30% soon,fail=70% 
+    now,success=0 now,success=1 now,success=2 now,success=30% now,success=70% 
+    soon,success=0 soon,success=1 soon,success=2 soon,success=30% now,success=70%
+
+echo '**'
+
 echo '### Test slow arguments generation - https://savannah.gnu.org/bugs/?32834'; 
   seq 1 3 | parallel -j1 "sleep 2; echo {}" | parallel -kj2 echo
 
@@ -83,7 +96,7 @@ echo '### Are children killed if GNU Parallel receives TERM twice? There should 
 
   parallel -q bash -c 'sleep 120 & pid=$!; wait $pid' ::: 1 & 
     T=$!; 
-    sleep 1; 
+    sleep 2; 
     pstree $$; 
     kill -TERM $T; 
     sleep 1; 
@@ -98,7 +111,7 @@ echo '### Are children killed if GNU Parallel receives INT twice? There should b
 
   parallel -q bash -c 'sleep 120 & pid=$!; wait $pid' ::: 1 & 
     T=$!; 
-    sleep 1; 
+    sleep 2; 
     pstree $$; 
     kill -INT $T; 
     sleep 1; 
