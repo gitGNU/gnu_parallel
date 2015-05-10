@@ -1679,6 +1679,13 @@ Do not use the first line of input (used by GNU B<parallel> itself
 when called with B<--shebang>).
 
 
+=item B<--ssh> I<sshcommand> (alpha testing)
+
+GNU B<parallel> defaults to using B<ssh> for remote access. This can
+be overridden with B<--ssh>. It can also be set on a per server
+basis (see B<--sshlogin>).
+
+
 =item B<--sshdelay> I<secs>
 
 Delay starting next ssh by I<secs> seconds. GNU B<parallel> will pause
@@ -3442,8 +3449,9 @@ $SHELL. If undefined use:
 =item $PARALLEL_SSH (alpha testing)
 
 GNU B<parallel> defaults to using B<ssh> for remote access. This can
-be overridden with $PARALLEL_SSH. It can also be set on a per server
-basis (see B<--sshlogin>).
+be overridden with $PARALLEL_SSH, which again can be overridden with
+B<--ssh>. It can also be set on a per server basis (see
+B<--sshlogin>).
 
 
 =item $PARALLEL_SEQ

@@ -89,6 +89,11 @@ echo '### use function as $PARALLEL_SSH'
   foossh() { echo "FOOSSH" >&2; ssh "$@"; };   export -f foossh;   PARALLEL_SSH=foossh parallel -S 1/lo echo ::: 'Run through FOOSSH?'
 Run through FOOSSH?
 FOOSSH
+echo '### use --ssh'
+### use --ssh
+  barssh() { echo "BARSSH" >&2; ssh "$@"; };   export -f barssh;   parallel --ssh barssh -S 1/lo echo ::: 'Run through BARSSH?'
+Run through BARSSH?
+BARSSH
 echo '### test filename :'
 ### test filename :
   echo content-of-: > :;   echo : | parallel -j1 --trc {}.{.} -S parallel@lo '(echo remote-{}.{.};cat {}) > {}.{.}';   cat :.:; rm : :.:
