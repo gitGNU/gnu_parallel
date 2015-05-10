@@ -422,8 +422,18 @@ Implies B<--semaphore>.
 
 =item B<--bibtex>
 
-Print the BibTeX entry for GNU B<parallel> and disable citation
+Print the BibTeX entry for GNU B<parallel> and silence citation
 notice.
+
+If it is impossible for you to run B<--bibtex> you can use
+B<--will-cite>.
+
+If you use B<--will-cite> in scripts to be run by others you are
+making it harder for others to see the citation notice.  The
+development of GNU B<parallel> is indirectly financed through
+citations, so if users do not know they should cite then that makes it
+harder to finance development. However, if you pay 10000 EUR, you
+should feel free to use B<--will-cite>.
 
 
 =item B<--block> I<size>
@@ -691,42 +701,80 @@ Print a summary of the options to GNU B<parallel> and exit.
 
 =item B<--halt> I<val>
 
-How should GNU B<parallel> terminate?
+When should GNU B<parallel> terminate? In some situations it makes no
+sense to run all jobs. GNU B<parallel> should simply give up as soon
+as a condition is met.
+
+I<val> defaults to B<never>, which runs all jobs no matter what.
+
+I<val> can also take on the form of I<when>,I<why>.
+
+I<when> can be 'now' which means kill all running jobs and halt
+immediately, or it can be 'soon' which means wait for all running jobs
+to complete, but start no new jobs.
+
+I<why> can be 'fail=X', 'fail=Y%', 'success=X', or 'success=Y%' where
+X is the number of jobs that has to fail or succeed before halting,
+and Y is the percentage of jobs that has to fail or succeed before
+halting.
+
+Example:
+
+=over 23
+
+=item Z<> --halt now,fail=1
+
+exit when the first job fails. Kill running jobs.
+
+=item Z<> --halt soon,fail=3
+
+exit when 3 jobs fail, but wait for running jobs to complete.
+
+=item Z<> --halt soon,fail=3%
+
+exit when 3% of the jobs have failed, but wait for running jobs to complete.
+
+=item Z<> --halt now,success=1
+
+exit when a job succeeds. Kill running jobs.
+
+=item Z<> --halt soon,success=3
+
+exit when 3 jobs succeeds, but wait for running jobs to complete.
+
+=item Z<> --halt now,success=3%
+
+exit when 3% of the jobs have succeeded. Kill running jobs.
+
+=back
+
+For backwards compability these also work:
 
 =over 7
 
 =item Z<>0
 
-Do not halt if a job fails. Exit status will be the number of jobs
-failed. This is the default.
+never
 
 =item Z<>1
 
-Do not start new jobs if a job fails, but complete the running jobs
-including cleanup. The exit status will be the exit status from the
-last failing job.
+soon,fail=1
 
 =item Z<>2
 
-Kill off all jobs immediately and exit without cleanup. The exit
-status will be the exit status from the failing job.
+now,fail=1
 
 =item Z<>-1
 
-Do not start new jobs if a job succeeds, but complete the running jobs
-including cleanup. The exit status will be the exit status from the
-last failing job if any.
+soon,success=1
 
 =item Z<>-2
 
-Kill off all jobs immediately and exit without cleanup. The exit
-status will be 0.
+now,success=1
 
 =item Z<>1-99%
 
-If I<val>% of the jobs fail and minimum 3: Do not start new jobs, but
-complete the running jobs including cleanup. The exit status will be
-the exit status from the last failing job.
+soon,fail=1-99%
 
 =back
 
@@ -3482,21 +3530,25 @@ remote computers:
 
 =head1 EXIT STATUS
 
-If B<--halt-on-error> 0 or not specified:
+Exit status depends on B<--halt-on-error> if one of these are used:
+success=X, success=Y%, fail=Y%.
 
 =over 6
 
 =item Z<>0
 
-All jobs ran without error.
+All jobs ran without error. If success=X is used: X jobs ran without
+error. If success=Y% is used: Y% of the jobs ran without error.
 
-=item Z<>1-253
+=item Z<>1-100
 
-Some of the jobs failed. The exit status gives the number of failed jobs
+Some of the jobs failed. The exit status gives the number of failed
+jobs. If Y% is used the exit status is the percentage of jobs that
+failed.
 
-=item Z<>254
+=item Z<>101
 
-More than 253 jobs failed.
+More than 100 jobs failed.
 
 =item Z<>255
 
@@ -3504,7 +3556,8 @@ Other error.
 
 =back
 
-If B<--halt-on-error> 1 or 2: Exit status of the failing job.
+If fail=1 is used, the exit status will be the exit status of the
+failing job.
 
 
 =head1 DIFFERENCES BETWEEN GNU Parallel AND ALTERNATIVES
@@ -3533,7 +3586,7 @@ Manipulation of input
  M3. Arguments can be put anywhere in the execution line
  M4. Multiple arguments can be put anywhere in the execution line
  M5. Arguments can be replaced with context
- M6. Input can be treated as complete execution line
+ M6. Input can be treated as the complete command line
 
 Outputs
  O1. Grouping output so output from different jobs do not mix

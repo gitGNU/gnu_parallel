@@ -222,29 +222,30 @@ Haiku of the month:
 
 New in this release:
 
-* <<afventer - rykket >> Comparing the CarbonTracker and TM5-4DVar data assimilation systems for CO2 surface flux inversions http://www.atmos-chem-phys-discuss.net/15/8883/2015/acpd-15-8883-2015-discussion.html
-
-* <<afventer opdatering>> CIDER: a pipeline for detecting waves of coordinated transcriptional regulation in gene expression time-course data http://biorxiv.org/content/biorxiv/early/2015/03/17/012518.full.pdf
-
-* <<afventer opdatering>> GNU Parallel was used (unfortunately without citation) in: MUGBAS: a species free gene-based programme suite for post-GWAS analysis http://www.ncbi.nlm.nih.gov/pubmed/25765345
-
-http://biorxiv.org/content/biorxiv/early/2015/05/05/018085.full.pdf
+* <<Har angiveligt submittet ny version - afventer opdatering>> GNU Parallel was used (unfortunately without citation) in: MUGBAS: a species free gene-based programme suite for post-GWAS analysis http://www.ncbi.nlm.nih.gov/pubmed/25765345
 
 taxator-tk http://algbio.cs.uni-duesseldorf.de/webapps/wa-download/ (check it)
 
 * <<har ikke svaret og accepteret ansvar>> GNU Parallel was used in: Large Scale Author Name Disambiguation in Digital Libraries http://ieeexplore.ieee.org/xpl/abstractReferences.jsp?tp=&arnumber=7004487&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7004487
 
-* << afventer svar fra Rachel >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
+* << Update forventet juni >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
+
+* <<kontaktet 2015-05-06>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
+
+
+* GNU Parallel was cited in: CIDER: a pipeline for detecting waves of coordinated transcriptional regulation in gene expression time-course data http://biorxiv.org/content/biorxiv/early/2015/03/17/012518.full.pdf
+
+* GNU Parallel was cited in: Building Genomic Analysis Pipelines in a Hackathon Setting with Bioinformatician Teams: DNA-seq, Epigenomics, Metagenomics and RNA-seq http://biorxiv.org/content/biorxiv/early/2015/05/05/018085.full.pdf
 
 * GNU Parallel was cited in: Toward Enhanced Metadata Quality of Large-Scale Digital Libraries: Estimating Volume Time Range https://www.ideals.illinois.edu/bitstream/handle/2142/73656/186_ready.pdf
 
 * GNU Parallel was cited in: Sequencing the cap-snatching repertoire of H1N1 influenza provides insight into the mechanism of viral transcription initiation http://nar.oxfordjournals.org/content/early/2015/04/20/nar.gkv333.full.pdf
 
-* GNU Parallel was cited in: Genome assemblyusing Nanopore-guided long and error-free DNA reads http://www.biomedcentral.com/content/pdf/s12864-015-1519-z.pdf
+* GNU Parallel was cited in: Genome assembly using Nanopore-guided long and error-free DNA reads http://www.biomedcentral.com/content/pdf/s12864-015-1519-z.pdf
 
 * GNU Parallel was cited in: Contrasting regional architectures of schizophrenia and other complex diseases using fast variance components analysis http://biorxiv.org/content/biorxiv/early/2015/03/13/016527.full.pdf
 
-* <<kontakt>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
+* GNU Parallel was used (unfortunately with wrong citation) in: Comparing the CarbonTracker and TM5-4DVar data assimilation systems for CO2 surface flux inversions http://www.atmos-chem-phys-discuss.net/15/8883/2015/acpd-15-8883-2015-discussion.html
 
 * GNU Parallel was used in: Gene Set Omic Analysis (GSOA) method https://bitbucket.org/srp33/gsoa
 

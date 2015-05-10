@@ -24,7 +24,7 @@ echo '### Test --halt-on-error 1';
   (echo "sleep 1;true"; echo "sleep 2;false";echo "sleep 3;true") | parallel -j10 --halt-on-error 1; 
   echo $?; 
 
-  (echo "sleep 1;true"; echo "sleep 2;false";echo "sleep 3;true";echo "sleep 4; non_exist") | parallel -j10 --halt 1; 
+  (echo "sleep 1;true"; echo "sleep 2; non_exist";echo "sleep 3;true";echo "sleep 4; false") | parallel -j10 --halt 1; 
   echo $?
 
 echo '**'
@@ -56,20 +56,20 @@ echo '### Test --halt -2';
 
 echo '**'
 
-echo '### Test last dying print --halt-on-error 1'; 
-  (seq 0 8;echo 0; echo 9) | parallel -j10 -kq --halt 1 perl -e 'sleep $ARGV[0];print STDERR @ARGV,"\n"; exit shift'; 
+echo '### Test first dying print --halt-on-error 1'; 
+  (echo 0; echo 3; seq 0 7;echo 0; echo 8) | parallel -j10 -kq --halt 1 perl -e 'sleep $ARGV[0];print STDERR @ARGV,"\n"; exit shift'; 
   echo exit code $?
 
 echo '### Test last dying print --halt-on-error 2'; 
-  (seq 0 8;echo 0; echo 9) | parallel -j10 -kq --halt 2 perl -e 'sleep $ARGV[0];print STDERR @ARGV,"\n"; exit shift'; 
+  (echo 0; echo 3; seq 0 7;echo 0; echo 8) | parallel -j10 -kq --halt 2 perl -e 'sleep $ARGV[0];print STDERR @ARGV,"\n"; exit shift'; 
   echo exit code $?
 
 echo '### Test last dying print --halt-on-error -1'; 
-  (seq 0 8;echo 0; echo 9) | parallel -j10 -kq --halt -1 perl -e 'sleep $ARGV[0];print STDERR @ARGV,"\n"; exit not shift'; 
+  (echo 0; echo 3; seq 0 7;echo 0; echo 8) | parallel -j10 -kq --halt -1 perl -e 'sleep $ARGV[0];print STDERR @ARGV,"\n"; exit not shift'; 
   echo exit code $?
 
 echo '### Test last dying print --halt-on-error -2'; 
-  (seq 0 8;echo 0; echo 9) | parallel -j10 -kq --halt -2 perl -e 'sleep $ARGV[0];print STDERR @ARGV,"\n"; exit not shift'; 
+  (echo 0; echo 3; seq 0 7;echo 0; echo 8) | parallel -j10 -kq --halt -2 perl -e 'sleep $ARGV[0];print STDERR @ARGV,"\n"; exit not shift'; 
   echo exit code $?
 
 echo '**'

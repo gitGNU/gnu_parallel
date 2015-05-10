@@ -110,7 +110,7 @@ if($opt::nonall or $opt::onall) {
 $Global::JobQueue = JobQueue->new(
     \@command,\@input_source_fh,$Global::ContextReplace,$number_of_args,\@Global::ret_files);
 
-if($opt::eta or $opt::bar or $opt::shuf) {
+if($opt::eta or $opt::bar or $opt::shuf or $Global::halt_pct) {
     # Count the number of jobs or shuffle all jobs
     # before starting any
     $Global::JobQueue->total_jobs();
@@ -162,9 +162,17 @@ for(keys %Global::sshmaster) {
 }
 ::debug("init", "Halt\n");
 if($opt::halt and $Global::halt_when ne "never") {
+    if(not defined $Global::halt_exitstatus) {
+	if($Global::halt_pct) {
+	    $Global::halt_exitstatus =
+		::ceil($Global::total_failed / $Global::total_started * 100);
+	} elsif($Global::halt_count) {
+	    $Global::halt_exitstatus = ::min($Global::total_failed,101);
+	}
+    }
     wait_and_exit($Global::halt_exitstatus);
 } else {
-    wait_and_exit(min(undef_as_zero($Global::exitstatus),254));
+    wait_and_exit(min(undef_as_zero($Global::exitstatus),101));
 }
 
 sub __PIPE_MODE__ {}
@@ -1093,7 +1101,6 @@ sub init_globals {
     $Global::stderr_verbose = 0;
     $Global::default_simultaneous_sshlogins = 9;
     $Global::exitstatus = 0;
-    $Global::halt_exitstatus = 0;
     $Global::arg_sep = ":::";
     $Global::arg_file_sep = "::::";
     $Global::trim = 'n';
@@ -3349,16 +3356,14 @@ sub bibtex {
 	    if(open (my $fh, ">", $ENV{'HOME'}."/.parallel/will-cite")) {
 		close $fh;
 		print "\nThank you for your support. It is much appreciated. The citation\n",
-		"notice is now silenced. You may also use '--will-cite'.\n",
-		"If you use '--will-cite' in scripts you are expected to pay\n",
-		"the 10000 EUR, because you are making it harder to see the\n",
-		"citation notice.\n\n";
+		"notice is now silenced. For other ways to silence the citation notice\n",
+		"see 'man parallel' under '--bibtex'.\n\n";
 	    } else {
 		print "\nThank you for your support. It is much appreciated. The citation\n",
 		"cannot permanently be silenced. Use '--will-cite' instead.\n",
-		"If you use '--will-cite' in scripts you are expected to pay\n",
-		"the 10000 EUR, because you are making it harder to see the\n",
-		"citation notice.\n\n";
+		"If you use '--will-cite' in scripts you are making it harder to see the\n",
+		"citation notice.  However, if you pay 10000 EUR, you should feel free\n",
+		"to use '--will-cite'.\n\n";
 		last;
 	    }
 	}
@@ -7471,11 +7476,19 @@ sub set_exitsignal {
 
 {
     my $status_printed;
+    my $total_jobs;
 
     sub should_we_halt {
 	# Should we halt? Immediately? Gracefully?
 	# Returns: N/A
 	my $job = shift;
+	#  --halt # => 1..100 (number of jobs failed, 101 means > 100)
+	#  --halt % => 1..100 (pct of jobs failed)
+	if($Global::halt_pct and not $Global::halt_count) {
+	    $total_jobs ||= $Global::JobQueue->total_jobs();
+	    # From the pct compute the number of jobs that must fail/succeed
+	    $Global::halt_count = $total_jobs * $Global::halt_pct;
+	}
 	if($job->exitstatus() or $job->exitsignal()) {
 	    # Job failed
 	    $Global::exitstatus++;
@@ -7483,21 +7496,23 @@ sub set_exitsignal {
 	    if($Global::halt_fail) {
 		::status("$Global::progname: This job failed:\n",
 			 $job->replaced(),"\n");
-		if(($Global::halt_count and
-		    $Global::halt_count <= $Global::total_failed)
-		   or
-		   ($Global::halt_pct and
-		    $Global::halt_pct <= 
-		    $Global::total_failed / $Global::total_started
-		    and $Global::total_failed > 3)) {
+		if($Global::halt_count <= $Global::total_failed) {
 		    # At least N jobs had failed
-		    # or at least N% had failed and more than 3
-		    if($Global::halt_count and $Global::halt_count == 1) {
-			$Global::halt_exitstatus = $job->exitstatus();
-		    } else {
-			$Global::halt_exitstatus = ::min($Global::total_failed,254);
+		    if(not defined $Global::halt_exitstatus) {
+			if($Global::halt_pct) {
+			    # --halt now,fail=X% or soon,fail=X%
+			    $Global::halt_exitstatus =
+				::ceil($Global::total_failed / $total_jobs * 100);
+			} elsif($Global::halt_count) {
+			    # --halt now,fail=X or soon,fail=X
+			    $Global::halt_exitstatus = ::min($Global::total_failed,101);
+			}
+			if($Global::halt_count and $Global::halt_count == 1) {
+			    # --halt now,fail=1 or soon,fail=1
+			    $Global::halt_exitstatus = $job->exitstatus();
+			}
 		    }
-		    ::debug("halt","Pct: ",$Global::halt_pct,"<=",$Global::total_failed / $Global::total_started," count: ",$Global::halt_count,"\n");
+		    ::debug("halt","Pct: ",$Global::halt_pct," count: ",$Global::halt_count,"\n");
 		    if($Global::halt_when eq "soon"
 		       and scalar(keys %Global::running) > 0) {
 			::status
@@ -7511,20 +7526,14 @@ sub set_exitsignal {
 	    }
 	} else {
 	    if($Global::halt_success) {
-		$Global::halt_exitstatus = $Global::total_failed;
+		::debug("halt","Pct: ",$Global::halt_pct,"<=",
+			" count: ",$Global::halt_count,"\n");
 		::status("$Global::progname: This job succeeded:\n",
 			 $job->replaced(),"\n");
-		if(($Global::halt_count and
-		    $Global::halt_count <=
-		    $Global::total_completed-$Global::total_failed)
-		   or
-		   ($Global::halt_pct and
-		    $Global::halt_pct <=
-		    ($Global::total_completed-$Global::total_failed)
-		    / $Global::total_completed
-		    and ($Global::total_completed-$Global::total_failed) > 3)) {
+		if($Global::halt_count <=
+		   $Global::total_completed-$Global::total_failed) {
 		    # At least N jobs had success
-		    # or at least N% had success and more than 3
+		    # or at least N% had success
 		    $Global::halt_exitstatus = 0;
 		    if($Global::halt_when eq "soon"
 		       and scalar(keys %Global::running) > 0) {
