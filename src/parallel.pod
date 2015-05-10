@@ -697,9 +697,9 @@ See also: B<--line-buffer> B<--ungroup>
 Print a summary of the options to GNU B<parallel> and exit.
 
 
-=item B<--halt-on-error> I<val>
+=item B<--halt-on-error> I<val> (alpha testing)
 
-=item B<--halt> I<val>
+=item B<--halt> I<val> (alpha testing)
 
 When should GNU B<parallel> terminate? In some situations it makes no
 sense to run all jobs. GNU B<parallel> should simply give up as soon
@@ -1665,7 +1665,7 @@ Does not run the command but quotes it. Useful for making quoted
 composed commands for GNU B<parallel>.
 
 
-=item B<--shuf> (beta testing)
+=item B<--shuf> (alpha testing)
 
 Shuffle jobs. When having multiple input sources it is hard to
 randomize jobs. --shuf will generate all jobs, and shuffle them before
@@ -3437,6 +3437,13 @@ $SHELL. If undefined use:
 /bin/sh
 
 =back
+
+
+=item $PARALLEL_SSH (alpha testing)
+
+GNU B<parallel> defaults to using B<ssh> for remote access. This can
+be overridden with $PARALLEL_SSH. It can also be set on a per server
+basis (see B<--sshlogin>).
 
 
 =item $PARALLEL_SEQ

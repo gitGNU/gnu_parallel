@@ -5387,6 +5387,8 @@ sub sshcommand_of_sshlogin {
     #   login@host
     my $self = shift;
     my ($sshcmd, $serverlogin);
+    # If $SSH is unset, use 'ssh'
+    $ENV{'PARALLEL_SSH'} ||= "ssh";
     if($self->{'string'} =~ /(.+) (\S+)$/) {
         # Own ssh command
         $sshcmd = $1; $serverlogin = $2;
@@ -5395,7 +5397,7 @@ sub sshcommand_of_sshlogin {
         if($opt::controlmaster) {
             # Use control_path to make ssh faster
             my $control_path = $self->control_path_dir()."/ssh-%r@%h:%p";
-            $sshcmd = "ssh -S ".$control_path;
+            $sshcmd = $ENV{'PARALLEL_SSH'}." -S ".$control_path;
             $serverlogin = $self->{'string'};
             if(not $self->{'control_path'}{$control_path}++) {
                 # Master is not running for this control_path
@@ -5407,18 +5409,24 @@ sub sshcommand_of_sshlogin {
 		    $SIG{'TERM'} = undef;
                     # Ignore the 'foo' being printed
                     open(STDOUT,">","/dev/null");
-                    # OpenSSH_3.6.1p2 gives 'tcgetattr: Invalid argument' with -tt
-                    # STDERR >/dev/null to ignore "process_mux_new_session: tcgetattr: Invalid argument"
+                    # With -tt OpenSSH_3.6.1p2 gives:
+		    # 'tcgetattr: Invalid argument'
+                    # STDERR >/dev/null to ignore
+		    # "process_mux_new_session: tcgetattr: Invalid argument"
                     open(STDERR,">","/dev/null");
                     open(STDIN,"<","/dev/null");
-                    # Run a sleep that outputs data, so it will discover if the ssh connection closes.
-                    my $sleep = ::shell_quote_scalar('$|=1;while(1){sleep 1;print "foo\n"}');
-                    my @master = ("ssh", "-tt", "-MTS", $control_path, $serverlogin, "perl", "-e", $sleep);
+                    # Run a sleep that outputs data, so it will discover
+		    # if the ssh connection closes.
+                    my $sleep = ::shell_quote_scalar
+			('$|=1;while(1){sleep 1;print "foo\n"}');
+                    my @master = ($ENV{'PARALLEL_SSH'}, "-tt", "-MTS",
+				  $control_path, $serverlogin, "perl", "-e",
+				  $sleep);
                     exec(@master);
                 }
             }
         } else {
-            $sshcmd = "ssh"; $serverlogin = $self->{'string'};
+            $sshcmd = $ENV{'PARALLEL_SSH'}; $serverlogin = $self->{'string'};
         }
     }
     $self->{'sshcommand'} = $sshcmd;

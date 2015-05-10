@@ -61,6 +61,11 @@ echo '### bug #40001: --joblog and --nonall seem not to work together:'
 echo '### bug #40132: FreeBSD: --workdir . gives warning if . == $HOME'
   cd && parallel --workdir . -S lo pwd ::: ""
 
+echo '### use function as $PARALLEL_SSH'
+  foossh() { echo "FOOSSH" >&2; ssh "$@"; }; 
+  export -f foossh; 
+  PARALLEL_SSH=foossh parallel -S 1/lo echo ::: 'Run through FOOSSH?'
+
 echo '### test filename :'
   echo content-of-: > :; 
   echo : | parallel -j1 --trc {}.{.} -S parallel@lo '(echo remote-{}.{.};cat {}) > {}.{.}'; 

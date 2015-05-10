@@ -84,6 +84,11 @@ echo '### bug #40132: FreeBSD: --workdir . gives warning if . == $HOME'
 ### bug #40132: FreeBSD: --workdir . gives warning if . == $HOME
   cd && parallel --workdir . -S lo pwd ::: ""
 /home/tange
+echo '### use function as $PARALLEL_SSH'
+### use function as $PARALLEL_SSH
+  foossh() { echo "FOOSSH" >&2; ssh "$@"; };   export -f foossh;   PARALLEL_SSH=foossh parallel -S 1/lo echo ::: 'Run through FOOSSH?'
+Run through FOOSSH?
+FOOSSH
 echo '### test filename :'
 ### test filename :
   echo content-of-: > :;   echo : | parallel -j1 --trc {}.{.} -S parallel@lo '(echo remote-{}.{.};cat {}) > {}.{.}';   cat :.:; rm : :.:
