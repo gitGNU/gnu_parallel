@@ -1061,7 +1061,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150503;
+    $Global::version = 20150509;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1243,8 +1243,12 @@ sub parse_semaphore {
     if(defined $opt::bg) { $Global::semaphore = 1; }
     if(defined $opt::wait) { $Global::semaphore = 1; }
     if($Global::semaphore) {
-        # A semaphore does not take input from neither stdin nor file
-        @opt::a = ("/dev/null");
+	if(@opt::a) {
+	    # A semaphore does not take input from neither stdin nor file
+	    ::error("A semaphore does not take input from neither stdin nor a file\n");
+	    ::wait_and_exit(255);
+	}
+	@opt::a = ("/dev/null");
         push(@Global::unget_argv, [Arg->new("")]);
         $Semaphore::timeout = $opt::semaphoretimeout || 0;
         if(defined $opt::semaphorename) {

@@ -861,7 +861,7 @@ Number of jobslots on each machine. Run up to N jobs in parallel.  0
 means as many as possible. Default is 100% which will run one job per
 CPU core on each machine.
 
-If B<--semaphore> is set default is 1 thus making a mutex.
+If B<--semaphore> is set, the default is 1 thus making a mutex.
 
 
 =item B<--jobs> I<+N>
