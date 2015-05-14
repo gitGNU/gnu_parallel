@@ -46,8 +46,8 @@ echo '### bug #42041: Implement $PARALLEL_JOBSLOT'
 
 echo '### bug #42363: --pipepart and --fifo/--cat does not work'
   seq 100 > /tmp/bug42363; 
-  parallel --pipepart --block 31 -a /tmp/bug42363 -k --fifo wc | perl -pe 's:(/tmp\S+fif).....:${1}XXXXX:'; 
-  parallel --pipepart --block 31 -a /tmp/bug42363 -k --cat  wc | perl -pe 's:(/tmp\S+cat).....:${1}XXXXX:'; 
+  parallel --pipepart --block 31 -a /tmp/bug42363 -k --fifo wc | perl -pe 's:(/tmp\S+par).....:${1}XXXXX:'; 
+  parallel --pipepart --block 31 -a /tmp/bug42363 -k --cat  wc | perl -pe 's:(/tmp\S+par).....:${1}XXXXX:'; 
   rm /tmp/bug42363
 
 echo '### bug #42055: --pipepart -a bigfile should not require sequential reading of bigfile'

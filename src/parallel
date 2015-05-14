@@ -6263,24 +6263,29 @@ sub wrapped {
 	    }
 	}
 	if($opt::cat) {
-	    # Prepend 'cat > {};'
-	    # Append 'unlink {} without affecting $?'
+# Append 'unlink {} without affecting $?'
 	    $command =
 		$self->{'commandline'}->replace_placeholders(["cat > \257<\257>; "], 0, 0).
 		$command.";". postpone_exit_and_cleanup().
-		$self->{'commandline'}->replace_placeholders(["\257<\257>"], 0, 0);
+		'$PARALLEL_TMP';
 	} elsif($opt::fifo) {
 	    # Prepend 'mkfifo {}; ('
 	    # Append ') & _PID=$!; cat > {}; wait $_PID; '
 	    # (This makes it fail in csh, but give the correct exit code in bash)
 	    # Append 'unlink {} without affecting $?'
+	    # Set $ENV{PARALLEL_TMP} when starting a job
+	    # Set $ENV{PARALLEL_TMP} in the remote wrapper
+	    # mkfifo $PARALLEL_TMP;
+	    # {} = $PARALLEL_TMP;
+	    # (...) &
+	    # cat > $PARALLEL_TMP; wait \$_PID; cleanup $PARALLEL_TMP
+	    # perl -e 'open($fifo,">",shift); while(read){print FIFO};unlink $fifo;waitpid($pid,0);exit $?' $! $PARALLEL_FIFO
 	    $command =
-		$self->{'commandline'}->replace_placeholders(["mkfifo \257<\257>;\n ("], 0, 0).
+		"mkfifo \$PARALLEL_TMP\n (".
 		$command.";".
-		$self->{'commandline'}->replace_placeholders([") & _PID=\$!; cat > \257<\257>; ",
-					    "wait \$_PID; "]).
+		') & _PID=$!; cat > $PARALLEL_TMP; wait $_PID; '.
 		postpone_exit_and_cleanup().
-		$self->{'commandline'}->replace_placeholders(["\257<\257>"], 0, 0);
+		'$PARALLEL_TMP';
 	}
 	# Wrap with ssh + tranferring of files
 	$command = $self->sshlogin_wrap($command);
@@ -6401,7 +6406,13 @@ sub sshlogin_wrap {
 	    $monitor_parent_sshd_script =
 		# This will be packed in ', so only use "
 		::spacefree(0,'$shell = "'.($ENV{'PARALLEL_SHELL'} || '$ENV{SHELL}').'";'.
-			q{
+			    '$tmpdir = "'.::perl_quote_scalar($ENV{'TMPDIR'}).'";'.
+			    q{
+		# Set $PARALLEL_TMP to a non-existent file name in $TMPDIR
+		do {
+		    $ENV{PARALLEL_TMP} = $tmpdir."/par".
+			join"", map { (0..9,"a".."z","A".."Z")[rand(62)] } (1..5);
+		} while(-e $ENV{PARALLEL_TMP});
                 $SIG{CHLD} = sub { $done = 1; };
 		$pid = fork;
                 unless($pid) {
@@ -6828,6 +6839,7 @@ sub start {
     }
     $ENV{'PARALLEL_SEQ'} = $job->seq();
     $ENV{'PARALLEL_PID'} = $$;
+    $ENV{'PARALLEL_TMP'} = ::tmpname("par");
     ::debug("run", $Global::total_running, " processes . Starting (",
 	    $job->seq(), "): $command\n");
     if($opt::pipe) {
@@ -6936,12 +6948,8 @@ sub print_dryrun_and_verbose {
 	my $self = shift;
 	my $actual_command = shift;
 	# Temporary file name. Used for fifo to communicate exit val
-	my ($fh, $tmpfifo) = ::tmpfile(SUFFIX => ".tmx");
-	$Global::unlink{$tmpfifo} = 1;
-	close $fh;
-	unlink $tmpfifo;
-#	# FIFO for communicating exit val
-#	my $tmpfifo = ::tmpfifo();
+	my $tmpfifo=::tmpname("tmx");
+
 	if(length($tmpfifo) >=100) {
 	    ::error("tmux does not support sockets with path > 100\n");
 	    ::wait_and_exit(255);
@@ -6959,12 +6967,13 @@ sub print_dryrun_and_verbose {
 
 	my $l_act = length($actual_command);
 	my $l_tit = length($title);
+	my $l_fifo = length($tmpfifo);
 	# The line to run contains a 118 chars extra code + the title 2x
-	my $l_tot = 2 * $l_tit + $l_act + 30;
+	my $l_tot = 2 * $l_tit + $l_act + $l_fifo;
 
 	while($l_tit < 1000 and
 	      (
-	       (900 < $l_tot and $l_tot < 1300)
+	       (890 < $l_tot and $l_tot < 1350)
 	       or
 	       (9250 < $l_tot and $l_tot < 9800)
 	      )) {
@@ -6977,7 +6986,7 @@ sub print_dryrun_and_verbose {
 	    # 9331 < (title + whole command) < 9636
 	    $title = $title.('\ 'x75);
 	    $l_tit = length($title);
-	    $l_tot = 2 * $l_tit + $l_act + 30;
+	    $l_tot = 2 * $l_tit + $l_act + $l_fifo;
 	}
 
 	my $tmux;
@@ -6994,7 +7003,7 @@ sub print_dryrun_and_verbose {
 		$Limits::Command::line_max_len, " tot ",
 		$l_tot, "\n");
 
-	return "mkfifo $tmpfifo; $tmux ".
+	return "mkfifo $tmpfifo && $tmux ".
 	    # Run in tmux
 	    ::shell_quote_scalar
 	    (
@@ -7567,14 +7576,14 @@ sub populate {
     my $max_len = $Global::minimal_command_line_length || Limits::Command::max_length();
 
     if($opt::cat) {
-	# Generate a tempfile name that will be used as {}
+	# $PARALLEL_TMP will point to a tempfile that will be used as {}
 	$Global::JobQueue->{'commandlinequeue'}->{'arg_queue'}->
-	    unget([Arg->new(::tmpname("cat"))]);
+	    unget([Arg->new('$PARALLEL_TMP')]);
     }
     if($opt::fifo) {
-	# Generate a tempfile name that will be used as {}
+	# $PARALLEL_TMP will point to a tempfile that will be used as {}
 	$Global::JobQueue->{'commandlinequeue'}->{'arg_queue'}->
-	    unget([Arg->new(::tmpname("fif"))]);
+	    unget([Arg->new('$PARALLEL_TMP')]);
     }
     while (not $self->{'arg_queue'}->empty()) {
 	$next_arg = $self->{'arg_queue'}->get();
@@ -7868,6 +7877,8 @@ sub replaced {
     if(not defined $self->{'replaced'}) {
 	# Don't quote arguments if the input is the full command line
 	my $quote_arg = $Global::noquote ? 0 : not $Global::quoting;
+	# or if ($opt::cat or $opt::pipe) as they use $PARALLEL_TMP
+	$quote_arg = ($opt::cat || $opt::fifo) ? 0 : $quote_arg;
 	$self->{'replaced'} = $self->
 	    replace_placeholders($self->{'command'},$Global::quoting,
 				 $quote_arg);
