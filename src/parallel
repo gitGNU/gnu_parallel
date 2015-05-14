@@ -725,7 +725,6 @@ sub options_hash {
 	 "use-cpus-instead-of-cores" => \$opt::use_cpus_instead_of_cores,
 	 "shellquote|shell_quote|shell-quote" => \$opt::shellquote,
 	 "nice=i" => \$opt::nice,
-	 "timeout=s" => \$opt::timeout,
 	 "tag" => \$opt::tag,
 	 "tagstring|tag-string=s" => \$opt::tagstring,
 	 "onall" => \$opt::onall,
@@ -751,9 +750,7 @@ sub options_hash {
 	 "compress" => \$opt::compress,
 	 "tty" => \$opt::tty,
 	 "T" => \$opt::retired,
-	 "halt-on-error|halt=s" => \$opt::halt,
 	 "H=i" => \$opt::retired,
-	 "retries=i" => \$opt::retries,
 	 "dry-run|dryrun" => \$opt::dryrun,
 	 "progress" => \$opt::progress,
 	 "eta" => \$opt::eta,
@@ -779,7 +776,11 @@ sub options_hash {
 	 "xapply" => \$opt::xapply,
 	 "bibtex" => \$opt::bibtex,
 	 "wc|willcite|will-cite|nn|nonotice|no-notice" => \$opt::willcite,
+	 # Termination and retries
+	 "halt-on-error|halt=s" => \$opt::halt,
 	 "memfree=s" => \$opt::memfree,
+	 "retries=i" => \$opt::retries,
+	 "timeout=s" => \$opt::timeout,
 	 # xargs-compatibility - implemented, man, testsuite
 	 "max-procs|P=s" => \$opt::jobs,
 	 "delimiter|d=s" => \$opt::d,
@@ -1053,7 +1054,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150422;
+    $Global::version = 20150424;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -3276,17 +3277,17 @@ sub bibtex {
 	       "please cite:",
 	       "",
                "\@article{Tange2011a,",
-	       " title = {GNU Parallel - The Command-Line Power Tool},",
-	       " author = {O. Tange},",
-	       " address = {Frederiksberg, Denmark},",
-	       " journal = {;login: The USENIX Magazine},",
-	       " month = {Feb},",
-	       " number = {1},",
-	       " volume = {36},",
-	       " url = {http://www.gnu.org/s/parallel},",
-	       " year = {2011},",
-	       " pages = {42-47}",
-	       " doi = {10.5281/zenodo.16303}",
+	       "  title = {GNU Parallel - The Command-Line Power Tool},",
+	       "  author = {O. Tange},",
+	       "  address = {Frederiksberg, Denmark},",
+	       "  journal = {;login: The USENIX Magazine},",
+	       "  month = {Feb},",
+	       "  number = {1},",
+	       "  volume = {36},",
+	       "  url = {http://www.gnu.org/s/parallel},",
+	       "  year = {2011},",
+	       "  pages = {42-47}",
+	       "  doi = {10.5281/zenodo.16303}",
 	       "}",
 	       "",
 	       "(Feel free to use \\nocite{Tange2011a})",
