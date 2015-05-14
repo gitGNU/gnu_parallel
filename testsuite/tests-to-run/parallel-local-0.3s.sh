@@ -148,6 +148,10 @@ echo '**'
 parallel --halt 2 ::: 'sleep 1' burnP6 false; killall burnP6 && echo ERROR: burnP6 should be killed
 parallel --halt -2 ::: 'sleep 1' burnP5 true; killall burnP5 && echo ERROR: burnP5 should be killed
 
+parallel --halt error ::: 1
+parallel --halt soon ::: 1
+parallel --halt now ::: 1
+
 echo '**'
 
 echo '### bug #44995: parallel echo {#} ::: 1 2 ::: 1 2'
