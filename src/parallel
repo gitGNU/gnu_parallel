@@ -933,6 +933,14 @@ sub parse_options {
 	::error("--timeout must be seconds or percentage.");
 	wait_and_exit(255);
     }
+    if(defined $opt::fifo and $opt::cat) {
+	::error("--fifo cannot be combined with --cat.");
+	::wait_and_exit(255);
+    }
+    if((defined $opt::fifo or defined $opt::cat)
+       and not $opt::pipepart) {
+	$opt::pipe = 1;
+    }
     if(defined $opt::minversion) {
 	print $Global::version,"\n";
 	if($Global::version < $opt::minversion) {
@@ -1062,7 +1070,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150509;
+    $Global::version = 20150515;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -4619,7 +4627,7 @@ sub compute_number_of_processes {
 	    # This is the child
 	    # The child takes one process slot
 	    # It will be killed later
-	    $SIG{TERM} = $Global::original_sig{TERM};
+	    $SIG{'TERM'} = $Global::original_sig{'TERM'};
             sleep 10000000;
             exit(0);
 	} else {
@@ -5704,7 +5712,8 @@ sub slot {
 
     sub cattail {
 	# Returns:
-	#   $cattail = perl program for: cattail "decompress program" writerpid [file_to_decompress or stdin] [file_to_unlink]
+	#   $cattail = perl program for:
+	#     cattail "decompress program" writerpid [file_to_decompress or stdin] [file_to_unlink]
 	if(not $cattail) {
 	    $cattail = q{
 		# cat followed by tail (possibly with rm as soon at the file is opened)
@@ -6284,6 +6293,46 @@ sub total_failed {
     }
 }
 
+{
+    my $script;
+
+    sub fifo_wrap {
+	# Script to create a fifo, run a command on the fifo
+	# while copying STDIN to the fifo, and finally
+	# remove the fifo and return the exit code of the command.
+	if(not $script) {
+	    # {} == $PARALLEL_TMP for --fifo
+	    # To make it csh compatible a wrapper needs to:
+	    # * mkfifo
+	    # * spawn $command &
+	    # * cat > fifo
+	    # * waitpid to get the exit code from $command
+	    # * be less than 1000 chars long
+	    $script = "perl -e ". ::shell_quote_scalar
+		(::spacefree
+		 (0, q{
+		     ($s,$c,$f) = @ARGV;
+		     # mkfifo $PARALLEL_TMP
+		     system "mkfifo", $f;
+		     # spawn $shell -c $command &
+		     $pid = fork || exec $s, "-c", $c;
+		     open($o,">",$f) || die $!;
+		     # cat > $PARALLEL_TMP
+		     while(sysread(STDIN,$buf,32768)){
+			 syswrite $o, $buf;
+		     }
+		     close $o;
+		     # waitpid to get the exit code from $command
+		     waitpid $pid,0;
+		     # Cleanup
+		     unlink $f;
+		     exit $?/256;
+		  }));
+	}
+	return $script;
+    }
+}
+
 sub wrapped {
     # Wrap command with:
     # * --shellquote
@@ -6337,29 +6386,27 @@ sub wrapped {
 	    }
 	}
 	if($opt::cat) {
-# Append 'unlink {} without affecting $?'
+	    # In '--cat' and '--fifo' {} == $PARALLEL_TMP.
+	    # This is to make it possible to compute $PARALLEL_TMP on
+	    # the fly when running remotely.
+	    # $ENV{PARALLEL_TMP} is set in the remote wrapper before
+	    # the command is run.
+	    #
+	    # Prepend 'cat > $PARALLEL_TMP;'
+	    # Append 'unlink $PARALLEL_TMP without affecting $?'
 	    $command =
-		$self->{'commandline'}->replace_placeholders(["cat > \257<\257>; "], 0, 0).
+		'cat > $PARALLEL_TMP;'.
 		$command.";". postpone_exit_and_cleanup().
 		'$PARALLEL_TMP';
 	} elsif($opt::fifo) {
 	    # Prepend 'mkfifo {}; ('
-	    # Append ') & _PID=$!; cat > {}; wait $_PID; '
-	    # (This makes it fail in csh, but give the correct exit code in bash)
+	    # Append ') & cat > {}; wait; '
 	    # Append 'unlink {} without affecting $?'
-	    # Set $ENV{PARALLEL_TMP} when starting a job
-	    # Set $ENV{PARALLEL_TMP} in the remote wrapper
-	    # mkfifo $PARALLEL_TMP;
-	    # {} = $PARALLEL_TMP;
-	    # (...) &
-	    # cat > $PARALLEL_TMP; wait \$_PID; cleanup $PARALLEL_TMP
-	    # perl -e 'open($fifo,">",shift); while(read){print FIFO};unlink $fifo;waitpid($pid,0);exit $?' $! $PARALLEL_FIFO
-	    $command =
-		"mkfifo \$PARALLEL_TMP\n (".
-		$command.";".
-		') & _PID=$!; cat > $PARALLEL_TMP; wait $_PID; '.
-		postpone_exit_and_cleanup().
-		'$PARALLEL_TMP';
+	    $command = fifo_wrap(). " ".
+		$Global::shell. " ".
+		::shell_quote_scalar($command).
+		' $PARALLEL_TMP'.
+		';';
 	}
 	# Wrap with ssh + tranferring of files
 	$command = $self->sshlogin_wrap($command);

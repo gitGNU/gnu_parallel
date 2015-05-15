@@ -461,6 +461,8 @@ will give data to the program on stdin (standard input). With B<--cat>
 GNU B<parallel> will create a temporary file with the name in {}, so
 you can do: B<parallel --pipe --cat wc {}>.
 
+Implies B<--pipe> unless B<--pipepart> is used.
+
 See also B<--fifo>.
 
 
@@ -504,9 +506,9 @@ Compress temporary files. If the output is big and very compressible
 this will take up less disk space in $TMPDIR and possibly be faster
 due to less disk I/O.
 
-GNU B<parallel> will try B<lzop>, B<pigz>, B<gzip>, B<pbzip2>,
-B<plzip>, B<bzip2>, B<lzma>, B<lzip>, B<xz> in that order, and use the
-first available.
+GNU B<parallel> will try B<lz4>, B<pigz>, B<lzop>, B<plzip>,
+B<pbzip2>, B<pxz>, B<gzip>, B<lzma>, B<xz>, B<bzip2>, B<lzip> in that
+order, and use the first available.
 
 
 =item B<--compress-program> I<prg>
@@ -653,6 +655,8 @@ input). With B<--fifo> GNU B<parallel> will create a temporary fifo
 with the name in {}, so you can do: B<parallel --pipe --fifo wc {}>.
 
 Beware: If data is not read from the fifo, the job will block forever.
+
+Implies B<--pipe> unless B<--pipepart> is used.
 
 See also B<--cat>.
 
