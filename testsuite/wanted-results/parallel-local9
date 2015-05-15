@@ -141,6 +141,7 @@ echo "# --recend '' --files --halt-on-error"
 350eda13a37912d755c9d733d149bdaf  -
 echo '### Test of -j filename - non-existent file';   nice stdout parallel -j no_such_file echo ::: 1
 ### Test of -j filename - non-existent file
+parallel: Error: Parsing of --jobs/-j/--max-procs/-P failed.
 Usage:
 
 parallel [options] [command [arguments]] < list_of_arguments
@@ -178,7 +179,6 @@ please cite:
 This helps funding further development; and it won't cost you a cent.
 If you pay 10000 EUR you should feel free to use GNU Parallel without citing.
 
-parallel: Error: Parsing of --jobs/-j/--max-procs/-P failed.
 echo '### Test of -j filename';   echo 3 >/tmp/jobs_to_run1;   parallel -j /tmp/jobs_to_run1 -v sleep {} ::: 10 8 6 5 4;   # Should give 6 8 10 5 4
 ### Test of -j filename
 sleep 6

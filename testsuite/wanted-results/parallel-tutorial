@@ -575,7 +575,7 @@ foo
 3
   parallel --filter-hosts -S 173.194.32.46,$SERVER1 echo ::: bar 
 bar
-parallel: Warning: Removed 173.194.32.46
+parallel: Warning: Removed 173.194.32.46.
   parallel --onall -S $SERVER1,$SERVER2 echo ::: foo bar
 foo
 bar

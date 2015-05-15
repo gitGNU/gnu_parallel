@@ -148,9 +148,9 @@ echo '**'
 parallel --halt 2 ::: 'sleep 1' burnP6 false; killall burnP6 && echo ERROR: burnP6 should be killed
 parallel --halt -2 ::: 'sleep 1' burnP5 true; killall burnP5 && echo ERROR: burnP5 should be killed
 
-parallel --halt error ::: 1
-parallel --halt soon ::: 1
-parallel --halt now ::: 1
+parallel --halt error echo ::: should not print
+parallel --halt soon echo ::: should not print
+parallel --halt now echo ::: should not print
 
 echo '**'
 

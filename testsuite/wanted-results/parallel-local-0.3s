@@ -317,12 +317,12 @@ parallel --halt -2 ::: 'sleep 1' burnP5 true; killall burnP5 && echo ERROR: burn
 parallel: This job succeeded:
 true
 burnP5: no process found
-parallel --halt error ::: 1
-parallel: Error: --halt must have 'never', 'soon', or 'now'
-parallel --halt soon ::: 1
-parallel: Error: --halt soon must be followed by ,success or ,fail
-parallel --halt now ::: 1
-parallel: Error: --halt now must be followed by ,success or ,fail
+parallel --halt error echo ::: should not print
+parallel: Error: --halt must have 'never', 'soon', or 'now'.
+parallel --halt soon echo ::: should not print
+parallel: Error: --halt soon must be followed by ,success or ,fail.
+parallel --halt now echo ::: should not print
+parallel: Error: --halt now must be followed by ,success or ,fail.
 echo '**'
 **
 echo '### bug #44995: parallel echo {#} ::: 1 2 ::: 1 2'

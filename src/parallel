@@ -1139,7 +1139,8 @@ sub parse_halt {
 	# Split: soon,fail=5%
 	my ($when,$fail_success,$pct_count) = split /[,=]/, $opt::halt;
 	if(not grep { $when eq $_ } qw(never soon now)) {
-	    ::error("--halt must have 'never', 'soon', or 'now'\n");
+	    ::error("--halt must have 'never', 'soon', or 'now'.");
+	    ::wait_and_exit(255);
 	}
 	$Global::halt_when = $when;
 	if($when ne "never") {
@@ -1148,15 +1149,17 @@ sub parse_halt {
 	    } elsif($fail_success eq "success") {
 		$Global::halt_success = 1;
 	    } else {
-		::error("--halt $when must be followed by ,success or ,fail\n");
+		::error("--halt $when must be followed by ,success or ,fail.");
+		::wait_and_exit(255);
 	    }
 	    if($pct_count =~ /^(\d+)%$/) {
 		$Global::halt_pct = $1/100;
 	    } elsif($pct_count =~ /^(\d+)$/) {
 		$Global::halt_count = $1;
 	    } else {
-		::error("--halt $when,$fail_success ",
-			"must be followed by ,number or ,percent%\n");
+		::error("--halt $when,$fail_success ".
+			"must be followed by ,number or ,percent%.");
+		::wait_and_exit(255);
 	    }
 	}
     }
@@ -4752,8 +4755,8 @@ sub compute_number_of_processes {
 		::wait_and_exit(255);
 	    }
 	    if(not $more_filehandles) {
-		::warning("Only enough file handles to run ", $system_limit, " jobs in parallel.",
-			  "Running 'parallel -j0 -N $system_limit --pipe parallel -j0' or ".
+		::warning("Only enough file handles to run ". $system_limit. " jobs in parallel.",
+			  "Running 'parallel -j0 -N $system_limit --pipe parallel -j0' or ",
 			  "raising ulimit -n or /etc/security/limits.conf may help.");
 	    }
 	    if($max_system_proc_reached) {

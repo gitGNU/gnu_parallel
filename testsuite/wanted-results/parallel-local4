@@ -101,7 +101,7 @@ X	:	XXXXXXXXXX.XXX	     X.XXX	X	X	X	X	true X
 echo '### How do we deal with missing $HOME'
 ### How do we deal with missing $HOME
    unset HOME; stdout perl -w $(which parallel) -k echo ::: 1 2 3
-parallel: Warning: $HOME not set. Using /tmp
+parallel: Warning: $HOME not set. Using /tmp.
 1
 2
 3
