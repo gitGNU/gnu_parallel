@@ -184,6 +184,10 @@ sub pipe_part_files {
     #   @commands that will cat_partial each part
     my ($file) = @_;
     my $buf = "";
+    if(not -f $file) {
+	::error("$file is not a seekable file.");
+	::wait_and_exit(255);
+    }
     my $header = find_header(\$buf,open_or_exit($file));
     # find positions
     my @pos = find_split_positions($file,$opt::blocksize,length $header);

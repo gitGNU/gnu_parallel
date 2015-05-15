@@ -230,12 +230,11 @@ New in this release:
 
 taxator-tk http://algbio.cs.uni-duesseldorf.de/webapps/wa-download/ (check it)
 
-* <<har ikke svaret og accepteret ansvar>> GNU Parallel was used in: Large Scale Author Name Disambiguation in Digital Libraries http://ieeexplore.ieee.org/xpl/abstractReferences.jsp?tp=&arnumber=7004487&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7004487
+* <<Afventer updateret publisering>> GNU Parallel was used in: Large Scale Author Name Disambiguation in Digital Libraries http://ieeexplore.ieee.org/xpl/abstractReferences.jsp?tp=&arnumber=7004487&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7004487
 
 * << Update forventet juni >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
 
-* <<kontaktet 2015-05-06>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
-
+* <<kontaktet 2015-05-09>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
 
 * GNU Parallel was cited in: CIDER: a pipeline for detecting waves of coordinated transcriptional regulation in gene expression time-course data http://biorxiv.org/content/biorxiv/early/2015/03/17/012518.full.pdf
 
@@ -260,6 +259,10 @@ taxator-tk http://algbio.cs.uni-duesseldorf.de/webapps/wa-download/ (check it)
 * Use parallel processing to save time importing databases http://drupalsun.com/node/41854
 
 * Run multiple ssh commands in parallel with GNU Parallel http://www.ameir.net/blog/archives/380-run-multiple-ssh-commands-in-parallel-with-gnu-parallel.html
+
+* Importing huge databases faster https://www.lullabot.com/blog/article/importing-huge-databases-faster
+
+* Run multiple ssh commands in parallel with GNU Parallel https://www.ameir.net/blog/archives/380-run-multiple-ssh-commands-in-parallel-with-gnu-parallel.html/comment-page-1
 
 * Parallel? Gnu parallel! https://debian.pro/1834
 
