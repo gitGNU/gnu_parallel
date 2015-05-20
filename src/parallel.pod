@@ -84,7 +84,21 @@ If it is a Bash function you need to B<export -f> the function
 first. To use aliases copy the full environment as described under
 B<--env> and use B<env_parallel> instead of B<parallel>.
 
+If it is a Ksh function you can encode the function in a variable:
+
+  foo() {
+    echo $*;
+  }
+  export fun=`typeset -f foo`; parallel 'eval "$fun";' foo ::: works
+
+To export all functions and make them available when running remote:
+
+  export fun=`typeset -f`; parallel --env fun 'eval "$fun";' foo ::: works
+
 =cut
+# ssh ksh@lo 'foo() { echo $* ; }; export fun="`typeset -f`"; parallel -S ksh@lo --env fun "eval \"\$fun\";"foo ::: works'
+# ssh zsh@lo 'foo() { echo $* ; }; export fun="`typeset -f`"; parallel -S zsh@lo --env fun "eval \"\$fun\";"foo ::: works'
+
 # If it is a zsh function you will need to use this helper function
 # B<exportf> to export and to set $PARALLEL_SHELL to bash:
 # 
@@ -970,6 +984,8 @@ Implies B<-X> unless B<-m>, B<--xargs>, or B<--pipe> is set.
 
 =item B<--line-buffer>
 
+=item B<--lb>
+
 Buffer output on line basis. B<--group> will keep the output together
 for a whole job. B<--ungroup> allows output to mixup with half a line
 coming from one job and half a line coming from another
@@ -1118,6 +1134,9 @@ defaults to '\n'. To have no record separator use B<--recend "">.
 
 B<--files> is often used with B<--pipe>.
 
+B<--pipe> maxes out at around 1 GB/s input, and 100 MB/s output. If
+performance is important use B<--pipepart>.
+
 See also: B<--recstart>, B<--recend>, B<--fifo>, B<--cat>, B<--pipepart>.
 
 
@@ -1130,7 +1149,8 @@ B<--pipe>, but is much faster. It has a few limitations:
 
 =item Z<>*
 
-The file must be a physical (seekable) file and must be given using B<-a> or B<::::>.
+The file must be a physical (seekable) file (not a stream) and must be
+given using B<-a> or B<::::>.
 
 =item Z<>*
 
@@ -1435,6 +1455,17 @@ all have to remain unchanged; otherwise GNU B<parallel> may run wrong
 commands.
 
 See also B<--joblog>, B<--resume>.
+
+
+=item B<--retry-failed> (alpha testing)
+
+Retry all failed jobs in joblog. By reading B<--joblog> GNU
+B<parallel> will figure out the failed jobs and run those again.
+
+B<--retry-failed> ignore the command and arguments: It only looks at
+the joblog.
+
+See also B<--joblog>, B<--resume>, B<--resume-failed>.
 
 
 =item B<--retries> I<n>

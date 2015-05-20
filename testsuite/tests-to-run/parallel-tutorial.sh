@@ -35,6 +35,8 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
             s/\d{10}.\d{3}\s+..\d+/TIMESTAMP\t9.999/g;
             # Version
             s/201\d{5}/VERSION/g;
+            # [123] [abc] [ABC]
+            s/^[123] [abc] [ABC]$/123 abc ABC/g;
             # Remote script
             s/(PARALLEL_PID\D+)\d+/${1}000000/g;
             # /usr/bin/time -f %e

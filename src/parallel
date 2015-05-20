@@ -704,13 +704,14 @@ sub options_hash {
 	 "results|result|res=s" => \$opt::results,
 	 "resume" => \$opt::resume,
 	 "resume-failed|resumefailed" => \$opt::resume_failed,
+	 "retry-failed|retryfailed" => \$opt::retry_failed,
 	 "silent" => \$opt::silent,
 	 "keep-order|keeporder|k" => \$opt::keeporder,
 	 "no-keep-order|nokeeporder|nok|no-k" => \$opt::nokeeporder,
 	 "group" => \$opt::group,
 	 "g" => \$opt::retired,
 	 "ungroup|u" => \$opt::ungroup,
-	 "linebuffer|linebuffered|line-buffer|line-buffered" => \$opt::linebuffer,
+	 "linebuffer|linebuffered|line-buffer|line-buffered|lb" => \$opt::linebuffer,
 	 "tmux" => \$opt::tmux,
 	 "null|0" => \$opt::0,
 	 "quote|q" => \$opt::q,
@@ -1074,7 +1075,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150515;
+    $Global::version = 20150516;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1340,27 +1341,59 @@ sub open_joblog {
 	::wait_and_exit(255);
     }
     if($opt::joblog) {
-	if($opt::resume || $opt::resume_failed) {
+	if($opt::resume || $opt::resume_failed || $opt::retry_failed) {
 	    if(open(my $joblog_fh, "<", $opt::joblog)) {
 		# Read the joblog
 		$append = <$joblog_fh>; # If there is a header: Open as append later
 		my $joblog_regexp;
-		if($opt::resume_failed) {
+		if($opt::retry_failed) {
 		    # Make a regexp that only matches commands with exit+signal=0
 		    # 4 host 1360490623.067 3.445 1023 1222 0 0 command
 		    $joblog_regexp='^(\d+)(?:\t[^\t]+){5}\t0\t0\t';
-		} else {
-		    # Just match the job number
-		    $joblog_regexp='^(\d+)';
+		    my @group;
+		    while(<$joblog_fh>) {
+			if(/$joblog_regexp/o) {
+			    # This is 30% faster than set_job_already_run($1);
+			    vec($Global::job_already_run,($1||0),1) = 1;
+			    $group[$1-1] = "true";
+			} elsif(/(\d+)\s+\S+(\s+[-0-9.]+){6}\s+(.*)$/) {
+			    $group[$1-1] = $3
+			} else {
+			    chomp;
+			    ::error("Format of '$opt::joblog' is wrong: $_");
+			    ::wait_and_exit(255);
+			}
+		    }
+		    if(@group) {
+			my ($outfh,$name) = ::tmpfile(SUFFIX => ".arg");
+			unlink($name);
+			# Put args into argfile
+			print $outfh map { $_,$/ } @group;
+			seek $outfh, 0, 0;
+			exit_if_disk_full();
+			# Set filehandle to -a
+			@opt::a = ($outfh);
+		    }
+		    # Remove $command (so -a is run)
+		    @ARGV = ();
 		}
-		while(<$joblog_fh>) {
-		    if(/$joblog_regexp/o) {
-			# This is 30% faster than set_job_already_run($1);
-			vec($Global::job_already_run,($1||0),1) = 1;
-		    } elsif(not /\d+\s+[^\s]+\s+([-0-9.]+\s+){6}/) {
-			chomp;
-			::error("Format of '$opt::joblog' is wrong: $_");
-			::wait_and_exit(255);
+		if($opt::resume || $opt::resume_failed) {
+		    if($opt::resume_failed) {
+			# Make a regexp that only matches commands with exit+signal=0
+			# 4 host 1360490623.067 3.445 1023 1222 0 0 command
+			$joblog_regexp='^(\d+)(?:\t[^\t]+){5}\t0\t0\t';
+		    } else {
+			# Just match the job number
+			$joblog_regexp='^(\d+)';
+		    }
+		    while(<$joblog_fh>) {
+			if(/$joblog_regexp/o) {
+			    # This is 30% faster than set_job_already_run($1);
+			    vec($Global::job_already_run,($1||0),1) = 1;
+			} elsif(not /\d+\s+[^\s]+\s+([-0-9.]+\s+){6}/) {
+			    ::error("Format of '$opt::joblog' is wrong: $_");
+			    ::wait_and_exit(255);
+			}
 		    }
 		}
 		close $joblog_fh;
@@ -3411,8 +3444,7 @@ sub tmpfile {
 
 sub tmpname {
     # Select a name that does not exist
-    # Do not create the file as that may cause problems
-    # if you ssh to localhost (or a shared file system) under a different name
+    # Do not create the file as it may be used for creating a socket (by tmux)
     my $name = shift;
     my($tmpname);
     if(not -w $ENV{'TMPDIR'}) {
@@ -6595,7 +6627,7 @@ sub sshlogin_wrap {
 	    }
 	}
 	# Duplicate vars as BASH functions to include post-shellshock functions (v1+v2)
-	# So --env myfunc should also look for BASH_FUNC_myfunc()
+	# So --env myfunc should look for BASH_FUNC_myfunc() and BASH_FUNC_myfunc%%
 	push(@vars, "PARALLEL_PID", "PARALLEL_SEQ",
 	     map { ("BASH_FUNC_$_()", "BASH_FUNC_$_%%") } @vars);
 	# Keep only defined variables

@@ -252,6 +252,8 @@ taxator-tk http://algbio.cs.uni-duesseldorf.de/webapps/wa-download/ (check it)
 
 * GNU Parallel was used in: Gene Set Omic Analysis (GSOA) method https://bitbucket.org/srp33/gsoa
 
+* A Quick and Neat :) Orchestrator using GNU Parallel http://www.elsotanillo.net/2015/05/a-quick-and-neat-orchestrator-using-gnu-parallel/
+
 * Execute commands on multiple computers using GNU Parallel (setting up a cluster on the cheap) https://spectraldifferences.wordpress.com/2015/04/26/execute-commands-on-multiple-computers-using-gnu-parallel-setting-up-a-cluster-on-the-cheap/
 
 * Functions and GNU parallel for effective cluster load management http://genomespot.blogspot.dk/2015/04/functions-and-gnu-parallel-for.html
