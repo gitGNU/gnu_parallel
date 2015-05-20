@@ -3707,6 +3707,10 @@ sub which {
 		::debug("init", "shell path $shellpath\n");
 		$shellpath and last;
 	    }
+	    if($testpid == $parent_of_ref->{$testpid}) {
+		# In Solaris zones, the PPID of the zsched process is itself
+		last;
+	    }
 	    $testpid = $parent_of_ref->{$testpid};
 	}
 	return $shellpath;
