@@ -12,11 +12,14 @@ B<sem> [--fg] [--id <id>] [--semaphoretimeout <secs>] [-j <num>] [--wait] comman
 
 GNU B<sem> is an alias for GNU B<parallel --semaphore>.
 
-It works as a tool for executing shell commands in parallel. GNU
-B<sem> acts as a counting semaphore. When GNU B<sem> is called with
-command it will start the command in the background. When I<num>
-number of commands are running in the background, GNU B<sem> will wait
-for one of these to complete before starting another command.
+GNU B<sem> acts as a counting semaphore. When GNU B<sem> is called
+with command it starts the command in the background. When I<num>
+number of commands are running in the background, GNU B<sem> waits for
+one of these to complete before starting the command.
+
+GNU B<sem> does not read any arguments to build the command (no -a,
+:::, and ::::). It simply waits for a semaphore to become available
+and then runs the command given.
 
 Before looking at the options you may want to check out the examples
 after the list of options. That will give you an idea of what GNU
@@ -28,21 +31,19 @@ B<sem> is capable of.
 
 =item I<command>
 
-Command to execute. The command may be followed by arguments for the command.
+Command to execute. The command may be followed by arguments for the
+command.
 
 
 =item B<--bg>
 
-Run command in background thus GNU B<parallel> will not wait for
+Run command in background thus GNU B<sem> will not wait for
 completion of the command before exiting. This is the default.
 
+In toilet analogy: GNU B<sem> waits for a toilet to be available,
+gives the toilet to a person, and exits immediately.
+
 See also: B<--fg>
-
-
-=item B<-j> I<N>
-
-Run up to N commands in parallel. Default is 1 thus acting like a
-mutex.
 
 
 =item B<--jobs> I<N>
@@ -55,6 +56,8 @@ mutex.
 
 Run up to N commands in parallel. Default is 1 thus acting like a
 mutex.
+
+In toilet analogy: B<-j> is the number of toilets.
 
 
 =item B<--jobs> I<+N>
@@ -122,28 +125,69 @@ are often a good value.
 
 The semaphore is stored in ~/.parallel/semaphores/
 
+In toilet analogy the name corresponds to different types of toilets:
+e.g. male, female, customer, staff.
+
 
 =item B<--fg>
 
 Do not put command in background.
+
+In toilet analogy: GNU B<sem> waits for a toilet to be available,
+takes a person to the toilet, waits for the person to finish, and
+exits.
 
 
 =item B<--semaphoretimeout> I<secs> (alpha testing)
 
 =item B<--st> I<secs> (alpha testing)
 
-If I<secs> > 0: If the semaphore is not released within I<secs> seconds, take it anyway.
+If I<secs> > 0: If the semaphore is not released within I<secs>
+seconds, take it anyway.
 
-If I<secs> < 0: If the semaphore is not released within I<secs> seconds, exit.
+If I<secs> < 0: If the semaphore is not released within I<secs>
+seconds, exit.
+
+In toilet analogy: I<secs> > 0: If no toilet becomes available within
+I<secs> seconds, pee on the floor. I<secs> < 0: If no toilet becomes
+available within I<secs> seconds, exit without doing anything.
 
 
 =item B<--wait>
 
-=item B<-w>
-
 Wait for all commands to complete.
 
+In toilet analogy: Wait until all toilets are empty, then exit.
+
+
 =back
+
+=head1 UNDERSTANDING A SEMAPHORE
+
+Try the following example:
+
+  sem -j 2 'sleep 1;echo 1 finished';   echo sem 1 exited
+  sem -j 2 'sleep 2;echo 2 finished';   echo sem 2 exited
+  sem -j 2 'sleep 3;echo 3 finished';   echo sem 3 exited
+  sem -j 2 'sleep 4;echo 4 finished';   echo sem 4 exited
+  sem --wait; echo sem --wait done
+
+In toilet analogy this uses 2 toilets (B<-j 2>). GNU B<sem> takes '1'
+to a toilet, and exits immediately. While '1' is sleeping, another GNU
+B<sem> takes '2' to a toilet, and exits immediately.
+
+While '1' and '2' are sleeping, another GNU B<sem> waits for a free
+toilet. When '1' finishes, a toilet becomes available, and this GNU
+B<sem> stops waiting, and takes '3' to a toilet, and exits
+immediately.
+
+While '2' and '3' are sleeping, another GNU B<sem> waits for a free
+toilet.  When '2' finishes, a toilet becomes available, and this GNU
+B<sem> stops waiting, and takes '4' to a toilet, and exits
+immediately.
+
+Finally another GNU B<sem> waits for all toilets to become free.
+
 
 =head1 EXAMPLE: Gzipping *.log
 
@@ -161,12 +205,32 @@ available.
 pod2html creates two files: pod2htmd.tmp and pod2htmi.tmp which it
 does not clean up. It uses these two files for a short time. But if
 you run multiple pod2html in parallel (e.g. in a Makefile with make
--j) you need to protect pod2html from running twice at the same
-time. B<sem> running as a mutex will do just that:
+-j) there is a risk that two different instances of pod2html will
+write to the files at the same time:
 
-  sem --fg --id pod2html pod2html foo.pod > foo.html
-  sem --fg --id pod2html rm -f pod2htmd.tmp pod2htmi.tmp
+  # This may fail due to shared pod2htmd.tmp/pod2htmi.tmp files
+  foo.html:
+          pod2html foo.pod --outfile foo.html
 
+  bar.html:
+          pod2html bar.pod --outfile bar.html
+
+  $ make -j foo.html bar.html
+
+You need to protect pod2html from running twice at the same time.
+B<sem> running as a mutex will make sure only one runs:
+
+  foo.html:
+          sem --id pod2html pod2html foo.pod --outfile foo.html
+
+  bar.html:
+          sem --id pod2html pod2html bar.pod --outfile bar.html
+
+  clean: foo.html bar.html
+          sem --id pod2html --wait
+          rm -f pod2htmd.tmp pod2htmi.tmp
+
+  $ make -j foo.html bar.html clean
 
 =head1 BUGS
 

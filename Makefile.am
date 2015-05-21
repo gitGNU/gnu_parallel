@@ -59,4 +59,4 @@ upload:
 	pushd; \
 	sudo cp /usr/local/bin/parallel /usr/local/bin/parallel-$(YYYYMMDD)
 
-EXTRA_DIST = CITATION
+EXTRA_DIST = CITATION CREDITS

@@ -1,7 +1,7 @@
 ### Test --pipe
 echo '### Test 200M records with too small block';   (    echo start;    seq 1 44 | parallel -uj1 cat /tmp/blocktest\;true;    echo end;    echo start;    seq 1 44 | parallel -uj1 cat /tmp/blocktest\;true;    echo end;    echo start;    seq 1 44 | parallel -uj1 cat /tmp/blocktest\;true;    echo end;   ) | stdout parallel -k --block 200m -j2 --pipe --recend 'end\n' wc -c |   egrep -v '^0$'
 ### Test 200M records with too small block
-parallel: Warning: A record was longer than 200000000. Increasing to --blocksize 260000001
+parallel: Warning: A record was longer than 200000000. Increasing to --blocksize 260000001.
 303111434
 303111434
 303111434
@@ -148,10 +148,10 @@ echo -n 01a02a0a0a12a34a45a6a |   parallel -k -j1 --blocksize 100 --pipe --recen
 2>0a12a34a
 3>45a6a
 echo -n 01a02a0a0a12a34a45a6a |   stdout parallel -k -j1 --blocksize 1 --pipe --recend a  -N 3  'echo -n "$PARALLEL_SEQ>"; cat; echo; sleep 0.1'
-parallel: Warning: A record was longer than 1. Increasing to --blocksize 3
-parallel: Warning: A record was longer than 3. Increasing to --blocksize 5
+parallel: Warning: A record was longer than 1. Increasing to --blocksize 3.
+parallel: Warning: A record was longer than 3. Increasing to --blocksize 5.
+parallel: Warning: A record was longer than 5. Increasing to --blocksize 8.
 1>01a02a0a
-parallel: Warning: A record was longer than 5. Increasing to --blocksize 8
 2>0a12a34a
 3>45a6a
 echo '### Test 10M records with too big block';   (    echo start;    seq 1 1 | parallel -uj1 cat /tmp/blocktest\;true;    echo end;    echo start;    seq 1 1 | parallel -uj1 cat /tmp/blocktest\;true;    echo end;    echo start;    seq 1 1 | parallel -uj1 cat /tmp/blocktest\;true;    echo end;   ) | stdout parallel -k --block 10M -j2 --pipe --recstart 'start\n' wc -c |   egrep -v '^0$'

@@ -141,19 +141,29 @@ command.
 {unlink;rmdir;} if($bash=~s/h//) {exit$bash;} exit$csh;' "$?h"
 "$status" {});
 
-{} is really just a tmpfile. The Perl script saves the exit value,
-unlinks the tmpfile, and returns the exit value - no matter if the
-shell is B<bash> (using $?) or B<*csh> (using $status).
+{} is set to $PARALLEL_TMP which is a tmpfile. The Perl script saves
+the exit value, unlinks the tmpfile, and returns the exit value - no
+matter if the shell is B<bash> (using $?) or B<*csh> (using $status).
 
 =item --fifo
 
-(mkfifo {};
- (<<input>> {};) & _PID=$!; cat > {};  wait $_PID; perl -e '$bash=shift; $csh=shift; for(@ARGV)
-{unlink;rmdir;} if($bash=~s/h//) {exit$bash;} exit$csh;' "$?h"
-"$status" {});
+perl -e '($s,$c,$f) = @ARGV;
+system "mkfifo", $f;
+$pid = fork || exec $s, "-c", $c;
+open($o,">",$f) || die $!;
+while(sysread(STDIN,$buf,32768)){
+syswrite $o, $buf;
+}
+close $o;
+waitpid $pid,0;
+unlink $f;
+exit $?/256;' $shell <<input>> $PARALLEL_TMP
 
-B<wait $_PID> makes sure the exit value is from that PID. This makes it 
-incompatible with B<*csh>. The Perl script is the same as from B<--cat>.
+This is an elaborate way of: mkfifo {}; run <<input>> in the
+background using $shell; copying STDIN to {}; waiting for background
+to complete; remove {} and exit with the exit code from <<input>>.
+
+It is made this way to be compatible with B<*csh>.
 
 =item --sshlogin I<sln>
 
@@ -248,8 +258,6 @@ For B<tmux 1.8> 17000 can be lowered to 2100.
 
 The interesting areas are title 0..1000 with (title + whole command)
 in 996..1127 and 9331..9636.
-
-
 
 =back
 

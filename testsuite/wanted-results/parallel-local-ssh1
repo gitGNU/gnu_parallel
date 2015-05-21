@@ -1,7 +1,7 @@
 echo '### Stop if all hosts are filtered and there are no hosts left to run on'
 ### Stop if all hosts are filtered and there are no hosts left to run on
   stdout parallel --filter-hosts -S no-such.host echo ::: 1
-parallel: Warning: Removed no-such.host
+parallel: Warning: Removed no-such.host.
 parallel: Error: There are no hosts left to run on.
 echo '### Can csh propagate a variable containing \n';   export A=$(seq 3); parallel -S csh@localhost --env A bash -c \''echo "$A"'\' ::: dummy
 ### Can csh propagate a variable containing \n
@@ -84,6 +84,16 @@ echo '### bug #40132: FreeBSD: --workdir . gives warning if . == $HOME'
 ### bug #40132: FreeBSD: --workdir . gives warning if . == $HOME
   cd && parallel --workdir . -S lo pwd ::: ""
 /home/tange
+echo '### use function as $PARALLEL_SSH'
+### use function as $PARALLEL_SSH
+  foossh() { echo "FOOSSH" >&2; ssh "$@"; };   export -f foossh;   PARALLEL_SSH=foossh parallel -S 1/lo echo ::: 'Run through FOOSSH?'
+Run through FOOSSH?
+FOOSSH
+echo '### use --ssh'
+### use --ssh
+  barssh() { echo "BARSSH" >&2; ssh "$@"; };   export -f barssh;   parallel --ssh barssh -S 1/lo echo ::: 'Run through BARSSH?'
+Run through BARSSH?
+BARSSH
 echo '### test filename :'
 ### test filename :
   echo content-of-: > :;   echo : | parallel -j1 --trc {}.{.} -S parallel@lo '(echo remote-{}.{.};cat {}) > {}.{.}';   cat :.:; rm : :.:

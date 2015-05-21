@@ -84,7 +84,21 @@ If it is a Bash function you need to B<export -f> the function
 first. To use aliases copy the full environment as described under
 B<--env> and use B<env_parallel> instead of B<parallel>.
 
+If it is a Ksh function you can encode the function in a variable:
+
+  foo() {
+    echo $*;
+  }
+  export fun=`typeset -f foo`; parallel 'eval "$fun";' foo ::: works
+
+To export all functions and make them available when running remote:
+
+  export fun=`typeset -f`; parallel --env fun 'eval "$fun";' foo ::: works
+
 =cut
+# ssh ksh@lo 'foo() { echo $* ; }; export fun="`typeset -f`"; parallel -S ksh@lo --env fun "eval \"\$fun\";"foo ::: works'
+# ssh zsh@lo 'foo() { echo $* ; }; export fun="`typeset -f`"; parallel -S zsh@lo --env fun "eval \"\$fun\";"foo ::: works'
+
 # If it is a zsh function you will need to use this helper function
 # B<exportf> to export and to set $PARALLEL_SHELL to bash:
 # 
@@ -422,8 +436,18 @@ Implies B<--semaphore>.
 
 =item B<--bibtex>
 
-Print the BibTeX entry for GNU B<parallel> and disable citation
+Print the BibTeX entry for GNU B<parallel> and silence citation
 notice.
+
+If it is impossible for you to run B<--bibtex> you can use
+B<--will-cite>.
+
+If you use B<--will-cite> in scripts to be run by others you are
+making it harder for others to see the citation notice.  The
+development of GNU B<parallel> is indirectly financed through
+citations, so if users do not know they should cite then that makes it
+harder to finance development. However, if you pay 10000 EUR, you
+should feel free to use B<--will-cite>.
 
 
 =item B<--block> I<size>
@@ -450,6 +474,8 @@ Create a temporary file with content. Normally B<--pipe>/B<--pipepart>
 will give data to the program on stdin (standard input). With B<--cat>
 GNU B<parallel> will create a temporary file with the name in {}, so
 you can do: B<parallel --pipe --cat wc {}>.
+
+Implies B<--pipe> unless B<--pipepart> is used.
 
 See also B<--fifo>.
 
@@ -494,9 +520,9 @@ Compress temporary files. If the output is big and very compressible
 this will take up less disk space in $TMPDIR and possibly be faster
 due to less disk I/O.
 
-GNU B<parallel> will try B<lzop>, B<pigz>, B<gzip>, B<pbzip2>,
-B<plzip>, B<bzip2>, B<lzma>, B<lzip>, B<xz> in that order, and use the
-first available.
+GNU B<parallel> will try B<lz4>, B<pigz>, B<lzop>, B<plzip>,
+B<pbzip2>, B<pxz>, B<gzip>, B<lzma>, B<xz>, B<bzip2>, B<lzip> in that
+order, and use the first available.
 
 
 =item B<--compress-program> I<prg>
@@ -644,6 +670,8 @@ with the name in {}, so you can do: B<parallel --pipe --fifo wc {}>.
 
 Beware: If data is not read from the fifo, the job will block forever.
 
+Implies B<--pipe> unless B<--pipepart> is used.
+
 See also B<--cat>.
 
 
@@ -687,46 +715,84 @@ See also: B<--line-buffer> B<--ungroup>
 Print a summary of the options to GNU B<parallel> and exit.
 
 
-=item B<--halt-on-error> I<val>
+=item B<--halt-on-error> I<val> (alpha testing)
 
-=item B<--halt> I<val>
+=item B<--halt> I<val> (alpha testing)
 
-How should GNU B<parallel> terminate?
+When should GNU B<parallel> terminate? In some situations it makes no
+sense to run all jobs. GNU B<parallel> should simply give up as soon
+as a condition is met.
+
+I<val> defaults to B<never>, which runs all jobs no matter what.
+
+I<val> can also take on the form of I<when>,I<why>.
+
+I<when> can be 'now' which means kill all running jobs and halt
+immediately, or it can be 'soon' which means wait for all running jobs
+to complete, but start no new jobs.
+
+I<why> can be 'fail=X', 'fail=Y%', 'success=X', or 'success=Y%' where
+X is the number of jobs that has to fail or succeed before halting,
+and Y is the percentage of jobs that has to fail or succeed before
+halting.
+
+Example:
+
+=over 23
+
+=item Z<> --halt now,fail=1
+
+exit when the first job fails. Kill running jobs.
+
+=item Z<> --halt soon,fail=3
+
+exit when 3 jobs fail, but wait for running jobs to complete.
+
+=item Z<> --halt soon,fail=3%
+
+exit when 3% of the jobs have failed, but wait for running jobs to complete.
+
+=item Z<> --halt now,success=1
+
+exit when a job succeeds. Kill running jobs.
+
+=item Z<> --halt soon,success=3
+
+exit when 3 jobs succeeds, but wait for running jobs to complete.
+
+=item Z<> --halt now,success=3%
+
+exit when 3% of the jobs have succeeded. Kill running jobs.
+
+=back
+
+For backwards compability these also work:
 
 =over 7
 
 =item Z<>0
 
-Do not halt if a job fails. Exit status will be the number of jobs
-failed. This is the default.
+never
 
 =item Z<>1
 
-Do not start new jobs if a job fails, but complete the running jobs
-including cleanup. The exit status will be the exit status from the
-last failing job.
+soon,fail=1
 
 =item Z<>2
 
-Kill off all jobs immediately and exit without cleanup. The exit
-status will be the exit status from the failing job.
+now,fail=1
 
 =item Z<>-1
 
-Do not start new jobs if a job succeeds, but complete the running jobs
-including cleanup. The exit status will be the exit status from the
-last failing job if any.
+soon,success=1
 
 =item Z<>-2
 
-Kill off all jobs immediately and exit without cleanup. The exit
-status will be 0.
+now,success=1
 
 =item Z<>1-99%
 
-If I<val>% of the jobs fail and minimum 3: Do not start new jobs, but
-complete the running jobs including cleanup. The exit status will be
-the exit status from the last failing job.
+soon,fail=1-99%
 
 =back
 
@@ -809,10 +875,11 @@ See also B<--resume> B<--resume-failed>.
 
 =item B<-P> I<N>
 
-Number of jobslots. Run up to N jobs in parallel.  0 means as many as
-possible. Default is 100% which will run one job per CPU core.
+Number of jobslots on each machine. Run up to N jobs in parallel.  0
+means as many as possible. Default is 100% which will run one job per
+CPU core on each machine.
 
-If B<--semaphore> is set default is 1 thus making a mutex.
+If B<--semaphore> is set, the default is 1 thus making a mutex.
 
 
 =item B<--jobs> I<+N>
@@ -916,6 +983,8 @@ Implies B<-X> unless B<-m>, B<--xargs>, or B<--pipe> is set.
 
 
 =item B<--line-buffer>
+
+=item B<--lb>
 
 Buffer output on line basis. B<--group> will keep the output together
 for a whole job. B<--ungroup> allows output to mixup with half a line
@@ -1065,6 +1134,9 @@ defaults to '\n'. To have no record separator use B<--recend "">.
 
 B<--files> is often used with B<--pipe>.
 
+B<--pipe> maxes out at around 1 GB/s input, and 100 MB/s output. If
+performance is important use B<--pipepart>.
+
 See also: B<--recstart>, B<--recend>, B<--fifo>, B<--cat>, B<--pipepart>.
 
 
@@ -1077,7 +1149,8 @@ B<--pipe>, but is much faster. It has a few limitations:
 
 =item Z<>*
 
-The file must be a physical (seekable) file and must be given using B<-a> or B<::::>.
+The file must be a physical (seekable) file (not a stream) and must be
+given using B<-a> or B<::::>.
 
 =item Z<>*
 
@@ -1384,6 +1457,17 @@ commands.
 See also B<--joblog>, B<--resume>.
 
 
+=item B<--retry-failed> (alpha testing)
+
+Retry all failed jobs in joblog. By reading B<--joblog> GNU
+B<parallel> will figure out the failed jobs and run those again.
+
+B<--retry-failed> ignore the command and arguments: It only looks at
+the joblog.
+
+See also B<--joblog>, B<--resume>, B<--resume-failed>.
+
+
 =item B<--retries> I<n>
 
 If a job fails, retry it on another computer on which it has not
@@ -1498,7 +1582,7 @@ to do anything.
 
 Work as a counting semaphore. B<--semaphore> will cause GNU
 B<parallel> to start I<command> in the background. When the number of
-simultaneous jobs is reached, GNU B<parallel> will wait for one of
+jobs given by B<--jobs> is reached, GNU B<parallel> will wait for one of
 these to complete before starting another command.
 
 B<--semaphore> implies B<--bg> unless B<--fg> is specified.
@@ -1616,7 +1700,7 @@ Does not run the command but quotes it. Useful for making quoted
 composed commands for GNU B<parallel>.
 
 
-=item B<--shuf> (beta testing)
+=item B<--shuf> (alpha testing)
 
 Shuffle jobs. When having multiple input sources it is hard to
 randomize jobs. --shuf will generate all jobs, and shuffle them before
@@ -1628,6 +1712,13 @@ before running the full batch.
 
 Do not use the first line of input (used by GNU B<parallel> itself
 when called with B<--shebang>).
+
+
+=item B<--ssh> I<sshcommand> (alpha testing)
+
+GNU B<parallel> defaults to using B<ssh> for remote access. This can
+be overridden with B<--ssh>. It can also be set on a per server
+basis (see B<--sshlogin>).
 
 
 =item B<--sshdelay> I<secs>
@@ -3390,6 +3481,14 @@ $SHELL. If undefined use:
 =back
 
 
+=item $PARALLEL_SSH (alpha testing)
+
+GNU B<parallel> defaults to using B<ssh> for remote access. This can
+be overridden with $PARALLEL_SSH, which again can be overridden with
+B<--ssh>. It can also be set on a per server basis (see
+B<--sshlogin>).
+
+
 =item $PARALLEL_SEQ
 
 $PARALLEL_SEQ will be set to the sequence number of the job
@@ -3481,21 +3580,25 @@ remote computers:
 
 =head1 EXIT STATUS
 
-If B<--halt-on-error> 0 or not specified:
+Exit status depends on B<--halt-on-error> if one of these are used:
+success=X, success=Y%, fail=Y%.
 
 =over 6
 
 =item Z<>0
 
-All jobs ran without error.
+All jobs ran without error. If success=X is used: X jobs ran without
+error. If success=Y% is used: Y% of the jobs ran without error.
 
-=item Z<>1-253
+=item Z<>1-100
 
-Some of the jobs failed. The exit status gives the number of failed jobs
+Some of the jobs failed. The exit status gives the number of failed
+jobs. If Y% is used the exit status is the percentage of jobs that
+failed.
 
-=item Z<>254
+=item Z<>101
 
-More than 253 jobs failed.
+More than 100 jobs failed.
 
 =item Z<>255
 
@@ -3503,7 +3606,8 @@ Other error.
 
 =back
 
-If B<--halt-on-error> 1 or 2: Exit status of the failing job.
+If fail=1 is used, the exit status will be the exit status of the
+failing job.
 
 
 =head1 DIFFERENCES BETWEEN GNU Parallel AND ALTERNATIVES
@@ -3532,7 +3636,7 @@ Manipulation of input
  M3. Arguments can be put anywhere in the execution line
  M4. Multiple arguments can be put anywhere in the execution line
  M5. Arguments can be replaced with context
- M6. Input can be treated as complete execution line
+ M6. Input can be treated as the complete command line
 
 Outputs
  O1. Grouping output so output from different jobs do not mix
