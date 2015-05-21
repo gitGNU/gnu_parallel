@@ -4,7 +4,7 @@
 
 Check that documentation is updated (compare to web):
 
-Fixet for 20150422
+Fixet for 20150522
 git diff last-release-commit
 Unmodified beta since last version => production
 Unmodified alpha since last version => beta

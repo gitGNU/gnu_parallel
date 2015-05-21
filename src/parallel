@@ -1054,7 +1054,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150424;
+    $Global::version = 20150522;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
