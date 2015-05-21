@@ -24,7 +24,7 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
   stdout parallel -j7 -vd'\n\n' |
   perl -pe '$|=1;
             # --tmux
-            s:(/tmp\S+)(/tms).....:$1XXXXX$2:;
+            s:(/tmp\S+)(tms).....:$1$2XXXXX:;
             # --files
             s:(/tmp\S+par).....(\....):$1XXXXX$2:;
             # --eta --progress

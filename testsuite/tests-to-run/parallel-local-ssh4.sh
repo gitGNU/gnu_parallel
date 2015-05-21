@@ -65,3 +65,59 @@ echo '### bug #44143: csh and nice'
   parallel --nice 1 -S csh@lo setenv B {}\; echo '$B' ::: OK
 
 EOF
+
+echo
+echo "### Fish environment"
+stdout ssh -q fish@lo <<'EOS' | grep -v 'packages can be updated.'
+alias alias_echo=echo;
+function func_echo
+  echo $argv;
+end
+function env_parallel
+  setenv PARALLEL_ENV (functions -n | perl -pe 's/,/\n/g' | while read d; functions $d; end|perl -pe 's/\n/\001/')
+  parallel $argv;
+  set -e PARALLEL_ENV
+end
+env_parallel alias_echo ::: alias_works
+env_parallel func_echo ::: function_works
+env_parallel -S fish@lo alias_echo ::: alias_works_over_ssh
+env_parallel -S fish@lo func_echo ::: function_works_over_ssh
+EOS
+
+echo
+echo "### Zsh environment"
+stdout ssh -q zsh@lo <<'EOS' | grep -v 'packages can be updated.'
+alias alias_echo=echo;
+func_echo() {
+  echo $*;
+}
+env_parallel() {
+  PARALLEL_ENV="$(typeset -f)";
+  export PARALLEL_ENV
+  `which parallel` "$@";
+  unset PARALLEL_ENV;
+}
+env_parallel alias_echo ::: alias_does_not_work
+env_parallel func_echo ::: function_works
+env_parallel -S zsh@lo alias_echo ::: alias_does_not_work_over_ssh
+env_parallel -S zsh@lo func_echo ::: function_works_over_ssh
+EOS
+
+echo
+echo "### Ksh environment"
+stdout ssh -q ksh@lo <<'EOS' | grep -v 'packages can be updated.'
+alias alias_echo=echo;
+func_echo() {
+  echo $*;
+}
+env_parallel() {
+  export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p;typeset -f)";
+  `which parallel` "$@";
+  unset PARALLEL_ENV;
+}
+env_parallel alias_echo ::: alias_works
+env_parallel func_echo ::: function_works
+env_parallel -S ksh@lo alias_echo ::: alias_works_over_ssh
+env_parallel -S ksh@lo func_echo ::: function_works_over_ssh
+EOS
+

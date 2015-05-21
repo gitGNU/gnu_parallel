@@ -1387,9 +1387,9 @@ Output:
 
 Servers can be put into groups by prepending '@groupname' to the
 server and the group can then be selected by appending '@groupname' to
-the argument if using '--hostgrp'.
+the argument if using '--hostgroup'.
 
-  parallel --hostgrp -S @grp1/$SERVER1 -S @grp2/SERVER2 echo {} ::: run_on_grp1@grp1 run_on_grp2@grp2
+  parallel --hostgroup -S @grp1/$SERVER1 -S @grp2/$SERVER2 echo {} ::: run_on_grp1@grp1 run_on_grp2@grp2
 
 Output:
 

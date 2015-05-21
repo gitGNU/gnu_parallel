@@ -832,7 +832,7 @@ sub options_hash {
 	 "cat" => \$opt::cat,
 	 "fifo" => \$opt::fifo,
 	 "pipepart|pipe-part" => \$opt::pipepart,
-	 "hgrp|hostgroup|hostgroups" => \$opt::hostgroups,
+	 "hgrp|hostgrp|hostgroup|hostgroups" => \$opt::hostgroups,
 	);
 }
 
@@ -1075,7 +1075,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150516;
+    $Global::version = 20150521;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -6447,6 +6447,12 @@ sub wrapped {
 		::shell_quote_scalar($command).
 		' $PARALLEL_TMP'.
 		';';
+	}
+	if($ENV{'PARALLEL_ENV'}) {
+	    # If $PARALLEL_ENV set, put that in front of the command
+	    # Used for importing functions for fish
+	    $ENV{'PARALLEL_ENV'} =~ s/\001/\n/g;
+	    $command = $ENV{'PARALLEL_ENV'}."\n".$command;
 	}
 	# Wrap with ssh + tranferring of files
 	$command = $self->sshlogin_wrap($command);

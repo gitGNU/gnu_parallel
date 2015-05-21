@@ -69,3 +69,42 @@ echo '### bug #44143: csh and nice'
 ### bug #44143: csh and nice
   parallel --nice 1 -S csh@lo setenv B {}\; echo '$B' ::: OK
 OK
+
+### Fish environment
+Welcome to Linux Mint 17 Qiana (GNU/Linux 3.16.0-31-lowlatency x86_64)
+
+Welcome to Linux Mint
+ * Documentation:  http://www.linuxmint.com
+
+0 updates are security updates.
+
+alias_works
+function_works
+alias_works_over_ssh
+function_works_over_ssh
+
+### Zsh environment
+Welcome to Linux Mint 17 Qiana (GNU/Linux 3.16.0-31-lowlatency x86_64)
+
+Welcome to Linux Mint
+ * Documentation:  http://www.linuxmint.com
+
+0 updates are security updates.
+
+zsh:10: command not found: alias_echo
+function_works
+zsh:10: command not found: alias_echo
+function_works_over_ssh
+
+### Ksh environment
+Welcome to Linux Mint 17 Qiana (GNU/Linux 3.16.0-31-lowlatency x86_64)
+
+Welcome to Linux Mint
+ * Documentation:  http://www.linuxmint.com
+
+0 updates are security updates.
+
+alias_works
+function_works
+alias_works_over_ssh
+function_works_over_ssh

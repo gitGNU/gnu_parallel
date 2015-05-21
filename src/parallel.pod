@@ -80,41 +80,74 @@ similar to B<cat | sh>.
 The I<command> must be an executable, a script, a composed command, or
 a function.
 
-If it is a Bash function you need to B<export -f> the function
-first. To use aliases copy the full environment as described under
-B<--env> and use B<env_parallel> instead of B<parallel>.
+B<Bash functions>: B<export -f> the function first.
 
-If it is a Ksh function you can encode the function in a variable:
+B<Bash aliases>: Copy the full environment using this and use B<env_parallel> instead of B<parallel>.
+
+  env_parallel() {
+    export PARALLEL_ENV="$(echo "shopt -s expand_aliases 2>/dev/null"; alias;typeset -p | grep -vFf <(readonly; echo GROUPS; echo FUNCNAME; echo DIRSTACK; echo _; echo PIPESTATUS; echo USERNAME) | grep -v BASH_;typeset -f)";
+    `which parallel` "$@";
+    unset PARALLEL_ENV;
+  }
+  # call as:
+  env_parallel [normal parallel options]
+
+B<Ksh functions>: If it is a Ksh function you can encode the function in a variable:
 
   foo() {
     echo $*;
   }
-  export fun=`typeset -f foo`; parallel 'eval "$fun";' foo ::: works
+  export PARALLEL_ENV=`typeset -f foo`
+  parallel foo ::: works
 
-To export all functions and make them available when running remote:
+To export all functions and also make them available when running remote:
 
-  export fun=`typeset -f`; parallel --env fun 'eval "$fun";' foo ::: works
+  env_parallel() {
+    export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p;typeset -f)";
+    `which parallel` "$@";
+    unset PARALLEL_ENV;
+  }
+  # call as:
+  env_parallel [normal parallel options]
 
-=cut
-# ssh ksh@lo 'foo() { echo $* ; }; export fun="`typeset -f`"; parallel -S ksh@lo --env fun "eval \"\$fun\";"foo ::: works'
-# ssh zsh@lo 'foo() { echo $* ; }; export fun="`typeset -f`"; parallel -S zsh@lo --env fun "eval \"\$fun\";"foo ::: works'
+B<Zsh functions>: If it is a Zsh function you can encode the function in a variable:
 
-# If it is a zsh function you will need to use this helper function
-# B<exportf> to export and to set $PARALLEL_SHELL to bash:
-# 
-#   function exportf (){
-#     export $(echo $1)="`whence -f $1 | sed -e "s/$1 //" `"
-#   }
-# 
-#   function my_func(){
-#     echo $1;
-#     echo "hello";
-#   }
-# 
-#   exportf my_func
-#   parallel --env my_func "my_func {}" :::  1 2
-#   TODO accept --env without -S
-=pod
+  foo() {
+    echo $*;
+  }
+  PARALLEL_ENV="$(typeset -f foo)";
+  export PARALLEL_ENV
+  parallel foo ::: works
+
+To export all functions and also make them available when running remote:
+
+  env_parallel() {
+    PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -f)";
+    export PARALLEL_ENV
+    `which parallel` "$@";
+    unset PARALLEL_ENV;
+  }
+  # call as:
+  env_parallel [normal parallel options]
+
+B<Fish functions>: If it is a Fish function you can encode the function in a variable:
+
+  function foo
+    echo $argv;
+  end
+
+  setenv PARALLEL_ENV (functions foo|perl -pe 's/\n/\001/')
+  parallel foo ::: works
+
+To export all functions and also make them available when running remote:
+
+  function env_parallel
+    setenv PARALLEL_ENV (functions -n | perl -pe 's/,/\n/g' | while read d; functions $d; end|perl -pe 's/\n/\001/')
+    parallel $argv;
+    set -e PARALLEL_ENV
+  end
+  # call as:
+  env_parallel [normal parallel options]
 
 The command cannot contain the character \257 (macron: ¯).
 

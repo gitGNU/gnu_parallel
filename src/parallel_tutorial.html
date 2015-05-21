@@ -1434,9 +1434,9 @@
 
 <pre><code>  force 4 cpus on server</code></pre>
 
-<p>Servers can be put into groups by prepending &#39;@groupname&#39; to the server and the group can then be selected by appending &#39;@groupname&#39; to the argument if using &#39;--hostgrp&#39;.</p>
+<p>Servers can be put into groups by prepending &#39;@groupname&#39; to the server and the group can then be selected by appending &#39;@groupname&#39; to the argument if using &#39;--hostgroup&#39;.</p>
 
-<pre><code>  parallel --hostgrp -S @grp1/$SERVER1 -S @grp2/SERVER2 echo {} ::: run_on_grp1@grp1 run_on_grp2@grp2</code></pre>
+<pre><code>  parallel --hostgroup -S @grp1/$SERVER1 -S @grp2/$SERVER2 echo {} ::: run_on_grp1@grp1 run_on_grp2@grp2</code></pre>
 
 <p>Output:</p>
 

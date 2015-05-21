@@ -404,10 +404,38 @@ B D
   wait
 3
   parallel --use-cpus-instead-of-cores -N0 sleep 1 :::: num8
+  parallel --shuf echo ::: 1 2 3 ::: a b c ::: A B C
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
+123 abc ABC
 
   seq 10 20 | parallel --tmux 'echo start {}; sleep {}; echo done {}'
-See output with: tmux -S /tmp/parallel-tutorialXXXXX/tms attach
-  tmux -S /tmp/parXXXXX.tms attach
+See output with: tmux -S /tmp/parallel-tutorial/tmsXXXXX attach
+  tmux -S /tmp/tmsXXXXX attach
 no sessions
   parallel --delay 2.5 echo Starting {}\;date ::: 1 2 3
 Starting 1
@@ -446,7 +474,7 @@ BASE64  parallel --joblog /tmp/log exit  ::: 1 2 3 0
   cat /tmp/log;
   parallel --resume-failed --joblog /tmp/log exit  ::: 1 2 3 0 0 0
   cat /tmp/log;
-  parallel -j2 --halt 1 echo {}\; exit {} ::: 0 0 1 2 3
+  parallel -j2 --halt soon,fail=1 echo {}\; exit {} ::: 0 0 1 2 3
 Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
 1	:	TIMESTAMP	9.999	0	0	1	0	exit 1
 2	:	TIMESTAMP	9.999	0	0	2	0	exit 2
@@ -483,14 +511,13 @@ echo 1; exit 1
 parallel: Starting no more jobs. Waiting for 1 jobs to finish.
 parallel: This job failed:
 echo 2; exit 2
-  parallel -j2 --halt 2 echo {}\; exit {} ::: 0 0 1 2 3
+  parallel -j2 --halt now,fail=1 echo {}\; exit {} ::: 0 0 1 2 3
 0
 0
 1
 parallel: This job failed:
 echo 1; exit 1
-  parallel -j2 --halt 20% echo {}\; exit {} ::: 0 0 1 2 3 4 5 6 7
-0
+  parallel -j2 --halt soon,fail=20% echo {}\; exit {} ::: 0 1 2 3 4 5 6 7 8 9
 0
 1
 2
@@ -502,6 +529,15 @@ echo 2; exit 2
 parallel: Starting no more jobs. Waiting for 1 jobs to finish.
 parallel: This job failed:
 echo 3; exit 3
+  parallel -j2 --halt soon,success=1 echo {}\; exit {} ::: 1 2 3 0 4 5 6
+1
+2
+3
+0
+4
+parallel: This job succeeded:
+echo 0; exit 0
+parallel: Starting no more jobs. Waiting for 1 jobs to finish.
   parallel -k --retries 3 'echo tried {} >>/tmp/runs; echo completed {}; exit {}' ::: 1 2 0
   cat /tmp/runs
 completed 1
@@ -540,6 +576,9 @@ more
 hosts
   parallel -S 4/$SERVER1 echo force {} cpus on server ::: 4
 force 4 cpus on server
+  parallel --hostgroup -S @grp1/$SERVER1 -S @grp2/$SERVER2 echo {} ::: run_on_grp1@grp1 run_on_grp2@grp2
+run_on_grp1
+run_on_grp2
   echo This is input_file > input_file
   parallel -S $SERVER1 --transfer cat ::: input_file 
 This is input_file
@@ -895,6 +934,15 @@ The second finished
 Fourth started
 The third finished
 The fourth finished
+  sem --id foo -u 'echo Slow started; sleep 5; echo Slow ended' &&
+  sem --id foo --semaphoretimeout 1 'echo Force this running after 1 sec' &&
+  sem --id foo --semaphoretimeout -2 'echo Give up after 1 sec'
+  sem --id foo --wait
+Slow started
+Force this running after 1 sec
+Slow ended
+parallel: Warning: Semaphore timed out. Stealing the semaphore.
+parallel: Warning: Semaphore timed out. Exiting.
   parallel --help
 Usage:
 
