@@ -1075,7 +1075,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150521;
+    $Global::version = 20150523;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -3141,60 +3141,48 @@ sub __USAGE__ {}
 
 sub killall {
     # Kill all jobs
-    # Send all jobs TERM
-    # Wait
-    # Send all jobs TERM
-    # Wait
-    # Send all jobs KILL
-    # Send all (grand*)children KILL
+    # Send all (grand*)children TERM,TERM,KILL
+    # Wait up to 200 ms between each
 
     $Global::start_no_new_jobs ||= 1;
+    $Global::killall = 1;
     # pids of the all children and (grand*)children
     # before we start the blood bath
     my @family_pids = family_pids(keys %Global::running);
-    # Send jobs TERM
-    ::debug("kill","TERM ", join(' ',keys %Global::running),"\n");
-    kill "TERM", keys %Global::running;
-    # Wait up to 200 ms
+    my @pids = @family_pids;
+    # Send jobs TERM,TERM,KILL
+    my @term_seq = ("TERM",200,"TERM",200,"KILL",200);
+    while(@term_seq) {
+	@pids = kill_sleep(shift @term_seq, shift @term_seq, @pids);
+    }
+    if(kill 0, @family_pids) {
+	my @fpids = grep { kill( 0, $_) } @family_pids;
+	::die_bug("Pids still alive @fpids (Parents: @pids)");
+    }
+}
+
+sub kill_sleep {
+    my ($signal, $sleep_max, @pids) = @_;
+    ::debug("kill","kill_sleep $signal @pids\n");
+    kill $signal, @pids;
     my $sleepsum = 0;
     my $sleep = 0.001;
-    for (; kill(0, keys %Global::running) and $sleepsum < 200;
+    for (; kill(0, @pids) and $sleepsum < $sleep_max;
 	 $sleepsum += $sleep) {
-	# This can change %Global::running
-	    ::debug("kill","Slept $sleepsum\n");
-	if((my $stiff = waitpid(-1, &WNOHANG)) > 0) {
-	    ::debug("kill","reaped $stiff\n");
-
-	    $Global::total_running--;
-	    delete $Global::running{$stiff};
+	if($Global::killall and (waitpid(-1, &WNOHANG) > 0)
+	   # Killall => dont run reaper
+	   or
+	   reaper()) {
+	    # Remove (grand)*children that are dead
+	    @pids = grep { kill( 0, $_) } @pids;
 	    $sleep = $sleep/2+0.001;
+	} else {
+	    $sleep *= 1.1;
+	    ::usleep($sleep);
 	}
-	$sleep *= 1.1;
-	::usleep($sleep);
     }
-    # Send jobs TERM (again)
-    ::debug("kill","TERM ", join(' ',keys %Global::running),"\n");
-    kill "TERM", keys %Global::running;
-    # Wait up to 200 ms
-     $sleepsum = 0;
-    $sleep = 0.001;
-    for (; kill(0, keys %Global::running) and $sleepsum < 200;
-	 $sleepsum += $sleep) {
-	# This can change %Global::running
-	if((my $stiff = waitpid(-1, &WNOHANG)) > 0) {
-	    $Global::total_running--;
-	    delete $Global::running{$stiff};
-	    $sleep = $sleep/2+0.001;
-	}
-	$sleep *= 1.1;
-	::usleep($sleep);
-    }
-    # Send jobs KILL
-    ::debug("kill","KILL ", join(' ',keys %Global::running),"\n");
-    kill "KILL", keys %Global::running;
-    # Send all (grand*)children KILL (if there are any left)
-    ::debug("kill","KILL @family_pids\n");
-    kill "KILL", @family_pids;
+    @pids = grep { kill( 0, $_) } @pids;
+    return @pids;
 }
 
 sub family_pids {
@@ -3230,10 +3218,11 @@ sub wait_and_exit {
     my $error = shift;
     unlink keys %Global::unlink;
     if($error) {
-	# Kill all without printing
+	# Kill all jobs without printing
 	killall();
     }
     for (keys %Global::unkilled_children) {
+	# Kill any (non-jobs) children
         kill 9, $_;
         waitpid($_,0);
         delete $Global::unkilled_children{$_};
@@ -4668,7 +4657,7 @@ sub compute_number_of_processes {
 	    # The child takes one process slot
 	    # It will be killed later
 	    $SIG{'TERM'} = $Global::original_sig{'TERM'};
-            sleep 10000000;
+            sleep 10101010;
             exit(0);
 	} else {
 	    # Failed to spawn

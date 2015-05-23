@@ -7,7 +7,7 @@ testsuite: 3
 	make stopvm
 
 1: ../src/parallel tests-to-run/* wanted-results/* prereqlocal startdb prereqremote
-	TRIES=1 time bash Start.sh - mem || true
+	TRIES=1 time bash Start.sh - 'mem|polarhome' || true
 	touch ~/.parallel/will-cite
 	make stopvm
 

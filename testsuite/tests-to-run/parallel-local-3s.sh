@@ -76,8 +76,8 @@ echo '**'
 
 testhalt() { 
   echo '### testhalt --halt '$1; 
-  (yes 0 | head -n 10; seq 10) | stdout parallel -kj4 --halt $1 'sleep {= $_*=0.3 =}; exit {}'; echo $?; 
-  (seq 10; yes 0 | head -n 10) | stdout parallel -kj4 --halt $1 'sleep {= $_*=0.3 =}; exit {}'; echo $?; 
+  (yes 0 | head -n 10; seq 10) | stdout parallel -kj4 --halt $1 'sleep {= $_=$_*0.3+1 =}; exit {}'; echo $?; 
+  (seq 10; yes 0 | head -n 10) | stdout parallel -kj4 --halt $1 'sleep {= $_=$_*0.3+1 =}; exit {}'; echo $?; 
 }; 
 export -f testhalt; 
   parallel -kj0 testhalt ::: now,fail=0 now,fail=1 now,fail=2 now,fail=30%  now,fail=70% 

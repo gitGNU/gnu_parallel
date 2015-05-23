@@ -627,7 +627,7 @@ If I<eof-str> is omitted, there is no end of file string.  If neither
 B<-E> nor B<-e> is used, no end of file string is used.
 
 
-=item B<--env> I<var> (beta testing)
+=item B<--env> I<var>
 
 Copy environment variable I<var>. This will copy I<var> to the
 environment that the command is run in. This is especially useful for
@@ -1173,7 +1173,7 @@ performance is important use B<--pipepart>.
 See also: B<--recstart>, B<--recend>, B<--fifo>, B<--cat>, B<--pipepart>.
 
 
-=item B<--pipepart> (beta testing)
+=item B<--pipepart>
 
 Pipe parts of a physical file. B<--pipepart> works similar to
 B<--pipe>, but is much faster. It has a few limitations:

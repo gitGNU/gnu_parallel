@@ -4,7 +4,7 @@
 
 Check that documentation is updated (compare to web):
 
-Fixet for 20150422
+Fixet for 20150522
 git diff last-release-commit
 Unmodified beta since last version => production
 Unmodified alpha since last version => beta
@@ -209,64 +209,30 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20150522 ('Nepal') released
+Subject: GNU Parallel 20150622 ('<<>>') released
 
-GNU Parallel 20150522 ('Nepal') has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20150622 ('<<>>') has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
 Haiku of the month:
 
-  Many jobs to run.
-  Idle cores is not your thing.
+  Programs very slow.
+  Multiple can run at once.
   Use GNU Parallel.
       -- Ole Tange
 
 New in this release:
 
-* Security: The security issue for --sshlogin + --fifo/--cat has been fixed. Thereby all issues with http://lists.gnu.org/archive/html/parallel/2015-04/msg00045.html have been fixed.
-
-* Security: After further security analysis the issue fixed in 20150422 also fixed the problem for --tmux.
+* <<afventer opdatering>> CIDER: a pipeline for detecting waves of coordinated transcriptional regulation in gene expression time-course data http://biorxiv.org/content/biorxiv/early/2015/03/17/012518.full.pdf
 
 * <<Har angiveligt submittet ny version - afventer opdatering>> GNU Parallel was used (unfortunately without citation) in: MUGBAS: a species free gene-based programme suite for post-GWAS analysis http://www.ncbi.nlm.nih.gov/pubmed/25765345
 
-taxator-tk http://algbio.cs.uni-duesseldorf.de/webapps/wa-download/ (check it)
-
 * <<Afventer updateret publisering>> GNU Parallel was used in: Large Scale Author Name Disambiguation in Digital Libraries http://ieeexplore.ieee.org/xpl/abstractReferences.jsp?tp=&arnumber=7004487&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7004487
-
-* << Update forventet juni >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
 
 * <<kontaktet 2015-05-09>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
 
-* GNU Parallel was cited in: CIDER: a pipeline for detecting waves of coordinated transcriptional regulation in gene expression time-course data http://biorxiv.org/content/biorxiv/early/2015/03/17/012518.full.pdf
+* taxator-tk http://algbio.cs.uni-duesseldorf.de/webapps/wa-download/ (check it)
 
-* GNU Parallel was cited in: Building Genomic Analysis Pipelines in a Hackathon Setting with Bioinformatician Teams: DNA-seq, Epigenomics, Metagenomics and RNA-seq http://biorxiv.org/content/biorxiv/early/2015/05/05/018085.full.pdf
-
-* GNU Parallel was cited in: Toward Enhanced Metadata Quality of Large-Scale Digital Libraries: Estimating Volume Time Range https://www.ideals.illinois.edu/bitstream/handle/2142/73656/186_ready.pdf
-
-* GNU Parallel was cited in: Sequencing the cap-snatching repertoire of H1N1 influenza provides insight into the mechanism of viral transcription initiation http://nar.oxfordjournals.org/content/early/2015/04/20/nar.gkv333.full.pdf
-
-* GNU Parallel was cited in: Genome assembly using Nanopore-guided long and error-free DNA reads http://www.biomedcentral.com/content/pdf/s12864-015-1519-z.pdf
-
-* GNU Parallel was cited in: Contrasting regional architectures of schizophrenia and other complex diseases using fast variance components analysis http://biorxiv.org/content/biorxiv/early/2015/03/13/016527.full.pdf
-
-* GNU Parallel was used (unfortunately with wrong citation) in: Comparing the CarbonTracker and TM5-4DVar data assimilation systems for CO2 surface flux inversions http://www.atmos-chem-phys-discuss.net/15/8883/2015/acpd-15-8883-2015-discussion.html
-
-* GNU Parallel was used in: Gene Set Omic Analysis (GSOA) method https://bitbucket.org/srp33/gsoa
-
-* A Quick and Neat :) Orchestrator using GNU Parallel http://www.elsotanillo.net/2015/05/a-quick-and-neat-orchestrator-using-gnu-parallel/
-
-* Execute commands on multiple computers using GNU Parallel (setting up a cluster on the cheap) https://spectraldifferences.wordpress.com/2015/04/26/execute-commands-on-multiple-computers-using-gnu-parallel-setting-up-a-cluster-on-the-cheap/
-
-* Functions and GNU parallel for effective cluster load management http://genomespot.blogspot.dk/2015/04/functions-and-gnu-parallel-for.html
-
-* Use parallel processing to save time importing databases http://drupalsun.com/node/41854
-
-* Run multiple ssh commands in parallel with GNU Parallel http://www.ameir.net/blog/archives/380-run-multiple-ssh-commands-in-parallel-with-gnu-parallel.html
-
-* Importing huge databases faster https://www.lullabot.com/blog/article/importing-huge-databases-faster
-
-* Run multiple ssh commands in parallel with GNU Parallel https://www.ameir.net/blog/archives/380-run-multiple-ssh-commands-in-parallel-with-gnu-parallel.html/comment-page-1
-
-* Parallel? Gnu parallel! https://debian.pro/1834
+* << Update forventet juni Rachel har lige svaret >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
 
 * Bug fixes and man page updates.
 

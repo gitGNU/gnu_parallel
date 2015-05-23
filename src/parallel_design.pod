@@ -152,7 +152,7 @@ system "mkfifo", $f;
 $pid = fork || exec $s, "-c", $c;
 open($o,">",$f) || die $!;
 while(sysread(STDIN,$buf,32768)){
-syswrite $o, $buf;
+  syswrite $o, $buf;
 }
 close $o;
 waitpid $pid,0;
@@ -387,9 +387,9 @@ shell that runs the function definition followed by the actual
 command.
 
 B<env_parallel> (mentioned in the man page) copies the full current
-environment into the environment variable
-B<parallel_bash_environment>. This variable is picked up by GNU
-B<parallel> and used to create the Perl script mentioned above.
+environment into the environment variable B<PARALLEL_ENV>. This
+variable is picked up by GNU B<parallel> and used to create the Perl
+script mentioned above.
 
 
 =head2 Base64 encoded bzip2
@@ -664,6 +664,46 @@ gives an instant load.
 
 As remote calculation of load can be slow, a process is spawned to run
 B<ps> and put the result in a file, which is then used next time.
+
+
+=head2 Killing jobs
+
+B<--memfree>, B<--halt> and when GNU B<parallel> meets a condition
+from which it cannot recover, jobs are killed. This is done by finding
+the (grand)*children of the jobs and killing those processes.
+
+More specifically GNU B<parallel> maintains a list of processes to be
+killed, sends a signal to all processes (first round this is a TERM).
+It weeds out the processes that exited from the list then waits a
+while and weeds out again. It does that until all processes are dead
+or 200 ms passed. Then it does another round with TERM, and finally a
+round with KILL.
+
+  pids = family_pids(jobs)
+  for signal in TERM, TERM, KILL:
+    for pid in pids:
+      kill signal, pid
+    while kill 0, pids and slept < 200 ms:
+      sleep sleeptime
+      pids = kill 0, pids
+      slept += sleeptime
+      sleeptime = sleeptime * 1.1
+
+By doing so there is a tiny risk, that GNU B<parallel> will kill
+processes that are not started from GNU B<parallel>. It, however,
+requires all of these to be true:
+
+* Process A is sent a signal
+* It dies during a I<sleep sleeptime> cycle
+* A new process B is spawned (by an unrelated process)
+* This is done during the same I<sleep sleeptime> cycle
+* B is owned by the same user
+* B reuses the pid of the A
+
+It is considered unlikely to ever happen due to:
+
+* The longest I<sleep sleeptime> sleeps is 10 ms
+* Re-use of a dead pid rarely happens within a few seconds
 
 
 =head1 Ideas for new design
