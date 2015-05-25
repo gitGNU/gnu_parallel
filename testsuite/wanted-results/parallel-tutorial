@@ -507,28 +507,28 @@ Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
 1
 2
 parallel: This job failed:
-echo 1; exit 1
+echo X; exit X
 parallel: Starting no more jobs. Waiting for 1 jobs to finish.
 parallel: This job failed:
-echo 2; exit 2
+echo X; exit X
   parallel -j2 --halt now,fail=1 echo {}\; exit {} ::: 0 0 1 2 3
 0
 0
 1
 parallel: This job failed:
-echo 1; exit 1
+echo X; exit X
   parallel -j2 --halt soon,fail=20% echo {}\; exit {} ::: 0 1 2 3 4 5 6 7 8 9
 0
 1
 2
 3
 parallel: This job failed:
-echo 1; exit 1
+echo X; exit X
 parallel: This job failed:
-echo 2; exit 2
+echo X; exit X
 parallel: Starting no more jobs. Waiting for 1 jobs to finish.
 parallel: This job failed:
-echo 3; exit 3
+echo X; exit X
   parallel -j2 --halt soon,success=1 echo {}\; exit {} ::: 1 2 3 0 4 5 6
 1
 2
@@ -536,7 +536,7 @@ echo 3; exit 3
 0
 4
 parallel: This job succeeded:
-echo 0; exit 0
+echo X; exit X
 parallel: Starting no more jobs. Waiting for 1 jobs to finish.
   parallel -k --retries 3 'echo tried {} >>/tmp/runs; echo completed {}; exit {}' ::: 1 2 0
   cat /tmp/runs
@@ -733,7 +733,7 @@ _
 
 /bin/bash: my_func2: command not found
   parallel -vv -S $SERVER1 echo ::: bar
-ssh parallel@lo exec perl\ -e\ \\\$ENV\\\{\\\"PARALLEL_PID\\\"\\\}=\\\"000000\\\"\\\;\\\$ENV\\\{\\\"PARALLEL_SEQ\\\"\\\}=\\\"1\\\"\\\;\\\$bashfunc\\\ =\\\ \\\"\\\"\\\;@ARGV=\\\"echo\\\ bar\\\"\\\;\\\$shell=\\\"\\\$ENV\\\{SHELL\\\}\\\"\\\;\\\$tmpdir=\\\"/tmp/parallel-tutorial\\\"\\\;do\\\{\\\$ENV\\\{PARALLEL_TMP\\\}=\\\$tmpdir.\\\"/par\\\".join\\\"\\\",map\\\{\\\(0..9,\\\"a\\\"..\\\"z\\\",\\\"A\\\"..\\\"Z\\\"\\\)\\\[rand\\\(62\\\)\\\]\\\}\\\(1..5\\\)\\\;\\\}while\\\(-e\\\$ENV\\\{PARALLEL_TMP\\\}\\\)\\\;\\\$SIG\\\{CHLD\\\}=sub\\\{\\\$done=1\\\;\\\}\\\;\\\$pid=fork\\\;unless\\\(\\\$pid\\\)\\\{setpgrp\\\;exec\\\$shell,\\\"-c\\\",\\\(\\\$bashfunc.\\\"@ARGV\\\"\\\)\\\;die\\\"exec:\\\$\\\!\\\\n\\\"\\\;\\\}do\\\{\\\$s=\\\$s\\\<1\\\?0.001+\\\$s\\\*1.03:\\\$s\\\;select\\\(undef,undef,undef,\\\$s\\\)\\\;\\\}until\\\(\\\$done\\\|\\\|getppid==1\\\)\\\;kill\\\(SIGHUP,-\\\$\\\{pid\\\}\\\)unless\\\$done\\\;wait\\\;exit\\\(\\\$\\\?\\\&127\\\?128+\\\(\\\$\\\?\\\&127\\\):1+\\\$\\\?\\\>\\\>8\\\);
+ssh parallel@lo exec perl\ -e\ \\\$ENV\\\{\\\"PARALLEL_PID\\\"\\\}\\\=\\\"000000\\\"\\\;\\\$ENV\\\{\\\"PARALLEL_SEQ\\\"\\\}\\\=\\\"1\\\"\\\;\\\$bashfunc\\\ \\\=\\\ \\\"\\\"\\\;@ARGV\\\=\\\"echo\\\ bar\\\"\\\;\\\$shell\\\=\\\"\\\$ENV\\\{SHELL\\\}\\\"\\\;\\\$tmpdir\\\=\\\"/tmp/parallel-tutorial\\\"\\\;do\\\{\\\$ENV\\\{PARALLEL_TMP\\\}\\\=\\\$tmpdir.\\\"/par\\\".join\\\"\\\",map\\\{\\\(0..9,\\\"a\\\"..\\\"z\\\",\\\"A\\\"..\\\"Z\\\"\\\)\\\[rand\\\(62\\\)\\\]\\\}\\\(1..5\\\)\\\;\\\}while\\\(-e\\\$ENV\\\{PARALLEL_TMP\\\}\\\)\\\;\\\$SIG\\\{CHLD\\\}\\\=sub\\\{\\\$done\\\=1\\\;\\\}\\\;\\\$pid\\\=fork\\\;unless\\\(\\\$pid\\\)\\\{setpgrp\\\;exec\\\$shell,\\\"-c\\\",\\\(\\\$bashfunc.\\\"@ARGV\\\"\\\)\\\;die\\\"exec:\\\$\\\!\\\\n\\\"\\\;\\\}do\\\{\\\$s\\\=\\\$s\\\<1\\\?0.001+\\\$s\\\*1.03:\\\$s\\\;select\\\(undef,undef,undef,\\\$s\\\)\\\;\\\}until\\\(\\\$done\\\|\\\|getppid\\\=\\\=1\\\)\\\;kill\\\(SIGHUP,-\\\$\\\{pid\\\}\\\)unless\\\$done\\\;wait\\\;exit\\\(\\\$\\\?\\\&127\\\?128+\\\(\\\$\\\?\\\&127\\\):1+\\\$\\\?\\\>\\\>8\\\);
 bar
   my_func3() {
     echo in my_func $1 > $1.out

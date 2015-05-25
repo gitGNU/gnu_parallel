@@ -45,26 +45,26 @@ seq 1 6 | parallel -k printf '{}.gif\\n' | parallel -j1 -km echo a{}b{.}c{.}
 seq 1 6 | parallel -k printf '{}.gif\\n' | parallel -j1 -kX echo a{}b{.}c{.}
 
 echo '### Test -m with 60000 args'; 
-  seq 1 60000 | perl -pe 's/$/.gif\n/' | 
+  seq 1 60000 | perl -pe 's/$/.gif/' | 
   parallel -j1 -km echo a{}b{.}c{.} | 
   tee >(wc) >(md5sum) >/dev/null; 
   wait
 
 echo '### Test -X with 60000 args'; 
-  seq 1 60000 | perl -pe 's/$/.gif\n/' | 
+  seq 1 60000 | perl -pe 's/$/.gif/' | 
   parallel -j1 -kX echo a{}b{.}c{.} | 
   tee >(wc) >(md5sum) >/dev/null; 
   wait
 
 echo '### Test -X with 60000 args and 5 expansions'
-seq 1 60000 | perl -pe 's/$/.gif\n/' | parallel -j1 -kX echo a{}b{.}c{.}{.}{} | wc -l
-seq 1 60000 | perl -pe 's/$/.gif\n/' | parallel -j1 -kX echo a{}b{.}c{.}{.} | wc -l
-seq 1 60000 | perl -pe 's/$/.gif\n/' | parallel -j1 -kX echo a{}b{.}c{.} | wc -l
-seq 1 60000 | perl -pe 's/$/.gif\n/' | parallel -j1 -kX echo a{}b{.}c | wc -l
-seq 1 60000 | perl -pe 's/$/.gif\n/' | parallel -j1 -kX echo a{}b | wc -l
+seq 1 60000 | perl -pe 's/$/.gif/' | parallel -j1 -kX echo a{}b{.}c{.}{.}{} | wc -l
+seq 1 60000 | perl -pe 's/$/.gif/' | parallel -j1 -kX echo a{}b{.}c{.}{.} | wc -l
+seq 1 60000 | perl -pe 's/$/.gif/' | parallel -j1 -kX echo a{}b{.}c{.} | wc -l
+seq 1 60000 | perl -pe 's/$/.gif/' | parallel -j1 -kX echo a{}b{.}c | wc -l
+seq 1 60000 | perl -pe 's/$/.gif/' | parallel -j1 -kX echo a{}b | wc -l
 echo '### Test {.} does not repeat more than {}'
-seq 1 15 | perl -pe 's/$/.gif\n/' | parallel -j1 -s 80 -kX echo a{}b{.}c{.}
-seq 1 15 | perl -pe 's/$/.gif\n/' | parallel -j1 -s 80 -km echo a{}b{.}c{.}
+seq 1 15 | perl -pe 's/$/.gif/'   | parallel -j1 -s 80 -kX echo a{}b{.}c{.}
+seq 1 15 | perl -pe 's/$/.gif/'   | parallel -j1 -s 80 -km echo a{}b{.}c{.}
 seq 1 15 | perl -pe 's/$/.gif/'   | parallel -j1 -s 80 -kX echo a{}b{.}c{.}
 seq 1 15 | perl -pe 's/$/.gif/'   | parallel -j1 -s 80 -km echo a{}b{.}c{.}
 

@@ -969,7 +969,8 @@ sub parse_options {
     }
     if(defined $opt::nonall) {
 	# Append a dummy empty argument
-	push @ARGV, $Global::arg_sep, "";
+	# \0 => nothing (not the empty string)
+	push @ARGV, $Global::arg_sep, "\0";
     }
     if(defined $opt::tty) {
         # Defaults for --tty: -j1 -u
@@ -1266,7 +1267,9 @@ sub parse_semaphore {
 	    ::wait_and_exit(255);
 	}
 	@opt::a = ("/dev/null");
-        push(@Global::unget_argv, [Arg->new("")]);
+	# Append a dummy empty argument
+	# \0 => nothing (not the empty string)
+        push(@Global::unget_argv, [Arg->new("\0")]);
         $Semaphore::timeout = $opt::semaphoretimeout || 0;
         if(defined $opt::semaphorename) {
             $Semaphore::name = $opt::semaphorename;
@@ -1639,43 +1642,95 @@ sub shell_quote {
     #   @strings = strings to be quoted
     # Output:
     #   @shell_quoted_strings = string quoted with \ as needed by the shell
-    my @strings = (@_);
-    for my $a (@strings) {
-        $a =~ s/([\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\>\<\~\|\; \"\!\$\&\'\202-\377])/\\$1/g;
-        $a =~ s/[\n]/'\n'/g; # filenames with '\n' is quoted using \'
-    }
-    return wantarray ? @strings : "@strings";
-}
-
-sub shell_quote_empty {
-    # Inputs:
-    #   @strings = strings to be quoted
-    # Returns:
-    #   @quoted_strings = empty strings quoted as ''.
-    my @strings = shell_quote(@_);
-    for my $a (@strings) {
-	if($a eq "") {
-	    $a = "''";
-	}
-    }
-    return wantarray ? @strings : "@strings";
+    return wantarray ? 
+	(map { shell_quote_scalar($_) } @_)
+	: (join" ",map { shell_quote_scalar($_) } @_);
 }
 
 sub shell_quote_scalar {
-    # Quote the string so shell will not expand any special chars
+    # Quote the string so the shell will not expand any special chars
     # Inputs:
     #   $string = string to be quoted
     # Returns:
-    #   $shell_quoted = string quoted with \ as needed by the shell
-    my $a = $_[0];
-    if(defined $a) {
-	# Solaris sh wants ^ quoted.
-	# $a =~ s/([\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\>\<\~\|\; \"\!\$\&\'\202-\377])/\\$1/g;
-	# This is 1% faster than the above
-	$a =~ s/[\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\>\<\~\|\; \"\!\$\&\'\202-\377]/\\$&/go;
-	$a =~ s/[\n]/'\n'/go; # filenames with '\n' is quoted using \'
+    #   $shell_quoted = string quoted as needed by the shell
+
+    sub shell_quote_scalar_rc {
+	# Quote for the rc-shell
+	my $a = $_[0];
+	if(defined $a) {
+	    if(($a =~ s/'/''/g)
+	       +
+	       ($a =~ s/[\n\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\<\=\>\~\|\; \"\!\$\&\202-\377]/'$&'/go)) {
+		# A string was replaced
+		# No need to test for "" or \0
+	    } elsif($a eq "") {
+		$a = "''";
+	    } elsif($a eq "\0") {
+		$a = "";
+	    }
+	}
+	return $a;
     }
-    return $a;
+
+    sub shell_quote_scalar_csh {
+	# Quote for (t)csh
+	my $a = $_[0];
+	if(defined $a) {
+	    # $a =~ s/([\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\>\<\~\|\; \"\!\$\&\'\202-\377])/\\$1/g;
+	    # This is 1% faster than the above
+	    if(($a =~ s/[\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\<\=\>\~\|\; \"\!\$\&\'\202-\377]/\\$&/go)
+	       +
+	       # quote newline in csh as \\\n
+	       ($a =~ s/[\n]/"\\\n"/go)) {
+		# A string was replaced
+		# No need to test for "" or \0
+	    } elsif($a eq "") {
+		$a = "''";
+	    } elsif($a eq "\0") {
+		$a = "";
+	    }
+	}
+	return $a;
+    }
+
+    sub shell_quote_scalar_default {
+	# Quote for other shells
+	my $a = $_[0];
+	if(defined $a) {
+	    # zsh wants '=' quoted
+	    # Solaris sh wants ^ quoted.
+	    # $a =~ s/([\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\>\<\~\|\; \"\!\$\&\'\202-\377])/\\$1/g;
+	    # This is 1% faster than the above
+	    if(($a =~ s/[\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\<\=\>\~\|\; \"\!\$\&\'\202-\377]/\\$&/go)
+	       +
+	       # quote newline as '\n'
+	       ($a =~ s/[\n]/'\n'/go)) {
+		# A string was replaced
+		# No need to test for "" or \0
+	    } elsif($a eq "") {
+		$a = "''";
+	    } elsif($a eq "\0") {
+		$a = "";
+	    }
+	}
+	return $a;
+    }
+
+    # Speed optimization: Choose the correct shell_quote_scalar_*
+    # and call that directly from now on
+    no warnings 'redefine';
+    if($Global::shell =~ m:(^|/)t?csh$:) {
+	# (t)csh
+	*shell_quote_scalar = \&shell_quote_scalar_csh;
+    } elsif($Global::shell =~ m:(^|/)rc$:) {
+	# rc-shell
+	*shell_quote_scalar = \&shell_quote_scalar_rc;
+    } else {
+	# other shells
+	*shell_quote_scalar = \&shell_quote_scalar_default;
+    }
+    # The sub is now redefined. Call it
+    return shell_quote_scalar(@_);
 }
 
 sub shell_quote_file {
@@ -2933,7 +2988,7 @@ sub onall {
     }
     my ($input_source_fh_ref,@command) = @_;
     if($Global::quoting) {
-       @command = shell_quote_empty(@command);
+       @command = shell_quote(@command);
     }
 
     # Copy all @input_source_fh (-a and :::) into tempfiles
@@ -3665,9 +3720,9 @@ sub which {
 	    # All shells known to mankind
 	    #
 	    # ash bash csh dash fdsh fish fizsh ksh ksh93 mksh pdksh
-	    # posh rbash rush rzsh sash sh static-sh tcsh yash zsh
+	    # posh rbash rc rush rzsh sash sh static-sh tcsh yash zsh
 	    my @shells = (qw(ash bash csh dash fdsh fish fizsh ksh
-                             ksh93 mksh pdksh posh rbash rush rzsh
+                             ksh93 mksh pdksh posh rbash rc rush rzsh
                              sash sh static-sh tcsh yash zsh -sh -csh),
 			  '-sh (sh)' # sh on FreeBSD
 		);
@@ -8638,7 +8693,8 @@ sub get {
     if(defined $Global::max_number_of_args
        and $Global::max_number_of_args == 0) {
 	::debug("run", "Read 1 but return 0 args\n");
-	return [Arg->new("")];
+	# \0 => nothing (not the empty string)
+	return [Arg->new("\0")];
     } else {
 	return $ret;
     }
@@ -8979,6 +9035,14 @@ sub new {
 	'orig' => $orig,
 	'hostgroups' => \@hostgroups,
     }, ref($class) || $class;
+}
+
+sub Q {
+    # Q alias for ::shell_quote_scalar
+    # Run shell_quote_scalar once to set the reference to the sub
+    my @a = ::shell_quote_scalar(@_);
+    *Q = \&::shell_quote_scalar;
+    return @a;
 }
 
 {

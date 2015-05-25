@@ -1052,13 +1052,13 @@ echo '###  echo this plus that < space.xi'
 stdout xargs echo this plus that < space.xi
 this plus that
 stdout parallel -k echo this plus that < space.xi
-this plus that
+this plus that 
 this plus that  	
 echo '###  -IARG echo from ARG to xARGy < space.xi'
 ###  -IARG echo from ARG to xARGy < space.xi
 stdout xargs -IARG echo from ARG to xARGy < space.xi
 stdout parallel -k -IARG echo from ARG to xARGy < space.xi
-from to xy
+from  to xy
 from  	 to x 	y
 echo '###  printf "\[%s\]\n" < verticaltabs.xi'
 ###  printf "\[%s\]\n" < verticaltabs.xi
@@ -1340,9 +1340,9 @@ stdout xargs -t echo this plus that < space.xi
 echo this plus that 
 this plus that
 stdout parallel -k -t echo this plus that < space.xi
-echo this plus that 
+echo this plus that ''
 echo this plus that \ \\\	\
-this plus that
+this plus that 
 this plus that  	
 echo '###  -n1 printf "@%s@\n" < empty.xi'
 ###  -n1 printf "@%s@\n" < empty.xi

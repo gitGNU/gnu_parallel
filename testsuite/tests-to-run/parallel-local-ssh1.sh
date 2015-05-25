@@ -14,13 +14,13 @@ echo '### Can csh propagate a variable containing \n';
 
 echo '### bug #41805: Idea: propagate --env for parallel --number-of-cores'
   echo '** test_zsh'
-  FOO=test_zsh parallel --env FOO,HOME -S zsh@lo env ::: "" |sort|egrep 'FOO|^HOME'
+  FOO=test_zsh parallel --env FOO,HOME -S zsh@lo -N0 env ::: "" |sort|egrep 'FOO|^HOME'
   echo '** test_zsh_filter'
-  FOO=test_zsh_filter parallel --filter-hosts --env FOO,HOME -S zsh@lo env ::: "" |sort|egrep 'FOO|^HOME'
+  FOO=test_zsh_filter parallel --filter-hosts --env FOO,HOME -S zsh@lo -N0 env ::: "" |sort|egrep 'FOO|^HOME'
   echo '** test_csh'
-  FOO=test_csh parallel --env FOO,HOME -S csh@lo env ::: "" |sort|egrep 'FOO|^HOME'
+  FOO=test_csh parallel --env FOO,HOME -S csh@lo -N0 env ::: "" |sort|egrep 'FOO|^HOME'
   echo '** test_csh_filter'
-  FOO=test_csh_filter parallel --filter-hosts --env FOO,HOME -S csh@lo env ::: "" |sort|egrep 'FOO|^HOME'
+  FOO=test_csh_filter parallel --filter-hosts --env FOO,HOME -S csh@lo -N0 env ::: "" |sort|egrep 'FOO|^HOME'
   echo '** bug #41805 done'
 
 echo '### Deal with long command lines on remote servers'

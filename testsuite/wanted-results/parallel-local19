@@ -105,38 +105,36 @@ seq 1 6 | parallel -k printf '{}.gif\\n' | parallel -j1 -km echo a{}b{.}c{.}
 a1.gif 2.gif 3.gif 4.gif 5.gif 6.gifb1 2 3 4 5 6c1 2 3 4 5 6
 seq 1 6 | parallel -k printf '{}.gif\\n' | parallel -j1 -kX echo a{}b{.}c{.}
 a1.gifb1c1 a2.gifb2c2 a3.gifb3c3 a4.gifb4c4 a5.gifb5c5 a6.gifb6c6
-echo '### Test -m with 60000 args';   seq 1 60000 | perl -pe 's/$/.gif\n/' |   parallel -j1 -km echo a{}b{.}c{.} |   tee >(wc) >(md5sum) >/dev/null;   wait
+echo '### Test -m with 60000 args';   seq 1 60000 | perl -pe 's/$/.gif/' |   parallel -j1 -km echo a{}b{.}c{.} |   tee >(wc) >(md5sum) >/dev/null;   wait
 ### Test -m with 60000 args
-cded9cd15e00550b08e57afc0172caa8  -
-     12  180000 1286718
-echo '### Test -X with 60000 args';   seq 1 60000 | perl -pe 's/$/.gif\n/' |   parallel -j1 -kX echo a{}b{.}c{.} |   tee >(wc) >(md5sum) >/dev/null;   wait
+565b18712ac24f5c46f6e64cf4548733  -
+     10  179980 1286692
+echo '### Test -X with 60000 args';   seq 1 60000 | perl -pe 's/$/.gif/' |   parallel -j1 -kX echo a{}b{.}c{.} |   tee >(wc) >(md5sum) >/dev/null;   wait
 ### Test -X with 60000 args
-12de4813eda45d364a51bef697eee299  -
-     13  120000 1586682
+f09f466888e1c737eb581f41cb0087ba  -
+     11   60000 1346682
 echo '### Test -X with 60000 args and 5 expansions'
 ### Test -X with 60000 args and 5 expansions
-seq 1 60000 | perl -pe 's/$/.gif\n/' | parallel -j1 -kX echo a{}b{.}c{.}{.}{} | wc -l
-19
-seq 1 60000 | perl -pe 's/$/.gif\n/' | parallel -j1 -kX echo a{}b{.}c{.}{.} | wc -l
-15
-seq 1 60000 | perl -pe 's/$/.gif\n/' | parallel -j1 -kX echo a{}b{.}c{.} | wc -l
+seq 1 60000 | perl -pe 's/$/.gif/' | parallel -j1 -kX echo a{}b{.}c{.}{.}{} | wc -l
+17
+seq 1 60000 | perl -pe 's/$/.gif/' | parallel -j1 -kX echo a{}b{.}c{.}{.} | wc -l
 13
-seq 1 60000 | perl -pe 's/$/.gif\n/' | parallel -j1 -kX echo a{}b{.}c | wc -l
-10
-seq 1 60000 | perl -pe 's/$/.gif\n/' | parallel -j1 -kX echo a{}b | wc -l
-7
+seq 1 60000 | perl -pe 's/$/.gif/' | parallel -j1 -kX echo a{}b{.}c{.} | wc -l
+11
+seq 1 60000 | perl -pe 's/$/.gif/' | parallel -j1 -kX echo a{}b{.}c | wc -l
+9
+seq 1 60000 | perl -pe 's/$/.gif/' | parallel -j1 -kX echo a{}b | wc -l
+6
 echo '### Test {.} does not repeat more than {}'
 ### Test {.} does not repeat more than {}
-seq 1 15 | perl -pe 's/$/.gif\n/' | parallel -j1 -s 80 -kX echo a{}b{.}c{.}
-a1.gifb1c1 abc a2.gifb2c2 abc a3.gifb3c3 abc a4.gifb4c4 abc a5.gifb5c5 abc
-a6.gifb6c6 abc a7.gifb7c7 abc a8.gifb8c8 abc a9.gifb9c9 abc a10.gifb10c10
-abc a11.gifb11c11 abc a12.gifb12c12 abc a13.gifb13c13 abc a14.gifb14c14
-abc a15.gifb15c15 abc
-seq 1 15 | perl -pe 's/$/.gif\n/' | parallel -j1 -s 80 -km echo a{}b{.}c{.}
-a1.gif 2.gif 3.gif 4.gif 5.gif b1 2 3 4 5 c1 2 3 4 5
-a6.gif 7.gif 8.gif 9.gif 10.gif b6 7 8 9 10 c6 7 8 9 10
-a11.gif 12.gif 13.gif 14.gif b11 12 13 14 c11 12 13 14
-a15.gif b15 c15
+seq 1 15 | perl -pe 's/$/.gif/'   | parallel -j1 -s 80 -kX echo a{}b{.}c{.}
+a1.gifb1c1 a2.gifb2c2 a3.gifb3c3 a4.gifb4c4 a5.gifb5c5 a6.gifb6c6
+a7.gifb7c7 a8.gifb8c8 a9.gifb9c9 a10.gifb10c10 a11.gifb11c11 a12.gifb12c12
+a13.gifb13c13 a14.gifb14c14 a15.gifb15c15
+seq 1 15 | perl -pe 's/$/.gif/'   | parallel -j1 -s 80 -km echo a{}b{.}c{.}
+a1.gif 2.gif 3.gif 4.gif 5.gif 6.gif 7.gifb1 2 3 4 5 6 7c1 2 3 4 5 6 7
+a8.gif 9.gif 10.gif 11.gif 12.gif 13.gifb8 9 10 11 12 13c8 9 10 11 12 13
+a14.gif 15.gifb14 15c14 15
 seq 1 15 | perl -pe 's/$/.gif/'   | parallel -j1 -s 80 -kX echo a{}b{.}c{.}
 a1.gifb1c1 a2.gifb2c2 a3.gifb3c3 a4.gifb4c4 a5.gifb5c5 a6.gifb6c6
 a7.gifb7c7 a8.gifb8c8 a9.gifb9c9 a10.gifb10c10 a11.gifb11c11 a12.gifb12c12
