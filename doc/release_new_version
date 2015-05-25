@@ -213,6 +213,8 @@ Subject: GNU Parallel 20150622 ('<<>>') released
 
 GNU Parallel 20150622 ('<<>>') has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
+No new functionality was introduced so this is a good candidate for a stable release.
+
 Haiku of the month:
 
   Programs very slow.

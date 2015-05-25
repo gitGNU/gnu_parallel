@@ -110,7 +110,7 @@ if($opt::nonall or $opt::onall) {
 $Global::JobQueue = JobQueue->new(
     \@command,\@input_source_fh,$Global::ContextReplace,$number_of_args,\@Global::ret_files);
 
-if($opt::eta or $opt::bar or $opt::shuf or $Global::halt_pct) {
+if($opt::eta or $opt::bar or $opt::shuf) {
     # Count the number of jobs or shuffle all jobs
     # before starting any
     $Global::JobQueue->total_jobs();
@@ -161,18 +161,10 @@ for(keys %Global::sshmaster) {
     kill "TERM", $_;
 }
 ::debug("init", "Halt\n");
-if($opt::halt and $Global::halt_when ne "never") {
-    if(not defined $Global::halt_exitstatus) {
-	if($Global::halt_pct) {
-	    $Global::halt_exitstatus =
-		::ceil($Global::total_failed / $Global::total_started * 100);
-	} elsif($Global::halt_count) {
-	    $Global::halt_exitstatus = ::min($Global::total_failed,101);
-	}
-    }
+if($opt::halt) {
     wait_and_exit($Global::halt_exitstatus);
 } else {
-    wait_and_exit(min(undef_as_zero($Global::exitstatus),101));
+    wait_and_exit(min(undef_as_zero($Global::exitstatus),254));
 }
 
 sub __PIPE_MODE__ {}
@@ -184,10 +176,6 @@ sub pipe_part_files {
     #   @commands that will cat_partial each part
     my ($file) = @_;
     my $buf = "";
-    if(not -f $file) {
-	::error("$file is not a seekable file.");
-	::wait_and_exit(255);
-    }
     my $header = find_header(\$buf,open_or_exit($file));
     # find positions
     my @pos = find_split_positions($file,$opt::blocksize,length $header);
@@ -397,7 +385,7 @@ sub spreadstdin {
 	      my $old_blocksize = $blocksize;
 	      $blocksize = ::min(ceil($blocksize * 1.3 + 1), $two_gb);
 	      ::warning("A record was longer than $old_blocksize. " .
-			"Increasing to --blocksize $blocksize.");
+			"Increasing to --blocksize $blocksize\n");
 	  }
       }
     }
@@ -704,14 +692,13 @@ sub options_hash {
 	 "results|result|res=s" => \$opt::results,
 	 "resume" => \$opt::resume,
 	 "resume-failed|resumefailed" => \$opt::resume_failed,
-	 "retry-failed|retryfailed" => \$opt::retry_failed,
 	 "silent" => \$opt::silent,
 	 "keep-order|keeporder|k" => \$opt::keeporder,
 	 "no-keep-order|nokeeporder|nok|no-k" => \$opt::nokeeporder,
 	 "group" => \$opt::group,
 	 "g" => \$opt::retired,
 	 "ungroup|u" => \$opt::ungroup,
-	 "linebuffer|linebuffered|line-buffer|line-buffered|lb" => \$opt::linebuffer,
+	 "linebuffer|linebuffered|line-buffer|line-buffered" => \$opt::linebuffer,
 	 "tmux" => \$opt::tmux,
 	 "null|0" => \$opt::0,
 	 "quote|q" => \$opt::q,
@@ -746,7 +733,6 @@ sub options_hash {
 	 "sshlogin|S=s" => \@opt::sshlogin,
 	 "sshloginfile|slf=s" => \@opt::sshloginfile,
 	 "controlmaster|M" => \$opt::controlmaster,
-	 "ssh=s" => \$opt::ssh,
 	 "return=s" => \@opt::return,
 	 "trc=s" => \@opt::trc,
 	 "transfer" => \$opt::transfer,
@@ -934,17 +920,11 @@ sub parse_options {
     }
     $opt::memfree = multiply_binary_prefix($opt::memfree);
     if(defined $opt::controlmaster) { $opt::noctrlc = 1; }
+    if(defined $opt::halt and
+       $opt::halt =~ /%/) { $opt::halt /= 100; }
     if(defined $opt::timeout and $opt::timeout !~ /^\d+(\.\d+)?%?$/) {
-	::error("--timeout must be seconds or percentage.");
+	::error("--timeout must be seconds or percentage\n");
 	wait_and_exit(255);
-    }
-    if(defined $opt::fifo and $opt::cat) {
-	::error("--fifo cannot be combined with --cat.");
-	::wait_and_exit(255);
-    }
-    if((defined $opt::fifo or defined $opt::cat)
-       and not $opt::pipepart) {
-	$opt::pipe = 1;
     }
     if(defined $opt::minversion) {
 	print $Global::version,"\n";
@@ -1028,8 +1008,8 @@ sub parse_options {
     if(defined $opt::pipepart and
        (defined $opt::L or defined $opt::max_lines
 	or defined $opt::max_replace_args)) {
-	::error("--pipepart is incompatible with --max-replace-args, ".
-		"--max-lines, and -L.");
+	::error("--pipepart is incompatible with --max-replace-args, ",
+		"--max-lines, and -L.\n");
 	wait_and_exit(255);
     }
     if(grep /^$Global::arg_sep$|^$Global::arg_file_sep$/o, @ARGV) {
@@ -1045,19 +1025,18 @@ sub parse_options {
         $opt::progress = $opt::bar;
     }
     if(defined $opt::retired) {
-	    ::error("-g has been retired. Use --group.",
-		    "-B has been retired. Use --bf.",
-		    "-T has been retired. Use --tty.",
-		    "-U has been retired. Use --er.",
-		    "-W has been retired. Use --wd.",
-		    "-Y has been retired. Use --shebang.",
-		    "-H has been retired. Use --halt.",
-		    "--tollef has been retired. Use -u -q --arg-sep -- and --load for -l.");
+	    ::error("-g has been retired. Use --group.\n");
+	    ::error("-B has been retired. Use --bf.\n");
+	    ::error("-T has been retired. Use --tty.\n");
+	    ::error("-U has been retired. Use --er.\n");
+	    ::error("-W has been retired. Use --wd.\n");
+	    ::error("-Y has been retired. Use --shebang.\n");
+	    ::error("-H has been retired. Use --halt.\n");
+	    ::error("--tollef has been retired. Use -u -q --arg-sep -- and --load for -l.\n");
             ::wait_and_exit(255);
     }
     citation_notice();
 
-    parse_halt();
     parse_sshlogin();
     parse_env_var();
 
@@ -1065,7 +1044,7 @@ sub parse_options {
         # As we do not know the max line length on the remote machine
         # long commands generated by xargs may fail
         # If $opt::max_replace_args is set, it is probably safe
-        ::warning("Using -X or -m with --sshlogin may fail.");
+        ::warning("Using -X or -m with --sshlogin may fail.\n");
     }
 
     if(not defined $opt::jobs) {
@@ -1116,6 +1095,7 @@ sub init_globals {
     $Global::stderr_verbose = 0;
     $Global::default_simultaneous_sshlogins = 9;
     $Global::exitstatus = 0;
+    $Global::halt_exitstatus = 0;
     $Global::arg_sep = ":::";
     $Global::arg_file_sep = "::::";
     $Global::trim = 'n';
@@ -1124,58 +1104,8 @@ sub init_globals {
     $ENV{'TMPDIR'} ||= "/tmp";
     if(not $ENV{HOME}) {
 	# $ENV{HOME} is sometimes not set if called from PHP
-	::warning("\$HOME not set. Using /tmp.");
+	::warning("\$HOME not set. Using /tmp\n");
 	$ENV{HOME} = "/tmp";
-    }
-}
-
-sub parse_halt {
-    # $opt::halt flavours
-    # Uses:
-    #   $opt::halt
-    #   $Global::halt_when
-    #   $Global::halt_fail
-    #   $Global::halt_success
-    #   $Global::halt_pct
-    #   $Global::halt_count
-    if(defined $opt::halt) {
-	my %halt_expansion = (
-	    "0" => "never",
-	    "1" => "soon,fail=1",
-	    "2" => "now,fail=1",
-	    "-1" => "soon,success=1",
-	    "-2" => "now,success=1",
-	);
-	# Expand -2,-1,0,1,2 into long form
-	$opt::halt = $halt_expansion{$opt::halt} || $opt::halt;
-	# --halt 5% == --halt soon,fail=5%
-	$opt::halt =~ s/^(\d+)%$/soon,fail=$1%/;
-	# Split: soon,fail=5%
-	my ($when,$fail_success,$pct_count) = split /[,=]/, $opt::halt;
-	if(not grep { $when eq $_ } qw(never soon now)) {
-	    ::error("--halt must have 'never', 'soon', or 'now'.");
-	    ::wait_and_exit(255);
-	}
-	$Global::halt_when = $when;
-	if($when ne "never") {
-	    if($fail_success eq "fail") {
-		$Global::halt_fail = 1;
-	    } elsif($fail_success eq "success") {
-		$Global::halt_success = 1;
-	    } else {
-		::error("--halt $when must be followed by ,success or ,fail.");
-		::wait_and_exit(255);
-	    }
-	    if($pct_count =~ /^(\d+)%$/) {
-		$Global::halt_pct = $1/100;
-	    } elsif($pct_count =~ /^(\d+)$/) {
-		$Global::halt_count = $1;
-	    } else {
-		::error("--halt $when,$fail_success ".
-			"must be followed by ,number or ,percent%.");
-		::wait_and_exit(255);
-	    }
-	}
     }
 }
 
@@ -1285,7 +1215,7 @@ sub parse_semaphore {
         }
 	if($Global::interactive and $opt::bg) {
 	    ::error("Jobs running in the ".
-		    "background cannot be interactive.");
+		    "background cannot be interactive.\n");
             ::wait_and_exit(255);
 	}
     }
@@ -1298,7 +1228,7 @@ sub record_env {
     if(open(my $vars_fh, ">", $ignore_filename)) {
 	print $vars_fh map { $_,"\n" } keys %ENV;
     } else {
-	::error("Cannot write to $ignore_filename.");
+	::error("Cannot write to $ignore_filename.\n");
 	::wait_and_exit(255);
     }
 }
@@ -1340,63 +1270,30 @@ sub open_joblog {
     if(($opt::resume or $opt::resume_failed)
        and
        not ($opt::joblog or $opt::results)) {
-        ::error("--resume and --resume-failed require --joblog or --results.");
+        ::error("--resume and --resume-failed require --joblog or --results.\n");
 	::wait_and_exit(255);
     }
     if($opt::joblog) {
-	if($opt::resume || $opt::resume_failed || $opt::retry_failed) {
+	if($opt::resume || $opt::resume_failed) {
 	    if(open(my $joblog_fh, "<", $opt::joblog)) {
 		# Read the joblog
 		$append = <$joblog_fh>; # If there is a header: Open as append later
 		my $joblog_regexp;
-		if($opt::retry_failed) {
+		if($opt::resume_failed) {
 		    # Make a regexp that only matches commands with exit+signal=0
 		    # 4 host 1360490623.067 3.445 1023 1222 0 0 command
 		    $joblog_regexp='^(\d+)(?:\t[^\t]+){5}\t0\t0\t';
-		    my @group;
-		    while(<$joblog_fh>) {
-			if(/$joblog_regexp/o) {
-			    # This is 30% faster than set_job_already_run($1);
-			    vec($Global::job_already_run,($1||0),1) = 1;
-			    $group[$1-1] = "true";
-			} elsif(/(\d+)\s+\S+(\s+[-0-9.]+){6}\s+(.*)$/) {
-			    $group[$1-1] = $3
-			} else {
-			    chomp;
-			    ::error("Format of '$opt::joblog' is wrong: $_");
-			    ::wait_and_exit(255);
-			}
-		    }
-		    if(@group) {
-			my ($outfh,$name) = ::tmpfile(SUFFIX => ".arg");
-			unlink($name);
-			# Put args into argfile
-			print $outfh map { $_,$/ } @group;
-			seek $outfh, 0, 0;
-			exit_if_disk_full();
-			# Set filehandle to -a
-			@opt::a = ($outfh);
-		    }
-		    # Remove $command (so -a is run)
-		    @ARGV = ();
+		} else {
+		    # Just match the job number
+		    $joblog_regexp='^(\d+)';
 		}
-		if($opt::resume || $opt::resume_failed) {
-		    if($opt::resume_failed) {
-			# Make a regexp that only matches commands with exit+signal=0
-			# 4 host 1360490623.067 3.445 1023 1222 0 0 command
-			$joblog_regexp='^(\d+)(?:\t[^\t]+){5}\t0\t0\t';
-		    } else {
-			# Just match the job number
-			$joblog_regexp='^(\d+)';
-		    }
-		    while(<$joblog_fh>) {
-			if(/$joblog_regexp/o) {
-			    # This is 30% faster than set_job_already_run($1);
-			    vec($Global::job_already_run,($1||0),1) = 1;
-			} elsif(not /\d+\s+[^\s]+\s+([-0-9.]+\s+){6}/) {
-			    ::error("Format of '$opt::joblog' is wrong: $_");
-			    ::wait_and_exit(255);
-			}
+		while(<$joblog_fh>) {
+		    if(/$joblog_regexp/o) {
+			# This is 30% faster than set_job_already_run($1);
+			vec($Global::job_already_run,($1||0),1) = 1;
+		    } elsif(not /\d+\s+[^\s]+\s+([-0-9.]+\s+){6}/) {
+			::error("Format of '$opt::joblog' is wrong: $_");
+			::wait_and_exit(255);
 		    }
 		}
 		close $joblog_fh;
@@ -1405,7 +1302,7 @@ sub open_joblog {
 	if($append) {
 	    # Append to joblog
 	    if(not open($Global::joblog, ">>", $opt::joblog)) {
-		::error("Cannot append to --joblog $opt::joblog.");
+		::error("Cannot append to --joblog $opt::joblog.\n");
 		::wait_and_exit(255);
 	    }
 	} else {
@@ -1414,7 +1311,7 @@ sub open_joblog {
 		$Global::joblog = $Global::fd{1};
 	    } elsif(not open($Global::joblog, ">", $opt::joblog)) {
 		# Overwrite the joblog
-		::error("Cannot write to --joblog $opt::joblog.");
+		::error("Cannot write to --joblog $opt::joblog.\n");
 		::wait_and_exit(255);
 	    }
 	    print $Global::joblog
@@ -1536,7 +1433,7 @@ sub read_options {
 		if(grep /^$profile$/, @config_profiles) {
 		    # config file is not required to exist
 		} else {
-		    ::error("$profile not readable.");
+		    ::error("$profile not readable.\n");
 		    wait_and_exit(255);
 		}
 	    }
@@ -1862,7 +1759,7 @@ sub open_or_exit {
     }
     my $fh = gensym;
     if(not open($fh, "<", $file)) {
-        ::error("Cannot open input file `$file': No such file or directory.");
+        ::error("Cannot open input file `$file': No such file or directory.\n");
         wait_and_exit(255);
     }
     return $fh;
@@ -1900,7 +1797,6 @@ sub init_run_jobs {
     # Returns: N/A
     $Global::total_running = 0;
     $Global::total_started = 0;
-    $Global::total_completed = 0;
     $Global::tty_taken = 0;
     $SIG{USR1} = \&list_running_jobs;
     $SIG{USR2} = \&toggle_progress;
@@ -2115,15 +2011,15 @@ sub init_run_jobs {
 		    # Count down the number of jobs to run for this SSHLogin.
 		    my $max = $sshlogin->max_jobs_running();
 		    if($max > 1) { $max--; } else {
-			::error("No more processes: cannot run a single job. Something is wrong.");
+			::error("No more processes: cannot run a single job. Something is wrong.\n");
 			::wait_and_exit(255);
 		    }
 		    $sshlogin->set_max_jobs_running($max);
 		    # Sleep up to 300 ms to give other processes time to die
 		    ::usleep(rand()*300);
-		    ::warning("No more processes: ".
-			      "Decreasing number of running jobs to $max.",
-			      "Raising ulimit -u or /etc/security/limits.conf may help.");
+		    ::warning("No more processes: ",
+			      "Decreasing number of running jobs to $max. ",
+			      "Raising ulimit -u or /etc/security/limits.conf may help.\n");
 		    return 0;
 		}
 	    }
@@ -2131,7 +2027,7 @@ sub init_run_jobs {
 	    # No more file handles
 	    $no_more_file_handles_warned++ or
 		::warning("No more file handles. ",
-			  "Raising ulimit -n or /etc/security/limits.conf may help.");
+			  "Raising ulimit -n or /etc/security/limits.conf may help.\n");
 	    return 0;
 	}
     }
@@ -2200,7 +2096,7 @@ sub drain_job_queue {
 	    # These jobs may not be started:
 	    # * because there the --filter-hosts has removed all
 	    if(not %Global::host) {
-		::error("There are no hosts left to run on.");
+		::error("There are no hosts left to run on.\n");
 		::wait_and_exit(255);
 	    }
 	    # * because of loadavg
@@ -2208,7 +2104,7 @@ sub drain_job_queue {
             start_more_jobs();
 	    $sleep = ::reap_usleep($sleep);
 	    if($Global::max_jobs_running == 0) {
-		::warning("There are no job slots available. Increase --jobs.");
+		::warning("There are no job slots available. Increase --jobs.\n");
 	    }
         }
     } while ($Global::total_running > 0
@@ -2392,7 +2288,8 @@ sub progress {
 	#   $avgtime = averaged time
 	#   $eta = smoothed eta
 	$total ||= $Global::JobQueue->total_jobs();
-	my $completed = $Global::total_completed;
+	my $completed = 0;
+        for(values %Global::host) { $completed += $_->jobs_completed() }
 	my $left = $total - $completed;
 	if(not $completed) {
 	    return($total, $completed, $left, 0, 0, 0);
@@ -2577,7 +2474,7 @@ sub expand_slf_shorthand {
     } elsif(not -r $file) {
 	if(not -r $ENV{'HOME'}."/.parallel/".$file) {
 		# Try prepending ~/.parallel
-		::error("Cannot open $file.");
+		::error("Cannot open $file.\n");
 		::wait_and_exit(255);
 	} else {
 	    $file = $ENV{'HOME'}."/.parallel/".$file;
@@ -2603,7 +2500,7 @@ sub read_sshloginfile {
     } else {
 	if(not open($in_fh, "<", $file)) {
 	    # Try the filename
-	    ::error("Cannot open $file.");
+	    ::error("Cannot open $file.\n");
 	    ::wait_and_exit(255);
 	}
     }
@@ -2691,15 +2588,15 @@ sub parse_sshlogin {
         if(not remote_hosts()) {
             # There are no remote hosts
             if(@opt::trc) {
-		::warning("--trc ignored as there are no remote --sshlogin.");
+		::warning("--trc ignored as there are no remote --sshlogin.\n");
             } elsif (defined $opt::transfer) {
-		::warning("--transfer ignored as there are no remote --sshlogin.");
+		::warning("--transfer ignored as there are no remote --sshlogin.\n");
             } elsif (@opt::return) {
-                ::warning("--return ignored as there are no remote --sshlogin.");
+                ::warning("--return ignored as there are no remote --sshlogin.\n");
             } elsif (defined $opt::cleanup) {
-		::warning("--cleanup ignored as there are no remote --sshlogin.");
+		::warning("--cleanup ignored as there are no remote --sshlogin.\n");
             } elsif (@opt::basefile) {
-                ::warning("--basefile ignored as there are no remote --sshlogin.");
+                ::warning("--basefile ignored as there are no remote --sshlogin.\n");
             }
         }
     }
@@ -2728,7 +2625,7 @@ sub setup_basefile {
       if($sshlogin->string() eq ":") { next }
       for my $file (@opt::basefile) {
 	if($file !~ m:^/: and $opt::workdir eq "...") {
-	  ::error("Work dir '...' will not work with relative basefiles.");
+	  ::error("Work dir '...' will not work with relative basefiles.\n");
 	  ::wait_and_exit(255);
 	}
 	$workdir ||= Job->new("")->workdir();
@@ -2773,7 +2670,7 @@ sub filter_hosts {
 	    parse_host_filtering(parallelized_host_filtering());
 
     delete @Global::host{@$down_hosts_ref};
-    @$down_hosts_ref and ::warning("Removed @$down_hosts_ref.");
+    @$down_hosts_ref and ::warning("Removed @$down_hosts_ref\n");
 
     $Global::minimal_command_line_length = 8_000_000;
     while (my ($sshlogin, $obj) = each %Global::host) {
@@ -2838,7 +2735,7 @@ sub parse_host_filtering {
 		# signal == 127: parallel not installed remote
 		# Set ncpus and ncores = 1
 		::warning("Could not figure out ",
-			  "number of cpus on $host. Using 1.");
+			  "number of cpus on $host. Using 1.\n");
 		$ncores{$host} = 1;
 		$ncpus{$host} = 1;
 		$maxlen{$host} = Limits::Command::max_length();
@@ -3148,11 +3045,8 @@ sub reaper {
             next;
         }
         my $job = $Global::running{$stiff};
-
 	# '-a <(seq 10)' will give us a pid not in %Global::running
         $job or next;
-        delete $Global::running{$stiff};
-        $Global::total_running--;
         $job->set_exitstatus($? >> 8);
         $job->set_exitsignal($? & 127);
         debug("run", "seq ",$job->seq()," died (", $job->exitstatus(), ")");
@@ -3161,9 +3055,7 @@ sub reaper {
             # The process that died had the tty => release it
             $Global::tty_taken = 0;
         }
-        my $sshlogin = $job->sshlogin();
-        $sshlogin->dec_jobs_running();
-        $sshlogin->inc_jobs_completed();
+
         if(not $job->should_be_retried()) {
 	    # The job is done
 	    # Free the jobslot
@@ -3172,16 +3064,24 @@ sub reaper {
 		# Update average runtime for timeout
 		$Global::timeoutq->update_median_runtime($job->runtime());
 	    }
-	    if($opt::keeporder) {
+            # Force printing now if --halt forces us to exit
+            my $print_now =
+		($opt::halt and
+		 (($opt::halt == 2 and $job->exitstatus())
+		  or
+		  ($opt::halt == -2 and not $job->exitstatus())));
+	    if($opt::keeporder and not $print_now) {
 		$job->print_earlier_jobs();
 	    } else {
-		$job->print();
-	    }
-	    if($job->should_we_halt() eq "now") {
-		::killall();
-		::wait_and_exit($Global::halt_exitstatus);
+                $job->print();
             }
+	    $job->should_we_halt();
         }
+        my $sshlogin = $job->sshlogin();
+        $sshlogin->dec_jobs_running();
+        $sshlogin->inc_jobs_completed();
+        $Global::total_running--;
+        delete $Global::running{$stiff};
 	start_more_jobs();
 	if($opt::progress) {
 	    my %progress = progress();
@@ -3375,14 +3275,16 @@ sub status {
 
 sub warning {
     my @w = @_;
+    my $fh = $Global::status_fd || *STDERR;
     my $prog = $Global::progname || "parallel";
-    status(map { ($prog, ": Warning: ", $_, "\n"); } @w);
+    print $fh $prog, ": Warning: ", @w;
 }
 
 sub error {
     my @w = @_;
+    my $fh = $Global::status_fd || *STDERR;
     my $prog = $Global::progname || "parallel";
-    status(map { ($prog, ": Error: ", $_, "\n"); } @w);
+    print $fh $prog, ": Error: ", @w;
 }
 
 sub die_bug {
@@ -3452,14 +3354,16 @@ sub bibtex {
 	    if(open (my $fh, ">", $ENV{'HOME'}."/.parallel/will-cite")) {
 		close $fh;
 		print "\nThank you for your support. It is much appreciated. The citation\n",
-		"notice is now silenced. For other ways to silence the citation notice\n",
-		"see 'man parallel' under '--bibtex'.\n\n";
+		"notice is now silenced. You may also use '--will-cite'.\n",
+		"If you use '--will-cite' in scripts you are expected to pay\n",
+		"the 10000 EUR, because you are making it harder to see the\n",
+		"citation notice.\n\n";
 	    } else {
 		print "\nThank you for your support. It is much appreciated. The citation\n",
 		"cannot permanently be silenced. Use '--will-cite' instead.\n",
-		"If you use '--will-cite' in scripts you are making it harder to see the\n",
-		"citation notice.  However, if you pay 10000 EUR, you should feel free\n",
-		"to use '--will-cite'.\n\n";
+		"If you use '--will-cite' in scripts you are expected to pay\n",
+		"the 10000 EUR, because you are making it harder to see the\n",
+		"citation notice.\n\n";
 		last;
 	    }
 	}
@@ -3488,17 +3392,10 @@ sub tmpfile {
 
 sub tmpname {
     # Select a name that does not exist
-    # Do not create the file as it may be used for creating a socket (by tmux)
+    # Do not create the file as that may cause problems
+    # if you ssh to localhost (or a shared file system) under a different name
     my $name = shift;
     my($tmpname);
-    if(not -w $ENV{'TMPDIR'}) {
-	if(not -e $ENV{'TMPDIR'}) {
-	    ::error("Tmpdir '$ENV{'TMPDIR'}' does not exist.","Try 'mkdir $ENV{'TMPDIR'}'");
-	} else {
-	    ::error("Tmpdir '$ENV{'TMPDIR'}' is not writable.","Try 'chmod +w $ENV{'TMPDIR'}'");
-	}
-	::wait_and_exit(255);
-    }
     do {
 	$tmpname = $ENV{'TMPDIR'}."/".$name.
 	    join"", map { (0..9,"a".."z","A".."Z")[rand(62)] } (1..5);
@@ -3653,8 +3550,8 @@ sub multiply_binary_prefix {
 	   tell $disk_full_fh != 8193) {
 	    # On raspbian the disk can be full except for 10 chars.
 	    if(not $error_printed) {
-		::error("Output is incomplete. Cannot append to buffer file in $ENV{'TMPDIR'}. Is the disk full?",
-			"Change \$TMPDIR with --tmpdir or use --compress.");
+		::error("Output is incomplete. Cannot append to buffer file in $ENV{'TMPDIR'}. Is the disk full?\n");
+		::error("Change \$TMPDIR with --tmpdir or use --compress.\n");
 		$error_printed = 1;
 	    }
 	    ::wait_and_exit(255);
@@ -4129,7 +4026,6 @@ sub hostgroups {
 sub inc_jobs_completed {
     my $self = shift;
     $self->{'jobs_completed'}++;
-    $Global::total_completed++;
 }
 
 sub set_max_jobs_running {
@@ -4626,11 +4522,11 @@ sub compute_max_loadavg {
                 close $in_fh;
                 $load = $self->compute_max_loadavg($opt_load_file);
             } else {
-                ::error("Cannot open $loadspec.");
+                ::error("Cannot open $loadspec.\n");
                 ::wait_and_exit(255);
             }
         } else {
-            ::error("Parsing of --load failed.");
+            ::error("Parsing of --load failed.\n");
             ::die_usage();
         }
         if($load < 0.01) {
@@ -4832,8 +4728,8 @@ sub compute_number_of_processes {
 		# It took more than 0.01 second to fork a processes on avg.
 		# Give the user a warning. He can press Ctrl-C if this
 		# sucks.
-		::warning("Starting $system_limit processes took > $forktime sec.",
-			  "Consider adjusting -j. Press CTRL-C to stop.");
+		::warning("Starting $system_limit processes took > $forktime sec.\n",
+			  "Consider adjusting -j. Press CTRL-C to stop.\n");
 		$slow_spawining_warning_printed = 1;
 	    }
 	}
@@ -4842,20 +4738,19 @@ sub compute_number_of_processes {
 	if($system_limit < $wanted_processes) {
 	    # The system_limit is less than the wanted_processes
 	    if($system_limit < 1 and not $Global::JobQueue->empty()) {
-		::warning("Cannot spawn any jobs. Raising ulimit -u or /etc/security/limits.conf",
-			  "or /proc/sys/kernel/pid_max may help.");
+		::warning("Cannot spawn any jobs. Raising ulimit -u or /etc/security/limits.conf\n",
+			  "or /proc/sys/kernel/pid_max may help.\n");
 		::wait_and_exit(255);
 	    }
 	    if(not $more_filehandles) {
-		::warning("Only enough file handles to run ". $system_limit. " jobs in parallel.",
-			  "Running 'parallel -j0 -N $system_limit --pipe parallel -j0' or ",
-			  "raising ulimit -n or /etc/security/limits.conf may help.");
+		::warning("Only enough file handles to run ", $system_limit, " jobs in parallel.\n",
+			  "Running 'parallel -j0 -N", $system_limit, " --pipe parallel -j0' or ",
+			  "raising ulimit -n or /etc/security/limits.conf may help.\n");
 	    }
 	    if($max_system_proc_reached) {
-		::warning("Only enough available processes to run ". $system_limit.
-			  " jobs in parallel.",
-			  "Raising ulimit -u or /etc/security/limits.conf ",
-			  "or /proc/sys/kernel/pid_max may help.");
+		::warning("Only enough available processes to run ", $system_limit,
+			  " jobs in parallel. Raising ulimit -u or /etc/security/limits.conf\n",
+			  "or /proc/sys/kernel/pid_max may help.\n");
 	    }
 	}
 	if($] == 5.008008 and $system_limit > 1000) {
@@ -4891,12 +4786,12 @@ sub simultaneous_sshlogin_limit {
 	      $self->simultaneous_sshlogin($wanted_processes));
     if($ssh_limit < $wanted_processes) {
         my $serverlogin = $self->serverlogin();
-        ::warning("ssh to $serverlogin only allows ".
-		  "for $ssh_limit simultaneous logins.",
-		  "You may raise this by changing ".
-		  "/etc/ssh/sshd_config:MaxStartups and MaxSessions on $serverlogin.",
-		  "Using only ".($ssh_limit-1)." connections ".
-		  "to avoid race conditions.");
+        ::warning("ssh to $serverlogin only allows ",
+		  "for $ssh_limit simultaneous logins.\n",
+		  "You may raise this by changing ",
+		  "/etc/ssh/sshd_config:MaxStartups and MaxSessions on $serverlogin.\n",
+		  "Using only ",$ssh_limit-1," connections ",
+		  "to avoid race conditions.\n");
     }
     # Race condition can cause problem if using all sshs.
     if($ssh_limit > 1) { $ssh_limit -= 1; }
@@ -4966,11 +4861,11 @@ sub user_requested_processes {
                 close $in_fh;
                 $processes = $self->user_requested_processes($opt_P_file);
             } else {
-                ::error("Cannot open $opt_P.");
+                ::error("Cannot open $opt_P.\n");
                 ::wait_and_exit(255);
             }
         } else {
-            ::error("Parsing of --jobs/-j/--max-procs/-P failed.");
+            ::error("Parsing of --jobs/-j/--max-procs/-P failed.\n");
             ::die_usage();
         }
 	$processes = ::ceil($processes);
@@ -5002,8 +4897,8 @@ sub ncpus {
             if($ncpu =~ /^\s*[0-9]+\s*$/s) {
                 $self->{'ncpus'} = $ncpu;
             } else {
-                ::warning("Could not figure out ".
-			  "number of cpus on $serverlogin ($ncpu). Using 1.");
+                ::warning("Could not figure out ",
+			  "number of cpus on $serverlogin ($ncpu). Using 1.\n");
                 $self->{'ncpus'} = 1;
             }
         }
@@ -5064,7 +4959,7 @@ sub no_of_cpus {
 	chomp $no_of_cpus;
         return $no_of_cpus;
     } else {
-        ::warning("Cannot figure out number of cpus. Using 1.");
+        ::warning("Cannot figure out number of cpus. Using 1.\n");
         return 1;
     }
 }
@@ -5121,7 +5016,7 @@ sub no_of_cores {
 	chomp $no_of_cores;
         return $no_of_cores;
     } else {
-        ::warning("Cannot figure out number of CPU cores. Using 1.");
+        ::warning("Cannot figure out number of CPU cores. Using 1.\n");
         return 1;
     }
 }
@@ -5491,8 +5386,6 @@ sub sshcommand_of_sshlogin {
     #   login@host
     my $self = shift;
     my ($sshcmd, $serverlogin);
-    # If $opt::ssh is unset, use $PARALLEL_SSH or 'ssh'
-    $opt::ssh ||= $ENV{'PARALLEL_SSH'} || "ssh";
     if($self->{'string'} =~ /(.+) (\S+)$/) {
         # Own ssh command
         $sshcmd = $1; $serverlogin = $2;
@@ -5501,7 +5394,7 @@ sub sshcommand_of_sshlogin {
         if($opt::controlmaster) {
             # Use control_path to make ssh faster
             my $control_path = $self->control_path_dir()."/ssh-%r@%h:%p";
-            $sshcmd = $opt::ssh." -S ".$control_path;
+            $sshcmd = "ssh -S ".$control_path;
             $serverlogin = $self->{'string'};
             if(not $self->{'control_path'}{$control_path}++) {
                 # Master is not running for this control_path
@@ -5513,24 +5406,18 @@ sub sshcommand_of_sshlogin {
 		    $SIG{'TERM'} = undef;
                     # Ignore the 'foo' being printed
                     open(STDOUT,">","/dev/null");
-                    # With -tt OpenSSH_3.6.1p2 gives:
-		    # 'tcgetattr: Invalid argument'
-                    # STDERR >/dev/null to ignore
-		    # "process_mux_new_session: tcgetattr: Invalid argument"
+                    # OpenSSH_3.6.1p2 gives 'tcgetattr: Invalid argument' with -tt
+                    # STDERR >/dev/null to ignore "process_mux_new_session: tcgetattr: Invalid argument"
                     open(STDERR,">","/dev/null");
                     open(STDIN,"<","/dev/null");
-                    # Run a sleep that outputs data, so it will discover
-		    # if the ssh connection closes.
-                    my $sleep = ::shell_quote_scalar
-			('$|=1;while(1){sleep 1;print "foo\n"}');
-                    my @master = ($opt::ssh, "-tt", "-MTS",
-				  $control_path, $serverlogin, "perl", "-e",
-				  $sleep);
+                    # Run a sleep that outputs data, so it will discover if the ssh connection closes.
+                    my $sleep = ::shell_quote_scalar('$|=1;while(1){sleep 1;print "foo\n"}');
+                    my @master = ("ssh", "-tt", "-MTS", $control_path, $serverlogin, "perl", "-e", $sleep);
                     exec(@master);
                 }
             }
         } else {
-            $sshcmd = $opt::ssh; $serverlogin = $self->{'string'};
+            $sshcmd = "ssh"; $serverlogin = $self->{'string'};
         }
     }
     $self->{'sshcommand'} = $sshcmd;
@@ -5563,7 +5450,7 @@ sub rsync_transfer_cmd {
     my $file = shift;
     my $workdir = shift;
     if(not -r $file) {
-	::warning($file. " is not readable and will not be transferred.");
+	::warning($file, " is not readable and will not be transferred.\n");
 	return "true";
     }
     my $rsync_destdir;
@@ -5702,10 +5589,10 @@ sub total_jobs {
 	my $start = time;
         while($job = $self->get()) {
 	    if(time - $start > 10) {
-		::warning("Reading ".scalar(@queue)." arguments took longer than 10 seconds.");
-		$opt::eta && ::warning("Consider removing --eta.");
-		$opt::bar && ::warning("Consider removing --bar.");
-		$opt::shuf && ::warning("Consider removing --shuf.");
+		::warning("Reading ".scalar(@queue)." arguments took longer than 10 seconds.\n");
+		$opt::eta && ::warning("Consider removing --eta.\n");
+		$opt::bar && ::warning("Consider removing --bar.\n");
+		$opt::shuf && ::warning("Consider removing --shuf.\n");
 		last;
 	    }
             push @queue, $job;
@@ -5796,8 +5683,7 @@ sub slot {
 
     sub cattail {
 	# Returns:
-	#   $cattail = perl program for:
-	#     cattail "decompress program" writerpid [file_to_decompress or stdin] [file_to_unlink]
+	#   $cattail = perl program for: cattail "decompress program" writerpid [file_to_decompress or stdin] [file_to_unlink]
 	if(not $cattail) {
 	    $cattail = q{
 		# cat followed by tail (possibly with rm as soon at the file is opened)
@@ -5896,13 +5782,13 @@ sub openoutputfiles {
 	# prefix/name1/val1/name2/val2/stdout
 	$outname = "$dir/stdout";
 	if(not open($outfhw, "+>", $outname)) {
-	    ::error("Cannot write to `$outname'.");
+	    ::error("Cannot write to `$outname'.\n");
 	    ::wait_and_exit(255);
 	}
 	# prefix/name1/val1/name2/val2/stderr
 	$errname = "$dir/stderr";
 	if(not open($errfhw, "+>", $errname)) {
-	    ::error("Cannot write to `$errname'.");
+	    ::error("Cannot write to `$errname'.\n");
 	    ::wait_and_exit(255);
 	}
 	$self->set_fh(1,"unlink","");
@@ -6377,46 +6263,6 @@ sub total_failed {
     }
 }
 
-{
-    my $script;
-
-    sub fifo_wrap {
-	# Script to create a fifo, run a command on the fifo
-	# while copying STDIN to the fifo, and finally
-	# remove the fifo and return the exit code of the command.
-	if(not $script) {
-	    # {} == $PARALLEL_TMP for --fifo
-	    # To make it csh compatible a wrapper needs to:
-	    # * mkfifo
-	    # * spawn $command &
-	    # * cat > fifo
-	    # * waitpid to get the exit code from $command
-	    # * be less than 1000 chars long
-	    $script = "perl -e ". ::shell_quote_scalar
-		(::spacefree
-		 (0, q{
-		     ($s,$c,$f) = @ARGV;
-		     # mkfifo $PARALLEL_TMP
-		     system "mkfifo", $f;
-		     # spawn $shell -c $command &
-		     $pid = fork || exec $s, "-c", $c;
-		     open($o,">",$f) || die $!;
-		     # cat > $PARALLEL_TMP
-		     while(sysread(STDIN,$buf,32768)){
-			 syswrite $o, $buf;
-		     }
-		     close $o;
-		     # waitpid to get the exit code from $command
-		     waitpid $pid,0;
-		     # Cleanup
-		     unlink $f;
-		     exit $?/256;
-		  }));
-	}
-	return $script;
-    }
-}
-
 sub wrapped {
     # Wrap command with:
     # * --shellquote
@@ -6470,27 +6316,29 @@ sub wrapped {
 	    }
 	}
 	if($opt::cat) {
-	    # In '--cat' and '--fifo' {} == $PARALLEL_TMP.
-	    # This is to make it possible to compute $PARALLEL_TMP on
-	    # the fly when running remotely.
-	    # $ENV{PARALLEL_TMP} is set in the remote wrapper before
-	    # the command is run.
-	    #
-	    # Prepend 'cat > $PARALLEL_TMP;'
-	    # Append 'unlink $PARALLEL_TMP without affecting $?'
+# Append 'unlink {} without affecting $?'
 	    $command =
-		'cat > $PARALLEL_TMP;'.
+		$self->{'commandline'}->replace_placeholders(["cat > \257<\257>; "], 0, 0).
 		$command.";". postpone_exit_and_cleanup().
 		'$PARALLEL_TMP';
 	} elsif($opt::fifo) {
 	    # Prepend 'mkfifo {}; ('
-	    # Append ') & cat > {}; wait; '
+	    # Append ') & _PID=$!; cat > {}; wait $_PID; '
+	    # (This makes it fail in csh, but give the correct exit code in bash)
 	    # Append 'unlink {} without affecting $?'
-	    $command = fifo_wrap(). " ".
-		$Global::shell. " ".
-		::shell_quote_scalar($command).
-		' $PARALLEL_TMP'.
-		';';
+	    # Set $ENV{PARALLEL_TMP} when starting a job
+	    # Set $ENV{PARALLEL_TMP} in the remote wrapper
+	    # mkfifo $PARALLEL_TMP;
+	    # {} = $PARALLEL_TMP;
+	    # (...) &
+	    # cat > $PARALLEL_TMP; wait \$_PID; cleanup $PARALLEL_TMP
+	    # perl -e 'open($fifo,">",shift); while(read){print FIFO};unlink $fifo;waitpid($pid,0);exit $?' $! $PARALLEL_FIFO
+	    $command =
+		"mkfifo \$PARALLEL_TMP\n (".
+		$command.";".
+		') & _PID=$!; cat > $PARALLEL_TMP; wait $_PID; '.
+		postpone_exit_and_cleanup().
+		'$PARALLEL_TMP';
 	}
 	if($ENV{'PARALLEL_ENV'}) {
 	    # If $PARALLEL_ENV set, put that in front of the command
@@ -6676,12 +6524,12 @@ sub sshlogin_wrap {
 		push @vars, grep { not defined $ignore{$_} } keys %ENV;
 		@vars = grep { not /^_$/ } @vars;
 	    } else {
-		::error("Run '$Global::progname --record-env' in a clean environment first.");
+		::error("Run '$Global::progname --record-env' in a clean environment first.\n");
 		::wait_and_exit(255);
 	    }
 	}
 	# Duplicate vars as BASH functions to include post-shellshock functions (v1+v2)
-	# So --env myfunc should look for BASH_FUNC_myfunc() and BASH_FUNC_myfunc%%
+	# So --env myfunc should also look for BASH_FUNC_myfunc()
 	push(@vars, "PARALLEL_PID", "PARALLEL_SEQ",
 	     map { ("BASH_FUNC_$_()", "BASH_FUNC_$_%%") } @vars);
 	# Keep only defined variables
@@ -6707,7 +6555,7 @@ sub sshlogin_wrap {
 	if(@bashfunc) {
 	    # Functions are not supported for all shells
 	    if($Global::shell !~ m:/(bash|rbash|zsh|rzsh|dash|ksh):) {
-		::warning("Shell functions may not be supported in $Global::shell.");
+		::warning("Shell functions may not be supported in $Global::shell\n");
 	    }
 	    $bashfuncset =
 		'@bash_functions=qw('."@bash_functions".");".
@@ -7162,13 +7010,13 @@ sub print_dryrun_and_verbose {
 	my $tmpfifo=::tmpname("tmx");
 
 	if(length($tmpfifo) >=100) {
-	    ::error("tmux does not support sockets with path > 100.");
+	    ::error("tmux does not support sockets with path > 100\n");
 	    ::wait_and_exit(255);
 	}
 	my $visual_command = $self->replaced();
 	my $title = $visual_command;
 	if($visual_command =~ /\0/) {
-	    ::error("Command line contains NUL. tmux is confused by NUL.");
+	    ::error("Command line contains NUL. tmux is confused by NUL.\n");
 	    ::wait_and_exit(255);
 	}
 	# ; causes problems
@@ -7386,7 +7234,7 @@ sub files_print {
     # If the job is dead: close printing fh. Needed for --compress
     close $self->fh($fdno,"w");
     if($? and $opt::compress) {
-	::error($opt::compress_program." failed.");
+	::error($opt::compress_program." failed.\n");
 	$self->set_exitstatus(255);
     }
     if($opt::compress) {
@@ -7417,7 +7265,7 @@ sub linebuffer_print {
 	# If the job is dead: close printing fh. Needed for --compress
 	close $self->fh($fdno,"w");
 	if($? and $opt::compress) {
-	    ::error($opt::compress_program." failed.");
+	    ::error($opt::compress_program." failed.\n");
 	    $self->set_exitstatus(255);
 	}
 	if($opt::compress) {
@@ -7487,7 +7335,7 @@ sub linebuffer_print {
 	    # decompress done: close fh
 	    close $in_fh;
 	    if($? and $opt::compress) {
-		::error($opt::decompress_program." failed.");
+		::error($opt::decompress_program." failed.\n");
 		$self->set_exitstatus(255);
 	    }
 	}
@@ -7500,7 +7348,7 @@ sub tag_print {
     my $buf;
     close $self->fh($fdno,"w");
     if($? and $opt::compress) {
-	::error($opt::compress_program." failed.");
+	::error($opt::compress_program." failed.\n");
 	$self->set_exitstatus(255);
     }
     seek $in_fh, 0, 0;
@@ -7530,7 +7378,7 @@ sub tag_print {
     }
     close $in_fh;
     if($? and $opt::compress) {
-	::error($opt::decompress_program." failed.");
+	::error($opt::decompress_program." failed.\n");
 	$self->set_exitstatus(255);
     }
 }
@@ -7541,7 +7389,7 @@ sub normal_print {
     my $buf;
     close $self->fh($fdno,"w");
     if($? and $opt::compress) {
-	::error($opt::compress_program." failed.");
+	::error($opt::compress_program." failed.\n");
 	$self->set_exitstatus(255);
     }
     seek $in_fh, 0, 0;
@@ -7564,7 +7412,7 @@ sub normal_print {
     }
     close $in_fh;
     if($? and $opt::compress) {
-	::error($opt::decompress_program." failed.");
+	::error($opt::decompress_program." failed.\n");
 	$self->set_exitstatus(255);
     }
 }
@@ -7646,78 +7494,62 @@ sub set_exitsignal {
 
 {
     my $status_printed;
-    my $total_jobs;
 
     sub should_we_halt {
 	# Should we halt? Immediately? Gracefully?
 	# Returns: N/A
 	my $job = shift;
-	#  --halt # => 1..100 (number of jobs failed, 101 means > 100)
-	#  --halt % => 1..100 (pct of jobs failed)
-	if($Global::halt_pct and not $Global::halt_count) {
-	    $total_jobs ||= $Global::JobQueue->total_jobs();
-	    # From the pct compute the number of jobs that must fail/succeed
-	    $Global::halt_count = $total_jobs * $Global::halt_pct;
-	}
 	if($job->exitstatus() or $job->exitsignal()) {
-	    # Job failed
 	    $Global::exitstatus++;
 	    $Global::total_failed++;
-	    if($Global::halt_fail) {
-		::status("$Global::progname: This job failed:\n",
+	    if($opt::halt) {
+		if($opt::halt == 1
+		   or
+		   ($opt::halt > 0 and $opt::halt < 1 and $Global::total_failed > 3
+		    and
+		    $Global::total_failed / $Global::total_started > $opt::halt)) {
+		    # If halt on error == 1 or --halt 10%
+		    # we should gracefully exit
+		    ::status
+			("$Global::progname: Starting no more jobs. ",
+			 "Waiting for ", scalar(keys %Global::running),
+			 " jobs to finish. This job failed:\n",
 			 $job->replaced(),"\n");
-		if($Global::halt_count <= $Global::total_failed) {
-		    # At least N jobs had failed
-		    if(not defined $Global::halt_exitstatus) {
-			if($Global::halt_pct) {
-			    # --halt now,fail=X% or soon,fail=X%
-			    $Global::halt_exitstatus =
-				::ceil($Global::total_failed / $total_jobs * 100);
-			} elsif($Global::halt_count) {
-			    # --halt now,fail=X or soon,fail=X
-			    $Global::halt_exitstatus = ::min($Global::total_failed,101);
-			}
-			if($Global::halt_count and $Global::halt_count == 1) {
-			    # --halt now,fail=1 or soon,fail=1
-			    $Global::halt_exitstatus = $job->exitstatus();
-			}
-		    }
-		    ::debug("halt","Pct: ",$Global::halt_pct," count: ",$Global::halt_count,"\n");
-		    if($Global::halt_when eq "soon"
-		       and scalar(keys %Global::running) > 0) {
+		    $Global::start_no_new_jobs ||= 1;
+		    $Global::halt_exitstatus = $job->exitstatus();
+		} elsif($opt::halt == 2) {
+		    # If halt on error == 2 we should exit immediately
+		    if(not $status_printed++) {
 			::status
-			    ("$Global::progname: Starting no more jobs. ",
-			     "Waiting for ", scalar(keys %Global::running),
-			     " jobs to finish.\n");
-			$Global::start_no_new_jobs ||= 1;
+			    ("$Global::progname: This job failed:\n",
+			     $job->replaced(),"\n");
 		    }
-		    return($Global::halt_when);
+		    ::killall();
+		    ::wait_and_exit($job->exitstatus());
 		}
 	    }
 	} else {
-	    if($Global::halt_success) {
-		::debug("halt","Pct: ",$Global::halt_pct,"<=",
-			" count: ",$Global::halt_count,"\n");
-		::status("$Global::progname: This job succeeded:\n",
+	    if($opt::halt) {
+		if($opt::halt == -1) {
+		    # If halt on error == -1
+		    # we should gracefully exit
+		    ::status
+			("$Global::progname: Starting no more jobs. ",
+			 "Waiting for ", scalar(keys %Global::running),
+			 " jobs to finish. This job succeeded:\n",
 			 $job->replaced(),"\n");
-		if($Global::halt_count <=
-		   $Global::total_completed-$Global::total_failed) {
-		    # At least N jobs had success
-		    # or at least N% had success
-		    $Global::halt_exitstatus = 0;
-		    if($Global::halt_when eq "soon"
-		       and scalar(keys %Global::running) > 0) {
-			::status
-			    ("$Global::progname: Starting no more jobs. ",
-			     "Waiting for ", scalar(keys %Global::running),
-			     " jobs to finish.\n");
-			$Global::start_no_new_jobs ||= 1;
-		    }
-		    return($Global::halt_when);
+		    $Global::start_no_new_jobs ||= 1;
+		    $Global::halt_exitstatus = $job->exitstatus();
+		} elsif($opt::halt == -2) {
+		    # If halt on error == -2 we should exit immediately
+		    ::status
+			("$Global::progname: This job succeeded:\n",
+			 $job->replaced(),"\n");
+		    ::killall();
+		    ::wait_and_exit($job->exitstatus());
 		}
 	    }
 	}
-	return "";
     }
 }
 
@@ -7829,15 +7661,15 @@ sub populate {
 		last;
 	    } else {
 		my $args = join(" ", map { $_->orig() } @$next_arg);
-		::error("Command line too long (".
-			$self->len(). " >= ".
-			$max_len.
-			") at input ".
-			$self->{'arg_queue'}->arg_number().
+		::error("Command line too long (",
+			$self->len(), " >= ",
+			$max_len,
+			") at input ",
+			$self->{'arg_queue'}->arg_number(),
 			": ".
 			((length $args > 50) ?
-			 (substr($args,0,50))."..." :
-			 $args));
+			 (substr($args,0,50))."...\n" :
+			 $args."\n"));
 		$self->{'arg_queue'}->unget($self->pop());
 		::wait_and_exit(255);
 	    }
@@ -8285,7 +8117,7 @@ sub new {
 	# Is this really a command in $PATH starting with '-'?
 	my $cmd = $1;
 	if(not ::which($cmd)) {
-	    ::error("Command ($cmd) starts with '-'. Is this a wrong option?");
+	    ::error("Command ($cmd) starts with '-'. Is this a wrong option?\n");
 	    ::wait_and_exit(255);
 	}
     }
@@ -8299,7 +8131,7 @@ sub new {
 	(defined $opt::tagstring ? $opt::tagstring : $dummy)) {
 	# Disallow \257 to avoid nested {= {= =} =}
 	if(/\257/) {
-	    ::error("Command cannot contain the character \257. Use a function for that.");
+	    ::error("Command cannot contain the character \257. Use a function for that.\n");
 	    ::wait_and_exit(255);
 	}
 	# Needs to match rightmost left parens (Perl defaults to leftmost)
@@ -8496,7 +8328,7 @@ sub get {
 	if($opt::pipe or $opt::pipepart) {
 	    if($cmd_line->replaced() eq "") {
 		# Empty command - pipe requires a command
-		::error("--pipe must have a command to pipe into (e.g. 'cat').");
+		::error("--pipe must have a command to pipe into (e.g. 'cat').\n");
 		::wait_and_exit(255);
 	    }
 	} else {
@@ -8571,7 +8403,8 @@ sub max_length {
 	    if($opt::max_chars <= $cached_limit) {
 		$Limits::Command::line_max_len = $opt::max_chars;
 	    } else {
-		::warning("Value for -s option should be < $cached_limit.");
+		::warning("Value for -s option ",
+			  "should be < $cached_limit.\n");
 	    }
 	}
     }
@@ -8635,7 +8468,7 @@ sub tmux_length {
     if($opt::tmux) {
 	$ENV{'TMUX'} ||= "tmux";
 	if(not ::which($ENV{'TMUX'})) {
-	    ::error($ENV{'TMUX'}." not found in \$PATH.");
+	    ::error($ENV{'TMUX'}." not found in \$PATH.\n");
 	    ::wait_and_exit(255);
 	}
 	my @out;
@@ -8789,9 +8622,9 @@ sub new {
     my $fhs = shift;
     for my $fh (@$fhs) {
 	if(-t $fh) {
-	    ::warning("Input is read from the terminal.",
-		      "Only experts do this on purpose. ".
-		      "Press CTRL-D to exit.");
+	    ::warning("Input is read from the terminal.\n");
+	    ::warning("Only experts do this on purpose. ".
+		      "Press CTRL-D to exit.\n");
 	}
     }
     return bless {
@@ -9024,7 +8857,7 @@ sub new {
 	    # We found hostgroups on the arg
 	    @hostgroups = split(/\+/, $1);
 	    if(not grep { defined $Global::hostgroups{$_} } @hostgroups) {
-		::warning("No such hostgroup (@hostgroups).");
+		::warning("No such hostgroup (@hostgroups)\n");
 		@hostgroups = (keys %Global::hostgroups);
 	    }
         } else {
@@ -9066,23 +8899,28 @@ sub Q {
 	    $_ = trim_of($self->{'orig'});
 	}
 	::debug("replace", "eval ", $perlexpr, " ", $_, "\n");
-	if(not $perleval{$perlexpr}) {
+	if(not $Global::perleval{$perlexpr}) {
 	    # Make an anonymous function of the $perlexpr
 	    # And more importantly: Compile it only once
-	    if($perleval{$perlexpr} =
+	    if($Global::perleval{$perlexpr} =
 	       eval('sub { no strict; no warnings; my $job = shift; '.
 		    $perlexpr.' }')) {
 		# All is good
 	    } else {
 		# The eval failed. Maybe $perlexpr is invalid perl?
-		::error("Cannot use $perlexpr: $@");
+		::error("Cannot use $perlexpr: $@\n");
 		::wait_and_exit(255);
 	    }
 	}
 	# Execute the function
-	$perleval{$perlexpr}->($job);
-	return $quote ? ::shell_quote_scalar($_) : $_;
+	$Global::perleval{$perlexpr}->($job);
+	$self->{"rpl",0,$perlexpr} = $_;
     }
+    if(not defined $self->{"rpl",$quote,$perlexpr}) {
+	$self->{"rpl",1,$perlexpr} =
+	    ::shell_quote_scalar($self->{"rpl",0,$perlexpr});
+    }
+    return $self->{"rpl",$quote,$perlexpr};
 }
 
 sub orig {
@@ -9109,7 +8947,7 @@ sub trim_of {
     } elsif($Global::trim eq "rl" or $Global::trim eq "lr") {
 	for my $arg (@strings) { $arg =~ s/^\s+//; $arg =~ s/\s+$//; }
     } else {
-	::error("--trim must be one of: r l rl lr.");
+	::error("--trim must be one of: r l rl lr.\n");
 	::wait_and_exit(255);
     }
     return wantarray ? @strings : "@strings";
@@ -9281,7 +9119,7 @@ sub acquire {
 	       and
 	       time - $start_time > $opt::semaphoretimeout) {
 		# Timeout: Take the semaphore anyway
-		::warning("Semaphore timed out. Stealing the semaphore.");
+		::warning("Semaphore timed out. Stealing the semaphore.\n");
 		if(not -e $self->{'idfile'}) {
 		    open (my $fh, ">", $self->{'idfile'}) or
 			::die_bug("timeout_write_idfile: $self->{'idfile'}");
@@ -9294,7 +9132,7 @@ sub acquire {
 	       and
 	       time - $start_time > -$opt::semaphoretimeout) {
 		# Timeout: Exit
-		::warning("Semaphore timed out. Exiting.");
+		::warning("Semaphore timed out. Exiting.\n");
 		exit(1);
 		last;
 	    }
@@ -9383,8 +9221,8 @@ sub lock {
 		last;
 	    } else {
 		if ($! =~ m/Function not implemented/) {
-		    ::warning("flock: $!",
-			      "Will wait for a random while.");
+		    ::warning("flock: $!");
+		    ::warning("Will wait for a random while\n");
 		    ::usleep(rand(5000));
 		    # File cannot be locked: No need to retry
 		    $locked = 2;
@@ -9443,7 +9281,7 @@ sub mkdir_or_die {
 	mkdir $ddir;
     }
     if(not -w $dir) {
-	::error("Cannot write to $dir: $!");
+	::error("Cannot write to $dir: $!\n");
 	::wait_and_exit(255);
     }
 }
