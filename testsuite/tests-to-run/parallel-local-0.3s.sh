@@ -160,14 +160,9 @@ parallel -k echo {#} ::: 1 2 ::: 1 2
 
 echo '**'
 
-printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=bash parallel -0 echo
-printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=fish parallel -0 echo
-printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=ash parallel -0 echo
-printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=dash parallel -0 echo
-printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=sh parallel -0 echo
-printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=rc parallel -0 echo
-printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=csh parallel -0 echo
-printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=tcsh parallel -0 echo
+testquote() { printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=$1 parallel -0 echo; }; 
+  export -f testquote; 
+  parallel --tag -k testquote ::: ash bash csh dash fdsh fish fizsh ksh ksh93 mksh pdksh posh rbash rc rzsh sash sh static-sh tcsh yash zsh
 
 echo '**'
 
