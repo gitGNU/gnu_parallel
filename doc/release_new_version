@@ -213,8 +213,6 @@ Subject: GNU Parallel 20150622 ('<<>>') released
 
 GNU Parallel 20150622 ('<<>>') has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
-No new functionality was introduced so this is a good candidate for a stable release.
-
 Haiku of the month:
 
   Programs very slow.
@@ -223,6 +221,20 @@ Haiku of the month:
       -- Ole Tange
 
 New in this release:
+
+* An empty argument would previously cause no string to be inserted. This is now changed to '' being inserted, thus prepending a space to the output of: parallel echo {} b ::: ''
+
+* $PARALLEL_ENV can now be set to an environment prepending the command. Used in env_parallel as mentioned in the manpage.
+
+* --retry-failed will retry all failed jobs in a joblog. It will ignore any command given.
+
+* --halt has been rewritten completely. You can now combine percentages with success or fail. See the man page.
+
+* Exit values 102..254 have been removed. 101 means more than 100 jobs failed.
+
+* --ssh and $PARALLEL_SSH can be used to set the command used for ssh. The command is assume to behave the same as ssh.
+
+* --fifo now works in csh, too.
 
 * <<afventer opdatering>> CIDER: a pipeline for detecting waves of coordinated transcriptional regulation in gene expression time-course data http://biorxiv.org/content/biorxiv/early/2015/03/17/012518.full.pdf
 
@@ -235,6 +247,10 @@ New in this release:
 * taxator-tk http://algbio.cs.uni-duesseldorf.de/webapps/wa-download/ (check it)
 
 * << Update forventet juni Rachel har lige svaret >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
+
+* GNU Parallel is used in: https://github.com/d2207197/local-mapreduce
+
+
 
 * Bug fixes and man page updates.
 
