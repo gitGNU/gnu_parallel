@@ -332,5 +332,33 @@ parallel -k echo {#} ::: 1 2 ::: 1 2
 2
 3
 4
+echo '**'
+**
+printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=bash parallel -0 echo
+"#&/
+()*=?'
+printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=fish parallel -0 echo
+"#&/
+()*=?'
+printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=ash parallel -0 echo
+"#&/
+()*=?'
+printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=dash parallel -0 echo
+"#&/
+()*=?'
+printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=sh parallel -0 echo
+"#&/
+()*=?'
+printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=rc parallel -0 echo
+"#&/
+()*=?'
+printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=csh parallel -0 echo
+"#&/
+()*=?'
+printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=tcsh parallel -0 echo
+"#&/
+()*=?'
+echo '**'
+**
 ### 1 .par file from --files expected
 1

@@ -158,6 +158,19 @@ echo '### bug #44995: parallel echo {#} ::: 1 2 ::: 1 2'
 
 parallel -k echo {#} ::: 1 2 ::: 1 2
 
+echo '**'
+
+printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=bash parallel -0 echo
+printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=fish parallel -0 echo
+printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=ash parallel -0 echo
+printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=dash parallel -0 echo
+printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=sh parallel -0 echo
+printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=rc parallel -0 echo
+printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=csh parallel -0 echo
+printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=tcsh parallel -0 echo
+
+echo '**'
+
 EOF
 echo '### 1 .par file from --files expected'
 find /tmp{/*,}/*.{par,tms,tmx} 2>/dev/null -mmin -10 | wc -l
