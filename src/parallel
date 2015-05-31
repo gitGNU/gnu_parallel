@@ -1076,7 +1076,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150524;
+    $Global::version = 20150531;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -3178,6 +3178,8 @@ sub reaper {
 		$job->print();
 	    }
 	    if($job->should_we_halt() eq "now") {
+		# Kill children
+		::kill_sleep_seq($job->pid());
 		::killall();
 		::wait_and_exit($Global::halt_exitstatus);
             }
@@ -3222,16 +3224,19 @@ sub killall {
 
     $Global::start_no_new_jobs ||= 1;
     $Global::killall ||= 1;
-    # pids of the all children and (grand*)children
-    # before we start the blood bath
-    my @family_pids = family_pids(keys %Global::running);
-    my @pids = @family_pids;
+    kill_sleep_seq(keys %Global::running);
+}
+
+sub kill_sleep_seq {
     # Send jobs TERM,TERM,KILL
-    my @term_seq = ("TERM",200,"TERM",200,"KILL",200);
+    # processgroups (-$pid)
+    my @pgrps = map { -$_ } @_;
+    my @term_seq = ("TERM",200,"TERM",100,"TERM",50,"KILL",25);
     while(@term_seq) {
-	@pids = kill_sleep(shift @term_seq, shift @term_seq, @pids);
+	@pgrps = kill_sleep(shift @term_seq, shift @term_seq, @pgrps);
     }
 }
+
 
 sub kill_sleep {
     my ($signal, $sleep_max, @pids) = @_;
@@ -3261,7 +3266,7 @@ sub kill_sleep {
 	$sleep *= 1.1;
 	::usleep($sleep);
 	$sleepsum += $sleep;
-	# Remove (grand)*children that are dead
+	# Remove dead children
 	@pids = grep { kill( 0, $_) } @pids;
     }
     return @pids;
@@ -3750,7 +3755,7 @@ sub which {
 	    # ash bash csh dash fdsh fish fizsh ksh ksh93 mksh pdksh
 	    # posh rbash rc rush rzsh sash sh static-sh tcsh yash zsh
 	    my @shells = (qw(ash bash csh dash fdsh fish fizsh ksh
-                             ksh93 mksh pdksh posh rbash rc rush rzsh
+                             ksh93 lksh mksh pdksh posh rbash rc rush rzsh
                              sash sh static-sh tcsh yash zsh -sh -csh),
 			  '-sh (sh)' # sh on FreeBSD
 		);
@@ -6247,6 +6252,12 @@ sub timedout {
 }
 
 sub kill {
+    my $self = shift;
+    $self->set_exitstatus(-1);
+    ::kill_sleep_seq($self->pid());
+}
+
+sub _kill {
     # Kill the job.
     # Send the signals to (grand)*children and pid.
     # If no signals: TERM TERM KILL
@@ -6265,9 +6276,9 @@ sub kill {
     for my $signal (@send_signals) {
 	my $alive = 0;
 	for my $pid (@family_pids) {
-	    if(kill 0, $pid) {
+	    if(CORE::kill 0, $pid) {
 		# The job still running
-		kill $signal, $pid;
+		CORE::kill $signal, $pid;
 		$alive = 1;
 		::debug("run","$pid is alive\n");
 	    }
@@ -6278,7 +6289,7 @@ sub kill {
 	if($signal eq "TERM" and $alive) {
 	    # Wait up to 200 ms between TERMs - but only if any pids are alive
 	    my $sleep = 1;
-	    for (my $sleepsum = 0; kill 0, $family_pids[0] and $sleepsum < 200;
+	    for (my $sleepsum = 0; CORE::kill 0, $family_pids[0] and $sleepsum < 200;
 		 $sleepsum += $sleep) {
 		$sleep = ::reap_usleep($sleep);
 	    }
@@ -7077,6 +7088,8 @@ sub start {
     if($opt::dryrun) {
 	$command = "true";
     }
+    # Each child gets its own process group to make it safe to killall
+    my @setpgrp_wrap = ('perl','-e',"setpgrp\;exec '$Global::shell', '-c', \@ARGV");
     $ENV{'PARALLEL_SEQ'} = $job->seq();
     $ENV{'PARALLEL_PID'} = $$;
     $ENV{'PARALLEL_TMP'} = ::tmpname("par");
@@ -7086,7 +7099,7 @@ sub start {
 	my ($stdin_fh);
 	# The eval is needed to catch exception from open3
 	eval {
-	    $pid = ::open3($stdin_fh, ">&OUT", ">&ERR", $Global::shell, "-c", $command) ||
+	    $pid = ::open3($stdin_fh, ">&OUT", ">&ERR", @setpgrp_wrap, $command) ||
 		::die_bug("open3-pipe");
 	    1;
 	};
@@ -7098,7 +7111,7 @@ sub start {
 	*IN = *STDIN;
 	# The eval is needed to catch exception from open3
 	eval {
-	    $pid = ::open3("<&IN", ">&OUT", ">&ERR", $Global::shell, "-c", $command) ||
+	    $pid = ::open3("<&IN", ">&OUT", ">&ERR", @setpgrp_wrap, $command) ||
 		::die_bug("open3-a");
 	    1;
 	};
@@ -7111,7 +7124,7 @@ sub start {
 	*IN = $devtty_fh;
 	# The eval is needed to catch exception from open3
 	eval {
-	    $pid = ::open3("<&IN", ">&OUT", ">&ERR", $Global::shell, "-c", $command) ||
+	    $pid = ::open3("<&IN", ">&OUT", ">&ERR", @setpgrp_wrap, $command) ||
 		::die_bug("open3-/dev/tty");
 	    $Global::tty_taken = $pid;
 	    close $devtty_fh;
@@ -7120,7 +7133,7 @@ sub start {
     } else {
 	# The eval is needed to catch exception from open3
 	eval {
-	    $pid = ::open3(::gensym, ">&OUT", ">&ERR", $Global::shell, "-c", $command) ||
+	    $pid = ::open3(::gensym, ">&OUT", ">&ERR", @setpgrp_wrap, $command) ||
 		::die_bug("open3-gensym");
 	    1;
 	};
