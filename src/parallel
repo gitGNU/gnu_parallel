@@ -3221,7 +3221,7 @@ sub killall {
     # Wait up to 200 ms between each
 
     $Global::start_no_new_jobs ||= 1;
-    $Global::killall = 1;
+    $Global::killall ||= 1;
     # pids of the all children and (grand*)children
     # before we start the blood bath
     my @family_pids = family_pids(keys %Global::running);
@@ -6800,7 +6800,8 @@ sub sshlogin_wrap {
 	    my $remote_command = $pwd.$envset.$bashfuncset.
 		'@ARGV="'.::perl_quote_scalar($command).'";'. monitor_parent_sshd_script();
 	    $quoted_remote_command = "perl -e ".::shell_quote_scalar($remote_command);
-	    if(length $quoted_remote_command > 999
+	    my $dq_remote_command = ::shell_quote_scalar($quoted_remote_command);
+	    if(length $dq_remote_command > 999
 	       or
 	       not $csh_friendly
 	       or
@@ -6810,7 +6811,7 @@ sub sshlogin_wrap {
 		$quoted_remote_command = "perl -e \\''".base64_zip_eval()."'\\' ".
 		    join" ",string_zip_base64($remote_command);
 	    } else {
-		$quoted_remote_command = ::shell_quote_scalar($quoted_remote_command);
+		$quoted_remote_command = $dq_remote_command;
 	    }
 
 	    my $sshcmd = $sshlogin->sshcommand();

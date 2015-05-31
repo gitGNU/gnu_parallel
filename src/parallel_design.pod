@@ -469,6 +469,29 @@ a Perl script in `` or using B<system> if called as a single string.
 
 While these cover most cases, there are situations where it will fail:
 
+=over 2
+
+=item *
+
+When run using B<exec>.
+
+=item *
+
+When run as the last command using B<-c> from another shell (because
+some shells use B<exec>):
+
+  zsh% bash -c "parallel 'echo {} is not run in bash; set | grep BASH_VERSION' ::: This"
+
+You can work around that by appending '&& true':
+
+  zsh% bash -c "parallel 'echo {} is run in bash; set | grep BASH_VERSION' ::: This && true"
+
+=item *
+
+When run in a Perl script using B<system> with parallel as the first
+string:
+
+
   #!/usr/bin/perl
 
   system("parallel",'setenv a {}; echo $a',":::",2);
@@ -478,16 +501,23 @@ Perl script is called from B<tcsh> it will work just fine, but if it
 is called from B<bash> it will fail, because the command B<setenv> is
 not known to B<bash>.
 
+=back
+
 
 =head2 Quoting
 
-Quoting is kept simple: Use \ for all special chars and ' for
-newline. Whether a char is special depends on the shell and the
-context. Luckily quoting a bit too many does not break things.
+Quoting depends on the shell. For most shells \ is used for all
+special chars and ' is used for newline. Whether a char is special
+depends on the shell and the context. Luckily quoting a bit too many
+chars does not break things.
 
 It is fast, but had the distinct disadvantage that if a string needs
 to be quoted multiple times, the \'s double every time - increasing
 the string length exponentially.
+
+For B<tcsh>/B<csh> newline is quoted as \ followed by newline.
+
+For B<rc> everything is quoted using '.
 
 
 =head2 --pipepart vs. --pipe
