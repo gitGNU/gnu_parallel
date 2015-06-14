@@ -1928,7 +1928,7 @@ Use B<tmux> for output. Start a B<tmux> session and run each job in a
 window in that session. No other output will be produced.
 
 
-=item B<--timeout> I<val>
+=item B<--timeout> I<val> (alpha testing)
 
 Time out for command. If the command runs for longer than I<val>
 seconds it will get killed with SIGTERM, followed by SIGTERM 200 ms
@@ -4469,12 +4469,13 @@ version.
 
 A complete example that others can run that shows the problem
 including all files needed to run the example. This should preferably
-be small and simple. A combination of B<yes>, B<seq>, B<cat>, B<echo>,
-and B<sleep> can reproduce most errors. If your example requires large
-files, see if you can make them by something like B<seq 1000000> >
-B<file> or B<yes | head -n 10000000> > B<file>. If your example
-requires remote execution, see if you can use B<localhost> - maybe
-using another login.
+be small and simple, so try to remove as many options as possible. A
+combination of B<yes>, B<seq>, B<cat>, B<echo>, and B<sleep> can
+reproduce most errors. If your example requires large files, see if
+you can make them by something like B<seq 1000000> > B<file> or B<yes
+| head -n 10000000> > B<file>. If your example requires remote
+execution, see if you can use B<localhost> - maybe using another
+login.
 
 =item *
 

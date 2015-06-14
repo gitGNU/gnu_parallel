@@ -503,6 +503,8 @@ not known to B<bash>.
 
 =back
 
+If GNU B<parallel> guesses wrong in these situation, set the shell using
+$PARALLEL_SHELL.
 
 =head2 Quoting
 

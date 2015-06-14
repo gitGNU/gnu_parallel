@@ -224,19 +224,33 @@ New in this release:
 
 * An empty argument would previously cause no string to be inserted. This is now changed to '' being inserted, thus prepending a space to the output of: parallel echo {} b ::: ''
 
-* $PARALLEL_ENV can now be set to an environment prepending the command. Used in env_parallel as mentioned in the manpage.
-
-* --retry-failed will retry all failed jobs in a joblog. It will ignore any command given.
-
 * --halt has been rewritten completely. You can now combine percentages with success or fail. See the man page.
 
 * Exit values 102..254 have been removed. 101 means more than 100 jobs failed.
+
+* $PARALLEL_ENV can now be set to an environment prepending the command. Used in env_parallel as mentioned in the manpage.
+
+* --retry-failed will retry all failed jobs in a joblog. It will ignore any command given.
 
 * --ssh and $PARALLEL_SSH can be used to set the command used for ssh. The command is assume to behave the same as ssh.
 
 * --fifo now works in csh, too.
 
+* Killing through --timeout, --memfree, or --halt is now done as a process group.
+
+* GNU Parallel was cited in: Contrasting regional architectures of schizophrenia and other complex diseases using fast variance components analysis http://biorxiv.org/content/biorxiv/early/2015/06/05/016527.full.pdf
+
 * GNU Parallel was cited in: DockBench: An Integrated Informatic Platform Bridging the Gap between the Robust Validation of Docking Protocols and Virtual Screening Simulations http://www.mdpi.com/1420-3049/20/6/9977
+
+* GNU Parallel was cited in: Swedes Online: You Are More Tracked Than You Think http://www.diva-portal.org/smash/get/diva2:807623/FULLTEXT01.pdf
+
+* GNU Parallel was cited in: Tutorial: Lorenz-Mie theory for 2D scattering and resonance calculations http://arxiv.org/pdf/1505.07691.pdf
+
+* GNU Parallel was cited in: A quantitative assessment of the Hadoop framework for analyzing massively parallel DNA sequencing data http://link.springer.com/article/10.1186/s13742-015-0058-5
+
+* GNU Parallel was cited in: A composite genome approach to identify phylogenetically informative data from next-generation sequencing http://www.biomedcentral.com/content/pdf/s12859-015-0632-y.pdf
+
+Tutorial: Lorenz-Mie theory for 2D scattering and resonance calculations http://arxiv.org/pdf/1505.07691.pdf
 
 * <<Har angiveligt submittet ny version - afventer opdatering>> GNU Parallel was used (unfortunately without citation) in: MUGBAS: a species free gene-based programme suite for post-GWAS analysis http://www.ncbi.nlm.nih.gov/pubmed/25765345
 
@@ -250,7 +264,11 @@ New in this release:
 
 * GNU Parallel is used in: https://github.com/d2207197/local-mapreduce
 
+* GNU Parallel is used in: A Fingerprint Identification System https://curve.carleton.ca/system/files/theses/28733.pdf
+
 * Job ad asking for GNU Parallel experience: http://searchjobs.intel.com/gdansk-pol/software-validation-engineer/63A06826DAF24797AB414DC146201C2E/job/
+
+* Using BLAT http://wangzhengyuan.blogspot.dk/2015/06/using-blat.html
 
 * Bug fixes and man page updates.
 

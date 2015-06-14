@@ -2,15 +2,17 @@
 
 rm -f ~/.parallel/will-cite
 
-echo '### Test stdin goes to first command only ("-" as argument)'
-cat >/tmp/parallel-script-for-script <<EOF
-#!/bin/bash
-echo via first cat |parallel --tty -kv cat ::: - -
-EOF
-chmod 755 /tmp/parallel-script-for-script
-echo via pseudotty | script -q -f -c /tmp/parallel-script-for-script /dev/null
-sleep 2
-rm /tmp/parallel-script-for-script
+# Disabled 2015-06-01
+# 
+# echo '### Test stdin goes to first command only ("-" as argument)'
+# cat >/tmp/parallel-script-for-script <<EOF
+# #!/bin/bash
+# echo via first cat |parallel --tty -kv cat ::: - -
+# EOF
+# chmod 755 /tmp/parallel-script-for-script
+# echo via pseudotty | script -q -f -c /tmp/parallel-script-for-script /dev/null
+# sleep 2
+# rm /tmp/parallel-script-for-script
 
 echo '### Test stdin goes to first command only ("cat" as argument)'
 cat >/tmp/parallel-script-for-script2 <<EOF

@@ -1076,7 +1076,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150531;
+    $Global::version = 20150607;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -2813,6 +2813,7 @@ sub parse_host_filtering {
     my (%ncores, %ncpus, %time_to_login, %maxlen, %echo, @down_hosts);
 
     for (@_) {
+	::debug("init",$_);
 	chomp;
 	my @col = split /\t/, $_;
 	if(defined $col[6]) {
@@ -2829,8 +2830,8 @@ sub parse_host_filtering {
 	    my $host = $1;
 	    $host =~ tr/\\//d;
 	    $Global::host{$host} or next;
-	    if($col[6] eq "255" or $col[7] eq "15") {
-		# exit == 255 or signal == 15: ssh failed
+	    if($col[6] eq "255" or $col[6] eq "-1") {
+		# exit == 255 or exit == timeout (-1): ssh failed/timedout
 		# Remove sshlogin
 		::debug("init", "--filtered $host\n");
 		push(@down_hosts, $host);
@@ -2916,7 +2917,8 @@ sub parallelized_host_filtering {
     # --retries 3: If the ssh daemon it overloaded, try 3 times
     # -s 16000: Half of the max line on UnixWare
     # TODO sh -c wrapper to work in csh
-    my $cmd = "cat $tmpfile | $0 -j0 --timeout 5 -s 16000 --joblog - --plain --delay 0.1 --retries 3 --tag --tagstring {1} -0 --colsep '\t' -k eval {2} 2>/dev/null";
+    my $unlinkcmd = $Global::debug ? "true" : "rm $tmpfile";
+    my $cmd = "($unlinkcmd; cat -) < $tmpfile | $0 -j0 --timeout 5 -s 16000 --joblog - --plain --delay 0.1 --retries 3 --tag --tagstring {1} -0 --colsep '\t' -k eval {2} 2>/dev/null";
     ::debug("init", $cmd, "\n");
     my @out;
     my $prepend = "";
@@ -2933,7 +2935,6 @@ sub parallelized_host_filtering {
 	push @out, $_;
     }
     close $host_fh;
-    $Global::debug or unlink $tmpfile;
     return @out;
 }
 
@@ -3196,31 +3197,8 @@ sub reaper {
 
 sub __USAGE__ {}
 
-sub _killall {
-    $Global::start_no_new_jobs ||= 1;
-    $Global::killall = 1;
-    my @term_seq = ("TERM",300,"TERM",300);
-    while(@term_seq) {
-	kill_my_pgrp(shift @term_seq, shift @term_seq);
-    }
-}
-
-sub kill_my_pgrp {
-    my $signal = shift;
-    my $time = shift;
-    my %S = %SIG;
-    $SIG{$signal} = 'IGNORE';
-    kill $signal, -$$;
-    %SIG = %S;
-    ::usleep($time);
-    my @pids = family_pids(keys %Global::running);
-    ::debug("kill","kill_my_pgrp $signal ",(join " ",sort @pids),"\n");
-}
-
 sub killall {
-    # Kill all jobs
-    # Send all (grand*)children TERM,TERM,KILL
-    # Wait up to 200 ms between each
+    # Kill all jobs by killing their process groups
 
     $Global::start_no_new_jobs ||= 1;
     $Global::killall ||= 1;
@@ -3228,8 +3206,10 @@ sub killall {
 }
 
 sub kill_sleep_seq {
-    # Send jobs TERM,TERM,KILL
-    # processgroups (-$pid)
+    # Send jobs TERM,TERM,KILL to processgroups
+    # Input:
+    #   @pids = list of pids that are also processgroups
+    # Convert pids to process groups ($processgroup = -$pid)
     my @pgrps = map { -$_ } @_;
     my @term_seq = ("TERM",200,"TERM",100,"TERM",50,"KILL",25);
     while(@term_seq) {
@@ -3270,34 +3250,6 @@ sub kill_sleep {
 	@pids = grep { kill( 0, $_) } @pids;
     }
     return @pids;
-}
-
-sub family_pids {
-    # Find the pids with this->pid as (grand)*parent
-    # Input:
-    #   @parents = pids of parents
-    # Returns:
-    #   @pids = pids of (grand)*children
-    my @parents = @_;
-    my @pids;
-
-    my ($children_of_ref, $parent_of_ref, $name_of_ref) = ::pid_table();
-
-    # Start out with the live parents
-    my @more = grep { kill( 0, $_) } @parents;
-    # While more (grand)*children
-    while(@more) {
-	my @m;
-	push @pids, @more;
-	for my $parent (@more) {
-	    if($children_of_ref->{$parent}) {
-		# add the children of this parent
-		push @m, @{$children_of_ref->{$parent}};
-	    }
-	}
-	@more = @m;
-    }
-    return (@pids);
 }
 
 sub wait_and_exit {
@@ -3755,8 +3707,8 @@ sub which {
 	    # ash bash csh dash fdsh fish fizsh ksh ksh93 mksh pdksh
 	    # posh rbash rc rush rzsh sash sh static-sh tcsh yash zsh
 	    my @shells = (qw(ash bash csh dash fdsh fish fizsh ksh
-                             ksh93 lksh mksh pdksh posh rbash rc rush rzsh
-                             sash sh static-sh tcsh yash zsh -sh -csh),
+	    ksh93 lksh mksh pdksh posh rbash rc rush rzsh sash sh
+	    static-sh tcsh yash zsh -sh -csh),
 			  '-sh (sh)' # sh on FreeBSD
 		);
 	    # Can be formatted as:
@@ -6240,7 +6192,7 @@ sub set_endtime {
     $self->{'endtime'} = $endtime;
 }
 
-sub timedout {
+sub is_timedout {
     # Is the job timedout?
     # Input:
     #   $delta_time = time that the job may run
@@ -6255,72 +6207,6 @@ sub kill {
     my $self = shift;
     $self->set_exitstatus(-1);
     ::kill_sleep_seq($self->pid());
-}
-
-sub _kill {
-    # Kill the job.
-    # Send the signals to (grand)*children and pid.
-    # If no signals: TERM TERM KILL
-    # Wait 200 ms after each TERM.
-    # Input:
-    #   @signals = signals to send
-    my $self = shift;
-    my @signals = @_;
-    my @family_pids = $self->family_pids();
-
-    # Record this jobs as failed
-    $self->set_exitstatus(-1);
-    # Send two TERMs to give time to clean up
-    ::debug("run", "Kill seq ", $self->seq(), " signal '@signals'\n");
-    my @send_signals = @signals || ("TERM", "TERM", "KILL");
-    for my $signal (@send_signals) {
-	my $alive = 0;
-	for my $pid (@family_pids) {
-	    if(CORE::kill 0, $pid) {
-		# The job still running
-		CORE::kill $signal, $pid;
-		$alive = 1;
-		::debug("run","$pid is alive\n");
-	    }
-	}
-	# If a signal was given as input, do not do the sleep below
-	@signals and next;
-
-	if($signal eq "TERM" and $alive) {
-	    # Wait up to 200 ms between TERMs - but only if any pids are alive
-	    my $sleep = 1;
-	    for (my $sleepsum = 0; CORE::kill 0, $family_pids[0] and $sleepsum < 200;
-		 $sleepsum += $sleep) {
-		$sleep = ::reap_usleep($sleep);
-	    }
-	}
-    }
-}
-
-sub family_pids {
-    # Find the pids with this->pid as (grand)*parent
-    # Returns:
-    #   @pids = pids of (grand)*children
-    my $self = shift;
-    my $pid = $self->pid();
-    my @pids;
-
-    my ($children_of_ref, $parent_of_ref, $name_of_ref) = ::pid_table();
-
-    my @more = ($pid);
-    # While more (grand)*children
-    while(@more) {
-	my @m;
-	push @pids, @more;
-	for my $parent (@more) {
-	    if($children_of_ref->{$parent}) {
-		# add the children of this parent
-		push @m, @{$children_of_ref->{$parent}};
-	    }
-	}
-	@more = @m;
-    }
-    return (@pids);
 }
 
 sub failed {
@@ -7104,6 +6990,18 @@ sub start {
 	    1;
 	};
 	$job->set_fh(0,"w",$stdin_fh);
+    } elsif ($opt::tty and not $Global::tty_taken and -c "/dev/tty" and
+	     open(my $devtty_fh, "<", "/dev/tty")) {
+	# Give /dev/tty to the command if no one else is using it
+	*IN = $devtty_fh;
+	# The eval is needed to catch exception from open3
+	eval {
+	    $pid = ::open3("<&IN", ">&OUT", ">&ERR", $Global::shell, "-c", $command) ||
+		::die_bug("open3-/dev/tty");
+	    $Global::tty_taken = $pid;
+	    close $devtty_fh;
+	    1;
+	};
     } elsif(@opt::a and not $Global::stdin_in_opt_a and $job->seq() == 1
 	    and $job->sshlogin()->string() eq ":") {
 	# Give STDIN to the first job if using -a (but only if running
@@ -7118,18 +7016,6 @@ sub start {
 	# Re-open to avoid complaining
 	open(STDIN, "<&", $Global::original_stdin)
 	    or ::die_bug("dup-\$Global::original_stdin: $!");
-    } elsif ($opt::tty and not $Global::tty_taken and -c "/dev/tty" and
-	     open(my $devtty_fh, "<", "/dev/tty")) {
-	# Give /dev/tty to the command if no one else is using it
-	*IN = $devtty_fh;
-	# The eval is needed to catch exception from open3
-	eval {
-	    $pid = ::open3("<&IN", ">&OUT", ">&ERR", @setpgrp_wrap, $command) ||
-		::die_bug("open3-/dev/tty");
-	    $Global::tty_taken = $pid;
-	    close $devtty_fh;
-	    1;
-	};
     } else {
 	# The eval is needed to catch exception from open3
 	eval {
@@ -9232,7 +9118,7 @@ sub process_timeouts {
 	    # Job already finished. No need to timeout the job
 	    # This could be because of --keep-order
 	    shift @{$self->{'queue'}};
-	} elsif($job->timedout($self->{'delta_time'})) {
+	} elsif($job->is_timedout($self->{'delta_time'})) {
 	    # Need to shift off queue before kill
 	    # because kill calls usleep that calls process_timeouts
 	    shift @{$self->{'queue'}};

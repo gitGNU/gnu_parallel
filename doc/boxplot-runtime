@@ -15,6 +15,7 @@
 
 
 if ! /tmp/bin/parallel-20140722 --version; then
+  wget -c ftp://ftp.gnu.org/old-gnu/parallel/p*
   wget -c ftp://ftp.uni-kl.de/pub/gnu/parallel/p*
   parallel 'gpg --auto-key-locate keyserver --keyserver-options auto-key-retrieve {}' ::: *.sig
   parallel --plus 'tar xvf {.} && cd {...} && ./configure --prefix /tmp/{.}-bin && make && make install' ::: *sig
@@ -31,26 +32,29 @@ measure() {
     INNER=$2
     CORES=$3
     VERSION=$4
+    GHZ=3.0
 
     # Force cpuspeed at 1.7GHz - seems to give tighter results
-    forever 'sleep 10;parallel sudo cpufreq-set -f 1700MHz -c{} ::: {0..7}' &
+#    forever 'sleep 10;parallel sudo cpufreq-set -f ${GHZ}GHz -c{} ::: {0..7}' &
+#    forever 'sleep 10;parallel sudo cpufreq-set -f 1700MHz -c{} ::: {0..7}' &
 
     PATH=/tmp/bin:$PATH
     cd /tmp/bin
-    ls parallel-* | shuf | parallel -j$CORES --joblog /tmp/joblog.csv 'seq '$INNER' | {2} true' :::: <(seq $OUTER) - 
+#    ls parallel-* | shuf | parallel -j$CORES --joblog /tmp/joblog$CORES-$INNER-$OUTER.csv 'seq '$INNER' | {2} true' :::: <(seq $OUTER) - 
+    ls parallel-* | parallel --shuf -j$CORES --joblog /tmp/joblog$CORES-$INNER-$OUTER.csv 'seq '$INNER' | {2} true' :::: <(seq $OUTER) - 
 
     killall forever
 
     Rscript - <<_
-      jl<-read.csv("/tmp/joblog.csv",sep="\t");
+      jl<-read.csv("/tmp/joblog$CORES-$INNER-$OUTER.csv",sep="\t");
       jl\$Command <- as.factor(substr(jl\$Command, 12, nchar(as.character(jl\$Command))-5))
       pdf("/tmp/boxplot.pdf");
       par(cex.axis=0.5);
       boxplot(JobRuntime/$INNER*1000~Command,data=jl,las=2,outline=F,
               ylab="milliseconds/job",main="GNU Parallel performance\n$OUTER trials each running $INNER");
 _
-    cp /tmp/boxplot.pdf /tmp/boxplot-j$CORES-1.7ghz-$OUTER-${INNER}v$VERSION.pdf
+    cp /tmp/boxplot.pdf /tmp/boxplot-j$CORES-${GHZ}ghz-$OUTER-${INNER}v$VERSION.pdf
     evince /tmp/boxplot.pdf
 }
 
-measure 3000 1000 8 1
+measure 3000 1000 2 1
