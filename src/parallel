@@ -2115,7 +2115,11 @@ sub init_run_jobs {
 		    # Count down the number of jobs to run for this SSHLogin.
 		    my $max = $sshlogin->max_jobs_running();
 		    if($max > 1) { $max--; } else {
-			::error("No more processes: cannot run a single job. Something is wrong.");
+			my @arg;
+			for my $record (@{$job->{'commandline'}->{'arg_list'}}) {
+			    push @arg, map { $_->orig() } @$record;
+			}
+			::error("No more processes: cannot run a single job. Something is wrong at @arg.");
 			::wait_and_exit(255);
 		    }
 		    $sshlogin->set_max_jobs_running($max);
