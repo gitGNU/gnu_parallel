@@ -14,16 +14,16 @@ echo '### zsh'
 
 echo '### csh'
   echo "3 big vars run remotely - length(base64) > 1000"
-  ssh csh@lo 'setenv A `seq 200|xargs`; 
-              setenv B `seq 200 -1 1|xargs`; 
-              setenv C `seq 300 -2 1|xargs`; 
-              parallel -Scsh@lo --env A,B,C -k echo \$\{\}\|wc ::: A B C'
+  stdout ssh csh@lo 'setenv A `seq 200|xargs`; 
+                     setenv B `seq 200 -1 1|xargs`; 
+                     setenv C `seq 300 -2 1|xargs`; 
+                     parallel -Scsh@lo --env A,B,C -k echo \$\{\}\|wc ::: A B C'
 
   echo "3 big vars run locally"
-  ssh csh@lo 'setenv A `seq 200|xargs`; 
-              setenv B `seq 200 -1 1|xargs`; 
-              setenv C `seq 300 -2 1|xargs`; 
-              parallel --env A,B,C -k echo \$\{\}\|wc ::: A B C'
+  stdout ssh csh@lo 'setenv A `seq 200|xargs`; 
+                     setenv B `seq 200 -1 1|xargs`; 
+                     setenv C `seq 300 -2 1|xargs`; 
+                     parallel --env A,B,C -k echo \$\{\}\|wc ::: A B C'
 
 echo '### Test tmux works on different shells'
   parallel -Scsh@lo,tcsh@lo,parallel@lo,zsh@lo --tmux echo ::: 1 2 3 4; echo $?

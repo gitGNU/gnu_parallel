@@ -1557,6 +1557,8 @@ time to initialize.
 B<--keep-order> will not work with B<--round-robin> as it is
 impossible to track which input block corresponds to which output.
 
+B<--round-robin> implies B<--pipe>.
+
 
 =item B<--rpl> 'I<tag> I<perl expression>'
 
@@ -2367,6 +2369,18 @@ To test a program with different parameters:
 
 If B<my_program> fails a red FAIL will be printed followed by the failing
 command; otherwise a green OK will be printed followed by the command.
+
+
+=head1 EXAMPLE: Log rotate
+
+Log rotation renames a logfile to an extension with a higher number:
+log.1 becomes log.2, log.2 becomes log.3, and so on. The oldest log is
+removed. To avoid overwriting files the process starts backwards from
+the high number to the low number.  This will keep 10 old versions of
+the log:
+
+  seq 9 -1 1 | parallel -j1 mv log.{} log.'{= $_++ =}'
+  mv log log.1
 
 
 =head1 EXAMPLE: Removing file extension when processing files

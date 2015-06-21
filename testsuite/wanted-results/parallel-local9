@@ -403,12 +403,12 @@ a1b1^c1[.}c
 echo "### BUG: The length for -X is not close to max (131072)"
 ### BUG: The length for -X is not close to max (131072)
 seq 1 4000 | nice parallel -k -X echo {.} aa {}{.} {}{}d{} {}dd{}d{.} |head -n 1 |wc
-      1   12821  131060
+      1    6861   65500
 echo "### BUG: empty lines with --show-limit"
 ### BUG: empty lines with --show-limit
 echo | $NICEPAR --show-limits
 Maximal size of command: 131071
-Maximal used size of command: 131071
+Maximal used size of command: 65535
 
 Execution of  will continue now, and it will try to read its input
 and run commands; if this is not what you wanted to happen, please

@@ -40,20 +40,19 @@ measure() {
 
     PATH=/tmp/bin:$PATH
     cd /tmp/bin
-#    ls parallel-* | shuf | parallel -j$CORES --joblog /tmp/joblog$CORES-$INNER-$OUTER.csv 'seq '$INNER' | {2} true' :::: <(seq $OUTER) - 
-    ls parallel-* | parallel --shuf -j$CORES --joblog /tmp/joblog$CORES-$INNER-$OUTER.csv 'seq '$INNER' | {2} true' :::: <(seq $OUTER) - 
+    ls parallel-* | parallel --shuf -j$CORES --joblog ~/tmp/joblog$CORES-$INNER-$OUTER.csv 'seq '$INNER' | {2} true' :::: <(seq $OUTER) - 
 
     killall forever
 
     Rscript - <<_
-      jl<-read.csv("/tmp/joblog$CORES-$INNER-$OUTER.csv",sep="\t");
+      jl<-read.csv("$HOME/tmp/joblog$CORES-$INNER-$OUTER.csv",sep="\t");
       jl\$Command <- as.factor(substr(jl\$Command, 12, nchar(as.character(jl\$Command))-5))
       pdf("/tmp/boxplot.pdf");
       par(cex.axis=0.5);
       boxplot(JobRuntime/$INNER*1000~Command,data=jl,las=2,outline=F,
               ylab="milliseconds/job",main="GNU Parallel performance\n$OUTER trials each running $INNER");
 _
-    cp /tmp/boxplot.pdf /tmp/boxplot-j$CORES-${GHZ}ghz-$OUTER-${INNER}v$VERSION.pdf
+    cp /tmp/boxplot.pdf $HOME/tmp/boxplot-j$CORES-${GHZ}ghz-$OUTER-${INNER}v$VERSION.pdf
     evince /tmp/boxplot.pdf
 }
 

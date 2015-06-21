@@ -241,11 +241,11 @@ f1=B f2=D
 f1=A f2=B
 f1=C f2=D
   cat num30000 | parallel --xargs echo | wc -l
-2
+3
   cat num30000 | parallel --xargs -s 10000 echo | wc -l
 17
   cat num30000 | parallel --jobs 4 -m echo | wc -l
-5
+6
   parallel --jobs 4 -m echo ::: 1 2 3 4 5 6 7 8 9 10
 1 2 3
 4 5 6

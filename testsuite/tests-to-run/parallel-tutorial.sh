@@ -5,6 +5,7 @@ cd testsuite 2>/dev/null
 rm -rf tmp
 mkdir tmp
 cd tmp
+touch ~/.parallel/will-cite
 echo '### test parallel_tutorial'
 rm -f /tmp/runs
 export SERVER1=parallel@lo

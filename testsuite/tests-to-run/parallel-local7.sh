@@ -62,7 +62,7 @@ perl -e 'print map { ($_, map { pack("c*",$_) } grep { $_>=1 && $_!=10 } 0..$_),
 
 echo '### Test output ascii'
   rm -f /tmp/paralocal7*; 
-  perl -e 'print map { ($_, map { pack("c*",$_) } grep { $_!=10 } 1..$_),"\n" } 1..255' | stdout parallel --tmux echo {}'>>/tmp/paralocal7{%}' | par_tmux_filter; 
+  perl -e 'print map { ($_, map { pack("c*",$_) } grep { $_>=1 && $_!=10 } $_-10..$_),"\n" } 1..255' | stdout parallel --tmux echo {}'>>/tmp/paralocal7{%}' | par_tmux_filter; 
   sort /tmp/paralocal7* | md5sum
 
 echo '### Test critical lengths. Must not block'

@@ -232,7 +232,7 @@ New in this release:
 
 * --retry-failed will retry all failed jobs in a joblog. It will ignore any command given.
 
-* --ssh and $PARALLEL_SSH can be used to set the command used for ssh. The command is assume to behave the same as ssh.
+* --ssh and $PARALLEL_SSH can be used to set the command used for ssh. The command is assumed to behave the same way as ssh.
 
 * --fifo now works in csh, too.
 
@@ -250,7 +250,7 @@ New in this release:
 
 * GNU Parallel was cited in: A composite genome approach to identify phylogenetically informative data from next-generation sequencing http://www.biomedcentral.com/content/pdf/s12859-015-0632-y.pdf
 
-Tutorial: Lorenz-Mie theory for 2D scattering and resonance calculations http://arxiv.org/pdf/1505.07691.pdf
+* GNU Parallel was cited in: Tutorial: Lorenz-Mie theory for 2D scattering and resonance calculations http://arxiv.org/pdf/1505.07691.pdf
 
 * <<Har angiveligt submittet ny version - afventer opdatering>> GNU Parallel was used (unfortunately without citation) in: MUGBAS: a species free gene-based programme suite for post-GWAS analysis http://www.ncbi.nlm.nih.gov/pubmed/25765345
 
@@ -263,6 +263,8 @@ Tutorial: Lorenz-Mie theory for 2D scattering and resonance calculations http://
 * << Update forventet juni Rachel har lige svaret >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
 
 * GNU Parallel is used in: https://github.com/d2207197/local-mapreduce
+
+* GNU Parallel is used in: wiki-edit-news https://github.com/albert-decatur/wiki-edit-news
 
 * GNU Parallel is used in: A Fingerprint Identification System https://curve.carleton.ca/system/files/theses/28733.pdf
 

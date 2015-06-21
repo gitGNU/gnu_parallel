@@ -24,7 +24,7 @@ echo '### bug #41805: Idea: propagate --env for parallel --number-of-cores'
   echo '** bug #41805 done'
 
 echo '### Deal with long command lines on remote servers'
-  perl -e 'print((("\""x10000)."\n")x10)' | parallel -j1 -S lo -N 10000 echo {} |wc
+  perl -e 'print((("\""x5000)."\n")x10)' | parallel -j1 -S lo -N 10000 echo {} |wc
 
 echo '### Test bug #34241: --pipe should not spawn unneeded processes'
   seq 5 | ssh csh@lo parallel -k --block 5 --pipe -j10 cat\\\;echo Block_end

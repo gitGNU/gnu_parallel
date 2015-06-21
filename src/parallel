@@ -890,6 +890,7 @@ sub parse_options {
     if(@opt::v) { $Global::verbose = $#opt::v+1; } # Convert -v -v to v=2
     $Global::debug = $opt::D;
     $Global::shell = $ENV{'PARALLEL_SHELL'} || parent_shell($$) || $ENV{'SHELL'} || "/bin/sh";
+    $Global::cshell = $Global::shell =~ m:/csh:;
     if(defined $opt::X) { $Global::ContextReplace = 1; }
     if(defined $opt::silent) { $Global::verbose = 0; }
     if(defined $opt::0) { $/ = "\0"; }
@@ -908,6 +909,7 @@ sub parse_options {
     if(defined $opt::colsep) { $Global::trim = 'lr'; }
     if(defined $opt::header) { $opt::colsep = defined $opt::colsep ? $opt::colsep : "\t"; }
     if(defined $opt::trim) { $Global::trim = $opt::trim; }
+    if(defined $opt::roundrobin) { $opt::pipe = 1; }
     if(defined $opt::arg_sep) { $Global::arg_sep = $opt::arg_sep; }
     if(defined $opt::arg_file_sep) { $Global::arg_file_sep = $opt::arg_file_sep; }
     if(defined $opt::number_of_cpus) { print SSHLogin::no_of_cpus(),"\n"; wait_and_exit(0); }
@@ -1259,7 +1261,7 @@ sub parse_semaphore {
     if(defined $opt::semaphorename) { $Global::semaphore = 1; }
     if(defined $opt::fg) { $Global::semaphore = 1; }
     if(defined $opt::bg) { $Global::semaphore = 1; }
-    if(defined $opt::wait) { $Global::semaphore = 1; }
+    if(defined $opt::wait) { $Global::semaphore = 1; @ARGV = "true"; }
     if($Global::semaphore) {
 	if(@opt::a) {
 	    # A semaphore does not take input from neither stdin nor file
@@ -1660,7 +1662,7 @@ sub shell_quote_scalar {
 	if(defined $a) {
 	    if(($a =~ s/'/''/g)
 	       +
-	       ($a =~ s/[\n\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\<\=\>\~\|\; \"\!\$\&\202-\377]+/'$&'/go)) {
+	       ($a =~ s/[\n\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\<\=\>\~\|\; \"\!\$\&\'\202-\377]+/'$&'/go)) {
 		# A string was replaced
 		# No need to test for "" or \0
 	    } elsif($a eq "") {
@@ -6321,7 +6323,7 @@ sub total_failed {
 	    # * cat > fifo
 	    # * waitpid to get the exit code from $command
 	    # * be less than 1000 chars long
-	    $script = "perl -e ". ::shell_quote_scalar
+	    $script = "perl -e '".
 		(::spacefree
 		 (0, q{
 		     ($s,$c,$f) = @ARGV;
@@ -6340,7 +6342,7 @@ sub total_failed {
 		     # Cleanup
 		     unlink $f;
 		     exit $?/256;
-		  }));
+		  }))."'";
 	}
 	return $script;
     }
@@ -6445,6 +6447,13 @@ sub wrapped {
 	if($opt::tmux) {
 	    # Wrap command with 'tmux'
 	    $command = $self->tmux_wrap($command);
+	}
+	if($Global::cshell
+	   and
+	   length $command > 499) {
+	    # csh does not like words longer than 1000 (499 quoted)
+	    $command = "perl -e '".base64_zip_eval()."' ".
+		join" ",string_zip_base64('exec "'.::perl_quote_scalar($command).'"');
 	}
 	$self->{'wrapped'} = $command;
     }
@@ -6954,18 +6963,62 @@ sub parentdirs_of {
     return @parents;
 }
 
+sub open3_setpgrp_external {
+    my ($in,$command) = @_;
+    my $pid;
+    my @setpgrp_wrap = ('perl','-e',"setpgrp\;exec '$Global::shell', '-c', \@ARGV");
+    # The eval is needed to catch exception from open3
+    eval {
+	$pid = ::open3($in, ">&OUT", ">&ERR", @setpgrp_wrap, $command)
+	    || ::die_bug("open3-$in");
+	1;
+    };
+    return $pid;
+}
+
+sub open3_setpgrp_internal {
+    my ($in,$command) = @_;
+    my $pid;
+    # The eval is needed to catch exception from open3
+    eval {
+	if(not $pid = ::open3($in, ">&OUT", ">&ERR", "-")) {
+	    # Each child gets its own process group to make it safe to killall
+	    setpgrp(0,0);
+	    exec("exec $Global::shell -c ".::shell_quote_scalar($command))
+		|| ::die_bug("open3-$in $command");
+	}
+    };
+    return $pid;
+}
+
+sub open3_setpgrp {
+    # If the OS supports open3(x,x,x,"-") use that
+    eval{ ::open3(Symbol::gensym(), ">&STDOUT", ">&STDERR", "-")};
+#    if($@) {
+    if(1) {
+	# Does not support open3(x,x,x,"-")
+	*open3_setpgrp = \&open3_setpgrp_external;
+    } else {
+	# Supports open3(x,x,x,"-")
+	*open3_setpgrp = \&open3_setpgrp_internal;
+    }
+    # The sub is now redefined. Call it
+    return open3_setpgrp(@_);
+}
+
 sub start {
     # Setup STDOUT and STDERR for a job and start it.
     # Returns:
     #   job-object or undef if job not to run
+
     my $job = shift;
     # Get the shell command to be executed (possibly with ssh infront).
     my $command = $job->wrapped();
-
+    my $pid;
+    
     if($Global::interactive or $Global::stderr_verbose) {
 	$command = interactive_start($command);
     }
-    my $pid;
     $job->openoutputfiles();
     my($stdout_fh,$stderr_fh) = ($job->fh(1,"w"),$job->fh(2,"w"));
     local (*IN,*OUT,*ERR);
@@ -6978,21 +7031,33 @@ sub start {
     if($opt::dryrun) {
 	$command = "true";
     }
-    # Each child gets its own process group to make it safe to killall
-    my @setpgrp_wrap = ('perl','-e',"setpgrp\;exec '$Global::shell', '-c', \@ARGV");
     $ENV{'PARALLEL_SEQ'} = $job->seq();
     $ENV{'PARALLEL_PID'} = $$;
     $ENV{'PARALLEL_TMP'} = ::tmpname("par");
     ::debug("run", $Global::total_running, " processes . Starting (",
 	    $job->seq(), "): $command\n");
+    $command = "exec $Global::shell -c ".::shell_quote_scalar($command);
+
     if($opt::pipe) {
 	my ($stdin_fh);
+#	$pid = open3_setpgrp($stdin_fh,$command);
+#	$pid = open3_setpgrp($stdin_fh,$command);
 	# The eval is needed to catch exception from open3
-	eval {
-	    $pid = ::open3($stdin_fh, ">&OUT", ">&ERR", @setpgrp_wrap, $command) ||
-		::die_bug("open3-pipe");
-	    1;
-	};
+    my @setpgrp_wrap = ('perl','-e',"setpgrp\;exec '$Global::shell', '-c', \@ARGV");
+    # The eval is needed to catch exception from open3
+    eval {
+	$pid = ::open3($stdin_fh, ">&OUT", ">&ERR", @setpgrp_wrap, $command)
+	    || ::die_bug("open3-stdin");
+	1;
+    };
+#	eval {
+#	    if(not $pid = ::open3($stdin_fh, ">&OUT", ">&ERR", "-")) {
+#		# Each child gets its own process group to make it safe to killall
+#		setpgrp(0,0);
+#		exec($command) || ::die_bug("open3-pipe");
+#	    }
+#	    1;
+#	};
 	$job->set_fh(0,"w",$stdin_fh);
     } elsif ($opt::tty and not $Global::tty_taken and -c "/dev/tty" and
 	     open(my $devtty_fh, "<", "/dev/tty")) {
@@ -7000,7 +7065,7 @@ sub start {
 	*IN = $devtty_fh;
 	# The eval is needed to catch exception from open3
 	eval {
-	    $pid = ::open3("<&IN", ">&OUT", ">&ERR", $Global::shell, "-c", $command) ||
+	    $pid = ::open3("<&IN", ">&OUT", ">&ERR", $command) ||
 		::die_bug("open3-/dev/tty");
 	    $Global::tty_taken = $pid;
 	    close $devtty_fh;
@@ -7011,22 +7076,46 @@ sub start {
 	# Give STDIN to the first job if using -a (but only if running
 	# locally - otherwise CTRL-C does not work for other jobs Bug#36585)
 	*IN = *STDIN;
+#	$pid = open3_setpgrp_internal("<&IN",$command);
+#	$pid = open3_setpgrp("<&IN",$command);
 	# The eval is needed to catch exception from open3
-	eval {
-	    $pid = ::open3("<&IN", ">&OUT", ">&ERR", @setpgrp_wrap, $command) ||
-		::die_bug("open3-a");
-	    1;
-	};
+    my @setpgrp_wrap = ('perl','-e',"setpgrp\;exec '$Global::shell', '-c', \@ARGV");
+    # The eval is needed to catch exception from open3
+    eval {
+	$pid = ::open3("<&IN", ">&OUT", ">&ERR", @setpgrp_wrap, $command)
+	    || ::die_bug("open3-IN");
+	1;
+    };
+#	eval {
+#	    if(not $pid = ::open3("<&IN", ">&OUT", ">&ERR", "-")) {
+#		# Each child gets its own process group to make it safe to killall
+#		setpgrp(0,0);
+#		exec($command) || ::die_bug("open3-a");
+#	    }
+#	    1;
+#	};
 	# Re-open to avoid complaining
 	open(STDIN, "<&", $Global::original_stdin)
 	    or ::die_bug("dup-\$Global::original_stdin: $!");
     } else {
+#	$pid = open3_setpgrp_internal(::gensym,$command);
+#	$pid = open3_setpgrp(::gensym,$command);
 	# The eval is needed to catch exception from open3
-	eval {
-	    $pid = ::open3(::gensym, ">&OUT", ">&ERR", @setpgrp_wrap, $command) ||
-		::die_bug("open3-gensym");
-	    1;
-	};
+    my @setpgrp_wrap = ('perl','-e',"setpgrp\;exec '$Global::shell', '-c', \@ARGV");
+    # The eval is needed to catch exception from open3
+    eval {
+	$pid = ::open3(::gensym, ">&OUT", ">&ERR", @setpgrp_wrap, $command)
+	    || ::die_bug("open3-gens");
+	1;
+    };
+#	eval {
+#	    if(not $pid = ::open3(::gensym, ">&OUT", ">&ERR", "-")) {
+#		# Each child gets its own process group to make it safe to killall
+#		setpgrp(0,0);
+#		exec($command) || ::die_bug("open3-gensym $command");
+#	    }
+#	    1;
+#	};
     }
     if($pid) {
 	# A job was started
@@ -8022,7 +8111,6 @@ sub len {
     }
     # If we are using --env, add the prefix for that, too.
     $len += $Global::envvarlen;
-
     return $len;
 }
 
@@ -8500,14 +8588,15 @@ sub max_length {
 	}
 	$Limits::Command::line_max_len = tmux_length($cached_limit);
 	if($opt::max_chars) {
-	    if($opt::max_chars <= $cached_limit) {
-		$Limits::Command::line_max_len = $opt::max_chars;
+	    if($opt::max_chars * 2 <= $cached_limit) {
+		# $opt::max_chars quoting causes the length to double
+		$Limits::Command::line_max_len = $opt::max_chars * 2;
 	    } else {
 		::warning("Value for -s option should be < $cached_limit.");
 	    }
 	}
     }
-    return $Limits::Command::line_max_len;
+    return int($Limits::Command::line_max_len/2);
 }
 
 sub real_max_length {
