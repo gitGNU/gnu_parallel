@@ -931,7 +931,7 @@ sub parse_options {
     if(not defined $opt::blocksize) { $opt::blocksize = "1M"; }
     $opt::blocksize = multiply_binary_prefix($opt::blocksize);
     if($opt::blocksize > 2**31-1) {
-	warning("--blocksize >= 2G causes problems. Using 2G-1\n");
+	warning("--blocksize >= 2G causes problems. Using 2G-1.");
 	$opt::blocksize = 2**31-1;
     }
     $opt::memfree = multiply_binary_prefix($opt::memfree);
@@ -1078,7 +1078,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150607;
+    $Global::version = 20150620;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -6969,6 +6969,7 @@ sub start {
     #   job-object or undef if job not to run
 
     sub open3_setpgrp_internal {
+	# Run open3+setpgrp followed by the command
 	# Input:
 	#   $stdin_fh = Filehandle to use as STDIN
 	#   $stdout_fh = Filehandle to use as STDOUT
@@ -6993,29 +6994,48 @@ sub start {
 	return $pid;
     }
 
-sub open3_setpgrp {
-    my ($stdin_fh,$stdout_fh,$stderr_fh,$command) = @_;
-    local (*IN,*OUT,*ERR);
-    if(fileno $stdin_fh) {
-	# $stdin_fh is a file handle, not a gensym
-	open IN,  '<&', $stdin_fh  or ::die_bug("Can't dup STDIN: $!");
-	$stdin_fh = *IN;
+    sub open3_setpgrp_external {
+	# Run open3 on $command wrapped with a perl script doing setpgrp
+	# Works on systems that do not support open3(,,,"-")
+	# Input:
+	#   $stdin_fh = Filehandle to use as STDIN
+	#   $stdout_fh = Filehandle to use as STDOUT
+	#   $stderr_fh = Filehandle to use as STDERR
+	#   $command = Command to run
+	# Returns:
+	#   $pid = Process group of job started
+	my ($stdin_fh,$stdout_fh,$stderr_fh,$command) = @_;
+	local (*OUT,*ERR);
+	open OUT, '>&', $stdout_fh or ::die_bug("Can't dup STDOUT: $!");
+	open ERR, '>&', $stderr_fh or ::die_bug("Can't dup STDERR: $!");
+
+	my $pid;
+	my @setpgrp_wrap = ('perl','-e',"setpgrp\;exec '$Global::shell', '-c', \@ARGV");
+	# The eval is needed to catch exception from open3
+	eval {
+	    $pid = ::open3($stdin_fh, ">&OUT", ">&ERR", @setpgrp_wrap, $command)
+		|| ::die_bug("open3-$stdin_fh");
+	    1;
+	};
+	return $pid;
     }
-    open OUT, '>&', $stdout_fh or ::die_bug("Can't dup STDOUT: $!");
-    open ERR, '>&', $stderr_fh or ::die_bug("Can't dup STDERR: $!");
 
-    my $pid;
-    my @setpgrp_wrap = ('perl','-e',"setpgrp\;exec '$Global::shell', '-c', \@ARGV");
-    # The eval is needed to catch exception from open3
-    eval {
-	$pid = ::open3($stdin_fh, ">&OUT", ">&ERR", @setpgrp_wrap, $command)
-	    || ::die_bug("open3-$stdin_fh");
-	1;
-    };
-    return $pid;
-}
-
-
+    sub open3_setpgrp {
+	# If the OS supports open3(x,x,x,"-") use that
+	# eval { if(not $pid=::open3($i,$o,$e,"-")) { exit } }
+	# if $!: external
+	# TODO build a selector that works with out side effects
+	no warnings 'redefine';
+	if(1) {
+	    # Does not support open3(x,x,x,"-")
+	    *open3_setpgrp = \&open3_setpgrp_external;
+	} else {
+	    # Supports open3(x,x,x,"-")
+	    *open3_setpgrp = \&open3_setpgrp_internal;
+	}
+	# The sub is now redefined. Call it
+	return open3_setpgrp(@_);
+    }
 
     my $job = shift;
     # Get the shell command to be executed (possibly with ssh infront).

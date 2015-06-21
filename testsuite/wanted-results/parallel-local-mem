@@ -16,12 +16,12 @@ Eats 2.5 GB
   (yes "`seq 3000`" | head -c 2300M; echo ged) |   PERL5LIB=input-files/perl-v5.14.2/lib input-files/perl-v5.14.2/perl `which parallel` -k --block 2G --pipe --recend ged md5sum
 7be046296f6b0cde6049a11c116908ea  -
 68b329da9893e34099c7d8ad5cb9c940  -
-parallel: Warning: --blocksize >= 2G causes problems. Using 2G-1
+parallel: Warning: --blocksize >= 2G causes problems. Using 2G-1.
 echo 'Eats 2.5 GB'
 Eats 2.5 GB
   (yes "`seq 3000`" | head -c 2300M; echo ged) |   PERL5LIB=input-files/perl-v5.14.2/lib input-files/perl-v5.14.2/perl `which parallel` -k --block 2G --pipe --recend ged cat | wc -c
 2411724804
-parallel: Warning: --blocksize >= 2G causes problems. Using 2G-1
+parallel: Warning: --blocksize >= 2G causes problems. Using 2G-1.
 echo '**'
 **
 echo '### bug #44358: 2 GB records cause problems for -N'
@@ -31,25 +31,25 @@ echo '5 GB version: Eats 12.5 GB'
   (yes "`seq 3000`" | head -c 5000000000; echo FOO;    yes "`seq 3000`" | head -c 3000000000; echo FOO;    yes "`seq 3000`" | head -c 1000000000;) |    PERL5LIB=input-files/perl-v5.14.2/lib input-files/perl-v5.14.2/perl    `which parallel` --pipe --recend FOO -N2 --block 1g -k LANG=c wc -c
 8000000007
 1000000001
-parallel: Warning: A record was longer than 1000000000. Increasing to --blocksize 1300000001
-parallel: Warning: A record was longer than 1300000001. Increasing to --blocksize 1690000003
-parallel: Warning: A record was longer than 1690000003. Increasing to --blocksize 2147483647
+parallel: Warning: A record was longer than 1000000000. Increasing to --blocksize 1300000001.
+parallel: Warning: A record was longer than 1300000001. Increasing to --blocksize 1690000003.
+parallel: Warning: A record was longer than 1690000003. Increasing to --blocksize 2147483647.
 echo '2 GB version: eats 10 GB'
 2 GB version: eats 10 GB
   (yes "`seq 3000`" | head -c 2300M; echo FOO;    yes "`seq 3000`" | head -c 2300M; echo FOO;    yes "`seq 3000`" | head -c 1000M;) |    PERL5LIB=input-files/perl-v5.14.2/lib input-files/perl-v5.14.2/perl    `which parallel` --pipe --recend FOO -N2 --block 1g -k LANG=c wc -c
 4823449607
 1048576001
-parallel: Warning: A record was longer than 1000000000. Increasing to --blocksize 1300000001
-parallel: Warning: A record was longer than 1300000001. Increasing to --blocksize 1690000003
-parallel: Warning: A record was longer than 1690000003. Increasing to --blocksize 2147483647
+parallel: Warning: A record was longer than 1000000000. Increasing to --blocksize 1300000001.
+parallel: Warning: A record was longer than 1300000001. Increasing to --blocksize 1690000003.
+parallel: Warning: A record was longer than 1690000003. Increasing to --blocksize 2147483647.
 echo '### -L >4GB'
 ### -L >4GB
   (head -c 5000000000 /dev/zero; echo FOO;    head -c 3000000000 /dev/zero; echo FOO;    head -c 1000000000 /dev/zero;) |    parallel --pipe  -L2 --block 1g -k LANG=c wc -c
 8000000008
 1000000000
-parallel: Warning: A record was longer than 1000000000. Increasing to --blocksize 1300000001
-parallel: Warning: A record was longer than 1300000001. Increasing to --blocksize 1690000003
-parallel: Warning: A record was longer than 1690000003. Increasing to --blocksize 2147483647
+parallel: Warning: A record was longer than 1000000000. Increasing to --blocksize 1300000001.
+parallel: Warning: A record was longer than 1300000001. Increasing to --blocksize 1690000003.
+parallel: Warning: A record was longer than 1690000003. Increasing to --blocksize 2147483647.
 make[1]: Entering directory `/home/tange/privat/parallel/testsuite'
 # Make sure we can reach the virtual machines
 sudo ifconfig wlan0:0 192.168.1.72
