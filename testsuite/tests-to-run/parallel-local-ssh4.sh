@@ -18,7 +18,7 @@ echo '### csh'
                      setenv B `seq 200 -1 1|xargs`; 
                      setenv C `seq 300 -2 1|xargs`; 
                      parallel -Scsh@lo --env A,B,C -k echo \$\{\}\|wc ::: A B C'
-
+echo '### csh2'
   echo "3 big vars run locally"
   stdout ssh csh@lo 'setenv A `seq 200|xargs`; 
                      setenv B `seq 200 -1 1|xargs`; 
@@ -35,12 +35,9 @@ echo '### Test tmux works on different shells'
   stdout ssh parallel@lo "$PARTMUX" 'true  ::: 1 2 3 4; echo $?'      | grep -v 'See output'; 
   stdout ssh parallel@lo "$PARTMUX" 'false ::: 1 2 3 4; echo $?'      | grep -v 'See output'; 
   stdout ssh tcsh@lo     "$PARTMUX" 'true  ::: 1 2 3 4; echo $status' | grep -v 'See output'; 
-  stdout ssh tcsh@lo     "$PARTMUX" 'false ::: 1 2 3 4; echo $status' | grep -v 'See output'
-
-echo '### This fails - word too long'
-  export PARTMUX='parallel -Scsh@lo,tcsh@lo,parallel@lo,zsh@lo --tmux '; 
-  stdout ssh csh@lo "$PARTMUX" 'true ::: 1 2 3 4; echo $status' | grep -v 'See output'; 
-  stdout ssh csh@lo "$PARTMUX" 'false ::: 1 2 3 4; echo $status' | grep -v 'See output'
+  stdout ssh tcsh@lo     "$PARTMUX" 'false ::: 1 2 3 4; echo $status' | grep -v 'See output'; 
+  stdout ssh csh@lo      "$PARTMUX" 'true  ::: 1 2 3 4; echo $status' | grep -v 'See output'; 
+  stdout ssh csh@lo      "$PARTMUX" 'false ::: 1 2 3 4; echo $status' | grep -v 'See output'
 
 echo '### works'
   stdout parallel -Sparallel@lo --tmux echo ::: \\\\\\\"\\\\\\\"\\\;\@ | grep -v 'See output'

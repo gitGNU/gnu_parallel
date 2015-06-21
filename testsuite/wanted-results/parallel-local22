@@ -191,10 +191,8 @@ which static-sh => shell path /bin/static-sh
 which tcsh => shell path /usr/bin/tcsh
 which yash => shell path /usr/bin/yash
 which zsh => shell path /usr/bin/zsh
-/bin/rbash: line 0: exec: restricted
 Local configuration error occurred.
 Contact the systems administrator for further assistance.
-zsh:exec:1: /bin/rzsh: restricted
   echo '## Started directly from perl'
 ## Started directly from perl
   perl -e 'system(qw(parallel -Dinit echo ::: 1))' | grep which;   rm -f /tmp/par*.par

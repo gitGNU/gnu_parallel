@@ -22,7 +22,7 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
             # When parallelized: Sleep to make sure the abc-files are made
             /%head1/ and $_.="sleep .3\n\n"x10;
 ' |
-  stdout parallel -j7 -vd'\n\n' |
+  stdout parallel --joblog /tmp/jl-`basename $0` -j7 -vd'\n\n' |
   perl -pe '$|=1;
             # --tmux
             s:(/tmp\S+)(tms).....:$1$2XXXXX:;

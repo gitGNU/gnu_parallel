@@ -39,9 +39,9 @@ export -f run_test
 # Create a monitor script
 echo forever pstree -lp $$ >/tmp/monitor
 chmod 755 /tmp/monitor
-# log rotate
-parallel -j1 mv testsuite.log.{} testsuite.log.'{= $_++ =}' ::: 10 9 8 7 6 5 4 3 2 1
-mv testsuite.log testsuite.log.1
+# Log rotate
+seq 10 -1 1 | parallel -j1 mv log/testsuite.log.{} log/testsuite.log.'{= $_++ =}'
+mv testsuite.log log/testsuite.log.1
 date
 mkdir -p actual-results
 ls -t tests-to-run/*${1}*.sh | egrep -v "${2}" |

@@ -359,8 +359,12 @@ pdksh	"#&/
 pdksh	()*=?'
 posh	"#&/
 posh	()*=?'
+rbash	"#&/
+rbash	()*=?'
 rc	"#&/
 rc	()*=?'
+rzsh	"#&/
+rzsh	()*=?'
 sash	"#&/
 sash	()*=?'
 sh	"#&/
@@ -373,8 +377,6 @@ yash	"#&/
 yash	()*=?'
 zsh	"#&/
 zsh	()*=?'
-rbash	rbash: line 0: exec: restricted
-rzsh	zsh:exec:1: rzsh: restricted
 echo '**'
 **
 ### 1 .par file from --files expected
