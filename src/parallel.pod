@@ -1916,6 +1916,20 @@ I<str> and TAB (\t). I<str> can contain replacement strings such as
 B<--tagstring> is ignored when using B<-u>, B<--onall>, and B<--nonall>.
 
 
+=item B<--termseq> I<sequence> (alpha testing)
+
+Termination sequence. When a job is killed due to B<--timeout>,
+B<--memfree>, or abnormal termination of GNU B<parallel>, I<sequence>
+determines how the job is killed. The default is:
+
+    TERM,200,TERM,100,TERM,50,KILL,25
+
+which sends a TERM signal, waits 200 ms, sends another TERM signal,
+waits 100 ms, sends another TERM signal, waits 50 ms, sends a KILL
+signal, waits 25 ms, and exits. GNU B<parallel> discovers if a process
+dies before the waiting time is up.
+
+
 =item B<--tmpdir> I<dirname>
 
 Directory for temporary files. GNU B<parallel> normally buffers output

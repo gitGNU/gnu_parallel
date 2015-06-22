@@ -795,6 +795,7 @@ sub options_hash {
 	 "memfree=s" => \$opt::memfree,
 	 "retries=i" => \$opt::retries,
 	 "timeout=s" => \$opt::timeout,
+	 "termseq|term-seq=s" => \$opt::termseq,
 	 # xargs-compatibility - implemented, man, testsuite
 	 "max-procs|P=s" => \$opt::jobs,
 	 "delimiter|d=s" => \$opt::d,
@@ -1649,67 +1650,67 @@ sub shell_quote {
 	: (join" ",map { shell_quote_scalar($_) } @_);
 }
 
-    sub shell_quote_scalar_rc {
-	# Quote for the rc-shell
-	my $a = $_[0];
-	if(defined $a) {
-	    if(($a =~ s/'/''/g)
-	       +
-	       ($a =~ s/[\n\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\<\=\>\~\|\; \"\!\$\&\'\202-\377]+/'$&'/go)) {
-		# A string was replaced
-		# No need to test for "" or \0
-	    } elsif($a eq "") {
-		$a = "''";
-	    } elsif($a eq "\0") {
-		$a = "";
-	    }
+sub shell_quote_scalar_rc {
+    # Quote for the rc-shell
+    my $a = $_[0];
+    if(defined $a) {
+	if(($a =~ s/'/''/g)
+	   +
+	   ($a =~ s/[\n\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\<\=\>\~\|\; \"\!\$\&\'\202-\377]+/'$&'/go)) {
+	    # A string was replaced
+	    # No need to test for "" or \0
+	} elsif($a eq "") {
+	    $a = "''";
+	} elsif($a eq "\0") {
+	    $a = "";
 	}
-	return $a;
     }
+    return $a;
+}
 
-    sub shell_quote_scalar_csh {
-	# Quote for (t)csh
-	my $a = $_[0];
-	if(defined $a) {
-	    # $a =~ s/([\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\>\<\~\|\; \"\!\$\&\'\202-\377])/\\$1/g;
-	    # This is 1% faster than the above
-	    if(($a =~ s/[\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\<\=\>\~\|\; \"\!\$\&\'\202-\377]/\\$&/go)
-	       +
-	       # quote newline in csh as \\\n
-	       ($a =~ s/[\n]/"\\\n"/go)) {
-		# A string was replaced
-		# No need to test for "" or \0
-	    } elsif($a eq "") {
-		$a = "''";
-	    } elsif($a eq "\0") {
-		$a = "";
-	    }
+sub shell_quote_scalar_csh {
+    # Quote for (t)csh
+    my $a = $_[0];
+    if(defined $a) {
+	# $a =~ s/([\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\>\<\~\|\; \"\!\$\&\'\202-\377])/\\$1/g;
+	# This is 1% faster than the above
+	if(($a =~ s/[\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\<\=\>\~\|\; \"\!\$\&\'\202-\377]/\\$&/go)
+	   +
+	   # quote newline in csh as \\\n
+	   ($a =~ s/[\n]/"\\\n"/go)) {
+	    # A string was replaced
+	    # No need to test for "" or \0
+	} elsif($a eq "") {
+	    $a = "''";
+	} elsif($a eq "\0") {
+	    $a = "";
 	}
-	return $a;
     }
+    return $a;
+}
 
-    sub shell_quote_scalar_default {
-	# Quote for other shells
-	my $a = $_[0];
-	if(defined $a) {
-	    # zsh wants '=' quoted
-	    # Solaris sh wants ^ quoted.
-	    # $a =~ s/([\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\>\<\~\|\; \"\!\$\&\'\202-\377])/\\$1/g;
-	    # This is 1% faster than the above
-	    if(($a =~ s/[\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\<\=\>\~\|\; \"\!\$\&\'\202-\377]/\\$&/go)
-	       +
-	       # quote newline as '\n'
-	       ($a =~ s/[\n]/'\n'/go)) {
-		# A string was replaced
-		# No need to test for "" or \0
-	    } elsif($a eq "") {
-		$a = "''";
-	    } elsif($a eq "\0") {
-		$a = "";
-	    }
+sub shell_quote_scalar_default {
+    # Quote for other shells
+    my $a = $_[0];
+    if(defined $a) {
+	# zsh wants '=' quoted
+	# Solaris sh wants ^ quoted.
+	# $a =~ s/([\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\>\<\~\|\; \"\!\$\&\'\202-\377])/\\$1/g;
+	# This is 1% faster than the above
+	if(($a =~ s/[\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\<\=\>\~\|\; \"\!\$\&\'\202-\377]/\\$&/go)
+	   +
+	   # quote newline as '\n'
+	   ($a =~ s/[\n]/'\n'/go)) {
+	    # A string was replaced
+	    # No need to test for "" or \0
+	} elsif($a eq "") {
+	    $a = "''";
+	} elsif($a eq "\0") {
+	    $a = "";
 	}
-	return $a;
     }
+    return $a;
+}
 
 sub shell_quote_scalar {
     # Quote the string so the shell will not expand any special chars
@@ -3217,12 +3218,14 @@ sub kill_sleep_seq {
     #   @pids = list of pids that are also processgroups
     # Convert pids to process groups ($processgroup = -$pid)
     my @pgrps = map { -$_ } @_;
-    my @term_seq = ("TERM",200,"TERM",100,"TERM",50,"KILL",25);
+    my @term_seq = split/,/,$opt::termseq;
+    if(not @term_seq) {
+	@term_seq = ("TERM",200,"TERM",100,"TERM",50,"KILL",25);
+    }
     while(@term_seq) {
 	@pgrps = kill_sleep(shift @term_seq, shift @term_seq, @pgrps);
     }
 }
-
 
 sub kill_sleep {
     my ($signal, $sleep_max, @pids) = @_;
