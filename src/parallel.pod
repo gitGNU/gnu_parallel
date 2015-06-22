@@ -306,7 +306,8 @@ Replace with calculated I<perl expression>. B<$_> will contain the
 same as B<{}>. After evaluating I<perl expression> B<$_> will be used
 as the value. It is recommended to only change $_ but you have full
 access to all of GNU B<parallel>'s internal functions and data
-structures.
+structures. You can use the function B<Q(>I<string>B<)> to shell quote
+a string.
 
 The B<{=>I<perl expression>B<=}> must be given as a single string.
 
@@ -501,7 +502,7 @@ I<size> defaults to 1M.
 See B<--pipe> and B<--pipepart> for use of this.
 
 
-=item B<--cat>
+=item B<--cat> (alpha testing)
 
 Create a temporary file with content. Normally B<--pipe>/B<--pipepart>
 will give data to the program on stdin (standard input). With B<--cat>
@@ -694,7 +695,7 @@ Implies B<--semaphore>.
 See also B<--bg>, B<man sem>.
 
 
-=item B<--fifo>
+=item B<--fifo> (alpha testing)
 
 Create a temporary fifo with content. Normally B<--pipe> and
 B<--pipepart> will give data to the program on stdin (standard
@@ -1735,7 +1736,7 @@ Does not run the command but quotes it. Useful for making quoted
 composed commands for GNU B<parallel>.
 
 
-=item B<--shuf> (alpha testing)
+=item B<--shuf> (beta testing)
 
 Shuffle jobs. When having multiple input sources it is hard to
 randomize jobs. --shuf will generate all jobs, and shuffle them before
@@ -1919,8 +1920,8 @@ B<--tagstring> is ignored when using B<-u>, B<--onall>, and B<--nonall>.
 =item B<--termseq> I<sequence> (alpha testing)
 
 Termination sequence. When a job is killed due to B<--timeout>,
-B<--memfree>, or abnormal termination of GNU B<parallel>, I<sequence>
-determines how the job is killed. The default is:
+B<--memfree>, B<--halt>, or abnormal termination of GNU B<parallel>,
+I<sequence> determines how the job is killed. The default is:
 
     TERM,200,TERM,100,TERM,50,KILL,25
 

@@ -1079,7 +1079,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150620;
+    $Global::version = 20150622;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -6429,6 +6429,7 @@ sub wrapped {
 	if($ENV{'PARALLEL_ENV'}) {
 	    # If $PARALLEL_ENV set, put that in front of the command
 	    # Used for importing functions for fish
+	    # Map \001 to \n to make it easer to quote \n in $PARALLEL_ENV
 	    $ENV{'PARALLEL_ENV'} =~ s/\001/\n/g;
 	    $command = $ENV{'PARALLEL_ENV'}."\n".$command;
 	}
@@ -7074,8 +7075,9 @@ sub start {
 	    local (*OUT,*ERR);
 	    open OUT, '>&', $stdout_fh or ::die_bug("Can't dup STDOUT: $!");
 	    open ERR, '>&', $stderr_fh or ::die_bug("Can't dup STDERR: $!");
-	    $pid = ::open3("<&IN", ">&OUT", ">&ERR", 
-			   "exec $Global::shell -c ".::shell_quote_scalar_default($command)) ||
+	    $pid = ::open3("<&IN", ">&OUT", ">&ERR",
+			   "exec $Global::shell -c ".
+			   ::shell_quote_scalar_default($command)) ||
 			       ::die_bug("open3-/dev/tty");
 	    $Global::tty_taken = $pid;
 	    close $devtty_fh;

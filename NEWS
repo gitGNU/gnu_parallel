@@ -1,38 +1,148 @@
+20150622
+
+* --halt has been rewritten completely. You can now combine
+  percentages with success or fail. See the man page.
+
+* Exit values 102..254 have been removed. 101 means more than 100 jobs
+  failed.
+
+* Killing through --timeout, --memfree, or --halt is now done as a
+  process group.
+
+* --termseq determines which signals are sent when a job is killed.
+
+* An empty argument would previously cause no string to be
+  inserted. This is now changed to '' being inserted, thus prepending
+  a space to the output of: parallel echo {} b ::: ''
+
+* $PARALLEL_ENV can now be set to an environment prepending the
+  command. Used in env_parallel as mentioned in the manpage.
+
+* --retry-failed will retry all failed jobs in a joblog. It will
+  ignore any command given.
+
+* --ssh and $PARALLEL_SSH can be used to set the command used for
+  ssh. The command is assumed to behave the same way as ssh.
+
+* --fifo now works in csh, too.
+
+* Q(...) can be used in {= =} to shell quote a string.
+
+* GNU Parallel was cited in: Contrasting regional architectures of
+  schizophrenia and other complex diseases using fast variance
+  components analysis
+  http://biorxiv.org/content/biorxiv/early/2015/06/05/016527.full.pdf
+
+* GNU Parallel was cited in: DockBench: An Integrated Informatic
+  Platform Bridging the Gap between the Robust Validation of Docking
+  Protocols and Virtual Screening Simulations
+  http://www.mdpi.com/1420-3049/20/6/9977
+
+* GNU Parallel was cited in: Swedes Online: You Are More Tracked Than
+  You Think
+  http://www.diva-portal.org/smash/get/diva2:807623/FULLTEXT01.pdf
+
+* GNU Parallel was cited in: Tutorial: Lorenz-Mie theory for 2D
+  scattering and resonance calculations
+  http://arxiv.org/pdf/1505.07691.pdf
+
+* GNU Parallel was cited in: A quantitative assessment of the Hadoop
+  framework for analyzing massively parallel DNA sequencing data
+  http://link.springer.com/article/10.1186/s13742-015-0058-5
+
+* GNU Parallel was cited in: A composite genome approach to identify
+  phylogenetically informative data from next-generation sequencing
+  http://www.biomedcentral.com/content/pdf/s12859-015-0632-y.pdf
+
+* GNU Parallel was cited in: Tutorial: Lorenz-Mie theory for 2D
+  scattering and resonance calculations
+  http://arxiv.org/pdf/1505.07691.pdf
+
+* GNU Parallel is used in: taxator-tk
+  http://algbio.cs.uni-duesseldorf.de/webapps/wa-download/
+
+* GNU Parallel is used in: https://github.com/d2207197/local-mapreduce
+
+* GNU Parallel is used in: wiki-edit-news https://github.com/albert-decatur/wiki-edit-news
+
+* GNU Parallel is used in: A Fingerprint Identification System
+  https://curve.carleton.ca/system/files/theses/28733.pdf
+
+* Job ad asking for GNU Parallel experience:
+  http://searchjobs.intel.com/gdansk-pol/software-validation-engineer/63A06826DAF24797AB414DC146201C2E/job/
+
+* Using BLAT http://wangzhengyuan.blogspot.dk/2015/06/using-blat.html
+
+* Bug fixes and man page updates.
+
+
 20150522
 
-* Security: The security issue for --sshlogin + --fifo/--cat has been fixed. Thereby all issues with http://lists.gnu.org/archive/html/parallel/2015-04/msg00045.html have been fixed.
+* Security: The security issue for --sshlogin + --fifo/--cat has been
+  fixed. Thereby all issues with
+  http://lists.gnu.org/archive/html/parallel/2015-04/msg00045.html
+  have been fixed.
 
-* Security: After further security analysis the issue fixed in 20150422 also fixed the problem for --tmux.
+* Security: After further security analysis the issue fixed in
+  20150422 also fixed the problem for --tmux.
 
-* GNU Parallel was cited in: CIDER: a pipeline for detecting waves of coordinated transcriptional regulation in gene expression time-course data http://biorxiv.org/content/biorxiv/early/2015/03/17/012518.full.pdf
+* GNU Parallel was cited in: CIDER: a pipeline for detecting waves of
+  coordinated transcriptional regulation in gene expression
+  time-course data
+  http://biorxiv.org/content/biorxiv/early/2015/03/17/012518.full.pdf
 
-* GNU Parallel was cited in: Building Genomic Analysis Pipelines in a Hackathon Setting with Bioinformatician Teams: DNA-seq, Epigenomics, Metagenomics and RNA-seq http://biorxiv.org/content/biorxiv/early/2015/05/05/018085.full.pdf
+* GNU Parallel was cited in: Building Genomic Analysis Pipelines in a
+  Hackathon Setting with Bioinformatician Teams: DNA-seq, Epigenomics,
+  Metagenomics and RNA-seq
+  http://biorxiv.org/content/biorxiv/early/2015/05/05/018085.full.pdf
 
-* GNU Parallel was cited in: Toward Enhanced Metadata Quality of Large-Scale Digital Libraries: Estimating Volume Time Range https://www.ideals.illinois.edu/bitstream/handle/2142/73656/186_ready.pdf
+* GNU Parallel was cited in: Toward Enhanced Metadata Quality of
+  Large-Scale Digital Libraries: Estimating Volume Time Range
+  https://www.ideals.illinois.edu/bitstream/handle/2142/73656/186_ready.pdf
 
-* GNU Parallel was cited in: Sequencing the cap-snatching repertoire of H1N1 influenza provides insight into the mechanism of viral transcription initiation http://nar.oxfordjournals.org/content/early/2015/04/20/nar.gkv333.full.pdf
+* GNU Parallel was cited in: Sequencing the cap-snatching repertoire
+  of H1N1 influenza provides insight into the mechanism of viral
+  transcription initiation
+  http://nar.oxfordjournals.org/content/early/2015/04/20/nar.gkv333.full.pdf
 
-* GNU Parallel was cited in: Genome assembly using Nanopore-guided long and error-free DNA reads http://www.biomedcentral.com/content/pdf/s12864-015-1519-z.pdf
+* GNU Parallel was cited in: Genome assembly using Nanopore-guided
+  long and error-free DNA reads
+  http://www.biomedcentral.com/content/pdf/s12864-015-1519-z.pdf
 
-* GNU Parallel was cited in: Contrasting regional architectures of schizophrenia and other complex diseases using fast variance components analysis http://biorxiv.org/content/biorxiv/early/2015/03/13/016527.full.pdf
+* GNU Parallel was cited in: Contrasting regional architectures of
+  schizophrenia and other complex diseases using fast variance
+  components analysis
+  http://biorxiv.org/content/biorxiv/early/2015/03/13/016527.full.pdf
 
-* GNU Parallel was used (unfortunately with wrong citation) in: Comparing the CarbonTracker and TM5-4DVar data assimilation systems for CO2 surface flux inversions http://www.atmos-chem-phys-discuss.net/15/8883/2015/acpd-15-8883-2015-discussion.html
+* GNU Parallel was used (unfortunately with wrong citation) in:
+  Comparing the CarbonTracker and TM5-4DVar data assimilation systems
+  for CO2 surface flux inversions
+  http://www.atmos-chem-phys-discuss.net/15/8883/2015/acpd-15-8883-2015-discussion.html
 
-* GNU Parallel was used in: Gene Set Omic Analysis (GSOA) method https://bitbucket.org/srp33/gsoa
+* GNU Parallel was used in: Gene Set Omic Analysis (GSOA) method
+  https://bitbucket.org/srp33/gsoa
 
-* A Quick and Neat :) Orchestrator using GNU Parallel http://www.elsotanillo.net/2015/05/a-quick-and-neat-orchestrator-using-gnu-parallel/
+* A Quick and Neat :) Orchestrator using GNU Parallel
+  http://www.elsotanillo.net/2015/05/a-quick-and-neat-orchestrator-using-gnu-parallel/
 
-* Execute commands on multiple computers using GNU Parallel (setting up a cluster on the cheap) https://spectraldifferences.wordpress.com/2015/04/26/execute-commands-on-multiple-computers-using-gnu-parallel-setting-up-a-cluster-on-the-cheap/
+* Execute commands on multiple computers using GNU Parallel (setting
+  up a cluster on the cheap)
+  https://spectraldifferences.wordpress.com/2015/04/26/execute-commands-on-multiple-computers-using-gnu-parallel-setting-up-a-cluster-on-the-cheap/
 
-* Functions and GNU parallel for effective cluster load management http://genomespot.blogspot.dk/2015/04/functions-and-gnu-parallel-for.html
+* Functions and GNU parallel for effective cluster load management
+  http://genomespot.blogspot.dk/2015/04/functions-and-gnu-parallel-for.html
 
-* Use parallel processing to save time importing databases http://drupalsun.com/node/41854
+* Use parallel processing to save time importing databases
+  http://drupalsun.com/node/41854
 
-* Run multiple ssh commands in parallel with GNU Parallel http://www.ameir.net/blog/archives/380-run-multiple-ssh-commands-in-parallel-with-gnu-parallel.html
+* Run multiple ssh commands in parallel with GNU Parallel
+  http://www.ameir.net/blog/archives/380-run-multiple-ssh-commands-in-parallel-with-gnu-parallel.html
 
-* Importing huge databases faster https://www.lullabot.com/blog/article/importing-huge-databases-faster
+* Importing huge databases faster
+  https://www.lullabot.com/blog/article/importing-huge-databases-faster
 
-* Run multiple ssh commands in parallel with GNU Parallel https://www.ameir.net/blog/archives/380-run-multiple-ssh-commands-in-parallel-with-gnu-parallel.html/comment-page-1
+* Run multiple ssh commands in parallel with GNU Parallel
+  https://www.ameir.net/blog/archives/380-run-multiple-ssh-commands-in-parallel-with-gnu-parallel.html/comment-page-1
 
 * Parallel? Gnu parallel! https://debian.pro/1834
 

@@ -4,7 +4,7 @@
 
 Check that documentation is updated (compare to web):
 
-Fixet for 20150522
+Fixet for 20150622
 git diff last-release-commit
 Unmodified beta since last version => production
 Unmodified alpha since last version => beta
@@ -213,6 +213,8 @@ Subject: GNU Parallel 20150622 ('Løkke') released
 
 GNU Parallel 20150622 ('Løkke') has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
+A performance chart has been made to compare the performance of different versions: http://www.gnu.org/software/parallel/boxplot-j2-3.0ghz-3000-1000.pdf The recent jump is due to every job being wrapped in a Perl-script doing setpgrp.
+
 Haiku of the month:
 
   Programs very slow.
@@ -222,11 +224,15 @@ Haiku of the month:
 
 New in this release:
 
-* An empty argument would previously cause no string to be inserted. This is now changed to '' being inserted, thus prepending a space to the output of: parallel echo {} b ::: ''
-
 * --halt has been rewritten completely. You can now combine percentages with success or fail. See the man page.
 
 * Exit values 102..254 have been removed. 101 means more than 100 jobs failed.
+
+* Killing through --timeout, --memfree, or --halt is now done as a process group (whence the setpgrp wrapper).
+
+* --termseq determines which signals are sent when a job is killed.
+
+* An empty argument would previously cause no string to be inserted. This is now changed to '' being inserted, thus prepending a space to the output of: parallel echo {} b ::: ''
 
 * $PARALLEL_ENV can now be set to an environment prepending the command. Used in env_parallel as mentioned in the manpage.
 
@@ -236,7 +242,7 @@ New in this release:
 
 * --fifo now works in csh, too.
 
-* Killing through --timeout, --memfree, or --halt is now done as a process group.
+* Q(...) can be used in {= =} to shell quote a string.
 
 * GNU Parallel was cited in: Contrasting regional architectures of schizophrenia and other complex diseases using fast variance components analysis http://biorxiv.org/content/biorxiv/early/2015/06/05/016527.full.pdf
 
@@ -256,11 +262,11 @@ New in this release:
 
 * <<Afventer updateret publisering>> GNU Parallel was used in: Large Scale Author Name Disambiguation in Digital Libraries http://ieeexplore.ieee.org/xpl/abstractReferences.jsp?tp=&arnumber=7004487&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7004487
 
-* <<kontaktet 2015-05-09>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
-
-* taxator-tk http://algbio.cs.uni-duesseldorf.de/webapps/wa-download/ (check it)
+* <<kontaktet 2015-06-22>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
 
 * << Update forventet juni Rachel har lige svaret >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
+
+* GNU Parallel is used in: taxator-tk http://algbio.cs.uni-duesseldorf.de/webapps/wa-download/
 
 * GNU Parallel is used in: https://github.com/d2207197/local-mapreduce
 
