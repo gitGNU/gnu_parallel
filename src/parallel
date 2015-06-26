@@ -907,6 +907,7 @@ sub parse_options {
     if(defined $opt::max_args) { $Global::max_number_of_args = $opt::max_args; }
     if(defined $opt::timeout) { $Global::timeoutq = TimeoutQueue->new($opt::timeout); }
     if(defined $opt::tmpdir) { $ENV{'TMPDIR'} = $opt::tmpdir; }
+    $opt::nice ||= 0;
     if(defined $opt::help) { die_usage(); }
     if(defined $opt::colsep) { $Global::trim = 'lr'; }
     if(defined $opt::header) { $opt::colsep = defined $opt::colsep ? $opt::colsep : "\t"; }
@@ -6387,24 +6388,6 @@ sub wrapped {
 	    $command = "echo " .
 		::shell_quote_scalar(::shell_quote_scalar($command));
 	}
-	if($opt::nice) {
-	    # Prepend \nice -n19 $SHELL -c
-	    # and quote.
-	    # The '\' before nice is needed to avoid tcsh's built-in
-	    my $sshlogin = $self->sshlogin();
-	    my $serverlogin = $sshlogin->serverlogin();
-	    if($serverlogin eq ":") {
-		# Local use $Global::shell
-		$command = '\nice'. " -n". $opt::nice. " ".
-		    $Global::shell. " -c ".
-		    ::shell_quote_scalar($command);
-	    } else {
-		# Remote systems use $SHELL
-		$command = '\nice'. " -n". $opt::nice.
-		    ' $SHELL -c '.
-		    ::shell_quote_scalar($command);
-	    }
-	}
 	if($opt::cat) {
 	    # In '--cat' and '--fifo' {} == $PARALLEL_TMP.
 	    # This is to make it possible to compute $PARALLEL_TMP on
@@ -6562,6 +6545,7 @@ sub sshlogin_wrap {
 		# This will be packed in ', so only use "
 		::spacefree(0,'$shell = "'.($ENV{'PARALLEL_SHELL'} || '$ENV{SHELL}').'";'.
 			    '$tmpdir = "'.::perl_quote_scalar($ENV{'TMPDIR'}).'";'.
+			    '$nice = '.$opt::nice.';'.
 			    q{
 		# Set $PARALLEL_TMP to a non-existent file name in $TMPDIR
 		do {
@@ -6573,6 +6557,7 @@ sub sshlogin_wrap {
                 unless($pid) {
 		    # Make own process group to be able to kill HUP it later
 		    setpgrp;
+		    setpriority(0,0,$nice);
 		    exec $shell, "-c", ($bashfunc."@ARGV");
 		    die "exec: $!\n";
 		}
@@ -7016,7 +7001,7 @@ sub start {
 	open ERR, '>&', $stderr_fh or ::die_bug("Can't dup STDERR: $!");
 
 	my $pid;
-	my @setpgrp_wrap = ('perl','-e',"setpgrp\;exec '$Global::shell', '-c', \@ARGV");
+	my @setpgrp_wrap = ('perl','-e',"setpgrp\;setpriority\(0,0,$opt::nice\)\;exec '$Global::shell', '-c', \@ARGV");
 	# The eval is needed to catch exception from open3
 	eval {
 	    $pid = ::open3($stdin_fh, ">&OUT", ">&ERR", @setpgrp_wrap, $command)
@@ -7094,7 +7079,7 @@ sub start {
 	open ERR, '>&', $stderr_fh or ::die_bug("Can't dup STDERR: $!");
 	*IN = *STDIN;
 	# The eval is needed to catch exception from open3
-	my @setpgrp_wrap = ('perl','-e',"setpgrp\;exec '$Global::shell', '-c', \@ARGV");
+	my @setpgrp_wrap = ('perl','-e',"setpgrp\;setpriority\(0,0,$opt::nice\)\;exec '$Global::shell', '-c', \@ARGV");
 	eval {
 	    $pid = ::open3("<&IN", ">&OUT", ">&ERR", @setpgrp_wrap, $command)
 		|| ::die_bug("open3-<IN");

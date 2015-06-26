@@ -282,6 +282,15 @@ B<--block-size> it increases the block size by 30%. A small
 B<--block-size> gives very poor performance; by exponentially
 increasing the block size performance will not suffer.
 
+GNU B<parallel> will waste CPU power if B<--block-size> does not
+contain a full record, because it tries to find a full record and will
+fail to do so. The recommendation is therefore to use a
+B<--block-size> > 2 records, so you always get at least one full
+record when you read one block.
+
+If you use B<-N> then B<--block-size> should be big enough to contain
+N+1 records.
+
 
 =head2 Convenience options --nice --basefile --transfer --return
 --cleanup --tmux --group --compress --cat --fifo --workdir
@@ -317,7 +326,7 @@ up the tmpfile and keep the exit code of the command.
 
 The real killer comes when you try to combine several of these: Doing
 that correctly for all corner cases is next to impossible to do by
-hard.
+hand.
 
 
 =head2 Shell shock

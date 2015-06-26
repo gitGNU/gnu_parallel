@@ -488,14 +488,17 @@ should feel free to use B<--will-cite>.
 
 =item B<--block-size> I<size>
 
-Size of block in bytes. The I<size> can be postfixed with K, M, G, T, P,
-k, m, g, t, or p which would multiply the size with 1024, 1048576,
-1073741824, 1099511627776, 1125899906842624, 1000, 1000000,
-1000000000, 1000000000000, or 1000000000000000 respectively.
+Size of block in bytes to read at a time. The I<size> can be postfixed
+with K, M, G, T, P, k, m, g, t, or p which would multiply the size
+with 1024, 1048576, 1073741824, 1099511627776, 1125899906842624, 1000,
+1000000, 1000000000, 1000000000000, or 1000000000000000 respectively.
 
 GNU B<parallel> tries to meet the block size but can be off by the
 length of one record. For performance reasons I<size> should be bigger
-than a single record.
+than a two records. GNU B<parallel> will warn you and automatically
+increase the size if you choose a I<size> that is too small.
+
+If you use B<-N>, B<--block-size> should be bigger than N+1 records.
 
 I<size> defaults to 1M.
 
