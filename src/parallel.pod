@@ -502,7 +502,7 @@ I<size> defaults to 1M.
 See B<--pipe> and B<--pipepart> for use of this.
 
 
-=item B<--cat> (alpha testing)
+=item B<--cat> (beta testing)
 
 Create a temporary file with content. Normally B<--pipe>/B<--pipepart>
 will give data to the program on stdin (standard input). With B<--cat>
@@ -566,12 +566,6 @@ order, and use the first available.
 Use I<prg> for (de)compressing temporary files. It is assumed that I<prg
 -dc> will decompress stdin (standard input) to stdout (standard
 output) unless B<--decompress-program> is given.
-
-
-=item B<--ctrlc>
-
-If receiving SIGNING, GNU B<parallel> will send SIGINT to tasks
-running on remote computers thus killing them.
 
 
 =item B<--delimiter> I<delim>
@@ -695,7 +689,7 @@ Implies B<--semaphore>.
 See also B<--bg>, B<man sem>.
 
 
-=item B<--fifo> (alpha testing)
+=item B<--fifo> (beta testing)
 
 Create a temporary fifo with content. Normally B<--pipe> and
 B<--pipepart> will give data to the program on stdin (standard
@@ -749,9 +743,9 @@ See also: B<--line-buffer> B<--ungroup>
 Print a summary of the options to GNU B<parallel> and exit.
 
 
-=item B<--halt-on-error> I<val> (alpha testing)
+=item B<--halt-on-error> I<val> (beta testing)
 
-=item B<--halt> I<val> (alpha testing)
+=item B<--halt> I<val> (beta testing)
 
 When should GNU B<parallel> terminate? In some situations it makes no
 sense to run all jobs. GNU B<parallel> should simply give up as soon
@@ -1491,7 +1485,7 @@ commands.
 See also B<--joblog>, B<--resume>.
 
 
-=item B<--retry-failed> (alpha testing)
+=item B<--retry-failed> (beta testing)
 
 Retry all failed jobs in joblog. By reading B<--joblog> GNU
 B<parallel> will figure out the failed jobs and run those again.
@@ -1736,7 +1730,7 @@ Does not run the command but quotes it. Useful for making quoted
 composed commands for GNU B<parallel>.
 
 
-=item B<--shuf> (beta testing)
+=item B<--shuf>
 
 Shuffle jobs. When having multiple input sources it is hard to
 randomize jobs. --shuf will generate all jobs, and shuffle them before
@@ -1750,7 +1744,7 @@ Do not use the first line of input (used by GNU B<parallel> itself
 when called with B<--shebang>).
 
 
-=item B<--ssh> I<sshcommand> (alpha testing)
+=item B<--ssh> I<sshcommand> (beta testing)
 
 GNU B<parallel> defaults to using B<ssh> for remote access. This can
 be overridden with B<--ssh>. It can also be set on a per server
@@ -1917,7 +1911,7 @@ I<str> and TAB (\t). I<str> can contain replacement strings such as
 B<--tagstring> is ignored when using B<-u>, B<--onall>, and B<--nonall>.
 
 
-=item B<--termseq> I<sequence> (alpha testing)
+=item B<--termseq> I<sequence> (beta testing)
 
 Termination sequence. When a job is killed due to B<--timeout>,
 B<--memfree>, B<--halt>, or abnormal termination of GNU B<parallel>,
@@ -1945,7 +1939,7 @@ Use B<tmux> for output. Start a B<tmux> session and run each job in a
 window in that session. No other output will be produced.
 
 
-=item B<--timeout> I<val> (alpha testing)
+=item B<--timeout> I<val> (beta testing)
 
 Time out for command. If the command runs for longer than I<val>
 seconds it will get killed with SIGTERM, followed by SIGTERM 200 ms
@@ -3543,7 +3537,7 @@ $SHELL. If undefined use:
 =back
 
 
-=item $PARALLEL_SSH (alpha testing)
+=item $PARALLEL_SSH (beta testing)
 
 GNU B<parallel> defaults to using B<ssh> for remote access. This can
 be overridden with $PARALLEL_SSH, which again can be overridden with

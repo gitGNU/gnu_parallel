@@ -91,9 +91,9 @@ bit tricky because there should be no files to clean up if GNU
 B<parallel> is killed by a power outage.
 
 GNU B<parallel> first selects a compress program. If the user has not
-selected one, the first of these that are in $PATH is used: B<lzop
-pigz pxz gzip plzip pbzip2 lzma xz lzip bzip2>. They are sorted by
-speed on a 8 core machine.
+selected one, the first of these that are in $PATH is used: B<lz4 pigz
+lzop plzip pbzip2 pxz gzip lzma xz bzip2 lzip>. They are sorted by
+speed on a 16 core machine.
 
 Schematically the setup is as follows:
 
@@ -240,7 +240,6 @@ command to not have certain limits.  When inside these limits, 75 '\ '
 are added to the title to force it to be outside the limits.
 
 You can map the bad limits using:
-
 
 perl -e 'sub r { int(rand(shift)).($_[0] && "\t".r(@_)) } print map { r(@ARGV)."\n" } 1..10000' 1600 1500 90 |
   perl -ane '$F[0]+$F[1]+$F[2] < 2037 and print ' | 
@@ -490,7 +489,6 @@ You can work around that by appending '&& true':
 
 When run in a Perl script using B<system> with parallel as the first
 string:
-
 
   #!/usr/bin/perl
 

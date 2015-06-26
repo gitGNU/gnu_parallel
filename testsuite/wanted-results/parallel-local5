@@ -157,8 +157,7 @@ parallel: Warning: A record was longer than 5. Increasing to --blocksize 8.
 echo '### Test 10M records with too big block';   (    echo start;    seq 1 1 | parallel -uj1 cat /tmp/blocktest\;true;    echo end;    echo start;    seq 1 1 | parallel -uj1 cat /tmp/blocktest\;true;    echo end;    echo start;    seq 1 1 | parallel -uj1 cat /tmp/blocktest\;true;    echo end;   ) | stdout parallel -k --block 10M -j2 --pipe --recstart 'start\n' wc -c |   egrep -v '^0$'
 ### Test 10M records with too big block
 6888906
-6888906
-6888906
+13777812
 echo '### Test --rrs -N1 --recend single';   echo 12a34a45a6 |   parallel -k --pipe --recend a -N1 --rrs 'echo -n "$PARALLEL_SEQ>"; cat; echo; sleep 0.1'
 ### Test --rrs -N1 --recend single
 1>12
@@ -180,18 +179,15 @@ echo '### Test --rrs -N1 --recend single';   echo 12a34b45a6 |   parallel -k --p
 
 echo '### Test --rrs --recend single';   echo 12a34a45a6 |   parallel -k --pipe --recend a --rrs 'echo -n "$PARALLEL_SEQ>"; cat; echo; sleep 0.1'
 ### Test --rrs --recend single
-1>123445
-2>6
+1>1234456
 
 echo '### Test --rrs --regexp --recend alternate';   echo 12a34b45a6 |   parallel -k --pipe --regexp --recend 'a|b' --rrs 'echo -n "$PARALLEL_SEQ>"; cat; echo; sleep 0.1'
 ### Test --rrs --regexp --recend alternate
-1>123445
-2>6
+1>1234456
 
 echo '### Test --rrs --recend single';   echo 12a34b45a6 |   parallel -k --pipe --recend 'b' --rrs 'echo -n "$PARALLEL_SEQ>"; cat; echo; sleep 0.1'
 ### Test --rrs --recend single
-1>12a34
-2>45a6
+1>12a3445a6
 
 echo '### Test -N even';   seq 1 10 | parallel -j2 -k -N 2 --pipe cat";echo ole;sleep 0.\$PARALLEL_SEQ"
 ### Test -N even
@@ -251,7 +247,7 @@ ole
 ole
 echo '### Test --recstart + --recend';   cat /tmp/blocktest | parallel --block 1M -k --recstart 44 --recend "44" -j10 --pipe sort -n |md5sum
 ### Test --recstart + --recend
-3c20e43c58152da30261c5827a1f9084  -
+fc06ad6705d362075fcbc6de43315f8f  -
 echo '### Race condition bug - 1 - would block';   seq 1 80  | nice parallel -j0 'seq 1 10| parallel --block 1 --recend "" --pipe cat;true' >/dev/null
 ### Race condition bug - 1 - would block
 echo '### Race condition bug - 2 - would block';   seq 1 100 | nice parallel -j100 --block 1 --recend "" --pipe cat >/dev/null

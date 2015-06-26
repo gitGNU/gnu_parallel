@@ -357,6 +357,7 @@ sub spreadstdin {
 					   $recstart,$recend,length $1);
 	      }
 	  } else {
+	      eof($in) and last;
 	      # Find the last recend-recstart in $buf
 	      if($buf =~ s/(.*$recend)($recstart.*?)$/$2/os) {
 		  # Copy to modifiable variable
@@ -379,6 +380,7 @@ sub spreadstdin {
 		  shorten(\$buf,$i);
 	      }
 	  } else {
+	      eof($in) and last;
 	      # Find the last recend+recstart in $buf
 	      my $i = rindex64(\$buf,$recendrecstart);
 	      if($i != -1) {
@@ -753,8 +755,8 @@ sub options_hash {
 	 "cleanup" => \$opt::cleanup,
 	 "basefile|bf=s" => \@opt::basefile,
 	 "B=s" => \$opt::retired,
-	 "ctrlc|ctrl-c" => \$opt::ctrlc,
-	 "noctrlc|no-ctrlc|no-ctrl-c" => \$opt::noctrlc,
+	 "ctrlc|ctrl-c" => \$opt::retired,
+	 "noctrlc|no-ctrlc|no-ctrl-c" => \$opt::retired,
 	 "workdir|work-dir|wd=s" => \$opt::workdir,
 	 "W=s" => \$opt::retired,
 	 "tmpdir=s" => \$opt::tmpdir,
@@ -886,7 +888,6 @@ sub parse_options {
 
     # no-* overrides *
     if($opt::nokeeporder) { $opt::keeporder = undef; }
-    if($opt::noctrlc) { $opt::ctrlc = undef; }
 
     if(@opt::v) { $Global::verbose = $#opt::v+1; } # Convert -v -v to v=2
     $Global::debug = $opt::D;
@@ -936,7 +937,6 @@ sub parse_options {
 	$opt::blocksize = 2**31-1;
     }
     $opt::memfree = multiply_binary_prefix($opt::memfree);
-    if(defined $opt::controlmaster) { $opt::noctrlc = 1; }
     if(defined $opt::timeout and $opt::timeout !~ /^\d+(\.\d+)?%?$/) {
 	::error("--timeout must be seconds or percentage.");
 	wait_and_exit(255);
@@ -1055,6 +1055,8 @@ sub parse_options {
 		    "-W has been retired. Use --wd.",
 		    "-Y has been retired. Use --shebang.",
 		    "-H has been retired. Use --halt.",
+		    "--ctrlc has been retired.",
+		    "--noctrlc has been retired.",
 		    "--tollef has been retired. Use -u -q --arg-sep -- and --load for -l.");
             ::wait_and_exit(255);
     }
@@ -1079,7 +1081,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150622;
+    $Global::version = 20150623;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -9457,6 +9459,6 @@ sub mkdir_or_die {
 }
 
 # Keep perl -w happy
-$opt::ctrlc = $opt::x = $Semaphore::timeout = $Semaphore::wait =
+$opt::x = $Semaphore::timeout = $Semaphore::wait =
 $opt::ignored_option = $Job::file_descriptor_warning_printed =
 $Global::envdef = 0;

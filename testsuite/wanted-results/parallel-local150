@@ -51,6 +51,8 @@ parallel: Error: -U has been retired. Use --er.
 parallel: Error: -W has been retired. Use --wd.
 parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
+parallel: Error: --ctrlc has been retired.
+parallel: Error: --noctrlc has been retired.
 parallel: Error: --tollef has been retired. Use -u -q --arg-sep -- and --load for -l.
   stdout parallel -g
 parallel: Error: -g has been retired. Use --group.
@@ -60,6 +62,8 @@ parallel: Error: -U has been retired. Use --er.
 parallel: Error: -W has been retired. Use --wd.
 parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
+parallel: Error: --ctrlc has been retired.
+parallel: Error: --noctrlc has been retired.
 parallel: Error: --tollef has been retired. Use -u -q --arg-sep -- and --load for -l.
   stdout parallel -H 1
 parallel: Error: -g has been retired. Use --group.
@@ -69,6 +73,8 @@ parallel: Error: -U has been retired. Use --er.
 parallel: Error: -W has been retired. Use --wd.
 parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
+parallel: Error: --ctrlc has been retired.
+parallel: Error: --noctrlc has been retired.
 parallel: Error: --tollef has been retired. Use -u -q --arg-sep -- and --load for -l.
   stdout parallel -T
 parallel: Error: -g has been retired. Use --group.
@@ -78,6 +84,8 @@ parallel: Error: -U has been retired. Use --er.
 parallel: Error: -W has been retired. Use --wd.
 parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
+parallel: Error: --ctrlc has been retired.
+parallel: Error: --noctrlc has been retired.
 parallel: Error: --tollef has been retired. Use -u -q --arg-sep -- and --load for -l.
   stdout parallel -U foo
 parallel: Error: -g has been retired. Use --group.
@@ -87,6 +95,8 @@ parallel: Error: -U has been retired. Use --er.
 parallel: Error: -W has been retired. Use --wd.
 parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
+parallel: Error: --ctrlc has been retired.
+parallel: Error: --noctrlc has been retired.
 parallel: Error: --tollef has been retired. Use -u -q --arg-sep -- and --load for -l.
   stdout parallel -W foo
 parallel: Error: -g has been retired. Use --group.
@@ -96,6 +106,8 @@ parallel: Error: -U has been retired. Use --er.
 parallel: Error: -W has been retired. Use --wd.
 parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
+parallel: Error: --ctrlc has been retired.
+parallel: Error: --noctrlc has been retired.
 parallel: Error: --tollef has been retired. Use -u -q --arg-sep -- and --load for -l.
   stdout parallel -Y
 parallel: Error: -g has been retired. Use --group.
@@ -105,6 +117,8 @@ parallel: Error: -U has been retired. Use --er.
 parallel: Error: -W has been retired. Use --wd.
 parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
+parallel: Error: --ctrlc has been retired.
+parallel: Error: --noctrlc has been retired.
 parallel: Error: --tollef has been retired. Use -u -q --arg-sep -- and --load for -l.
 echo '### Test --joblog followed by --resume --joblog'
 ### Test --joblog followed by --resume --joblog

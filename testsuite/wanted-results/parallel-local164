@@ -115,6 +115,8 @@ one 1
 echo '### Test --tollef'
 ### Test --tollef
   stdout parallel -k --tollef echo -- 1 2 3 ::: a b c | sort
+parallel: Error: --ctrlc has been retired.
+parallel: Error: --noctrlc has been retired.
 parallel: Error: --tollef has been retired. Use -u -q --arg-sep -- and --load for -l.
 parallel: Error: -B has been retired. Use --bf.
 parallel: Error: -H has been retired. Use --halt.
@@ -133,6 +135,8 @@ parallel: Error: -U has been retired. Use --er.
 parallel: Error: -W has been retired. Use --wd.
 parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
+parallel: Error: --ctrlc has been retired.
+parallel: Error: --noctrlc has been retired.
 parallel: Error: --tollef has been retired. Use -u -q --arg-sep -- and --load for -l.
 echo '### Test --gnu'
 ### Test --gnu

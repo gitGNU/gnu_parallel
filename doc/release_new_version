@@ -4,7 +4,7 @@
 
 Check that documentation is updated (compare to web):
 
-Fixet for 20150622
+Fixet for 20150722
 git diff last-release-commit
 Unmodified beta since last version => production
 Unmodified alpha since last version => beta
@@ -209,74 +209,36 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20150622 ('Løkke') released
+Subject: GNU Parallel 20150722 ('Davao') released [stable]
 
-GNU Parallel 20150622 ('Løkke') has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20150722 ('Davao') [stable] has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
-A performance chart has been made to compare the performance of different versions: http://www.gnu.org/software/parallel/boxplot-j2-3.0ghz-3000-1000.pdf The recent jump is due to every job being wrapped in a Perl-script doing setpgrp.
+No new functionality was introduced so this is a good candidate for a stable release.
 
 Haiku of the month:
 
-  Programs very slow.
-  Multiple can run at once.
+  Multi core I see.
+  Doing nothing. I say no!
   Use GNU Parallel.
       -- Ole Tange
 
 New in this release:
 
-* --halt has been rewritten completely. You can now combine percentages with success or fail. See the man page.
-
-* Exit values 102..254 have been removed. 101 means more than 100 jobs failed.
-
-* Killing through --timeout, --memfree, or --halt is now done as a process group (whence the setpgrp wrapper).
-
-* --termseq determines which signals are sent when a job is killed.
-
-* An empty argument would previously cause no string to be inserted. This is now changed to '' being inserted, thus prepending a space to the output of: parallel echo {} b ::: ''
-
-* $PARALLEL_ENV can now be set to an environment prepending the command. Used in env_parallel as mentioned in the manpage.
-
-* --retry-failed will retry all failed jobs in a joblog. It will ignore any command given.
-
-* --ssh and $PARALLEL_SSH can be used to set the command used for ssh. The command is assumed to behave the same way as ssh.
-
-* --fifo now works in csh, too.
-
-* Q(...) can be used in {= =} to shell quote a string.
-
-* GNU Parallel was cited in: Contrasting regional architectures of schizophrenia and other complex diseases using fast variance components analysis http://biorxiv.org/content/biorxiv/early/2015/06/05/016527.full.pdf
-
-* GNU Parallel was cited in: DockBench: An Integrated Informatic Platform Bridging the Gap between the Robust Validation of Docking Protocols and Virtual Screening Simulations http://www.mdpi.com/1420-3049/20/6/9977
-
-* GNU Parallel was cited in: Swedes Online: You Are More Tracked Than You Think http://www.diva-portal.org/smash/get/diva2:807623/FULLTEXT01.pdf
-
-* GNU Parallel was cited in: Tutorial: Lorenz-Mie theory for 2D scattering and resonance calculations http://arxiv.org/pdf/1505.07691.pdf
-
-* GNU Parallel was cited in: A quantitative assessment of the Hadoop framework for analyzing massively parallel DNA sequencing data http://link.springer.com/article/10.1186/s13742-015-0058-5
-
-* GNU Parallel was cited in: A composite genome approach to identify phylogenetically informative data from next-generation sequencing http://www.biomedcentral.com/content/pdf/s12859-015-0632-y.pdf
-
-* GNU Parallel was cited in: Tutorial: Lorenz-Mie theory for 2D scattering and resonance calculations http://arxiv.org/pdf/1505.07691.pdf
-
 * <<Har angiveligt submittet ny version - afventer opdatering>> GNU Parallel was used (unfortunately without citation) in: MUGBAS: a species free gene-based programme suite for post-GWAS analysis http://www.ncbi.nlm.nih.gov/pubmed/25765345
 
 * <<Afventer updateret publisering>> GNU Parallel was used in: Large Scale Author Name Disambiguation in Digital Libraries http://ieeexplore.ieee.org/xpl/abstractReferences.jsp?tp=&arnumber=7004487&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7004487
 
-* <<kontaktet 2015-06-22>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
+* <<kontaktet 2015-06-22 Afventer svar fra journal>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
 
 * << Update forventet juni Rachel har lige svaret >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
 
-* GNU Parallel is used in: taxator-tk http://algbio.cs.uni-duesseldorf.de/webapps/wa-download/
+* GNU Parallel was cited in: Decomposing Time-Lapse Paintings into Layers http://cs.gmu.edu/~ygingold/timemap/Decomposing%20Time-Lapse%20Paintings%20into%20Layers%20(Tan%20et%20al%202015%20SIGGRAPH)%20600dpi.pdf
 
-* GNU Parallel is used in: https://github.com/d2207197/local-mapreduce
+* GNU Parallel was used in: Somatic mutation calling from the matched tumor-normal exome-sequencing http://fafner.meb.ki.se/biostatwiki/somac/
 
-* GNU Parallel is used in: wiki-edit-news https://github.com/albert-decatur/wiki-edit-news
+* Using GNU Parallel to speed up network operations http://vielmetti.typepad.com/vacuum/2015/06/using-gnu-parallel-to-speed-up-network-operations.html
 
-* GNU Parallel is used in: A Fingerprint Identification System https://curve.carleton.ca/system/files/theses/28733.pdf
-
-* Job ad asking for GNU Parallel experience: http://searchjobs.intel.com/gdansk-pol/software-validation-engineer/63A06826DAF24797AB414DC146201C2E/job/
-
-* Using BLAT http://wangzhengyuan.blogspot.dk/2015/06/using-blat.html
+* Simultaneously benchmark many URLs with ApacheBench and GNU parallel https://www.simonholywell.com/post/2015/06/parallel-benchmark-many-urls-with-apachebench/
 
 * Bug fixes and man page updates.
 
