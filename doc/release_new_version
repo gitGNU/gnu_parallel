@@ -232,9 +232,13 @@ New in this release:
 
 * << Update forventet juni Rachel har lige svaret >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
 
+* GNU Parallel was cited in: A Fast Compiler for NetKAT http://arxiv.org/pdf/1506.06378.pdf
+
 * GNU Parallel was cited in: Decomposing Time-Lapse Paintings into Layers http://cs.gmu.edu/~ygingold/timemap/Decomposing%20Time-Lapse%20Paintings%20into%20Layers%20(Tan%20et%20al%202015%20SIGGRAPH)%20600dpi.pdf
 
 * GNU Parallel was used in: Somatic mutation calling from the matched tumor-normal exome-sequencing http://fafner.meb.ki.se/biostatwiki/somac/
+
+* Parallel Processing from the Command Line https://www.perpetual-beta.org/weblog/parallel-processing-from-the-command-line.html
 
 * Using GNU Parallel to speed up network operations http://vielmetti.typepad.com/vacuum/2015/06/using-gnu-parallel-to-speed-up-network-operations.html
 

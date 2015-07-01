@@ -2620,15 +2620,15 @@ can be written like this:
 
 Nested for-loops like this:
 
-  (for gender in M F ; do
+  (for colour in red green blue ; do
     for size in S M L XL XXL ; do
-      echo $gender $size
+      echo $colour $size
     done
   done) | sort
 
 can be written like this:
 
-  parallel echo {1} {2} ::: M F ::: S M L XL XXL | sort
+  parallel echo {1} {2} ::: red green blue ::: S M L XL XXL | sort
 
 
 =head1 EXAMPLE: Finding the lowest difference between files
@@ -2650,7 +2650,7 @@ the loop variable if is is named instead of just having a number. Use
 B<--header :> to let the first argument be an named alias for the
 positional replacement string:
 
-  parallel --header : echo {gender} {size} ::: gender M F ::: size S M L XL
+  parallel --header : echo {colour} {size} ::: colour red green blue ::: size S M L XL XXL
 
 This also works if the input file is a file with columns:
 
