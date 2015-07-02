@@ -787,7 +787,7 @@ sub options_hash {
 	 "remove-rec-sep|removerecsep|rrs" => \$opt::remove_rec_sep,
 	 "files|output-as-files|outputasfiles" => \$opt::files,
 	 "block|block-size|blocksize=s" => \$opt::blocksize,
-	 "tollef" => \$opt::retired,
+	 "tollef" => \$opt::tollef,
 	 "gnu" => \$opt::ignored_option,
 	 "xapply" => \$opt::xapply,
 	 "bibtex" => \$opt::bibtex,
@@ -1057,10 +1057,14 @@ sub parse_options {
 		    "-Y has been retired. Use --shebang.",
 		    "-H has been retired. Use --halt.",
 		    "--ctrlc has been retired.",
-		    "--noctrlc has been retired.",
-		    "--tollef has been retired. Use -u -q --arg-sep -- and --load for -l.");
+		    "--noctrlc has been retired.");
             ::wait_and_exit(255);
     }
+    if(defined $opt::tollef and not $opt::gnu) {
+       ::error("--tollef has been retired.","Remove --tollef or use --gnu to override --tollef.");
+       ::wait_and_exit(255);
+    }
+
     citation_notice();
 
     parse_halt();
