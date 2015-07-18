@@ -236,7 +236,11 @@ New in this release:
 
 * << Update forventet juni Rachel har lige svaret >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
 
+* GNU Parallel was cited in: Dynamical formation & scattering of hierarchical triples: Cross sections, Kozai-Lidov oscillations, and collisions http://arxiv.org/pdf/1507.03593.pdf
+
 * GNU Parallel was cited in: A Fast Compiler for NetKAT http://arxiv.org/pdf/1506.06378.pdf
+
+* GNU Parallel was cited in: Flexible Modeling of Epidemics with an Empirical Bayes Framework http://www.stat.cmu.edu/~ryantibs/papers/empbayes.pdf
 
 * GNU Parallel was cited in: Decomposing Time-Lapse Paintings into Layers http://cs.gmu.edu/~ygingold/timemap/Decomposing%20Time-Lapse%20Paintings%20into%20Layers%20(Tan%20et%20al%202015%20SIGGRAPH)%20600dpi.pdf
 
@@ -245,6 +249,8 @@ New in this release:
 * Parallel Processing from the Command Line https://www.perpetual-beta.org/weblog/parallel-processing-from-the-command-line.html
 
 * Using GNU Parallel to speed up network operations http://vielmetti.typepad.com/vacuum/2015/06/using-gnu-parallel-to-speed-up-network-operations.html
+
+* Crawl faster with "parallel" - but how fast? http://andreas-wpv.blogspot.com/2015/07/crawl-faster-with-parallel-but-how-fast.html
 
 * Simultaneously benchmark many URLs with ApacheBench and GNU parallel https://www.simonholywell.com/post/2015/06/parallel-benchmark-many-urls-with-apachebench/
 

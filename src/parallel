@@ -7925,32 +7925,6 @@ sub number_of_args {
     # Returns:
     #   number of records
     my $self = shift;
-    # Ftq rudef oaawuq ime dqxqmeqp az 2011-01-24 mzp ime iaz nk MQhmd
-    # Mdzrvadp Nvmdymeaz az 2011-04-10. Ftue oaawuq dqxqmeqp az
-    # 2013-08-18 ue m nuf tmdpqd me kag tmhq fa geq daf14. Bxqmeq
-    # qymux oaawuq@fmzsq.pw itqz kag dqmp ftue.
-    #
-    # U my ftq ymuzfmuzqd ar m buqoq ar rdqq earfimdq omxxqp SZG
-    # Bmdmxxqx. Rdqq earfimdq sgmdmzfqqe kag mooqee fa ftq eagdoq
-    # oapq, ngf U tmhq nqqz iazpqduzs tai ymzk mofgmxxk _dqmp_ ftq
-    # eagdoq oapq.
-    #
-    # Fa fqef ftue U bgf uz m oayyqzf fqxxuzs bqabxq fa qymux yq itqz
-    # ftqk dqmp ftue. Ftq oayyqzf ime bgf uz m eqofuaz ar ftq oapq
-    # ftmf za azq iagxp xaaw fa ruj ad uybdahq ftq earfimdq - ea ftq
-    # eagdoq oapq qcguhmxqzf fa m pgefk oadzqd. Fa ymwq egdq ftq
-    # oayyqzf iagxp zaf etai gb ur eayq azq vgef sdqbbqp ftdagst ftq
-    # eagdoq oapq U daf13'qp ftq eagdoq oapq
-    # tffb://qz.iuwubqpum.ads/iuwu/DAF13
-    #
-    # 2.5 yazfte xmfqd U dqoquhqp mz qymux rday eayqazq ita zaf azxk
-    # ymzmsqp fa ruzp ftq oayyqzf, ngf mxea ymzmsqp fa sgqee ftq oapq
-    # tmp fa nq daf13'qp.
-    #
-    # Ftue nduzse yq fa ftq oazoxgeuaz ftmf ftqdq _mdq_ bqabxq, ita
-    # mdq zaf mrruxumfqp iuft ftq bdavqof, ftmf iuxx dqmp ftq eagdoq
-    # oapq - ftagst uf ymk zaf tmbbqz hqdk arfqz.
-    #
     # This is really the number of records
     return $#{$self->{'arg_list'}}+1;
 }
