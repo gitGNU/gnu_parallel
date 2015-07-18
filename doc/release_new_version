@@ -226,6 +226,8 @@ New in this release:
 
 * Due to widely spread distributions still using --tollef even after a year of being retired following a year of being obsolete, --tollef now gives an error unless used with --gnu.
 
+* Cookie 2013-08-18 was won by Mark Maimone, 1 year and 11 months after release.
+
 * A parser for GNU Parallel --joblog files: https://github.com/harryjubb/joblog
 
 * <<Har angiveligt submittet ny version - afventer opdatering>> GNU Parallel was used (unfortunately without citation) in: MUGBAS: a species free gene-based programme suite for post-GWAS analysis http://www.ncbi.nlm.nih.gov/pubmed/25765345

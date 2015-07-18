@@ -318,7 +318,11 @@ sub spreadstdin {
     my $header = find_header(\$buf,$in);
     while(1) {
       my $anything_written = 0;
-      if(not read($in,substr($buf,length $buf,0),$blocksize)) {
+      my $buflen = length $buf;
+      my $readsize = ($buflen < $blocksize) ? $blocksize-$buflen : $blocksize;
+      # If $buf < $blocksize, append so it is $blocksize long after reading.
+      # Otherwise append a full $blocksize
+      if(not read($in,substr($buf,$buflen,0),$readsize)) {
 	  # End-of-file
 	  $chunk_number != 1 and last;
 	  # Force the while-loop once if everything was read by header reading
@@ -472,7 +476,6 @@ sub nindex {
     #   the position where the Nth copy is found
     my ($buf_ref, $str, $n) = @_;
     my $i = 0;
-    my $two_gb = 2**31-1;
     for(1..$n) {
 	$i = index64($buf_ref,$str,$i+1);
 	if($i == -1) { last }
@@ -6144,7 +6147,7 @@ sub non_block_write {
 	} else {
 	    # successfully wrote everything
 	    my $a = "";
-	    $self->set_stdin_buffer(\$a,\$a,"","");
+	    $self->set_stdin_buffer(\$a,\$a,0,"","");
 	    $something_written = $rv;
 	}
     }
@@ -6189,7 +6192,7 @@ sub set_starttime {
 
 sub runtime {
     # Returns:
-    #   Run time in seconds
+    #   Run time in seconds with 3 decimals
     my $self = shift;
     return sprintf("%.3f",int(($self->endtime() - $self->starttime())*1000)/1000);
 }
