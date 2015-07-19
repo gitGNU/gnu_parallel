@@ -61,6 +61,9 @@ echo '### bug #44371: --trc with csh complains'
 echo '### bug #44143: csh and nice'
   parallel --nice 1 -S csh@lo setenv B {}\; echo '$B' ::: OK
 
+echo '### bug #45575: -m and multiple hosts repeats first args'
+  seq 1 3 | parallel -X -S 2/lo,2/: -k echo 
+
 EOF
 
 echo
