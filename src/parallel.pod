@@ -484,9 +484,9 @@ harder to finance development. However, if you pay 10000 EUR, you
 should feel free to use B<--will-cite>.
 
 
-=item B<--block> I<size>
+=item B<--block> I<size> (alpha testing)
 
-=item B<--block-size> I<size>
+=item B<--block-size> I<size> (alpha testing)
 
 Size of block in bytes to read at a time. The I<size> can be postfixed
 with K, M, G, T, P, k, m, g, t, or p which would multiply the size
@@ -1139,9 +1139,9 @@ of each job is saved in a file and the filename is then printed.
 
 See also: B<--results>
 
-=item B<--pipe>
+=item B<--pipe> (alpha testing)
 
-=item B<--spreadstdin>
+=item B<--spreadstdin> (alpha testing)
 
 Spread input to jobs on stdin (standard input). Read a block of data
 from stdin (standard input) and give one block of data as input to one
@@ -1284,7 +1284,7 @@ Overrides an earlier B<--keep-order> (e.g. if set in
 B<~/.parallel/config>).
 
 
-=item B<--nice> I<niceness>
+=item B<--nice> I<niceness> (alpha testing)
 
 Run the command at this niceness. For simple commands you can just add
 B<nice> in front of the command. But if the command consists of more

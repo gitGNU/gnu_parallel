@@ -209,9 +209,9 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20150722 ('Davao') released [stable]
+Subject: GNU Parallel 20150722 ('Pluto') released [stable]
 
-GNU Parallel 20150722 ('Davao') [stable] has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20150722 ('Pluto') [stable] has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
 No new functionality was introduced so this is a good candidate for a stable release.
 
@@ -224,19 +224,15 @@ Haiku of the month:
 
 New in this release:
 
+* If a record fits in a block, --block only reads upto the size of --block. If not: --block reads a full --block more.
+
 * Due to widely spread distributions still using --tollef even after a year of being retired following a year of being obsolete, --tollef now gives an error unless used with --gnu.
+
+* --nice now uses a perl wrapper instead of the nice command.
 
 * Cookie 2013-08-18 was won by Mark Maimone, 1 year and 11 months after release.
 
 * A parser for GNU Parallel --joblog files: https://github.com/harryjubb/joblog
-
-* <<Har angiveligt submittet ny version - afventer opdatering>> GNU Parallel was used (unfortunately without citation) in: MUGBAS: a species free gene-based programme suite for post-GWAS analysis http://www.ncbi.nlm.nih.gov/pubmed/25765345
-
-* <<Afventer updateret publisering>> GNU Parallel was used in: Large Scale Author Name Disambiguation in Digital Libraries http://ieeexplore.ieee.org/xpl/abstractReferences.jsp?tp=&arnumber=7004487&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7004487
-
-* <<kontaktet 2015-06-22 Afventer svar fra journal>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
-
-* << Update forventet juni Rachel har lige svaret >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
 
 * GNU Parallel was cited in: Dynamical formation & scattering of hierarchical triples: Cross sections, Kozai-Lidov oscillations, and collisions http://arxiv.org/pdf/1507.03593.pdf
 
