@@ -96,7 +96,7 @@ echo '### Are children killed if GNU Parallel receives TERM twice? There should 
 
   parallel -q bash -c 'sleep 120 & pid=$!; wait $pid' ::: 1 & 
     T=$!; 
-    sleep 2; 
+    sleep 5; 
     pstree $$; 
     kill -TERM $T; 
     sleep 1; 
@@ -111,7 +111,7 @@ echo '### Are children killed if GNU Parallel receives INT twice? There should b
 
   parallel -q bash -c 'sleep 120 & pid=$!; wait $pid' ::: 1 & 
     T=$!; 
-    sleep 2; 
+    sleep 5; 
     pstree $$; 
     kill -INT $T; 
     sleep 1; 

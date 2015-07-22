@@ -47,14 +47,16 @@ seq 1 6 | parallel -k printf '{}.gif\\n' | parallel -j1 -kX echo a{}b{.}c{.}
 echo '### Test -m with 60000 args'; 
   seq 1 60000 | perl -pe 's/$/.gif/' | 
   parallel -j1 -km echo a{}b{.}c{.} | 
-  tee >(wc) >(md5sum) >/dev/null; 
-  wait
+  tee >(wc; sleep 1) >(md5sum; sleep 1) >/dev/null; 
+  wait; 
+  sleep 1
 
 echo '### Test -X with 60000 args'; 
   seq 1 60000 | perl -pe 's/$/.gif/' | 
   parallel -j1 -kX echo a{}b{.}c{.} | 
-  tee >(wc) >(md5sum) >/dev/null; 
-  wait
+  tee >(wc; sleep 1) >(md5sum; sleep 1) >/dev/null; 
+  wait; 
+  sleep 1
 
 echo '### Test -X with 60000 args and 5 expansions'
 seq 1 60000 | perl -pe 's/$/.gif/' | parallel -j1 -kX echo a{}b{.}c{.}{.}{} | wc -l

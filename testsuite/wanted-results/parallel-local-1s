@@ -3,17 +3,17 @@ echo '### Test --fifo under csh'
   csh -c "seq 3000000 | parallel -k --pipe --fifo 'sleep .{#};cat {}|wc -c ; false; echo \$status; false'"; echo exit $?
 1048571
 1
-1048579
+1048572
 1
 1048572
 1
-1048579
-1
-1048579
+1048572
 1
 1048572
 1
-1048580
+1048572
+1
+1048569
 1
 1048576
 1
@@ -43,6 +43,6 @@ echo '### Test --fifo under csh'
 1
 1048576
 1
-868800
+868832
 1
 exit 22

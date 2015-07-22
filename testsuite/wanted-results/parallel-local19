@@ -105,11 +105,11 @@ seq 1 6 | parallel -k printf '{}.gif\\n' | parallel -j1 -km echo a{}b{.}c{.}
 a1.gif 2.gif 3.gif 4.gif 5.gif 6.gifb1 2 3 4 5 6c1 2 3 4 5 6
 seq 1 6 | parallel -k printf '{}.gif\\n' | parallel -j1 -kX echo a{}b{.}c{.}
 a1.gifb1c1 a2.gifb2c2 a3.gifb3c3 a4.gifb4c4 a5.gifb5c5 a6.gifb6c6
-echo '### Test -m with 60000 args';   seq 1 60000 | perl -pe 's/$/.gif/' |   parallel -j1 -km echo a{}b{.}c{.} |   tee >(wc) >(md5sum) >/dev/null;   wait
+echo '### Test -m with 60000 args';   seq 1 60000 | perl -pe 's/$/.gif/' |   parallel -j1 -km echo a{}b{.}c{.} |   tee >(wc; sleep 1) >(md5sum; sleep 1) >/dev/null;   wait;   sleep 1
 ### Test -m with 60000 args
 0891d955e7e2659ee6a88a96f3309b5c  -
      20  179960 1286702
-echo '### Test -X with 60000 args';   seq 1 60000 | perl -pe 's/$/.gif/' |   parallel -j1 -kX echo a{}b{.}c{.} |   tee >(wc) >(md5sum) >/dev/null;   wait
+echo '### Test -X with 60000 args';   seq 1 60000 | perl -pe 's/$/.gif/' |   parallel -j1 -kX echo a{}b{.}c{.} |   tee >(wc; sleep 1) >(md5sum; sleep 1) >/dev/null;   wait;   sleep 1
 ### Test -X with 60000 args
 af6c8c69409b5cbc55aeb95174e23c37  -
      21   60000 1346682

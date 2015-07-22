@@ -678,7 +678,7 @@ echo '**'
 **
 echo '### Are children killed if GNU Parallel receives TERM twice? There should be no sleep at the end'
 ### Are children killed if GNU Parallel receives TERM twice? There should be no sleep at the end
-  parallel -q bash -c 'sleep 120 & pid=$!; wait $pid' ::: 1 &     T=$!;     sleep 2;     pstree $$;     kill -TERM $T;     sleep 1;     pstree $$;     kill -TERM $T;     sleep 1;     pstree $$; echo '**'
+  parallel -q bash -c 'sleep 120 & pid=$!; wait $pid' ::: 1 &     T=$!;     sleep 5;     pstree $$;     kill -TERM $T;     sleep 1;     pstree $$;     kill -TERM $T;     sleep 1;     pstree $$; echo '**'
 bash-+-perl---bash---sleep
      `-pstree
 bash-+-perl---bash---sleep
@@ -690,7 +690,7 @@ parallel: Waiting for these 1 jobs to finish. Send SIGTERM again to stop now.
 parallel: bash -c sleep\ 120\ \&\ pid\=\$\!\;\ wait\ \$pid 1
 echo '### Are children killed if GNU Parallel receives INT twice? There should be no sleep at the end'
 ### Are children killed if GNU Parallel receives INT twice? There should be no sleep at the end
-  parallel -q bash -c 'sleep 120 & pid=$!; wait $pid' ::: 1 &     T=$!;     sleep 2;     pstree $$;     kill -INT $T;     sleep 1;     pstree $$; 
+  parallel -q bash -c 'sleep 120 & pid=$!; wait $pid' ::: 1 &     T=$!;     sleep 5;     pstree $$;     kill -INT $T;     sleep 1;     pstree $$; 
 bash-+-perl---bash---sleep
      `-pstree
 bash---pstree

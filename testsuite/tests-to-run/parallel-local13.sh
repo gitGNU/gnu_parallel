@@ -5,6 +5,9 @@ echo '### Tests from xargs'
 rsync -Ha --delete input-files/xargs-inputs/ tmp/
 cd tmp
 
+PARALLEL=-j8
+export PARALLEL
+
 cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj0 -k --joblog /tmp/jl-`basename $0` -L1
 echo '### -0 -n3 echo < files0.xi'
 stdout xargs -0 -n3 echo < files0.xi

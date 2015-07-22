@@ -68,7 +68,7 @@ EOF
 
 echo
 echo "### Fish environment"
-stdout ssh -q fish@lo <<'EOS' | grep -v 'packages can be updated.'
+stdout ssh -q fish@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated.'
 alias alias_echo=echo;
 function func_echo
   echo $argv;
@@ -86,7 +86,7 @@ EOS
 
 echo
 echo "### Zsh environment"
-stdout ssh -q zsh@lo <<'EOS' | grep -v 'packages can be updated.'
+stdout ssh -q zsh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated.'
 alias alias_echo=echo;
 func_echo() {
   echo $*;
@@ -105,13 +105,13 @@ EOS
 
 echo
 echo "### Ksh environment"
-stdout ssh -q ksh@lo <<'EOS' | grep -v 'packages can be updated.'
+stdout ssh -q ksh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated.'
 alias alias_echo=echo;
 func_echo() {
   echo $*;
 }
 env_parallel() {
-  export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p;typeset -f)";
+  export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p|egrep -v 'typeset( -i)? -r|PIPESTATUS';typeset -f)";
   `which parallel` "$@";
   unset PARALLEL_ENV;
 }

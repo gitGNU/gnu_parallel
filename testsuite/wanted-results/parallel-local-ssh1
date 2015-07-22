@@ -44,6 +44,7 @@ echo '### Test bug #34241: --pipe should not spawn unneeded processes'
 Block_end
 3
 4
+Block_end
 5
 Block_end
 echo '### --env _'

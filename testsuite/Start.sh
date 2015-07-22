@@ -37,7 +37,7 @@ run_test() {
 export -f run_test
 
 # Create a monitor script
-echo forever pstree -lp $$ >/tmp/monitor
+echo forever "'echo; pstree -lp '"$$"'; pstree -l'" $$ >/tmp/monitor
 chmod 755 /tmp/monitor
 # Log rotate
 seq 10 -1 1 | parallel -j1 mv log/testsuite.log.{} log/testsuite.log.'{= $_++ =}'

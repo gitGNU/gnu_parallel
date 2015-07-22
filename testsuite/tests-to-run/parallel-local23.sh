@@ -29,7 +29,7 @@ echo '### bug #39554: Feature request: line buffered output --tag';
 echo
 
 echo '### test round-robin';
-  nice seq 1000 | $NICEPAR --block 1k --pipe --round-robin wc | sort
+  nice seq 1000 | $NICEPAR -j4 --block 1k --pipe --round-robin wc | sort
 
 echo '### bug #43600: --pipe --linebuffer --round does not work'
   seq 10000000000 | parallel --pipe --linebuffer --round cat | head

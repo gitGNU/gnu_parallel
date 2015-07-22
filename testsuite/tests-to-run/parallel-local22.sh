@@ -23,10 +23,12 @@ echo '### Test of xargs -m command lines > 130k';
   seq 1 60000 | parallel -k -j1 -m echo | md5sum
 
 echo '### This causes problems if we kill child processes'; 
-  seq 2 40 | parallel -j 0 seq 1 10  | sort | md5sum
+# 2>/dev/null to avoid parallel: Warning: Starting 45 processes took > 2 sec.
+  seq 2 40 | parallel -j 0 seq 1 10 2>/dev/null | sort | md5sum
 
 echo '### This causes problems if we kill child processes (II)'; 
-  seq 1 40 | parallel -j 0 seq 1 10 '| parallel -j 3 echo' | sort | md5sum
+# 2>/dev/null to avoid parallel: Warning: Starting 45 processes took > 2 sec.
+  seq 1 40 | parallel -j 0 seq 1 10 '| parallel -j 3 echo' 2>/dev/null | sort | md5sum
 
 echo '### Test -m'; 
   (echo foo;echo bar) | parallel -j1 -m echo 1{}2{}3 A{}B{}C
@@ -71,7 +73,7 @@ echo '### bug #42892: parallel -a nonexiting --pipepart'
 
 echo '### bug #42913: Dont use $SHELL but the shell currently running'
   echo '## Unknown shell => $SHELL (bash)'
-  parallel -j1 "cp \`which {}\` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;" 
+  parallel -kj1 "cp \`which {}\` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;" 
   ::: ash bash csh dash fish fizsh ksh ksh93 mksh pdksh posh rbash rush rzsh sash sh static-sh tcsh yash zsh; 
   rm -f /tmp/SHELL /tmp/par*.par
 

@@ -2,11 +2,11 @@ echo '### bug #41565: Print happens in blocks - not after each job complete'
 ### bug #41565: Print happens in blocks - not after each job complete
 echo 'The timing here is important: a full second between each'
 The timing here is important: a full second between each
-  perl -e 'for(1..10){print("$_\n");`sleep 1`}' | parallel -j3  'echo {#}' | timestamp -dd | perl -pe '$_=int($_+0.3)."\n"' | median
+  perl -e 'for(1..30){print("$_\n");`sleep 1`}' | parallel -j3  'echo {#}' | timestamp -dd | perl -pe '$_=int($_+0.3)."\n"' | median
 1
 echo '300 ms jobs:'
 300 ms jobs:
-  perl -e 'for(1..10){print("$_\n");`sleep .3`}' | parallel -j3 --delay 0.3 echo | timestamp -d -d | perl -pe 's/(.....).*/int($1*10+0.2)/e' | median
+  perl -e 'for(1..30){print("$_\n");`sleep .3`}' | parallel -j3 --delay 0.3 echo | timestamp -d -d | perl -pe 's/(.....).*/int($1*10+0.2)/e' | median
 3
 echo '### Test --tagstring'
 ### Test --tagstring
@@ -53,7 +53,6 @@ parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
 parallel: Error: --ctrlc has been retired.
 parallel: Error: --noctrlc has been retired.
-parallel: Error: --tollef has been retired. Use -u -q --arg-sep -- and --load for -l.
   stdout parallel -g
 parallel: Error: -g has been retired. Use --group.
 parallel: Error: -B has been retired. Use --bf.
@@ -64,7 +63,6 @@ parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
 parallel: Error: --ctrlc has been retired.
 parallel: Error: --noctrlc has been retired.
-parallel: Error: --tollef has been retired. Use -u -q --arg-sep -- and --load for -l.
   stdout parallel -H 1
 parallel: Error: -g has been retired. Use --group.
 parallel: Error: -B has been retired. Use --bf.
@@ -75,7 +73,6 @@ parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
 parallel: Error: --ctrlc has been retired.
 parallel: Error: --noctrlc has been retired.
-parallel: Error: --tollef has been retired. Use -u -q --arg-sep -- and --load for -l.
   stdout parallel -T
 parallel: Error: -g has been retired. Use --group.
 parallel: Error: -B has been retired. Use --bf.
@@ -86,7 +83,6 @@ parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
 parallel: Error: --ctrlc has been retired.
 parallel: Error: --noctrlc has been retired.
-parallel: Error: --tollef has been retired. Use -u -q --arg-sep -- and --load for -l.
   stdout parallel -U foo
 parallel: Error: -g has been retired. Use --group.
 parallel: Error: -B has been retired. Use --bf.
@@ -97,7 +93,6 @@ parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
 parallel: Error: --ctrlc has been retired.
 parallel: Error: --noctrlc has been retired.
-parallel: Error: --tollef has been retired. Use -u -q --arg-sep -- and --load for -l.
   stdout parallel -W foo
 parallel: Error: -g has been retired. Use --group.
 parallel: Error: -B has been retired. Use --bf.
@@ -108,7 +103,6 @@ parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
 parallel: Error: --ctrlc has been retired.
 parallel: Error: --noctrlc has been retired.
-parallel: Error: --tollef has been retired. Use -u -q --arg-sep -- and --load for -l.
   stdout parallel -Y
 parallel: Error: -g has been retired. Use --group.
 parallel: Error: -B has been retired. Use --bf.
@@ -119,7 +113,6 @@ parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
 parallel: Error: --ctrlc has been retired.
 parallel: Error: --noctrlc has been retired.
-parallel: Error: --tollef has been retired. Use -u -q --arg-sep -- and --load for -l.
 echo '### Test --joblog followed by --resume --joblog'
 ### Test --joblog followed by --resume --joblog
   rm -f /tmp/joblog;   timeout -k 1 1 parallel -j2 --joblog /tmp/joblog sleep {} ::: 1.1 2.2 3.3 4.4 2>/dev/null;   parallel -j2 --resume --joblog /tmp/joblog sleep {} ::: 1.1 2.2 3.3 4.4;   cat /tmp/joblog | wc -lw;   rm -f /tmp/joblog; echo '### Test --resume --joblog followed by --resume --joblog';   rm -f /tmp/joblog2;   timeout -k 1 1 parallel -j2 --resume --joblog /tmp/joblog2 sleep {} ::: 1.1 2.2 3.3 4.4 2>/dev/null;   parallel -j2 --resume --joblog /tmp/joblog2 sleep {} ::: 1.1 2.2 3.3 4.4;   cat /tmp/joblog2 | wc -lw;   rm -f /tmp/joblog2; echo '### Test --header'

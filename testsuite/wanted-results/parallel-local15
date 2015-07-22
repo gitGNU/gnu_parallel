@@ -598,4 +598,3 @@ perl -ne /\^\\S+\\s+\\S+\$/\ and\ print\ \$ARGV,\"\\n\" ./more_than_5000-9996
 perl -ne /\^\\S+\\s+\\S+\$/\ and\ print\ \$ARGV,\"\\n\" ./more_than_5000-9997
 perl -ne /\^\\S+\\s+\\S+\$/\ and\ print\ \$ARGV,\"\\n\" ./more_than_5000-9998
 perl -ne /\^\\S+\\s+\\S+\$/\ and\ print\ \$ARGV,\"\\n\" ./more_than_5000-9999
-/home/tange/privat/parallel/testsuite

@@ -3,6 +3,19 @@
 # Simple jobs that never fails
 # Each should be taking 0.3-1s and be possible to run in parallel
 # I.e.: No race conditions, no logins
+
+SMALLDISK=${SMALLDISK:-/mnt/ram}
+export SMALLDISK
+(
+  cd /tmp
+  sudo umount -l smalldisk.img
+  dd if=/dev/zero of=smalldisk.img bs=100k count=1k
+  yes|mkfs smalldisk.img
+  mkdir -p /mnt/ram
+  sudo mount smalldisk.img /mnt/ram
+  sudo chmod 777 /mnt/ram
+) >/dev/null 2>/dev/null
+
 cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj0 -k --joblog /tmp/jl-`basename $0` -L1
 echo '### Test exit val - true'; 
   echo true | parallel; 
@@ -70,9 +83,9 @@ parallel --plus --rpl '%'
 echo '**'
 
 echo '### Disk full'
-cat /dev/zero >/mnt/ram/out; 
-  parallel --tmpdir /mnt/ram echo ::: OK; 
-  rm /mnt/ram/out
+cat /dev/zero >$SMALLDISK/out; 
+  parallel --tmpdir $SMALLDISK echo ::: OK; 
+  rm $SMALLDISK/out
 
 echo '**'
 
@@ -145,8 +158,8 @@ echo '### TMUX not found'
 
 echo '**'
 
-parallel --halt 2 ::: 'sleep 1' burnP6 false; killall burnP6 && echo ERROR: burnP6 should be killed
-parallel --halt -2 ::: 'sleep 1' burnP5 true; killall burnP5 && echo ERROR: burnP5 should be killed
+parallel -j4 --halt 2 ::: 'sleep 1' burnP6 false; killall burnP6 && echo ERROR: burnP6 should be killed
+parallel -j4 --halt -2 ::: 'sleep 1' burnP5 true; killall burnP5 && echo ERROR: burnP5 should be killed
 
 parallel --halt error echo ::: should not print
 parallel --halt soon echo ::: should not print
@@ -171,3 +184,4 @@ echo '### 1 .par file from --files expected'
 find /tmp{/*,}/*.{par,tms,tmx} 2>/dev/null -mmin -10 | wc -l
 find /tmp{/*,}/*.{par,tms,tmx} 2>/dev/null -mmin -10 | parallel rm
 
+sudo umount -l /tmp/smalldisk.img

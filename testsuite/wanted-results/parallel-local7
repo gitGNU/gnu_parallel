@@ -1,36 +1,37 @@
 echo '### tmux1.9'
 ### tmux1.9
-  seq 000 100 | TMUX=tmux1.9 par_tmux
+  seq 000   100 | TMUX=tmux1.9 par_tmux
 See output with: tmux1.9 -S /tmp/parallel-local7/tmsXXXXX attach
 0
-  seq 100 200 | TMUX=tmux1.9 par_tmux
+  seq 100   200 | TMUX=tmux1.9 par_tmux
 See output with: tmux1.9 -S /tmp/parallel-local7/tmsXXXXX attach
 0
-  seq 200 300 | TMUX=tmux1.9 par_tmux
+  seq 200   300 | TMUX=tmux1.9 par_tmux
 See output with: tmux1.9 -S /tmp/parallel-local7/tmsXXXXX attach
 0
-  seq 300 400 | TMUX=tmux1.9 par_tmux
+  seq 300   400 | TMUX=tmux1.9 par_tmux
 See output with: tmux1.9 -S /tmp/parallel-local7/tmsXXXXX attach
 0
-  seq 400 500 | TMUX=tmux1.9 par_tmux
+  seq 400   500 | TMUX=tmux1.9 par_tmux
 See output with: tmux1.9 -S /tmp/parallel-local7/tmsXXXXX attach
 0
-  seq 500 600 | TMUX=tmux1.9 par_tmux
+  seq 500   600 | TMUX=tmux1.9 par_tmux
 See output with: tmux1.9 -S /tmp/parallel-local7/tmsXXXXX attach
 0
-  seq 600 700 | TMUX=tmux1.9 par_tmux
+  seq 600   700 | TMUX=tmux1.9 par_tmux
 See output with: tmux1.9 -S /tmp/parallel-local7/tmsXXXXX attach
 0
-  seq 700 800 | TMUX=tmux1.9 par_tmux
+  seq 700   800 | TMUX=tmux1.9 par_tmux
 See output with: tmux1.9 -S /tmp/parallel-local7/tmsXXXXX attach
 0
-  seq 800 900 | TMUX=tmux1.9 par_tmux
+  seq 800   900 | TMUX=tmux1.9 par_tmux
 See output with: tmux1.9 -S /tmp/parallel-local7/tmsXXXXX attach
 0
-  seq 900 1000 | TMUX=tmux1.9 par_tmux
+  seq 900  1000 | TMUX=tmux1.9 par_tmux
 See output with: tmux1.9 -S /tmp/parallel-local7/tmsXXXXX attach
 0
   seq 1000 1100 | TMUX=tmux1.9 par_tmux
+See output with: tmux1.9 -S /tmp/parallel-local7/tmsXXXXX attach
 parallel: Error: Command line too long (2023 >= 2023) at input 0: 1007
 255
   seq 1100 1200 | TMUX=tmux1.9 par_tmux
@@ -79,10 +80,10 @@ parallel: Error: Command line too long (4053 >= 2023) at input 0: 2022
 255
 echo '### tmux1.8'
 ### tmux1.8
-  seq 1 50 | TMUX=tmux1.8 par_tmux
+  seq   1  50 | TMUX=tmux1.8 par_tmux
 See output with: tmux1.8 -S /tmp/parallel-local7/tmsXXXXX attach
 0
-  seq 51 100 | TMUX=tmux1.8 par_tmux
+  seq  51 100 | TMUX=tmux1.8 par_tmux
 See output with: tmux1.8 -S /tmp/parallel-local7/tmsXXXXX attach
 0
   seq 101 150 | TMUX=tmux1.8 par_tmux
@@ -125,7 +126,7 @@ See output with: tmux1.9 -S /tmp/parallel-local7/tmsXXXXX attach
 0
 echo '### Test output ascii'
 ### Test output ascii
-  rm -f /tmp/paralocal7*;   perl -e 'print map { ($_, map { pack("c*",$_) } grep { $_>=1 && $_!=10 } $_-10..$_),"\n" } 1..255' | stdout parallel --tmux echo {}'>>/tmp/paralocal7{%}' | par_tmux_filter;   sort /tmp/paralocal7* | md5sum
+  rm -f /tmp/paralocal7-ascii*;   perl -e 'print map { ($_, map { pack("c*",$_) } grep { $_>=1 && $_!=10 } $_-10..$_),"\n" } 1..255' | stdout parallel --tmux echo {}'>>/tmp/paralocal7-ascii{%}' | par_tmux_filter;   sort /tmp/paralocal7-ascii* | md5sum
 See output with: tmux -S /tmp/parallel-local7/tmsXXXXX attach
 053c7e8e945ef7641fc63bc309ac069d  -
 echo '### Test critical lengths. Must not block'

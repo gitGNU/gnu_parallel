@@ -94,7 +94,7 @@ echo '**'
 **
 echo '### Disk full'
 ### Disk full
-cat /dev/zero >/mnt/ram/out;   parallel --tmpdir /mnt/ram echo ::: OK;   rm /mnt/ram/out
+cat /dev/zero >$SMALLDISK/out;   parallel --tmpdir $SMALLDISK echo ::: OK;   rm $SMALLDISK/out
 cat: write error: No space left on device
 parallel: Error: Output is incomplete. Cannot append to buffer file in /mnt/ram. Is the disk full?
 parallel: Error: Change $TMPDIR with --tmpdir or use --compress.
@@ -309,11 +309,11 @@ echo '### TMUX not found'
 parallel: Error: not-existing not found in $PATH.
 echo '**'
 **
-parallel --halt 2 ::: 'sleep 1' burnP6 false; killall burnP6 && echo ERROR: burnP6 should be killed
+parallel -j4 --halt 2 ::: 'sleep 1' burnP6 false; killall burnP6 && echo ERROR: burnP6 should be killed
 parallel: This job failed:
 false
 burnP6: no process found
-parallel --halt -2 ::: 'sleep 1' burnP5 true; killall burnP5 && echo ERROR: burnP5 should be killed
+parallel -j4 --halt -2 ::: 'sleep 1' burnP5 true; killall burnP5 && echo ERROR: burnP5 should be killed
 parallel: This job succeeded:
 true
 burnP5: no process found

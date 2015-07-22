@@ -40,7 +40,8 @@ echo "### bug #41609: --compress fails"
   seq 12 | parallel --compress -k seq {} 1000000 | md5sum
 
 echo "### --compress race condition (use nice): Fewer than 400 would run"
-  seq 400| nice parallel -j200 --compress echo | wc
+# 2>/dev/null to ignore Warning: Starting 45 processes took > 2 sec.
+  seq 400| nice parallel -j200 --compress echo 2>/dev/null | wc
 
 echo "### -v --pipe: Dont spawn too many - 1 is enough"
   seq 1 | parallel -j10 -v --pipe cat

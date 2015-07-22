@@ -791,7 +791,7 @@ sub options_hash {
 	 "files|output-as-files|outputasfiles" => \$opt::files,
 	 "block|block-size|blocksize=s" => \$opt::blocksize,
 	 "tollef" => \$opt::tollef,
-	 "gnu" => \$opt::ignored_option,
+	 "gnu" => \$opt::gnu,
 	 "xapply" => \$opt::xapply,
 	 "bibtex" => \$opt::bibtex,
 	 "wc|willcite|will-cite|nn|nonotice|no-notice" => \$opt::willcite,
@@ -1089,7 +1089,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150630;
+    $Global::version = 20150719;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -4520,7 +4520,7 @@ sub loadavg {
     # Should we update the loadavg file?
     my $update_loadavg_file = 0;
     if(open(my $load_fh, "<", $self->{'loadavg_file'})) {
-	local $/ = undef;
+	local $/; # $/ = undef => slurp whole file
         my $load_out = <$load_fh>;
         close $load_fh;
 	# Count lines starting with D,O,R but command does not start with [
@@ -4777,9 +4777,9 @@ sub compute_number_of_processes {
 	}
 	# Cleanup: Unget the command_lines or the @args
 	$Global::JobQueue->{'commandlinequeue'}->{'arg_queue'}->unget(@args);
-	@args = undef;
+	@args = ();
 	$Global::JobQueue->unget(@jobs);
-	@jobs = undef;
+	@jobs = ();
     }
 
     sub processes_available_by_system_limit {
@@ -7483,7 +7483,7 @@ sub linebuffer_print {
 	}
 	print $out_fd $$partial;
 	# Release the memory
-	$$partial = undef;
+	undef $$partial;
 	if($self->fh($fdno,"rpid") and CORE::kill 0, $self->fh($fdno,"rpid")) {
 	    # decompress still running
 	} else {
@@ -7632,7 +7632,7 @@ sub set_exitstatus {
 
 sub reset_exitstatus {
     my $self = shift;
-    $self->{'exitstatus'} = undef;
+    undef $self->{'exitstatus'};
 }
 
 sub exitsignal {
@@ -8810,7 +8810,7 @@ sub xapply_get {
 	return shift @{$self->{'unget'}};
     }
     my @record = ();
-    my $prepend = undef;
+    my $prepend;
     my $empty = 1;
     for my $fh (@{$self->{'fhs'}}) {
 	my $arg = read_arg_from_fh($fh);
@@ -8840,7 +8840,7 @@ sub nest_get {
 	return shift @{$self->{'unget'}};
     }
     my @record = ();
-    my $prepend = undef;
+    my $prepend;
     my $empty = 1;
     my $no_of_inputsources = $#{$self->{'fhs'}} + 1;
     if(not $self->{'arg_matrix'}) {
@@ -8917,7 +8917,7 @@ sub read_arg_from_fh {
     #   Arg-object with one read line
     #   undef if end of file
     my $fh = shift;
-    my $prepend = undef;
+    my $prepend;
     my $arg;
     do {{
 	# This makes 10% faster
@@ -8944,7 +8944,7 @@ sub read_arg_from_fh {
 	}
 	if(defined $prepend) {
 	    $arg = $prepend.$arg; # For line continuation
-	    $prepend = undef; #undef;
+	    undef $prepend;
 	}
 	if($Global::ignore_empty) {
 	    if($arg =~ /^\s*$/) {
@@ -9427,5 +9427,5 @@ sub mkdir_or_die {
 
 # Keep perl -w happy
 $opt::x = $Semaphore::timeout = $Semaphore::wait =
-$opt::ignored_option = $Job::file_descriptor_warning_printed =
+$Job::file_descriptor_warning_printed =
 $Global::envdef = 0;
