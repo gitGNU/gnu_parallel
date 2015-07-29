@@ -17,6 +17,12 @@ export SMALLDISK
 ) >/dev/null 2>/dev/null
 
 cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj0 -k --joblog /tmp/jl-`basename $0` -L1
+echo '### Test bug #45619: "--halt" erroneous error exit code (should give 0)'; 
+  seq 10 | parallel --halt now,fail=1 true; 
+  echo $?
+
+echo '**'
+
 echo '### Test exit val - true'; 
   echo true | parallel; 
   echo $?

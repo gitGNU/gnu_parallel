@@ -167,7 +167,8 @@ if($opt::halt and $Global::halt_when ne "never") {
 	    $Global::halt_exitstatus =
 		::ceil($Global::total_failed / $Global::total_started * 100);
 	} elsif($Global::halt_count) {
-	    $Global::halt_exitstatus = ::min($Global::total_failed,101);
+	    $Global::halt_exitstatus =
+		::min(undef_as_zero($Global::total_failed),101);
 	}
     }
     wait_and_exit($Global::halt_exitstatus);

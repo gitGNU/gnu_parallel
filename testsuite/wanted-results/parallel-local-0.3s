@@ -1,3 +1,8 @@
+echo '### Test bug #45619: "--halt" erroneous error exit code (should give 0)';   seq 10 | parallel --halt now,fail=1 true;   echo $?
+### Test bug #45619: "--halt" erroneous error exit code (should give 0)
+0
+echo '**'
+**
 echo '### Test exit val - true';   echo true | parallel;   echo $?
 ### Test exit val - true
 0
