@@ -138,9 +138,9 @@ takes a person to the toilet, waits for the person to finish, and
 exits.
 
 
-=item B<--semaphoretimeout> I<secs> (alpha testing)
+=item B<--semaphoretimeout> I<secs> (beta testing)
 
-=item B<--st> I<secs> (alpha testing)
+=item B<--st> I<secs> (beta testing)
 
 If I<secs> > 0: If the semaphore is not released within I<secs>
 seconds, take it anyway.
