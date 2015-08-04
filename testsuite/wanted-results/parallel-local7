@@ -31,7 +31,6 @@ See output with: tmux1.9 -S /tmp/parallel-local7/tmsXXXXX attach
 See output with: tmux1.9 -S /tmp/parallel-local7/tmsXXXXX attach
 0
   seq 1000 1100 | TMUX=tmux1.9 par_tmux
-See output with: tmux1.9 -S /tmp/parallel-local7/tmsXXXXX attach
 parallel: Error: Command line too long (2023 >= 2023) at input 0: 1007
 255
   seq 1100 1200 | TMUX=tmux1.9 par_tmux

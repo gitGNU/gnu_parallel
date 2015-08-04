@@ -125,5 +125,15 @@ echo '### test --workdir . in $HOME'
 ### test --workdir . in $HOME
   cd && mkdir -p parallel-test && cd parallel-test &&     echo OK > testfile && parallel --workdir . --transfer -S parallel@parallel-server3 cat {} ::: testfile
 OK
-echo '### Missing: test --filter-hosts proxied through the one host'
-### Missing: test --filter-hosts proxied through the one host
+echo '### TODO: test --filter-hosts proxied through the one host'
+### TODO: test --filter-hosts proxied through the one host
+echo '### bug #43358: shellshock breaks exporting functions using --env'
+### bug #43358: shellshock breaks exporting functions using --env
+  echo shellshock-hardened to shellshock-hardened;   funky() { echo Function $1; };   export -f funky;   parallel --env funky -S parallel@localhost funky ::: shellshock-hardened
+shellshock-hardened to shellshock-hardened
+Function shellshock-hardened
+echo '2bug #43358: shellshock breaks exporting functions using --env'
+2bug #43358: shellshock breaks exporting functions using --env
+  echo shellshock-hardened to non-shellshock-hardened;   funky() { echo Function $1; };   export -f funky;   parallel --env funky -S centos3.tange.dk funky ::: non-shellshock-hardened
+shellshock-hardened to non-shellshock-hardened
+Function non-shellshock-hardened

@@ -30,18 +30,6 @@ echo '### bug #42725: csh with \n in variables'
   parallel --env not_csh -S tcsh@lo not_csh ::: 1; 
   parallel --env not_csh -S parallel@lo not_csh ::: 1
 
-echo '### bug #43358: shellshock breaks exporting functions using --env'
-  echo shellshock-hardened to shellshock-hardened; 
-  funky() { echo Function $1; }; 
-  export -f funky; 
-  parallel --env funky -S parallel@localhost funky ::: shellshock-hardened
-
-echo '2bug #43358: shellshock breaks exporting functions using --env'
-  echo shellshock-hardened to non-shellshock-hardened; 
-  funky() { echo Function $1; }; 
-  export -f funky; 
-  parallel --env funky -S centos3.tange.dk funky ::: non-shellshock-hardened
-
 echo '### bug #42999: --pipepart with remote does not work'
   seq 100 > /tmp/bug42999; chmod 600 /tmp/bug42999; 
   parallel --sshdelay 0.3 --pipepart --block 31 -a /tmp/bug42999 -k -S parallel@lo wc; 

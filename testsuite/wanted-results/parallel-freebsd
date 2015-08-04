@@ -26,13 +26,13 @@ echo 'bug #40133: FreeBSD: --round-robin gives no output'
 bug #40133: FreeBSD: --round-robin gives no output
   jot 1000000 | parallel --round-robin --pipe -kj3 wc | sort
   299592  299592 2097144
-  299594  299594 2097158
-  400814  400814 2694594
+  299592  299592 2097144
+  400816  400816 2694608
   jot 1000000 | parallel --round-robin --pipe -kj4 wc | sort
-  149797  149797 1048579
-  235145  235145 1646016
-  299593  299593 2097151
-  315465  315465 2097150
+  149796  149796 1048572
+  235148  235148 1646037
+  299592  299592 2097144
+  315464  315464 2097143
 echo 'bug #40134: FreeBSD: --shebang not working'
 bug #40134: FreeBSD: --shebang not working
   (echo '#!/usr/bin/env -S parallel --shebang -rk echo'; echo It; echo worked) > shebang;   chmod 755 ./shebang; ./shebang

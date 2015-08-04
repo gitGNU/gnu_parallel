@@ -32,16 +32,6 @@ echo '### bug #42725: csh with \n in variables'
 This is not csh/tcsh
 CSH/TCSH DO NOT SUPPORT newlines IN VARIABLES/FUNCTIONS. Unset not_csh
 CSH/TCSH DO NOT SUPPORT newlines IN VARIABLES/FUNCTIONS. Unset not_csh
-echo '### bug #43358: shellshock breaks exporting functions using --env'
-### bug #43358: shellshock breaks exporting functions using --env
-  echo shellshock-hardened to shellshock-hardened;   funky() { echo Function $1; };   export -f funky;   parallel --env funky -S parallel@localhost funky ::: shellshock-hardened
-shellshock-hardened to shellshock-hardened
-Function shellshock-hardened
-echo '2bug #43358: shellshock breaks exporting functions using --env'
-2bug #43358: shellshock breaks exporting functions using --env
-  echo shellshock-hardened to non-shellshock-hardened;   funky() { echo Function $1; };   export -f funky;   parallel --env funky -S centos3.tange.dk funky ::: non-shellshock-hardened
-shellshock-hardened to non-shellshock-hardened
-Function non-shellshock-hardened
 echo '### bug #42999: --pipepart with remote does not work'
 ### bug #42999: --pipepart with remote does not work
   seq 100 > /tmp/bug42999; chmod 600 /tmp/bug42999;   parallel --sshdelay 0.3 --pipepart --block 31 -a /tmp/bug42999 -k -S parallel@lo wc;   parallel --sshdelay 0.2 --pipepart --block 31 -a /tmp/bug42999 -k --fifo -S parallel@lo wc | perl -pe 's:(/tmp\S+par)\S+:${1}XXXXX:' ;   parallel --sshdelay 0.1 --pipepart --block 31 -a /tmp/bug42999 -k --cat -S parallel@lo wc | perl -pe 's:(/tmp\S+par)\S+:${1}XXXXX:' ;   rm /tmp/bug42999

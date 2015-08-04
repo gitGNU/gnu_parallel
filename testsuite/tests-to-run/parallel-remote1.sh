@@ -32,7 +32,19 @@ echo '### test --workdir . in $HOME'
   cd && mkdir -p parallel-test && cd parallel-test && 
     echo OK > testfile && parallel --workdir . --transfer -S $SSHLOGIN1 cat {} ::: testfile
 
-echo '### Missing: test --filter-hosts proxied through the one host'
+echo '### TODO: test --filter-hosts proxied through the one host'
+
+echo '### bug #43358: shellshock breaks exporting functions using --env'
+  echo shellshock-hardened to shellshock-hardened; 
+  funky() { echo Function $1; }; 
+  export -f funky; 
+  parallel --env funky -S parallel@localhost funky ::: shellshock-hardened
+
+echo '2bug #43358: shellshock breaks exporting functions using --env'
+  echo shellshock-hardened to non-shellshock-hardened; 
+  funky() { echo Function $1; }; 
+  export -f funky; 
+  parallel --env funky -S centos3.tange.dk funky ::: non-shellshock-hardened
 
 EOF
 rm /tmp/myssh1 /tmp/myssh2 /tmp/myssh1-run /tmp/myssh2-run
