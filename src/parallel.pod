@@ -470,6 +470,8 @@ Implies B<--semaphore>.
 
 =item B<--bibtex>
 
+=item B<--citation>
+
 Print the BibTeX entry for GNU B<parallel> and silence citation
 notice.
 

@@ -794,7 +794,7 @@ sub options_hash {
 	 "tollef" => \$opt::tollef,
 	 "gnu" => \$opt::gnu,
 	 "xapply" => \$opt::xapply,
-	 "bibtex" => \$opt::bibtex,
+	 "bibtex|citation" => \$opt::bibtex,
 	 "wc|willcite|will-cite|nn|nonotice|no-notice" => \$opt::willcite,
 	 # Termination and retries
 	 "halt-on-error|halt=s" => \$opt::halt,
@@ -817,7 +817,7 @@ sub options_hash {
 	 "help|h" => \$opt::help,
 	 "L=f" => \$opt::L,
 	 "max-lines|l:f" => \$opt::max_lines,
-	 "interactive|p" => \$opt::p,
+	 "interactive|p" => \$opt::interactive,
 	 "verbose|t" => \$opt::verbose,
 	 "version|V" => \$opt::version,
 	 "minversion|min-version=i" => \$opt::minversion,
@@ -902,7 +902,7 @@ sub parse_options {
     if(defined $opt::0) { $/ = "\0"; }
     if(defined $opt::d) { $/ = unquote_printf($opt::d) }
     if(defined $opt::tagstring) { $opt::tagstring = unquote_printf($opt::tagstring); }
-    if(defined $opt::p) { $Global::interactive = $opt::p; }
+    if(defined $opt::interactive) { $Global::interactive = $opt::interactive; }
     if(defined $opt::q) { $Global::quoting = 1; }
     if(defined $opt::r) { $Global::ignore_empty = 1; }
     if(defined $opt::verbose) { $Global::stderr_verbose = 1; }
@@ -3172,8 +3172,15 @@ sub reaper {
         $job or next;
         delete $Global::running{$stiff};
         $Global::total_running--;
-        $job->set_exitstatus($? >> 8);
-        $job->set_exitsignal($? & 127);
+	if($job->{'commandline'}{'skip'}) {
+	    # $job->skip() was called
+	    $job->set_exitstatus(-2);
+	    $job->set_exitsignal(0);
+	} else {
+	    $job->set_exitstatus($? >> 8);
+	    $job->set_exitsignal($? & 127);
+	}
+
         debug("run", "seq ",$job->seq()," died (", $job->exitstatus(), ")");
         $job->set_endtime(::now());
         if($stiff == $Global::tty_taken) {
@@ -7042,8 +7049,12 @@ sub start {
     my $command = $job->wrapped();
     my $pid;
 
+    if($job->{'commandline'}{'skip'}) {
+	# $job->skip() was called
+	$command = "true";
+    }
     if($Global::interactive or $Global::stderr_verbose) {
-	$command = interactive_start($command);
+	$job->interactive_start();
     }
     $job->openoutputfiles();
     my($stdout_fh,$stderr_fh) = ($job->fh(1,"w"),$job->fh(2,"w"));
@@ -7121,7 +7132,8 @@ sub start {
 }
 
 sub interactive_start {
-    my $command = shift;
+    my $self = shift;
+    my $command = $self->wrapped();
     if($Global::interactive) {
 	::status("$command ?...");
 	open(my $tty_fh, "<", "/dev/tty") || ::die_bug("interactive-tty");
@@ -7129,12 +7141,11 @@ sub interactive_start {
 	close $tty_fh;
 	my $run_yes = ($answer =~ /^\s*y/i);
 	if (not $run_yes) {
-	    $command = "true"; # Run the command 'true'
+	    $self->{'commandline'}->skip();
 	}
     } else {
 	print $Global::original_stderr "$command\n";
     }
-    return $command;
 }
 
 sub print_dryrun_and_verbose {
@@ -8101,8 +8112,8 @@ sub replaced {
 {
     my @target;
     my $context_replace;
-    my @arg;
     my $perl_expressions_as_re;
+    my @arg;
 
     sub fish_out_words_containing_replacement_strings {
 	my %word;
@@ -8154,6 +8165,8 @@ sub replaced {
 
     sub replace_placeholders {
 	# Replace foo{}bar with fooargbar
+	# Uses:
+	#   @Arg::arg = arguments as strings to be use in {= =}
 	# Input:
 	#   $targetref = command as shell words
 	#   $quote = should everything be quoted?
@@ -8178,7 +8191,8 @@ sub replaced {
 	# Fish out the words that have replacement strings in them
 	my @word = fish_out_words_containing_replacement_strings();
 	flatten_arg_list($self->{'arg_list'});
-
+	# Make it possible to use $arg[2] in {= =}
+	@Arg::arg = (undef, map { $_->orig() } @arg);
 	# Number of arguments - used for positional arguments
 	my $n = $#arg+1;
 
@@ -8223,7 +8237,7 @@ sub replaced {
 		$normal_replace or last;
 	    }
 	}
-
+	@Arg::arg = ();
 	if($quote) {
 	    @target = ::shell_quote(@target);
 	}
@@ -8240,6 +8254,12 @@ sub replaced {
 	::debug("replace", "Return @target\n");
 	return wantarray ? @target : "@target";
     }
+}
+
+sub skip {
+    # Skip this job
+    my $self = shift;
+    $self->{'skip'} = 1;
 }
 
 
@@ -9427,6 +9447,6 @@ sub mkdir_or_die {
 }
 
 # Keep perl -w happy
+
 $opt::x = $Semaphore::timeout = $Semaphore::wait =
-$Job::file_descriptor_warning_printed =
-$Global::envdef = 0;
+$Job::file_descriptor_warning_printed = $Global::envdef = @Arg::arg;

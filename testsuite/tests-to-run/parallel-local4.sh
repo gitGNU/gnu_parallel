@@ -63,4 +63,9 @@ echo 'env in zsh'
   export -f myfunc; 
   PARALLEL_SHELL=/usr/bin/zsh parallel --env myfunc myfunc ::: a
 
+echo 'bug #45692: Easy way of cancelling a job in {= =} and'
+echo 'bug #45691: Accessing multiple arguments in {= =}'
+  parallel echo {= '$arg[1] eq 2 and $job->skip()' =} ::: {1..5}
+
+
 EOF
