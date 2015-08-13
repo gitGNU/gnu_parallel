@@ -4172,6 +4172,9 @@ sub memfree_recompute {
 
     # TODO add sshlogin and backgrounding
     $self->{'memfree'} = qx{ $script };
+    if(not $self->{'memfree'}) {
+	::die_bug("Less than 1 byte free");
+    }
     #::debug("mem","New free:",$self->{'memfree'}," ");
 }
 
@@ -4183,12 +4186,12 @@ sub memfree_recompute {
 	#   shellscript for giving available memory in bytes
 	if(not $script) {
 	    my %script_of = (
-		# $ free
-		#              total       used       free     shared    buffers     cached
-		# Mem:       8075152    4922780    3152372     338856     233356    1658604
-		# -/+ buffers/cache:    3030820    5044332
-		# Swap:      8286204     116924    8169280
-		"linux" => q{ print (1024*((grep /buffers.cache/, `free`)[0] =~ /buffers.cache:\s+\S+\s+(\S+)/)[0]) },
+		# /proc/meminfo
+		# MemFree:          7012 kB
+		# Buffers:         19876 kB
+		# Cached:         431192 kB
+		# SwapCached:          0 kB
+		"linux" => q{ print 1024 * qx{ awk '/^((Swap)?Cached|MemFree|Buffers):/ { sum += \$2} END { print sum }' /proc/meminfo } },
 		# $ vmstat 1 1
 		#     procs           memory                   page                              faults       cpu
 		# r     b     w      avm    free   re   at    pi   po    fr   de    sr     in     sy    cs  us sy id
