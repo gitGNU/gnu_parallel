@@ -209,9 +209,9 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20150822 ('') released <<[stable]>>
+Subject: GNU Parallel 20150822 ('天津') released <<[stable]>>
 
-GNU Parallel 20150822 ('') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20150822 ('天津') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
@@ -223,6 +223,8 @@ Haiku of the month:
     -- Ole Tange
 
 New in this release:
+
+* If $job->skip() is called in {= =} the job will not be run.
 
 * @arg can now be used in {= =}: parallel echo '{= $arg[2] < 5 and $_="j" =}' ::: 1 2 3 ::: 4 5 6 
 

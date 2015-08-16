@@ -1,3 +1,28 @@
+echo '### --env _'
+### --env _
+  fUbAr="OK FUBAR" parallel -S parallel@lo --env _ echo '$fUbAr $DEBEMAIL' ::: test
+OK FUBAR test
+  fUbAr="OK FUBAR" parallel -S csh@lo --env _ echo '$fUbAr $DEBEMAIL' ::: test
+echo '### --env _ with explicit mentioning of normally ignored var $DEBEMAIL'
+### --env _ with explicit mentioning of normally ignored var $DEBEMAIL
+  fUbAr="OK FUBAR" parallel -S parallel@lo --env DEBEMAIL,_ echo '$fUbAr $DEBEMAIL' ::: test
+OK FUBAR ole@tange.dk test
+  fUbAr="OK FUBAR" parallel -S csh@lo --env DEBEMAIL,_ echo '$fUbAr $DEBEMAIL' ::: test
+OK FUBAR ole@tange.dk test
+echo 'bug #40137: SHELL not bash: Warning when exporting funcs'
+bug #40137: SHELL not bash: Warning when exporting funcs
+  . <(printf 'myfunc() {\necho $1\n}'); export -f myfunc; parallel --env myfunc -S lo myfunc ::: no_warning
+no_warning
+  . <(printf 'myfunc() {\necho $1\n}'); export -f myfunc; SHELL=/bin/sh parallel --env myfunc -S lo myfunc ::: warning
+warning
+echo 'env_parallel from man page - transfer non-exported var'
+env_parallel from man page - transfer non-exported var
+  env_parallel() {     export parallel_bash_environment="$(echo "shopt -s expand_aliases 2>/dev/null"; alias;typeset -p | grep -vFf <(readonly; echo GROUPS; echo FUNCNAME; echo DIRSTACK; echo _; echo PIPESTATUS; echo USERNAME) | grep -v BASH_;typeset -f)";     `which parallel` "$@";     unset parallel_bash_environment;   };   var=nonexported env_parallel -S parallel@lo echo '$var' ::: variable
+nonexported variable
+echo 'compared to parallel - no transfer non-exported var'
+compared to parallel - no transfer non-exported var
+  var=nonexported parallel -S parallel@lo echo '$var' ::: variable
+variable
 echo '### zsh'
 ### zsh
   ssh zsh@lo 'fun="() { echo function from zsh to zsh \$*; }";               export fun;               parallel --env fun fun ::: OK'
@@ -67,6 +92,28 @@ echo '### bug #45575: -m and multiple hosts repeats first args'
 2
 3
 
+Test env_parallel:
++ for each shell
++ remote, locally
++ variables, variables with funky content, arrays, functions, aliases
+
+### Bash environment
+alias_works
+function_works
+myvar  works
+Funky-
+
+	
+ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
+alias_works_over_ssh
+function_works_over_ssh
+myvar  works
+Funky-
+
+	
+ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
 ### Fish environment
 
  * Documentation:  http://www.linuxmint.com
@@ -75,8 +122,12 @@ echo '### bug #45575: -m and multiple hosts repeats first args'
 
 alias_works
 function_works
+myvar  works
+Funky-	   !"#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
 alias_works_over_ssh
 function_works_over_ssh
+myvar  works
+Funky-	   !"#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
 
 ### Zsh environment
 
@@ -84,10 +135,18 @@ function_works_over_ssh
 
 0 updates are security updates.
 
-zsh:10: command not found: alias_echo
+zsh:124: command not found: alias_echo
 function_works
-zsh:10: command not found: alias_echo
+myvar  works
+Funky-
+	
+ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
+zsh:124: command not found: alias_echo
 function_works_over_ssh
+myvar  works
+Funky-
+	
+ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
 
 ### Ksh environment
 
@@ -97,5 +156,7 @@ function_works_over_ssh
 
 alias_works
 function_works
+myvar  works
 alias_works_over_ssh
 function_works_over_ssh
+myvar  works
