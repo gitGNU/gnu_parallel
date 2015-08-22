@@ -1,3 +1,46 @@
+20150822
+
+* If $job->skip() is called in {= =} the job will not be run.
+
+* @arg can now be used in {= =}: parallel echo '{= $arg[2] < 5 and
+  $_="j" =}' ::: 1 2 3 ::: 4 5 6
+
+* Version of GNU Parallel that uses PostgreSQL as backend
+  https://github.com/stephen-fralich/parallel-sql/
+
+* A composite genome approach to identify phylogenetically informative
+  data from next-generation sequencing
+  http://www.biomedcentral.com/content/pdf/s12859-015-0632-y.pdf
+
+* SpeedSeq: ultra-fast personal genome analysis and interpretation
+  http://www.nature.com/nmeth/journal/vaop/ncurrent/full/nmeth.3505.html
+
+* GNU Parallel is used in elPrep: https://github.com/ExaScience/elprep
+
+* Who actually reads the code?
+  http://www.fsf.org/blogs/community/who-actually-reads-the-code
+
+* Introduction to GNU Parallel
+  http://erictleung.com/2015/08/06/intro-to-gnu-parallel/
+
+* ¿Alguien se lee el código?
+  http://www.taringa.net/post/linux/18854759/Alguien-se-lee-el-codigo.html
+
+* ¿Quién se lee el código fuente?
+  https://victorhckinthefreeworld.wordpress.com/2015/08/12/quien-se-lee-el-codigo-fuente/
+
+* Distribution des traitements avec GNU Parallel
+  http://blog.inovia-conseil.fr/?p=226#4
+
+* Эксперимент по проверке, читают ли код открытых проектов
+  http://www.opennet.ru/opennews/art.shtml?num=42718
+
+* 多核心主機搭配 GNU parallel
+  http://blog.zeroplex.tw/2015/08/gnu-parallel.html
+
+* Bug fixes and man page updates.
+
+
 20150722
 
 * If a record fits in a block, --block only reads upto the size of

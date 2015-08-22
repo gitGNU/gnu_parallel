@@ -165,12 +165,12 @@ func_echo() {
 }
 
 env_parallel() {
-  unset PARALLEL_ENV;
   export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p |
     grep -aFvf <(typeset -pr)|egrep -iav 'ZSH_EVAL_CONTEXT|LINENO=| _=|aliases|^typeset [a-z_]+$'|
     egrep -av '^(typeset IFS=|..$)|cyan';
     typeset -f)";
   parallel "$@";
+  unset PARALLEL_ENV;
 }
 
 # alias does not work: http://unix.stackexchange.com/questions/223534/defining-an-alias-and-immediately-use-it
@@ -200,9 +200,9 @@ func_echo() {
 }
 
 env_parallel() {
-  unset PARALLEL_ENV;
   export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p|egrep -v 'typeset( -i)? -r|PIPESTATUS';typeset -f)";
   `which parallel` "$@";
+  unset PARALLEL_ENV;
 }
 env_parallel alias_echo ::: alias_works
 env_parallel func_echo ::: function_works

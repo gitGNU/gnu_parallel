@@ -209,11 +209,9 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20150822 ('天津') released <<[stable]>>
+Subject: GNU Parallel 20150822 ('Hans Vibeke') released
 
-GNU Parallel 20150822 ('天津') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
-
-<<No new functionality was introduced so this is a good candidate for a stable release.>>
+GNU Parallel 20150822 ('Hans Vibeke') has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
 Haiku of the month:
 
@@ -229,12 +227,6 @@ New in this release:
 * @arg can now be used in {= =}: parallel echo '{= $arg[2] < 5 and $_="j" =}' ::: 1 2 3 ::: 4 5 6 
 
 * Version of GNU Parallel that uses PostgreSQL as backend https://github.com/stephen-fralich/parallel-sql/
-
-* <<Har angiveligt submittet ny version - afventer opdatering>> GNU Parallel was used (unfortunately without citation) in: MUGBAS: a species free gene-based programme suite for post-GWAS analysis http://www.ncbi.nlm.nih.gov/pubmed/25765345
-
-* <<Afventer updateret publisering>> GNU Parallel was used in: Large Scale Author Name Disambiguation in Digital Libraries http://ieeexplore.ieee.org/xpl/abstractReferences.jsp?tp=&arnumber=7004487&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7004487
-
-* <<kontaktet 2015-06-22 Afventer svar fra journal>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
 
 * A composite genome approach to identify phylogenetically informative data from next-generation sequencing http://www.biomedcentral.com/content/pdf/s12859-015-0632-y.pdf
 

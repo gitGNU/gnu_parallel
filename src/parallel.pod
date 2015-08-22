@@ -85,7 +85,10 @@ B<Bash functions>: B<export -f> the function first.
 B<Bash aliases>: Copy the full environment using this and use B<env_parallel> instead of B<parallel>.
 
   env_parallel() {
-    export PARALLEL_ENV="$(echo "shopt -s expand_aliases 2>/dev/null"; alias;typeset -p | grep -vFf <(readonly; echo GROUPS; echo FUNCNAME; echo DIRSTACK; echo _; echo PIPESTATUS; echo USERNAME) | grep -v BASH_;typeset -f)";
+    export PARALLEL_ENV="$(echo "shopt -s expand_aliases 2>/dev/null"; alias;typeset -p |
+      grep -vFf <(readonly) |
+      grep -v 'declare .. (GROUPS|FUNCNAME|DIRSTACK|_|PIPESTATUS|USERNAME|BASH_[A-Z_]+) ';
+      typeset -f)";
     `which parallel` "$@";
     unset PARALLEL_ENV;
   }
@@ -103,7 +106,7 @@ B<Ksh functions>: If it is a Ksh function you can encode the function in a varia
 To export all functions and also make them available when running remote:
 
   env_parallel() {
-    export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p;typeset -f)";
+    export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p|egrep -v 'typeset( -i)? -r|PIPESTATUS';typeset -f)";
     `which parallel` "$@";
     unset PARALLEL_ENV;
   }
@@ -122,9 +125,11 @@ B<Zsh functions>: If it is a Zsh function you can encode the function in a varia
 To export all functions and also make them available when running remote:
 
   env_parallel() {
-    PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -f)";
-    export PARALLEL_ENV
-    `which parallel` "$@";
+    export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p |
+      grep -aFvf <(typeset -pr)|egrep -iav 'ZSH_EVAL_CONTEXT|LINENO=| _=|aliases|^typeset [a-z_]+$'|
+      egrep -av '^(typeset IFS=|..$)|cyan';
+      typeset -f)";
+    parallel "$@";
     unset PARALLEL_ENV;
   }
   # call as:
