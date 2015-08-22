@@ -4191,20 +4191,28 @@ sub memfree_recompute {
 		# Buffers:         19876 kB
 		# Cached:         431192 kB
 		# SwapCached:          0 kB
-		"linux" => q{ print 1024 * qx{ awk '/^((Swap)?Cached|MemFree|Buffers):/ { sum += \$2} END { print sum }' /proc/meminfo } },
+		"linux" =>
+		q[ print 1024 * qx{ ].
+		q[   awk '/^((Swap)?Cached|MemFree|Buffers):/ ].
+		q[     { sum += \$2} END { print sum }' ].
+		q[   /proc/meminfo } ],
 		# $ vmstat 1 1
 		#     procs           memory                   page                              faults       cpu
 		# r     b     w      avm    free   re   at    pi   po    fr   de    sr     in     sy    cs  us sy id
 		# 1     0     0   242793  389737    5    1     0    0     0    0     0    107    978    60   1  1 99
-		"hpux" => q{ print (((reverse `vmstat 1 1`)[0] =~ /(?:\d+\D+){4}(\d+)/)[0]*1024) },
+		"hpux" =>
+		q[ print (((reverse `vmstat 1 1`)[0] ].
+		q[   =~ /(?:\d+\D+){4}(\d+)/)[0]*1024) ],
 		# $ vmstat 1 2
 		# kthr      memory            page            disk          faults      cpu
 		# r b w   swap  free  re  mf pi po fr de sr s3 s4 -- --   in   sy   cs us sy id
 		# 0 0 0 6496720 5170320 68 260 8 2  1  0  0 -0  3  0  0  309 1371  255  1  2 97
 		# 0 0 0 6434088 5072656 7 15  8  0  0  0  0  0 261 0  0 1889 1899 3222  0  8 92
 		#
-		# The last free is really free
-		"solaris" => q{ print (((reverse `vmstat 1 2`)[0] =~ /(?:\d+\D+){4}(\d+)/)[0]*1024) },
+		# The second free value is correct
+		"solaris" =>
+		q[ print (((reverse `vmstat 1 2`)[0] ].
+		q[   =~ /(?:\d+\D+){4}(\d+)/)[0]*1024) ],
 		"freebsd" => q{
 			for(qx{/sbin/sysctl -a}) {
 			    if (/^([^:]+):\s+(.+)\s*$/s) {
@@ -6402,9 +6410,9 @@ sub wrapped {
     if(not defined $self->{'wrapped'}) {
 	my $command = $self->replaced();
 	if($opt::shellquote) {
-	    # Prepend echo
+	    # Prepend \echo (echo no-\ is wrong in csh)
 	    # and quote twice
-	    $command = "echo " .
+	    $command = "\\echo " .
 		::shell_quote_scalar(::shell_quote_scalar($command));
 	}
 	if($opt::cat) {
@@ -6576,7 +6584,7 @@ sub sshlogin_wrap {
                 unless($pid) {
 		    # Make own process group to be able to kill HUP it later
 		    setpgrp;
-		    setpriority(0,0,$nice);
+		    eval { setpriority(0,0,$nice) };
 		    exec $shell, "-c", ($bashfunc."@ARGV");
 		    die "exec: $!\n";
 		}
@@ -7020,7 +7028,8 @@ sub start {
 	open ERR, '>&', $stderr_fh or ::die_bug("Can't dup STDERR: $!");
 
 	my $pid;
-	my @setpgrp_wrap = ('perl','-e',"setpgrp\;setpriority\(0,0,$opt::nice\)\;exec '$Global::shell', '-c', \@ARGV");
+	my @setpgrp_wrap = ('perl','-e',
+			    "setpgrp\;eval\{setpriority\(0,0,$opt::nice\)\}\;exec '$Global::shell', '-c', \@ARGV");
 	# The eval is needed to catch exception from open3
 	eval {
 	    $pid = ::open3($stdin_fh, ">&OUT", ">&ERR", @setpgrp_wrap, $command)
@@ -7102,7 +7111,8 @@ sub start {
 	open ERR, '>&', $stderr_fh or ::die_bug("Can't dup STDERR: $!");
 	*IN = *STDIN;
 	# The eval is needed to catch exception from open3
-	my @setpgrp_wrap = ('perl','-e',"setpgrp\;setpriority\(0,0,$opt::nice\)\;exec '$Global::shell', '-c', \@ARGV");
+	my @setpgrp_wrap = ('perl','-e',
+			    "setpgrp\;eval\{setpriority\(0,0,$opt::nice\)\}\;exec '$Global::shell', '-c', \@ARGV");
 	eval {
 	    $pid = ::open3("<&IN", ">&OUT", ">&ERR", @setpgrp_wrap, $command)
 		|| ::die_bug("open3-<IN");

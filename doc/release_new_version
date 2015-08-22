@@ -240,6 +240,8 @@ New in this release:
 
 * SpeedSeq: ultra-fast personal genome analysis and interpretation http://www.nature.com/nmeth/journal/vaop/ncurrent/full/nmeth.3505.html
 
+* GNU Parallel is used in elPrep: https://github.com/ExaScience/elprep
+
 * Who actually reads the code? http://www.fsf.org/blogs/community/who-actually-reads-the-code
 
 * Introduction to GNU Parallel http://erictleung.com/2015/08/06/intro-to-gnu-parallel/

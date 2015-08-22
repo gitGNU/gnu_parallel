@@ -1,5 +1,7 @@
 #!/bin/bash
 
+unset run_test
+
 # SSH only allowed to localhost/lo
 # --retries if ssh dies
 cat <<'EOF' | sed -e s/\$SERVER1/$SERVER1/\;s/\$SERVER2/$SERVER2/ | parallel -vj1 --retries 2 -k --joblog /tmp/jl-`basename $0` -L1
@@ -27,6 +29,22 @@ echo 'compared to parallel - no transfer non-exported var'
   var=nonexported parallel -S parallel@lo echo '$var' ::: variable
 
 echo '### zsh'
+
+echo 'env in zsh'
+  echo 'Normal variable export'
+  export B=\'; 
+  PARALLEL_SHELL=/usr/bin/zsh parallel --env B echo '$B' ::: a
+
+  echo 'Function export as variable'
+  export myfuncvar="() { echo myfuncvar \$*; }"; 
+  PARALLEL_SHELL=/usr/bin/zsh parallel --env myfuncvar myfuncvar ::: a
+
+  echo 'Function export as function'
+  myfunc() { echo myfunc $*; }; 
+  export -f myfunc; 
+  PARALLEL_SHELL=/usr/bin/zsh parallel --env myfunc myfunc ::: a
+
+
   ssh zsh@lo 'fun="() { echo function from zsh to zsh \$*; }"; 
               export fun; 
               parallel --env fun fun ::: OK'
@@ -49,8 +67,8 @@ echo '### csh2'
                      parallel --env A,B,C -k echo \$\{\}\|wc ::: A B C'
 
 echo '### Test tmux works on different shells'
-  parallel -Scsh@lo,tcsh@lo,parallel@lo,zsh@lo --tmux echo ::: 1 2 3 4; echo $?
-  parallel -Scsh@lo,tcsh@lo,parallel@lo,zsh@lo --tmux false ::: 1 2 3 4; echo $?
+  (stdout parallel -Scsh@lo,tcsh@lo,parallel@lo,zsh@lo --tmux echo ::: 1 2 3 4; echo $?) | grep -v 'See output';
+  (stdout parallel -Scsh@lo,tcsh@lo,parallel@lo,zsh@lo --tmux false ::: 1 2 3 4; echo $?) | grep -v 'See output';
 
   export PARTMUX='parallel -Scsh@lo,tcsh@lo,parallel@lo,zsh@lo --tmux '; 
   stdout ssh zsh@lo      "$PARTMUX" 'true  ::: 1 2 3 4; echo $status' | grep -v 'See output'; 
@@ -93,16 +111,22 @@ echo
 echo Test env_parallel:
 echo + for each shell
 echo + remote, locally
-echo + variables, variables with funky content, arrays, functions, aliases
+echo + variables, variables with funky content, arrays, assoc array, functions, aliases
 echo
 echo "### Bash environment"
 #stdout ssh -t lo <<'EOS'
 myvar="myvar  works"
 funky=$(perl -e 'print pack "c*", 1..255')
-alias alias_echo=echo;
+myarray=('' array_val2 3 '' 5)
+declare -A assocarr
+assocarr[a]=assoc_val_a
+assocarr[b]=assoc_val_b
+alias alias_echo="echo 3 arg";
 func_echo() {
   echo $*;
   echo "$myvar"
+  echo ${myarray[1]}
+  echo ${assocarr[a]}
   echo Funky-"$funky"-funky
 }
 
@@ -122,68 +146,35 @@ env_parallel -S lo func_echo ::: function_works_over_ssh
 #EOS
 
 
-echo "### Fish environment"
-stdout ssh -q fish@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated.'
-set myvar "myvar  works"
-# ` (ascii 39) is a problem
-set funky (perl -e 'print pack "c*", 1..38,40..255')
-alias alias_echo=echo;
-function func_echo
-  echo $argv;
-  echo $myvar;
-  echo Funky-"$funky"-funky
-end
-
-function env_parallel
-  setenv PARALLEL_ENV (begin; \
-      set -L|perl -ne '
-        /^(status|version|history|PWD|SHLVL|USER|_|COLUMNS|FISH_VERSION|HOME|LINES) /
-          or s/^/set / and print
-      '; \
-      functions -n | perl -pe 's/,/\n/g' | while read d; functions $d; end; \
-    end|perl -pe 's/\n/\001/')
-  parallel $argv;
-  set -e PARALLEL_ENV
-end
-
-env_parallel alias_echo ::: alias_works
-env_parallel func_echo ::: function_works
-env_parallel -S fish@lo alias_echo ::: alias_works_over_ssh
-env_parallel -S fish@lo func_echo ::: function_works_over_ssh
-EOS
-
 echo
 echo "### Zsh environment"
 stdout ssh -q zsh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated.'
 myvar="myvar  works"
 funky=$(perl -e 'print pack "c*", 1..255')
-alias alias_echo=echo;
+myarray=('' array_val2 3 '' 5)
+declare -A assocarr
+assocarr[a]=assoc_val_a
+assocarr[b]=assoc_val_b
+alias alias_echo="echo 3 arg";
 func_echo() {
   echo $*;
   echo "$myvar"
+  echo $myarray[2]
+  echo ${assocarr[a]}
   echo Funky-"$funky"-funky
-}
-
-
-env_parallel() {
-  PARALLEL_ENV="$(typeset -f)";
-  export PARALLEL_ENV
-  `which parallel` "$@";
-  unset PARALLEL_ENV;
 }
 
 env_parallel() {
   unset PARALLEL_ENV;
   export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p |
     grep -aFvf <(typeset -pr)|egrep -iav 'ZSH_EVAL_CONTEXT|LINENO=| _=|aliases|^typeset [a-z_]+$'|
-    egrep -av '^(typeset IFS=|..$)|cyan'
-;
+    egrep -av '^(typeset IFS=|..$)|cyan';
     typeset -f)";
   parallel "$@";
 }
 
+# alias does not work: http://unix.stackexchange.com/questions/223534/defining-an-alias-and-immediately-use-it
 env_parallel alias_echo ::: alias_does_not_work
-
 env_parallel func_echo ::: function_works
 env_parallel -S zsh@lo alias_echo ::: alias_does_not_work_over_ssh
 env_parallel -S zsh@lo func_echo ::: function_works_over_ssh
@@ -193,19 +184,76 @@ echo
 echo "### Ksh environment"
 stdout ssh -q ksh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated.'
 myvar="myvar  works"
-alias alias_echo=echo;
+funky=$(perl -e 'print pack "c*", 1..255')
+myarray=('' array_val2 3 '' 5)
+typeset -A assocarr
+assocarr[a]=assoc_val_a
+assocarr[b]=assoc_val_b
+alias alias_echo="echo 3 arg";
+
 func_echo() {
   echo $*;
   echo "$myvar"
+  echo ${myarray[1]}
+  echo ${assocarr[a]}
+  echo Funky-"$funky"-funky
 }
+
 env_parallel() {
+  unset PARALLEL_ENV;
   export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p|egrep -v 'typeset( -i)? -r|PIPESTATUS';typeset -f)";
   `which parallel` "$@";
-  unset PARALLEL_ENV;
 }
 env_parallel alias_echo ::: alias_works
 env_parallel func_echo ::: function_works
 env_parallel -S ksh@lo alias_echo ::: alias_works_over_ssh
 env_parallel -S ksh@lo func_echo ::: function_works_over_ssh
+EOS
+
+echo 
+echo "### csh environment"
+stdout ssh -q csh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated.'
+set myvar = "myvar  works"
+set funky = "`perl -e 'print pack q(c*), 1..255'`"
+set myarray = ('' 'array_val2' '3' '' '5')
+#declare -A assocarr
+#assocarr[a]=assoc_val_a
+#assocarr[b]=assoc_val_b
+alias alias_echo echo 3 arg;
+
+#function func_echo
+#  echo $argv;
+#  echo $myvar;
+#  echo ${myarray[2]}
+#  #echo ${assocarr[a]}
+#  echo Funky-"$funky"-funky
+#end
+
+# s/'/'"'"'/g;
+# ' => \047 " => \042
+# s/\047/\047\042\047\042\047/g;
+# Quoted: s/\\047/\\047\\042\\047\\042\\047/g\;
+
+# s/^(\S+)(\s+)\((.*)\)/\1\2\3/
+# \047 => '
+# s/^(\S+)(\s+)\((.*)\)/\1\2\3/;
+# Quoted: s/\^\(\\S+\)\(\\s+\)\\\(\(.\*\)\\\)/\\1\\2\\3/\;
+
+# s/^(\S+)(\s+)(.*)/\1\2'\3'/
+# \047 => '
+# s/^(\S+)(\s+)(.*)/\1\2\047\3\047/;
+# Quoted: s/\^\(\\S+\)\(\\s+\)\(.\*\)/\\1\\2\\047\\3\\047/\;
+
+# s/^/\001alias /;
+# Quoted: s/\^/\\001alias\ /\;
+
+alias env_parallel 'setenv PARALLEL_ENV "`alias | perl -pe s/\\047/\\047\\042\\047\\042\\047/g\;s/\^\(\\S+\)\(\\s+\)\\\(\(.\*\)\\\)/\\1\\2\\3/\;s/\^\(\\S+\)\(\\s+\)\(.\*\)/\\1\\2\\047\\3\\047/\;s/\^/\\001alias\ /\;`"'
+
+alias pp 'parallel \!*'
+
+env_parallel alias_echo ::: alias_works
+env_parallel func_echo ::: function_works
+env_parallel -S csh@lo alias_echo ::: alias_works_over_ssh
+env_parallel -S csh@lo func_echo ::: function_works_over_ssh
 EOS
 

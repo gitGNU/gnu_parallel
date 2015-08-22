@@ -10,6 +10,7 @@ P_WORKING="minix freebsd solaris openbsd netbsd debian aix redhat hpux qnx tru64
 
 P="$P_WORKING"
 POLAR=`parallel -k echo {}.polarhome.com ::: $P`
+S_POLAR=`parallel -k echo -S 1/{}.polarhome.com ::: $P`
 # Avoid the stupid /etc/issue.net banner at Polarhome: -oLogLevel=quiet
 
 echo '### Tests on polarhome machines'
@@ -37,6 +38,9 @@ copy_and_test() {
 export -f copy_and_test
 # 20150414 --timeout 80 -> 40
 stdout parallel -j0 -k --retries 5 --timeout 40 --delay 0.1 --tag  -v copy_and_test {} ::: $POLAR
+
+# Test remote wrapper working on all platforms
+parallel -j0 --nonall -k $S_POLAR hostname
 
 cat /tmp/test_empty_cmd
 rm /tmp/test_empty_cmd

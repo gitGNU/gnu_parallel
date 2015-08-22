@@ -1,0 +1,9 @@
+echo '### test memfree'
+### test memfree
+  parallel --memfree 1k echo Free mem: ::: 1k
+Free mem: 1k
+  stdout parallel --timeout 3 --argsep II parallel --memfree 1t echo Free mem: ::: II 1t
+parallel: SIGTERM received. No new jobs will be started.
+parallel: Waiting for these 0 jobs to finish. Send SIGTERM again to stop now.
+echo '**'
+**

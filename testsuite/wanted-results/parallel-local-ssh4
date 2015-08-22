@@ -25,6 +25,20 @@ compared to parallel - no transfer non-exported var
 variable
 echo '### zsh'
 ### zsh
+echo 'env in zsh'
+env in zsh
+  echo 'Normal variable export'
+Normal variable export
+  export B=\';   PARALLEL_SHELL=/usr/bin/zsh parallel --env B echo '$B' ::: a
+' a
+  echo 'Function export as variable'
+Function export as variable
+  export myfuncvar="() { echo myfuncvar \$*; }";   PARALLEL_SHELL=/usr/bin/zsh parallel --env myfuncvar myfuncvar ::: a
+myfuncvar a
+  echo 'Function export as function'
+Function export as function
+  myfunc() { echo myfunc $*; };   export -f myfunc;   PARALLEL_SHELL=/usr/bin/zsh parallel --env myfunc myfunc ::: a
+myfunc a
   ssh zsh@lo 'fun="() { echo function from zsh to zsh \$*; }";               export fun;               parallel --env fun fun ::: OK'
 function from zsh to zsh OK
   ssh zsh@lo 'fun="() { echo function from zsh to bash \$*; }";               export fun;               parallel -S parallel@lo --env fun fun ::: OK'
@@ -47,9 +61,9 @@ echo '### csh2'
       1     150     547
 echo '### Test tmux works on different shells'
 ### Test tmux works on different shells
-  parallel -Scsh@lo,tcsh@lo,parallel@lo,zsh@lo --tmux echo ::: 1 2 3 4; echo $?
+  (stdout parallel -Scsh@lo,tcsh@lo,parallel@lo,zsh@lo --tmux echo ::: 1 2 3 4; echo $?) | grep -v 'See output';
 0
-  parallel -Scsh@lo,tcsh@lo,parallel@lo,zsh@lo --tmux false ::: 1 2 3 4; echo $?
+  (stdout parallel -Scsh@lo,tcsh@lo,parallel@lo,zsh@lo --tmux false ::: 1 2 3 4; echo $?) | grep -v 'See output';
 4
   export PARTMUX='parallel -Scsh@lo,tcsh@lo,parallel@lo,zsh@lo --tmux ';   stdout ssh zsh@lo      "$PARTMUX" 'true  ::: 1 2 3 4; echo $status' | grep -v 'See output';   stdout ssh zsh@lo      "$PARTMUX" 'false ::: 1 2 3 4; echo $status' | grep -v 'See output';   stdout ssh parallel@lo "$PARTMUX" 'true  ::: 1 2 3 4; echo $?'      | grep -v 'See output';   stdout ssh parallel@lo "$PARTMUX" 'false ::: 1 2 3 4; echo $?'      | grep -v 'See output';   stdout ssh tcsh@lo     "$PARTMUX" 'true  ::: 1 2 3 4; echo $status' | grep -v 'See output';   stdout ssh tcsh@lo     "$PARTMUX" 'false ::: 1 2 3 4; echo $status' | grep -v 'See output';   stdout ssh csh@lo      "$PARTMUX" 'true  ::: 1 2 3 4; echo $status' | grep -v 'See output';   stdout ssh csh@lo      "$PARTMUX" 'false ::: 1 2 3 4; echo $status' | grep -v 'See output'
 0
@@ -95,39 +109,29 @@ echo '### bug #45575: -m and multiple hosts repeats first args'
 Test env_parallel:
 + for each shell
 + remote, locally
-+ variables, variables with funky content, arrays, functions, aliases
++ variables, variables with funky content, arrays, assoc array, functions, aliases
 
 ### Bash environment
-alias_works
+3 arg alias_works
 function_works
 myvar  works
+array_val2
+assoc_val_a
 Funky-
 
 	
  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
 €‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-alias_works_over_ssh
+3 arg alias_works_over_ssh
 function_works_over_ssh
 myvar  works
+array_val2
+assoc_val_a
 Funky-
 
 	
  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
 €‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-### Fish environment
-
- * Documentation:  http://www.linuxmint.com
-
-0 updates are security updates.
-
-alias_works
-function_works
-myvar  works
-Funky-	   !"#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-alias_works_over_ssh
-function_works_over_ssh
-myvar  works
-Funky-	   !"#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
 
 ### Zsh environment
 
@@ -135,15 +139,19 @@ Funky-	   !"#$%&()*+,-./0123456789:;<=>?@ABCDEFGHIJK
 
 0 updates are security updates.
 
-zsh:124: command not found: alias_echo
+zsh:129: command not found: alias_echo
 function_works
 myvar  works
+array_val2
+assoc_val_a
 Funky-
 	
  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-zsh:124: command not found: alias_echo
+zsh:129: command not found: alias_echo
 function_works_over_ssh
 myvar  works
+array_val2
+assoc_val_a
 Funky-
 	
  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
@@ -154,9 +162,27 @@ Funky-
 
 0 updates are security updates.
 
-alias_works
+3 arg alias_works
 function_works
 myvar  works
-alias_works_over_ssh
+array_val2
+assoc_val_a
+Funky-	
+ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
+3 arg alias_works_over_ssh
 function_works_over_ssh
 myvar  works
+array_val2
+assoc_val_a
+Funky-	
+ !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
+
+### csh environment
+
+ * Documentation:  http://www.linuxmint.com
+
+0 updates are security updates.
+
+Warning: no access to tty (Bad file descriptor).
+Thus no job control in this shell.
+setenv: Too many arguments.

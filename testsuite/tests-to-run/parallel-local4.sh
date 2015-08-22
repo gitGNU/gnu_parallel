@@ -49,20 +49,6 @@ echo 'bug #44144: --tagstring {=s/a/b/=} broken'
   # Non-standard --parens -i
   parallel --rpl '{:} s/A/D/;{}' --tag --parens ,, -iDUMMY echo {} ::: A/B.C
 
-echo 'env in zsh'
-  echo 'Normal variable export'
-  export B=\'; 
-  PARALLEL_SHELL=/usr/bin/zsh parallel --env B echo '$B' ::: a
-
-  echo 'Function export as variable'
-  export myfuncvar="() { echo myfuncvar \$*; }"; 
-  PARALLEL_SHELL=/usr/bin/zsh parallel --env myfuncvar myfuncvar ::: a
-
-  echo 'Function export as function'
-  myfunc() { echo myfunc $*; };
-  export -f myfunc; 
-  PARALLEL_SHELL=/usr/bin/zsh parallel --env myfunc myfunc ::: a
-
 echo 'bug #45692: Easy way of cancelling a job in {= =} and'
 echo 'bug #45691: Accessing multiple arguments in {= =}'
   parallel -k echo {= '$arg[1] eq 2 and $job->skip()' =} ::: {1..5}
