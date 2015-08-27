@@ -210,8 +210,46 @@ env_parallel -S ksh@lo alias_echo ::: alias_works_over_ssh
 env_parallel -S ksh@lo func_echo ::: function_works_over_ssh
 EOS
 
+echo
+echo "### Fish environment"
+stdout ssh -q fish@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated.'
+set myvar "myvar  works"
+setenv myenvvar "myenvvar  works"
+
+set funky (perl -e 'print pack "c*", 1..255')
+setenv funkyenv (perl -e 'print pack "c*", 1..255')
+
+set myarray '' array_val2 3 '' 5
+#typeset -A assocarr
+#assocarr[a]=assoc_val_a
+#assocarr[b]=assoc_val_b
+alias alias_echo="echo 3 arg";
+
+function func_echo
+  echo $argv;
+  echo "$myvar"
+  echo "$myenvvar"
+  echo $myarray[2]
+#  echo ${assocarr[a]}
+  echo Funky-"$funky"-funky
+  echo Funky-"$funkyenv"-funky
+end
+
+function env_parallel
+  setenv PARALLEL_ENV (functions -n | perl -pe 's/,/\n/g' | while read d; functions $d; end|perl -pe 's/\n/\001/')
+  parallel $argv;
+  set -e PARALLEL_ENV
+end
+
+env_parallel alias_echo ::: alias_does_not_work
+env_parallel func_echo ::: function_works
+env_parallel -S fish@lo alias_echo ::: alias_does_not_work_over_ssh
+env_parallel -S fish@lo func_echo ::: function_works_over_ssh
+EOS
+
 echo 
 echo "### csh environment"
+# http://hyperpolyglot.org/unix-shells
 stdout ssh -q csh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated.'
 set myvar = "myvar  works"
 set funky = "`perl -e 'print pack q(c*), 1..255'`"

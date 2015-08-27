@@ -231,6 +231,10 @@ New in this release:
 
 * <<kontaktet 2015-06-22 Afventer svar fra journal>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
 
+* Joys of gnu parallel http://scottolesen.com/index.php/2015/08/26/joys-of-gnu-parallel/
+
+* Crop and resize images with bash and ImageMagick https://www.simonholywell.com/post/2015/08/image-resize-crop-bash-imagemagick/
+
 * Bug fixes and man page updates.
 
 GNU Parallel - For people who live life in the parallel lane.

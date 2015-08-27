@@ -185,6 +185,15 @@ testquote() { printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=$1 parallel -0 echo; };
 
 echo '**'
 
+echo '### bug #45769: --round-robin --pipepart gives wrong results'
+
+seq 10000 >/tmp/seq10000; 
+  parallel -j2 --pipepart -a /tmp/seq10000 --block 14 --round-robin wc | wc -l; 
+  rm /tmp/seq10000
+
+echo '**'
+
+
 EOF
 echo '### 1 .par file from --files expected'
 find /tmp{/*,}/*.{par,tms,tmx} 2>/dev/null -mmin -10 | wc -l

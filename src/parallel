@@ -51,6 +51,7 @@ my @command = @ARGV;
 
 my @input_source_fh;
 if($opt::pipepart) {
+    # -a is used for data - not for command line args
     @input_source_fh = map { open_or_exit($_) } "/dev/null";
 } else {
     @input_source_fh = map { open_or_exit($_) } @opt::a;
@@ -115,15 +116,24 @@ if($opt::eta or $opt::bar or $opt::shuf or $Global::halt_pct) {
     # before starting any
     $Global::JobQueue->total_jobs();
 }
+# Compute $Global::max_jobs_running
+for my $sshlogin (values %Global::host) {
+    $sshlogin->max_jobs_running();
+}
 if($opt::pipepart) {
+    if($opt::roundrobin) {
+	# Compute size of -a
+	my $size = 0;
+	$size += -s $_ for @opt::a;
+	$Global::max_jobs_running or ::die_bug("Global::max_jobs_running not set");
+	# Set --blocksize = size / no of proc
+	$opt::blocksize = 1 + $size / $Global::max_jobs_running;
+    }
     @Global::cat_partials = map { pipe_part_files($_) } @opt::a;
     # Unget the command as many times as there are parts
     $Global::JobQueue->{'commandlinequeue'}->unget(
 	map { $Global::JobQueue->{'commandlinequeue'}->get() } @Global::cat_partials
 	);
-}
-for my $sshlogin (values %Global::host) {
-    $sshlogin->max_jobs_running();
 }
 
 init_run_jobs();
@@ -916,7 +926,6 @@ sub parse_options {
     if(defined $opt::colsep) { $Global::trim = 'lr'; }
     if(defined $opt::header) { $opt::colsep = defined $opt::colsep ? $opt::colsep : "\t"; }
     if(defined $opt::trim) { $Global::trim = $opt::trim; }
-    if(defined $opt::roundrobin) { $opt::pipe = 1; }
     if(defined $opt::arg_sep) { $Global::arg_sep = $opt::arg_sep; }
     if(defined $opt::arg_file_sep) { $Global::arg_file_sep = $opt::arg_file_sep; }
     if(defined $opt::number_of_cpus) { print SSHLogin::no_of_cpus(),"\n"; wait_and_exit(0); }
@@ -4834,7 +4843,9 @@ sub compute_number_of_processes {
 	    $max_system_proc_reached and last;
 
 	    my $before_getting_arg = time;
-	    get_args_or_jobs() or last;
+	    if(!$opt::roundrobin) {
+		get_args_or_jobs() or last;
+	    }
 	    $wait_time_for_getting_args += time - $before_getting_arg;
 	    $system_limit++;
 

@@ -177,6 +177,39 @@ assoc_val_a
 Funky-	
  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
 
+### Fish environment
+
+ * Documentation:  http://www.linuxmint.com
+
+0 updates are security updates.
+
+3 arg alias_does_not_work
+function_works
+
+myenvvar  works
+Funky--funky
+Funky-	   !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
+Array index out of bounds
+fish:   echo $myarray[2]
+                      ^
+in function â€œfunc_echoâ€
+	called on standard input
+	with parameter list â€œfunction_worksâ€
+
+3 arg alias_does_not_work_over_ssh
+function_works_over_ssh
+
+
+Funky--funky
+Funky--funky
+Array index out of bounds
+fish:   echo $myarray[2]
+                      ^
+in function â€œfunc_echoâ€
+	called on standard input
+	with parameter list â€œfunction_works_over_sshâ€
+
+
 ### csh environment
 
  * Documentation:  http://www.linuxmint.com
