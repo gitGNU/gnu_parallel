@@ -2484,7 +2484,7 @@ For all values of x and z it runs commands like:
 
   cat x1y*z1 > x1z1
 
-So you end up with x1z1 .. x1z5 each containing the content of all
+So you end up with x1z1 .. x5z5 each containing the content of all
 values of y.
 
 

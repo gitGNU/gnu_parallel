@@ -16,7 +16,7 @@ export SMALLDISK
   sudo chmod 777 /mnt/ram
 ) >/dev/null 2>/dev/null
 
-cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj0 -k --joblog /tmp/jl-`basename $0` -L1
+cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj8 -k --joblog /tmp/jl-`basename $0` -L1
 echo '### Test bug #45619: "--halt" erroneous error exit code (should give 0)'; 
   seq 10 | parallel --halt now,fail=1 true; 
   echo $?
@@ -193,6 +193,14 @@ seq 10000 >/tmp/seq10000;
 
 echo '**'
 
+echo '### bug #45842: Do not evaluate {= =} twice'
+
+parallel -k echo '{=  $_=++$::G =}' ::: {1001..1004}
+parallel -k echo '{=1 $_=++$::G =}' ::: {1001..1004}
+parallel -k echo '{=  $_=++$::G =}' ::: {1001..1004} ::: {a..c}
+parallel -k echo '{=1 $_=++$::G =}' ::: {1001..1004} ::: {a..c}
+
+echo '**'
 
 EOF
 echo '### 1 .par file from --files expected'

@@ -3261,7 +3261,7 @@ sub kill_sleep {
     my $sleepsum = 0;
     my $sleep = 0.001;
     my @dead;
-    
+
     while(@pids and $sleepsum < $sleep_max) {
 	if($Global::killall) {
 	    # Killall => don't run reaper
@@ -7784,6 +7784,8 @@ sub new {
 	'seq' => $seq,
 	'len' => \%len,
 	'arg_list' => [],
+	'arg_list_flat' => [],
+	'arg_list_flat_orig' => [undef],
 	'arg_queue' => $arg_queue,
 	'max_number_of_args' => $max_number_of_args,
 	'replacecount' => \%replacecount,
@@ -7911,19 +7913,23 @@ sub push {
     # Returns: N/A
     my $self = shift;
     my $record = shift;
+    push @{$self->{'arg_list_flat_orig'}}, map { $_->orig() } @$record;
+    push @{$self->{'arg_list_flat'}}, @$record;
     push @{$self->{'arg_list'}}, $record;
+    # Make @arg available for {= =}
+    *Arg::arg = $self->{'arg_list_flat_orig'};
 
     my $quote_arg = $Global::noquote ? 0 : not $Global::quoting;
-    my $rep;
-    for my $arg (@$record) {
-	if(defined $arg) {
-	    for my $perlexpr (keys %{$self->{'replacecount'}}) {
-		# 50% faster than below
-		$self->{'len'}{$perlexpr} += length $arg->replace($perlexpr,$quote_arg,$self);
-		# $rep = $arg->replace($perlexpr,$quote_arg,$self);
-		# $self->{'len'}{$perlexpr} += length $rep;
-		# ::debug("length", "Length: ", length $rep,
-		# "(", $perlexpr, "=>", $rep, ")\n");
+    for my $perlexpr (keys %{$self->{'replacecount'}}) {
+	if($perlexpr =~ /^(\d+) /) {
+	    # Positional
+	    defined($record->[$1-1]) or next;
+	    $self->{'len'}{$perlexpr} += length $record->[$1-1]->replace($perlexpr,$quote_arg,$self);
+	} else {
+	    for my $arg (@$record) {
+		if(defined $arg) {
+		    $self->{'len'}{$perlexpr} += length $arg->replace($perlexpr,$quote_arg,$self);
+		}
 	    }
 	}
     }
@@ -7935,12 +7941,20 @@ sub pop {
     #   the last record
     my $self = shift;
     my $record = pop @{$self->{'arg_list'}};
+    # pop off arguments from @$record
+    splice @{$self->{'arg_list_flat_orig'}}, -($#$record+1), $#$record+1;
+    splice @{$self->{'arg_list_flat'}}, -($#$record+1), $#$record+1;
     my $quote_arg = $Global::noquote ? 0 : not $Global::quoting;
-    for my $arg (@$record) {
-	if(defined $arg) {
-	    for my $perlexpr (keys %{$self->{'replacecount'}}) {
-		$self->{'len'}{$perlexpr} -=
-		    length $arg->replace($perlexpr,$quote_arg,$self);
+    for my $perlexpr (keys %{$self->{'replacecount'}}) {
+	if($perlexpr =~ /^(\d+) /) {
+	    # Positional
+	    defined($record->[$1-1]) or next;
+	    $self->{'len'}{$perlexpr} -= length $record->[$1-1]->replace($perlexpr,$quote_arg,$self);
+	} else {
+	    for my $arg (@$record) {
+		if(defined $arg) {
+		    $self->{'len'}{$perlexpr} -= length $arg->replace($perlexpr,$quote_arg,$self);
+		}
 	    }
 	}
     }
@@ -7948,15 +7962,17 @@ sub pop {
 }
 
 sub pop_all {
-    # Remove all arguments and zeros the length of replacement strings
+    # Remove all arguments and zeros the length of replacement perlexpr
     # Returns:
     #   all records
     my $self = shift;
     my @popped = @{$self->{'arg_list'}};
-    for my $replacement_string (keys %{$self->{'replacecount'}}) {
-	$self->{'len'}{$replacement_string} = 0;
+    for my $perlexpr (keys %{$self->{'replacecount'}}) {
+	$self->{'len'}{$perlexpr} = 0;
     }
     $self->{'arg_list'} = [];
+    $self->{'arg_list_flat_orig'} = [undef];
+    $self->{'arg_list_flat'} = [];
     return @popped;
 }
 
@@ -8138,53 +8154,45 @@ sub replaced {
     my $context_replace;
     my $perl_expressions_as_re;
     my @arg;
+    my %words_containing_replacement_strings;
 
     sub fish_out_words_containing_replacement_strings {
-	my %word;
-	for (@target) {
-	    my $tt = $_;
-	    ::debug("replace", "Target: $tt");
-	    # Command line template:
-	    #   a{1}b{}c{}d
-	    # becomes:
-	    #   a{=1 $_=$_ =}b{= $_=$_ =}c{= $_=$_ =}d
-	    # becomes:
-	    #   a\257<1 $_=$_ \257>b\257< $_=$_ \257>c\257< $_=$_ \257>d
-	    # Input A B C (no context) becomes:
-	    #    A B C => aAbA B CcA B Cd
-	    # Input A B C (context -X) becomes:
-	    #    A B C => aAbAcAd aAbBcBd aAbCcCd
-	    if($context_replace) {
-		while($tt =~ s/([^\s\257]*  # before {=
+	if(not $words_containing_replacement_strings{$context_replace,@target}) {
+	    my %word;
+	    for (@target) {
+		my $tt = $_;
+		::debug("replace", "Target: $tt");
+		# Command line template:
+		#   a{1}b{}c{}d
+		# becomes:
+		#   a{=1 $_=$_ =}b{= $_=$_ =}c{= $_=$_ =}d
+		# becomes:
+		#   a\257<1 $_=$_ \257>b\257< $_=$_ \257>c\257< $_=$_ \257>d
+		# Input A B C (no context) becomes:
+		#    A B C => aAbA B CcA B Cd
+		# Input A B C (context -X) becomes:
+		#    A B C => aAbAcAd aAbBcBd aAbCcCd
+		if($context_replace) {
+		    while($tt =~ s/([^\s\257]*  # before {=
                      (?:
                       \257<       # {=
                       [^\257]*?   # The perl expression
                       \257>       # =}
                       [^\s\257]*  # after =}
                      )+)/ /x) {
-		    # $1 = pre \257 perlexpr \257 post
-		    $word{"$1"} ||= 1;
-		}
-	    } else {
-		while($tt =~ s/( (?: \257<([^\257]*?)\257>) )//x) {
-		    # $f = \257 perlexpr \257
-		    $word{$1} ||= 1;
+			# $1 = pre \257 perlexpr \257 post
+			$word{"$1"} ||= 1;
+		    }
+		} else {
+		    while($tt =~ s/( (?: \257<([^\257]*?)\257>) )//x) {
+			# $f = \257 perlexpr \257
+			$word{$1} ||= 1;
+		    }
 		}
 	    }
+	    @{$words_containing_replacement_strings{$context_replace,@target}} = keys %word
 	}
-	return keys %word;
-    }
-
-    sub flatten_arg_list {
-	my $arglist_ref = shift;
-	@arg = ();
-	for my $record (@$arglist_ref) {
-	    # $self->{'arg_list'} = [ [Arg11, Arg12], [Arg21, Arg22], [Arg31, Arg32] ]
-	    # Merge arg-objects from records into @arg for easy access
-	    CORE::push @arg, @$record;
-	}
-	# Add one arg if empty to allow {#} and {%} to be computed only once
-	if(not @arg) { @arg = (Arg->new("")); }
+	return @{$words_containing_replacement_strings{$context_replace,@target}};
     }
 
     sub replace_placeholders {
@@ -8202,28 +8210,32 @@ sub replaced {
 	my $quote = shift;
 	my $quote_arg = shift;
 	my %replace;
+	# -X = context replace (fish_out_words_containing_replacement_strings)
 	$context_replace = $self->{'context_replace'};
 	@target = @$targetref;
 	::debug("replace", "Replace @target\n");
-	# -X = context replace
-	# maybe multiple input sources
-	# maybe --xapply
 	if(not @target) {
 	    # @target is empty: Return empty array
 	    return @target;
 	}
-	# Fish out the words that have replacement strings in them
-	my @word = fish_out_words_containing_replacement_strings();
-	flatten_arg_list($self->{'arg_list'});
 	# Make it possible to use $arg[2] in {= =}
-	@Arg::arg = (undef, map { $_->orig() } @arg);
+	*Arg::arg = $self->{'arg_list_flat_orig'};
+	# Flat list:
+	# $self->{'arg_list'} = [ [Arg11, Arg12], [Arg21, Arg22], [Arg31, Arg32] ]
+	# $self->{'arg_list_flat'} = [ Arg11, Arg12, Arg21, Arg22, Arg31, Arg32 ]
+	if(not @{$self->{'arg_list_flat'}}) {
+	    @{$self->{'arg_list_flat'}} = Arg->new("");
+	}
+	my $argref = $self->{'arg_list_flat'};
 	# Number of arguments - used for positional arguments
-	my $n = $#arg+1;
+	my $n = $#$argref+1;
 
-	# This is actually a CommandLine-object,
+	# $self is actually a CommandLine-object,
 	# but it looks nice to be able to say {= $job->slot() =}
 	my $job = $self;
-	for my $word (@word) {
+	# Fish out the words that have replacement strings in them
+	for my $word (
+	    fish_out_words_containing_replacement_strings()) {
 	    # word = AB \257< perlexpr \257> CD \257< perlexpr \257> EF
 	    ::debug("replace", "Replacing in $word\n");
 	    my $normal_replace;
@@ -8233,7 +8245,7 @@ sub replaced {
 	    #   push to replace word value
 	    $perl_expressions_as_re ||=
 		join("|", map {s/^-?\d+//; "\Q$_\E"} keys %{$self->{'replacecount'}});
-	    for my $arg (@arg) {
+	    for my $arg (@$argref) {
 		my $val = $word;
 		# Replace {= perl expr =} with value for each arg
 		$val =~ s{\257<(-?\d+)?($perl_expressions_as_re)\257>}
@@ -8241,8 +8253,8 @@ sub replaced {
 			if($1) {
 			    # Positional replace
 			    # Find the relevant arg and replace it
-			    ($arg[$1 > 0 ? $1-1 : $n+$1] ? # If defined: replace
-			     $arg[$1 > 0 ? $1-1 : $n+$1]->
+			    ($argref->[$1 > 0 ? $1-1 : $n+$1] ? # If defined: replace
+			     $argref->[$1 > 0 ? $1-1 : $n+$1]->
 			     replace($2,$quote_arg,$self)
 			     : "");
 			} else {
@@ -8265,7 +8277,6 @@ sub replaced {
 	if($quote) {
 	    @target = ::shell_quote(@target);
 	}
-	# ::debug("replace", "%replace=",::my_dump(%replace),"\n");
 	if(%replace) {
 	    # Substitute the replace strings with the replacement values
 	    # Must be sorted by length if a short word is a substring of a long word
@@ -8293,7 +8304,7 @@ sub new {
     my $class = shift;
     my $commandref = shift;
     my $read_from = shift;
-    my $context_replace = shift;
+    my $context_replace = shift || 0;
     my $max_number_of_args = shift;
     my $return_files = shift;
     my @unget = ();
@@ -8828,7 +8839,13 @@ sub get {
     if($opt::xapply) {
 	return $self->xapply_get();
     } else {
-	return $self->nest_get();
+	my $arglist = $self->nest_get();
+	# Flush cached computed values
+	# To fix: parallel echo {%} ::: 1 2 ::: 4 3
+	if($arglist) {
+	    map { $_->flush_cache() } @$arglist;
+	}
+	return $arglist;
     }
 }
 
@@ -8973,7 +8990,6 @@ sub read_arg_from_fh {
 		return undef;
 	    }
 	}
-#	::debug("run", "read $arg\n");
 	# Remove delimiter
 	$arg =~ s:$/$::;
 	if($Global::end_of_file_string and
@@ -9080,31 +9096,45 @@ sub Q {
 	# This is actually a CommandLine-object,
 	# but it looks nice to be able to say {= $job->slot() =}
 	my $job = shift;
-	$perlexpr =~ s/^-?\d+ +//; # Positional replace treated as normal replace
-	local $_;
-	if($Global::trim eq "n") {
-	    $_ = $self->{'orig'};
-	} else {
-	    $_ = trim_of($self->{'orig'});
-	}
-	::debug("replace", "eval ", $perlexpr, " ", $_, "\n");
-	if(not $perleval{$perlexpr}) {
-	    # Make an anonymous function of the $perlexpr
-	    # And more importantly: Compile it only once
-	    if($perleval{$perlexpr} =
-	       eval('sub { no strict; no warnings; my $job = shift; '.
-		    $perlexpr.' }')) {
-		# All is good
+	$perlexpr =~ s/^(-?\d+)? *//; # Positional replace treated as normal replace
+	if(not $self->{'cache'}{$perlexpr}) {
+	    # Only compute the value once
+	    # Use $_ as the variable to change
+	    local $_;
+	    if($Global::trim eq "n") {
+		$_ = $self->{'orig'};
 	    } else {
-		# The eval failed. Maybe $perlexpr is invalid perl?
-		::error("Cannot use $perlexpr: $@");
-		::wait_and_exit(255);
+		# Trim the input
+		$_ = trim_of($self->{'orig'});
 	    }
+	    ::debug("replace", "eval ", $perlexpr, " ", $_, "\n");
+	    if(not $perleval{$perlexpr}) {
+		# Make an anonymous function of the $perlexpr
+		# And more importantly: Compile it only once
+		if($perleval{$perlexpr} =
+		   eval('sub { no strict; no warnings; my $job = shift; '.
+			$perlexpr.' }')) {
+		    # All is good
+		} else {
+		    # The eval failed. Maybe $perlexpr is invalid perl?
+		    ::error("Cannot use $perlexpr: $@");
+		    ::wait_and_exit(255);
+		}
+	    }
+	    # Execute the function
+	    $perleval{$perlexpr}->($job);
+	    $self->{'cache'}{$perlexpr} = $_;
 	}
-	# Execute the function
-	$perleval{$perlexpr}->($job);
-	return $quote ? ::shell_quote_scalar($_) : $_;
+	# Return the value quoted if needed
+	return($quote ? ::shell_quote_scalar($self->{'cache'}{$perlexpr})
+	       : $self->{'cache'}{$perlexpr});
     }
+}
+
+sub flush_cache {
+    # Flush cache of computed values
+    my $self = shift;
+    $self->{'cache'} = undef;
 }
 
 sub orig {

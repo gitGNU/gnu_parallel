@@ -390,5 +390,45 @@ seq 10000 >/tmp/seq10000;   parallel -j2 --pipepart -a /tmp/seq10000 --block 14 
 2
 echo '**'
 **
+echo '### bug #45842: Do not evaluate {= =} twice'
+### bug #45842: Do not evaluate {= =} twice
+parallel -k echo '{=  $_=++$::G =}' ::: {1001..1004}
+1
+2
+3
+4
+parallel -k echo '{=1 $_=++$::G =}' ::: {1001..1004}
+1
+2
+3
+4
+parallel -k echo '{=  $_=++$::G =}' ::: {1001..1004} ::: {a..c}
+1 2
+3 4
+5 6
+7 8
+9 10
+11 12
+13 14
+15 16
+17 18
+19 20
+21 22
+23 24
+parallel -k echo '{=1 $_=++$::G =}' ::: {1001..1004} ::: {a..c}
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+echo '**'
+**
 ### 1 .par file from --files expected
 1
