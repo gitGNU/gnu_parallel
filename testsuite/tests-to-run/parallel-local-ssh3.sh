@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # SSH only allowed to localhost/lo
-cat <<'EOF' | sed -e s/\$SERVER1/$SERVER1/\;s/\$SERVER2/$SERVER2/ | parallel -vj2 -k --joblog /tmp/jl-`basename $0` -L1
+cat <<'EOF' | sed -e s/\$SERVER1/$SERVER1/\;s/\$SERVER2/$SERVER2/ | parallel -vj2 --retries 3 -k --joblog /tmp/jl-`basename $0` -L1
 echo '### --hostgroup force ncpu'
   parallel --delay 0.1 --hgrp -S @g1/1/parallel@lo -S @g2/3/lo whoami\;sleep 0.2{} ::: {1..8} | sort
 
@@ -63,5 +63,15 @@ echo '### Uniq {=perlexpr=} in return - not used in command'
 
 echo '### functions and --nice'
   myfunc() { echo OK $*; }; export -f myfunc; parallel --nice 10 --env myfunc -S parallel@lo myfunc ::: func
+
+echo '### bug #45906: {= in header =}'
+  rm -f returnfile45906; 
+  parallel --rpl '{G} $_=lc($_)' -S parallel@lo --return {G} --cleanup echo {G} '>' {G} ::: RETURNFILE45906; 
+  ls returnfile45906
+
+echo '### bug #45907: --header : + --return {header}'
+  rm returnfile45907; 
+  ppar --header : -S parallel@lo --return {G} --cleanup echo {G} '>' {G} ::: G returnfile45907; 
+  ls returnfile45907
 
 EOF

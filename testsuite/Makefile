@@ -40,7 +40,7 @@ prereqlocal: installparallel
 	which timeout || (echo timeout is required for testsuite; /bin/false)
 
 prereqremote: installparallel startvm
-	parallel --timeout 5 --tag ssh parallel@parallel-server{} parallel --minversion 20121021 ::: 1 2 3 || (echo parallel on remote required for testsuite; /bin/true)
+	parallel --timeout 10 --tag ssh parallel@parallel-server{} parallel --minversion 20121021 ::: 1 2 3 || (echo parallel on remote required for testsuite; /bin/true)
 
 startvm:
 	# Make sure we can reach the virtual machines

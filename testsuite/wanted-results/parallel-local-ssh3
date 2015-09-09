@@ -105,3 +105,11 @@ echo '### functions and --nice'
 ### functions and --nice
   myfunc() { echo OK $*; }; export -f myfunc; parallel --nice 10 --env myfunc -S parallel@lo myfunc ::: func
 OK func
+echo '### bug #45906: {= in header =}'
+### bug #45906: {= in header =}
+  rm -f returnfile45906;   parallel --rpl '{G} $_=lc($_)' -S parallel@lo --return {G} --cleanup echo {G} '>' {G} ::: RETURNFILE45906;   ls returnfile45906
+returnfile45906
+echo '### bug #45907: --header : + --return {header}'
+### bug #45907: --header : + --return {header}
+  rm returnfile45907;   ppar --header : -S parallel@lo --return {G} --cleanup echo {G} '>' {G} ::: G returnfile45907;   ls returnfile45907
+returnfile45907

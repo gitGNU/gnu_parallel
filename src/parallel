@@ -78,9 +78,7 @@ if($opt::header and not $opt::pipe) {
 	for my $s (split /$delimiter/o, $line) {
 	    ::debug("init", "Colname: '$s'");
 	    # Replace {colname} with {2}
-	    # TODO accept configurable short hands
-	    # TODO how to deal with headers in {=...=}
-	    for(@command) {
+	    for(@command,@Global::ret_files) {
 	      s:\{$s(|/|//|\.|/\.)\}:\{$id$1\}:g;
 	    }
 	    $Global::input_source_header{$id} = $s;
@@ -1099,7 +1097,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150823;
+    $Global::version = 20150909;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -8322,6 +8320,7 @@ sub new {
 	}
     }
     # Replace replacement strings with {= perl expr =}
+    # '{=' 'perlexpr' '=}'  => '{= perlexpr =}'
     @command = merge_rpl_parts(@command);
 
     # Protect matching inside {= perl expr =}

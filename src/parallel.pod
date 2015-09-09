@@ -3900,11 +3900,8 @@ B<make -j> can run jobs in parallel, but requires a crafted Makefile
 to do this. That results in extra quoting to get filename containing
 newline to work correctly.
 
-B<make -j> has no support for grouping the output, therefore output
-may run together, e.g. the first half of a line is from one process
-and the last half of the line is from another process. The example
-B<Parallel grep> cannot be done reliably with B<make -j> because of
-this.
+B<make -j> computes a dependency graph before running jobs. Jobs run
+by GNU B<parallel> does not depend on eachother.
 
 (Very early versions of GNU B<parallel> were coincidently implemented
 using B<make -j>).

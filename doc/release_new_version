@@ -212,9 +212,9 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20150822 ('<<>>') released <<[stable]>>
+Subject: GNU Parallel 20150822 ('Aylan Kurdi') released <<[stable]>>
 
-GNU Parallel 20150922 ('<<>>') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20150922 ('Aylan Kurdi') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
@@ -240,6 +240,10 @@ New in this release:
 * Joys of gnu parallel http://scottolesen.com/index.php/2015/08/26/joys-of-gnu-parallel/
 
 * Crop and resize images with bash and ImageMagick https://www.simonholywell.com/post/2015/08/image-resize-crop-bash-imagemagick/
+
+* Three Ways to Script Processes in Parallel http://www.codeword.xyz/2015/09/02/three-ways-to-script-processes-in-parallel/
+
+* L’Exploration De Données Twitter http://blog.inovia-conseil.fr/?p=233
 
 * Bug fixes and man page updates.
 
