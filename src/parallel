@@ -8353,11 +8353,14 @@ sub new {
 	    $posrpl = $rpl;
 	    if($posrpl =~ s/^\{//) {
 		# Only do this if the shorthand start with {
-		s{\{(-?\d+)\Q$posrpl\E}
-		{\257<$1 $Global::rpl{$rpl}\257>}g;
+		while(s{((^|\257>)[^\257]*?) # Don't replace after \257 unless \257>
+                  \{(-?\d+)\Q$posrpl\E}
+		      {$1\257<$3 $Global::rpl{$rpl}\257>}xg) {
+		}
 	    }
 	}
     }
+
     # Add {} if no replacement strings in @command
     ($replacecount_ref, $len_ref, @command) =
 	replacement_counts_and_lengths($return_files,@command);
@@ -9077,9 +9080,9 @@ sub new {
 sub Q {
     # Q alias for ::shell_quote_scalar
     # Run shell_quote_scalar once to set the reference to the sub
-    my @a = ::shell_quote_scalar(@_);
+    my $a = ::shell_quote_scalar(@_);
     *Q = \&::shell_quote_scalar;
-    return @a;
+    return $a;
 }
 
 {

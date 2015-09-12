@@ -430,5 +430,11 @@ parallel -k echo '{=1 $_=++$::G =}' ::: {1001..1004} ::: {a..c}
 12
 echo '**'
 **
+echo '### bug #45939: {2} in {= =} fails'
+### bug #45939: {2} in {= =} fails
+parallel echo '{= s/O{2}//=}' ::: OOOK
+OK
+parallel echo '{2}-{=1 s/O{2}//=}' ::: OOOK ::: OK
+OK-OK
 ### 1 .par file from --files expected
 1

@@ -202,6 +202,10 @@ parallel -k echo '{=1 $_=++$::G =}' ::: {1001..1004} ::: {a..c}
 
 echo '**'
 
+echo '### bug #45939: {2} in {= =} fails'
+parallel echo '{= s/O{2}//=}' ::: OOOK
+parallel echo '{2}-{=1 s/O{2}//=}' ::: OOOK ::: OK
+
 EOF
 echo '### 1 .par file from --files expected'
 find /tmp{/*,}/*.{par,tms,tmx} 2>/dev/null -mmin -10 | wc -l
