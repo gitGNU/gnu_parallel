@@ -436,5 +436,12 @@ parallel echo '{= s/O{2}//=}' ::: OOOK
 OK
 parallel echo '{2}-{=1 s/O{2}//=}' ::: OOOK ::: OK
 OK-OK
+echo '**'
+**
+echo '### bug #45998: --pipe to function broken'
+### bug #45998: --pipe to function broken
+myfunc() { echo $1; cat; }; export -f myfunc; echo OK | parallel --pipe myfunc {#}
+1
+OK
 ### 1 .par file from --files expected
 1

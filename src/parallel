@@ -6006,7 +6006,7 @@ sub empty_input_wrapper {
     # Returns:
     #   $wrapped_command = the wrapped command
     my $command = shift;
-    my $script = '$c="'.::perl_quote_scalar($command).'";'.
+    my $script = '$c="'.::perl_quote_scalar($Global::shell." -c ".::shell_quote_scalar($command)).'";'.
 	::spacefree(0,q{
 	    if(sysread(STDIN, $buf, 1)) {
 		open($fh, "|-", $c) || die;
@@ -8345,7 +8345,7 @@ sub new {
 	    # with the {= perl expr =}
 	    # Avoid replacing inside existing {= perl expr =}
 	    while(s{((^|\257>)[^\257]*?) # Don't replace after \257 unless \257>
-                  \Q$rpl\E}
+                    \Q$rpl\E}
 		  {$1\257<$Global::rpl{$rpl}\257>}xg) {
 	    }
 	    # Do the same for the positional replacement strings
@@ -8354,7 +8354,7 @@ sub new {
 	    if($posrpl =~ s/^\{//) {
 		# Only do this if the shorthand start with {
 		while(s{((^|\257>)[^\257]*?) # Don't replace after \257 unless \257>
-                  \{(-?\d+)\Q$posrpl\E}
+                        \{(-?\d+)\Q$posrpl\E}
 		      {$1\257<$3 $Global::rpl{$rpl}\257>}xg) {
 		}
 	    }

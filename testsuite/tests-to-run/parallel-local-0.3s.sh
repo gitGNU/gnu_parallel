@@ -206,6 +206,12 @@ echo '### bug #45939: {2} in {= =} fails'
 parallel echo '{= s/O{2}//=}' ::: OOOK
 parallel echo '{2}-{=1 s/O{2}//=}' ::: OOOK ::: OK
 
+echo '**'
+
+echo '### bug #45998: --pipe to function broken'
+myfunc() { echo $1; cat; }; export -f myfunc; echo OK | parallel --pipe myfunc {#}
+
+
 EOF
 echo '### 1 .par file from --files expected'
 find /tmp{/*,}/*.{par,tms,tmx} 2>/dev/null -mmin -10 | wc -l
