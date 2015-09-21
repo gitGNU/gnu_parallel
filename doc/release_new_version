@@ -4,7 +4,7 @@
 
 Check that documentation is updated (compare to web):
 
-Fixet for 20150722
+Fixet for 20150922
 git diff last-release-commit
 Unmodified beta since last version => production
 Unmodified alpha since last version => beta
@@ -212,9 +212,9 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20150822 ('Aylan Kurdi') released <<[stable]>>
+Subject: GNU Parallel 20151022 ('<<>>') released <<[stable]>>
 
-GNU Parallel 20150922 ('Aylan Kurdi') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20151022 ('<<>>') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
@@ -225,21 +225,6 @@ Haiku of the month:
 
 New in this release:
 
-* GNU Parallel was cited in: Flexible Modeling of Epidemics with an Empirical Bayes Framework http://journals.plos.org/ploscompbiol/article?id=10.1371%2Fjournal.pcbi.1004382
-
-* GNU Parallel was cited in: BL1: 2D Potts Model with a Twist https://sucs.swan.ac.uk/~rjames93/Dissertation.pdf
-
-* GNU Parallel was cited in: DockBench: An Integrated Informatic Platform Bridging the Gap between the Robust Validation of Docking Protocols and Virtual Screening Simulations http://www.mdpi.com/1420-3049/20/6/9977/pdf
-
-* GNU Parallel was cited in: A Scalable Parallel Implementation of Evolutionary Algorithms for
-Multi-Objective Optimization on GPUs http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7257074
-
-* GNU Parallel was cited in: Tools and techniques for computational reproducibility http://biorxiv.org/content/biorxiv/early/2015/07/17/022707.full.pdf
-
-* GNU Parallel was cited in: How Can We Measure the Similarity Between Résumés of Selected Candidates for a Job? http://crawl.prod.proquest.com.s3.amazonaws.com/fpcache/c79b355e6e441a51de3c7fcd52866184.pdf?AWSAccessKeyId=AKIAJF7V7KNV2KKY2NUQ&Expires=1442658364&Signature=soRDi6Xqw1zHhSmBrqJ5KiD%2B8Sw%3D
-
-* GNU Parallel was cited in: Interplay of cell dynamics and epithelial tension during morphogenesis of the Drosophila pupal wing http://www.researchgate.net/profile/Raphael_Etournay/publication/279061859_Interplay_of_cell_dynamics_and_epithelial_tension_during_morphogenesis_of_the_Drosophila_pupal_wing/links/558a95ad08aeae8413bcceea.pdf
-
 * << kontakt GNU Parallel was used (unfortunately without citation) in: Instrumentation and Trace Analysis for Ad-hoc Python Workflows in Cloud Environments http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=7214035>>
 
 * <<Har angiveligt submittet ny version - afventer opdatering>> GNU Parallel was used (unfortunately without citation) in: MUGBAS: a species free gene-based programme suite for post-GWAS analysis http://www.ncbi.nlm.nih.gov/pubmed/25765345
@@ -247,18 +232,6 @@ Multi-Objective Optimization on GPUs http://ieeexplore.ieee.org/stamp/stamp.jsp?
 * <<Afventer updateret publisering>> GNU Parallel was used in: Large Scale Author Name Disambiguation in Digital Libraries http://ieeexplore.ieee.org/xpl/abstractReferences.jsp?tp=&arnumber=7004487&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7004487
 
 * <<kontaktet 2015-06-22 Afventer svar fra journal>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
-
-* Third-party selling GNU Parallel T-shirts http://www.aliexpress.com/item/2015F-BSO-GNU-LOGO-GNU-PARALLEL-men-s-shirt-sleeve-visual-illusion-error/32464827966.html
-
-* Joys of gnu parallel http://scottolesen.com/index.php/2015/08/26/joys-of-gnu-parallel/
-
-* Crop and resize images with bash and ImageMagick https://www.simonholywell.com/post/2015/08/image-resize-crop-bash-imagemagick/
-
-* Three Ways to Script Processes in Parallel http://www.codeword.xyz/2015/09/02/three-ways-to-script-processes-in-parallel/
-
-* What It Looks Like to Process 3.5 Million Books http://blog.gdeltproject.org/what-it-looks-like-to-process-3-5-million-books/
-
-* L’Exploration De Données Twitter http://blog.inovia-conseil.fr/?p=233
 
 * Bug fixes and man page updates.
 

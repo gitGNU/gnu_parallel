@@ -2,15 +2,19 @@
 tange@freebsd7
 echo 'bug #40136: FreeBSD: No more processes'
 bug #40136: FreeBSD: No more processes
-  sem --jobs 3 --id my_id -u 'echo First started; sleep 5; echo The first finished' &&   sem --jobs 3 --id my_id -u 'echo Second started; sleep 6; echo The second finished' &&   sem --jobs 3 --id my_id -u 'echo Third started; sleep 7; echo The third finished' &&   sem --jobs 3 --id my_id -u 'echo Fourth started; sleep 8; echo The fourth finished' &&   sem --wait --id my_id
+  sem --jobs 3 --id my_id -u 'echo First started; sleep 10; echo The first finished;echo' &&   sem --jobs 3 --id my_id -u 'echo Second started; sleep 11; echo The second finished;echo' &&   sem --jobs 3 --id my_id -u 'echo Third started; sleep 12; echo The third finished;echo' &&   sem --jobs 3 --id my_id -u 'echo Fourth started; sleep 13; echo The fourth finished;echo' &&   sem --wait --id my_id
 First started
 Second started
 Third started
 The first finished
+
 Fourth started
 The second finished
+
 The third finished
+
 The fourth finished
+
 echo 'Test --compress --pipe'
 Test --compress --pipe
   jot 1000 | parallel --compress --pipe cat | wc

@@ -211,6 +211,12 @@ echo '**'
 echo '### bug #45998: --pipe to function broken'
 myfunc() { echo $1; cat; }; export -f myfunc; echo OK | parallel --pipe myfunc {#}
 
+echo '**'
+
+echo 'bug #46016: --joblog should not log when --dryrun'
+parallel --dryrun --joblog - echo ::: Only_this
+
+echo '**'
 
 EOF
 echo '### 1 .par file from --files expected'

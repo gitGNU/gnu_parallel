@@ -11,7 +11,7 @@ Multi-Objective Optimization on GPUs http://ieeexplore.ieee.org/stamp/stamp.jsp?
 
 * GNU Parallel was cited in: Tools and techniques for computational reproducibility http://biorxiv.org/content/biorxiv/early/2015/07/17/022707.full.pdf
 
-* GNU Parallel was cited in: How Can We Measure the Similarity Between Résumés of Selected Candidates for a Job? http://crawl.prod.proquest.com.s3.amazonaws.com/fpcache/c79b355e6e441a51de3c7fcd52866184.pdf?AWSAccessKeyId=AKIAJF7V7KNV2KKY2NUQ&Expires=1442658364&Signature=soRDi6Xqw1zHhSmBrqJ5KiD%2B8Sw%3D
+* GNU Parallel was cited in: How Can We Measure the Similarity Between Résumés of Selected Candidates for a Job? http://www.researchgate.net/publication/275954089_How_can_we_measure_the_similarity_between_rsums_of_selected_candidates_for_a_job
 
 * GNU Parallel was cited in: Interplay of cell dynamics and epithelial tension during morphogenesis of the Drosophila pupal wing http://www.researchgate.net/profile/Raphael_Etournay/publication/279061859_Interplay_of_cell_dynamics_and_epithelial_tension_during_morphogenesis_of_the_Drosophila_pupal_wing/links/558a95ad08aeae8413bcceea.pdf
 
@@ -24,8 +24,6 @@ Multi-Objective Optimization on GPUs http://ieeexplore.ieee.org/stamp/stamp.jsp?
 * Three Ways to Script Processes in Parallel http://www.codeword.xyz/2015/09/02/three-ways-to-script-processes-in-parallel/
 
 * What It Looks Like to Process 3.5 Million Books http://blog.gdeltproject.org/what-it-looks-like-to-process-3-5-million-books/
-
-* L’Exploration De Données Twitter http://blog.inovia-conseil.fr/?p=233
 
 * Bug fixes and man page updates.
 

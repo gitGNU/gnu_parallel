@@ -1097,7 +1097,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150922;
+    $Global::version = 20150923;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1430,7 +1430,13 @@ sub open_joblog {
 		::wait_and_exit(255);
 	    }
 	} else {
-	    if($opt::joblog eq "-") {
+	    if($opt::dryrun) {
+		# Do not write to joblog in a dry-run
+		if(not open($Global::joblog, ">", "/dev/null")) {
+		    ::error("Cannot write to --joblog $opt::joblog.");
+		    ::wait_and_exit(255);
+		}
+	    } elsif($opt::joblog eq "-") {
 		# Use STDOUT as joblog
 		$Global::joblog = $Global::fd{1};
 	    } elsif(not open($Global::joblog, ">", $opt::joblog)) {

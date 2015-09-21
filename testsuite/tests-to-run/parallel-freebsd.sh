@@ -11,10 +11,10 @@ scp -q .*/src/{parallel,sem,sql,niceload} freebsd7.tange.dk:bin/
 
 cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj9 -k --joblog /tmp/jl-`basename $0` -L1 -S freebsd7.tange.dk
 echo 'bug #40136: FreeBSD: No more processes'
-  sem --jobs 3 --id my_id -u 'echo First started; sleep 5; echo The first finished' && 
-  sem --jobs 3 --id my_id -u 'echo Second started; sleep 6; echo The second finished' && 
-  sem --jobs 3 --id my_id -u 'echo Third started; sleep 7; echo The third finished' && 
-  sem --jobs 3 --id my_id -u 'echo Fourth started; sleep 8; echo The fourth finished' && 
+  sem --jobs 3 --id my_id -u 'echo First started; sleep 10; echo The first finished;echo' && 
+  sem --jobs 3 --id my_id -u 'echo Second started; sleep 11; echo The second finished;echo' && 
+  sem --jobs 3 --id my_id -u 'echo Third started; sleep 12; echo The third finished;echo' && 
+  sem --jobs 3 --id my_id -u 'echo Fourth started; sleep 13; echo The fourth finished;echo' && 
   sem --wait --id my_id
 
 echo 'Test --compress --pipe'
