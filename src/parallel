@@ -1097,7 +1097,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150909;
+    $Global::version = 20150922;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -6006,10 +6006,10 @@ sub empty_input_wrapper {
     # Returns:
     #   $wrapped_command = the wrapped command
     my $command = shift;
-    my $script = '$c="'.::perl_quote_scalar($Global::shell." -c ".::shell_quote_scalar($command)).'";'.
+    my $script =
 	::spacefree(0,q{
 	    if(sysread(STDIN, $buf, 1)) {
-		open($fh, "|-", $c) || die;
+		open($fh, "|-", "@ARGV") || die;
 		syswrite($fh, $buf);
 		while($read = sysread(STDIN, $buf, 32768)) {
 		    syswrite($fh, $buf);
@@ -6019,7 +6019,8 @@ sub empty_input_wrapper {
 	    }
 		  });
     ::debug("run",'Empty wrap: perl -e '.::shell_quote_scalar($script)."\n");
-    return 'perl -e '.::shell_quote_scalar($script);
+    return 'perl -e '.::shell_quote_scalar($script)." ".
+	::shell_quote_scalar($Global::shell." -c ".::shell_quote_scalar($command));
 }
 
 sub filter_through_compress {

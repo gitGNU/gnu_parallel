@@ -229,6 +229,17 @@ New in this release:
 
 * GNU Parallel was cited in: BL1: 2D Potts Model with a Twist https://sucs.swan.ac.uk/~rjames93/Dissertation.pdf
 
+* GNU Parallel was cited in: DockBench: An Integrated Informatic Platform Bridging the Gap between the Robust Validation of Docking Protocols and Virtual Screening Simulations http://www.mdpi.com/1420-3049/20/6/9977/pdf
+
+* GNU Parallel was cited in: A Scalable Parallel Implementation of Evolutionary Algorithms for
+Multi-Objective Optimization on GPUs http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7257074
+
+* GNU Parallel was cited in: Tools and techniques for computational reproducibility http://biorxiv.org/content/biorxiv/early/2015/07/17/022707.full.pdf
+
+* GNU Parallel was cited in: How Can We Measure the Similarity Between Résumés of Selected Candidates for a Job? http://crawl.prod.proquest.com.s3.amazonaws.com/fpcache/c79b355e6e441a51de3c7fcd52866184.pdf?AWSAccessKeyId=AKIAJF7V7KNV2KKY2NUQ&Expires=1442658364&Signature=soRDi6Xqw1zHhSmBrqJ5KiD%2B8Sw%3D
+
+* GNU Parallel was cited in: Interplay of cell dynamics and epithelial tension during morphogenesis of the Drosophila pupal wing http://www.researchgate.net/profile/Raphael_Etournay/publication/279061859_Interplay_of_cell_dynamics_and_epithelial_tension_during_morphogenesis_of_the_Drosophila_pupal_wing/links/558a95ad08aeae8413bcceea.pdf
+
 * << kontakt GNU Parallel was used (unfortunately without citation) in: Instrumentation and Trace Analysis for Ad-hoc Python Workflows in Cloud Environments http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=7214035>>
 
 * <<Har angiveligt submittet ny version - afventer opdatering>> GNU Parallel was used (unfortunately without citation) in: MUGBAS: a species free gene-based programme suite for post-GWAS analysis http://www.ncbi.nlm.nih.gov/pubmed/25765345

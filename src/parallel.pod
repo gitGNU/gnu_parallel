@@ -4497,7 +4497,10 @@ version.
 
 =item *
 
-A complete example that others can run that shows the problem
+A minimal, complete, and verifiable example (See description on
+http://stackoverflow.com/help/mcve).
+
+It should be a complete example that others can run that shows the problem
 including all files needed to run the example. This should preferably
 be small and simple, so try to remove as many options as possible. A
 combination of B<yes>, B<seq>, B<cat>, B<echo>, and B<sleep> can
