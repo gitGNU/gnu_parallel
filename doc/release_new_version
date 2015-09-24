@@ -232,6 +232,11 @@ New in this release:
 * <<Afventer updateret publisering>> GNU Parallel was used in: Large Scale Author Name Disambiguation in Digital Libraries http://ieeexplore.ieee.org/xpl/abstractReferences.jsp?tp=&arnumber=7004487&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7004487
 
 * <<kontaktet 2015-06-22 Afventer svar fra journal>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
+http://www.researchgate.net/profile/Christoph_Junghans/publication/276178326_TADSim_Discrete_Event-Based_Performance_Prediction_for_Temperature-Accelerated_Dynamics/links/55562b6708ae980ca60c8369.pdf
+
+* GNU Parallel was cited in: Roary: rapid large-scale prokaryote pan genome analysis http://bioinformatics.oxfordjournals.org/content/early/2015/08/05/bioinformatics.btv421.full.pdf+html
+
+* GNU Parallel is used in TraitAR: https://testpypi.python.org/pypi/traitar/0.1.4
 
 * Bug fixes and man page updates.
 

@@ -3503,6 +3503,23 @@ sub show_limits {
 
 sub __GENERIC_COMMON_FUNCTION__ {}
 
+sub mkdir_or_die {
+    # If dir is not executable: die
+    my $dir = shift;
+    my @dir_parts = split(m:/:,$dir);
+    my ($ddir,$part);
+    while(defined ($part = shift @dir_parts)) {
+	$part eq "" and next;
+	$ddir .= "/".$part;
+	-d $ddir and next;
+	mkdir $ddir;
+    }
+    if(not -x $dir) {
+	::error("Cannot write to $dir: $!");
+	::wait_and_exit(255);
+    }
+}
+
 sub tmpfile {
     # Create tempfile as $TMPDIR/parXXXXX
     # Returns:
@@ -6710,6 +6727,16 @@ sub sshlogin_wrap {
 	$ENV{'PARALLEL_SEQ'} = $self->seq();
 	$ENV{'PARALLEL_PID'} = $$;
 	if($serverlogin eq ":") {
+	    if($opt::workdir) {
+		# Create workdir if needed. Then cd to it.
+	        my $wd = $self->workdir();
+		if($opt::workdir eq "." or $opt::workdir eq "...") {
+		    # If $wd does not start with '/': Prepend $HOME
+		    $wd =~ s:^([^/]):$ENV{'HOME'}/$1:;
+		}
+		::mkdir_or_die($wd);
+		$command = "cd ".::shell_quote_scalar($wd)." || exit 255; ".$command;
+	    }
 	    if(@opt::env) {
 		# Prepend with environment setter, which sets functions in zsh
 		my ($csh_friendly,$envset,$bashfuncset) = env_as_eval();
@@ -6973,7 +7000,7 @@ sub workdir {
 		$workdir = $opt::workdir;
 		# Rsync treats /./ special. We dont want that
 		$workdir =~ s:/\./:/:g; # Remove /./
-		$workdir =~ s:/+$::; # Remove ending / if any
+		$workdir =~ s:(.)/+$:$1:; # Remove ending / if any
 		$workdir =~ s:^\./::g; # Remove starting ./ if any
 	    }
 	} else {
@@ -9289,9 +9316,9 @@ sub new {
     $id =~ s/([^-_a-z0-9])/unpack("H*",$1)/ige; # Convert non-word chars to hex
     $id = "id-".$id; # To distinguish it from a process id
     my $parallel_dir = $ENV{'HOME'}."/.parallel";
-    -d $parallel_dir or mkdir_or_die($parallel_dir);
+    -d $parallel_dir or ::mkdir_or_die($parallel_dir);
     my $parallel_locks = $parallel_dir."/semaphores";
-    -d $parallel_locks or mkdir_or_die($parallel_locks);
+    -d $parallel_locks or ::mkdir_or_die($parallel_locks);
     my $lockdir = "$parallel_locks/$id";
     my $lockfile = $lockdir.".lock";
     if($count < 1) { ::die_bug("semaphore-count: $count"); }
@@ -9400,7 +9427,7 @@ sub atomic_link_if_count_less_than {
     my $nlinks = $self->nlinks();
     ::debug("sem","$nlinks<$self->{'count'} ");
     if($nlinks < $self->{'count'}) {
-	-d $self->{'lockdir'} or mkdir_or_die($self->{'lockdir'});
+	-d $self->{'lockdir'} or ::mkdir_or_die($self->{'lockdir'});
 	if(not -e $self->{'idfile'}) {
 	    open (my $fh, ">", $self->{'idfile'}) or
 		::die_bug("write_idfile: $self->{'idfile'}");
@@ -9490,23 +9517,6 @@ sub unlock {
     unlink $self->{'lockfile'};
     close $self->{'lockfh'};
     ::debug("run", "unlocked\n");
-}
-
-sub mkdir_or_die {
-    # If dir is not writable: die
-    my $dir = shift;
-    my @dir_parts = split(m:/:,$dir);
-    my ($ddir,$part);
-    while(defined ($part = shift @dir_parts)) {
-	$part eq "" and next;
-	$ddir .= "/".$part;
-	-d $ddir and next;
-	mkdir $ddir;
-    }
-    if(not -w $dir) {
-	::error("Cannot write to $dir: $!");
-	::wait_and_exit(255);
-    }
 }
 
 # Keep perl -w happy

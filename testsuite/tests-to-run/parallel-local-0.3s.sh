@@ -218,6 +218,18 @@ parallel --dryrun --joblog - echo ::: Only_this
 
 echo '**'
 
+echo 'bug #45993: --wd ... should also work when run locally'
+parallel --wd /bi 'pwd; echo $OLDPWD; echo' ::: fail
+parallel --wd /bin 'pwd; echo $OLDPWD; echo' ::: OK
+parallel --wd / 'pwd; echo $OLDPWD; echo' ::: OK
+parallel --wd /tmp 'pwd; echo $OLDPWD; echo' ::: OK
+parallel --wd ... 'pwd; echo $OLDPWD; echo' ::: OK | perl -pe 's/\d+/0/g'
+
+parallel --wd . 'pwd; echo $OLDPWD; echo' ::: OK
+
+echo '**'
+
+
 EOF
 echo '### 1 .par file from --files expected'
 find /tmp{/*,}/*.{par,tms,tmx} 2>/dev/null -mmin -10 | wc -l

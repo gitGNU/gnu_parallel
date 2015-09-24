@@ -451,5 +451,31 @@ parallel --dryrun --joblog - echo ::: Only_this
 echo Only_this
 echo '**'
 **
+echo 'bug #45993: --wd ... should also work when run locally'
+bug #45993: --wd ... should also work when run locally
+parallel --wd /bi 'pwd; echo $OLDPWD; echo' ::: fail
+parallel: Error: Cannot write to /bi: No such file or directory
+parallel --wd /bin 'pwd; echo $OLDPWD; echo' ::: OK
+/bin
+/home/tange/privat/parallel/testsuite
+OK
+parallel --wd / 'pwd; echo $OLDPWD; echo' ::: OK
+/
+/home/tange/privat/parallel/testsuite
+OK
+parallel --wd /tmp 'pwd; echo $OLDPWD; echo' ::: OK
+/tmp
+/home/tange/privat/parallel/testsuite
+OK
+parallel --wd ... 'pwd; echo $OLDPWD; echo' ::: OK | perl -pe 's/\d+/0/g'
+/home/tange/.parallel/tmp/aspire-0-0
+/home/tange/privat/parallel/testsuite
+OK
+parallel --wd . 'pwd; echo $OLDPWD; echo' ::: OK
+/home/tange/privat/parallel/testsuite
+/home/tange/privat/parallel/testsuite
+OK
+echo '**'
+**
 ### 1 .par file from --files expected
 1
