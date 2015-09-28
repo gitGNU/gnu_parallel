@@ -183,31 +183,29 @@ Funky-
 
 0 updates are security updates.
 
-3 arg alias_does_not_work
+3 arg alias_works
 function_works
 
 myenvvar  works
-Funky--funky
-Funky-	   !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-Array index out of bounds
-fish:   echo $myarray[2]
-                      ^
-in function â€œfunc_echoâ€
-	called on standard input
-	with parameter list â€œfunction_worksâ€
 
-3 arg alias_does_not_work_over_ssh
+
+
+Funky--funky
+Funky-	   !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
+
+
+
+3 arg alias_works_over_ssh
 function_works_over_ssh
 
+myenvvar  works
+
+
 
 Funky--funky
-Funky--funky
-Array index out of bounds
-fish:   echo $myarray[2]
-                      ^
-in function â€œfunc_echoâ€
-	called on standard input
-	with parameter list â€œfunction_works_over_sshâ€
+Funky-	   !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
+
+
 
 
 ### csh environment
@@ -218,4 +216,10 @@ in function â€œfunc_echoâ€
 
 Warning: no access to tty (Bad file descriptor).
 Thus no job control in this shell.
-setenv: Too many arguments.
+3 arg alias_works
+
+myvar: Undefined variable.
+func_echo: Command not found.
+3 arg alias_works_over_ssh
+myvar: Undefined variable.
+func_echo: Command not found.

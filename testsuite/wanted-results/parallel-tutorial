@@ -735,14 +735,14 @@ _
 
 /bin/bash: my_func2: command not found
   parallel -vv -S $SERVER1 echo ::: bar
-ssh parallel@lo exec perl -e \''@GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");eval"@GNU_Parallel";$SIG{CHLD}="IGNORE";my$zip=(grep{-x$_}"/usr/local/bin/bzip2")[0]||"bzip2";my($in,$out,$eval);open3($in,$out,">&STDERR",$zip,"-dc");if(my$perlpid=fork){close$in;$eval=join"",<$out>;close$out;}else{close$out;print$in(decode_base64(join"",@ARGV));close$in;exit;}wait;eval$eval;'\' BASE64;
+ssh -l parallel lo -- exec perl -e \''@GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");eval"@GNU_Parallel";$SIG{CHLD}="IGNORE";my$zip=(grep{-x$_}"/usr/local/bin/bzip2")[0]||"bzip2";my($in,$out,$eval);open3($in,$out,">&STDERR",$zip,"-dc");if(my$perlpid=fork){close$in;$eval=join"",<$out>;close$out;}else{close$out;print$in(decode_base64(join"",@ARGV));close$in;exit;}wait;eval$eval;'\' BASE64;
 bar
   my_func3() {
     echo in my_func $1 > $1.out
   }
   export -f my_func3
   parallel -vv --workdir ... --nice 17 --env _ --trc {}.out -S $SERVER1 my_func3 {} ::: abc-file
-( ssh parallel@lo mkdir -p ./.TMPWORKDIR;rsync --protocol 30 -rlDzR -essh ./abc-file parallel@lo:./.TMPWORKDIR );ssh parallel@lo exec perl -e \''@GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");eval"@GNU_Parallel";$SIG{CHLD}="IGNORE";my$zip=(grep{-x$_}"/usr/local/bin/bzip2")[0]||"bzip2";my($in,$out,$eval);open3($in,$out,">&STDERR",$zip,"-dc");if(my$perlpid=fork){close$in;$eval=join"",<$out>;close$out;}else{close$out;print$in(decode_base64(join"",@ARGV));close$in;exit;}wait;eval$eval;'\' BASE64;_EXIT_status=$?; mkdir -p ./.; rsync --protocol 30 --rsync-path=cd\ ./.TMPWORKDIR/./.\;\ rsync -rlDzR -essh parallel@lo:./abc-file.out ./.;ssh parallel@lo \(rm\ -f\ ./.TMPWORKDIR/abc-file\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh parallel@lo \(rm\ -f\ ./.TMPWORKDIR/abc-file.out\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh parallel@lo rm -rf .TMPWORKDIR; exit $_EXIT_status;
+( ssh -l parallel lo -- mkdir -p ./.TMPWORKDIR;rsync --protocol 30 -rlDzR -essh\ -l\ parallel ./abc-file lo:./.TMPWORKDIR );ssh -l parallel lo -- exec perl -e \''@GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");eval"@GNU_Parallel";$SIG{CHLD}="IGNORE";my$zip=(grep{-x$_}"/usr/local/bin/bzip2")[0]||"bzip2";my($in,$out,$eval);open3($in,$out,">&STDERR",$zip,"-dc");if(my$perlpid=fork){close$in;$eval=join"",<$out>;close$out;}else{close$out;print$in(decode_base64(join"",@ARGV));close$in;exit;}wait;eval$eval;'\' BASE64;_EXIT_status=$?; mkdir -p ./.; rsync --protocol 30 --rsync-path=cd\ ./.TMPWORKDIR/./.\;\ rsync -rlDzR -essh\ -l\ parallel lo:./abc-file.out ./.;ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file.out\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh -l parallel lo -- rm -rf .TMPWORKDIR; exit $_EXIT_status;
   cat num1000000 | parallel --pipe wc
  165668  165668 1048571
  149796  149796 1048572

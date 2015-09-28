@@ -103,7 +103,7 @@ B<Ksh functions>: If it is a Ksh function you can encode the function in a varia
   export PARALLEL_ENV=`typeset -f foo`
   parallel foo ::: works
 
-To export all functions and also make them available when running remote:
+To export all functions, aliases, and variables and also make them available when running remote:
 
   env_parallel() {
     export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p|egrep -v 'typeset( -i)? -r|PIPESTATUS';typeset -f)";
@@ -122,7 +122,7 @@ B<Zsh functions>: If it is a Zsh function you can encode the function in a varia
   export PARALLEL_ENV
   parallel foo ::: works
 
-To export all functions and also make them available when running remote:
+To export all functions, aliases, and variables and also make them available when running remote:
 
   env_parallel() {
     export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p |
@@ -144,10 +144,11 @@ B<Fish functions>: If it is a Fish function you can encode the function in a var
   setenv PARALLEL_ENV (functions foo|perl -pe 's/\n/\001/')
   parallel foo ::: works
 
-To export all functions and also make them available when running remote:
+To export all functions and simple variables (not arrays) and also make them available
+when running remote:
 
   function env_parallel
-    setenv PARALLEL_ENV (functions -n | perl -pe 's/,/\n/g' | while read d; functions $d; end|perl -pe 's/\n/\001/')
+    setenv PARALLEL_ENV (begin; functions -n | perl -pe 's/,/\n/g' | while read d; functions $d; end; perl -e 'print map { "$_///$ENV{$_}\n"} grep !/^(PWD|SHLVL|PATH)$/, keys %ENV'| sh -c 'parallel --shellquote' | perl -pe 's:^([^/]+)///:setenv $1 :'; end |perl -pe 's/\001/\\cb/g;s/\n/\001/')
     parallel $argv;
     set -e PARALLEL_ENV
   end
@@ -2352,23 +2353,7 @@ B<--env>:
 
 If your environment (aliases, variables, and functions) is small you
 can copy the full environment without having to B<export -f>
-anything. Just run this first:
-
-  env_parallel() {
-      export parallel_bash_environment='() {
-        '"$(echo "shopt -s expand_aliases 2>/dev/null"; alias;typeset -p | grep -vFf <(readonly; echo GROUPS; echo FUNCNAME; echo DIRSTACK; echo _; echo PIPESTATUS; echo USERNAME) | grep -v BASH_;typeset -f)"'
-      }'
-      # Run as: env_parallel parallel_bash_environment "2>/dev/null;" ...
-      `which parallel` "$@"
-      unset parallel_bash_environment
-  }
-
-And then call as:
-
-  env_parallel doit ::: 1 2 3
-  env_parallel doubleit ::: 1 2 3 ::: a b
-  env_parallel -S server doit ::: 1 2 3
-  env_parallel -S server doubleit ::: 1 2 3 ::: a b
+anything. See B<env_parallel> earlier in the man page.
 
 
 =head1 EXAMPLE: Function tester
@@ -4089,10 +4074,9 @@ B<prll> is also a tool for running jobs in parallel. It does not
 support running jobs on remote computers.
 
 B<prll> encourages using BASH aliases and BASH functions instead of
-scripts. GNU B<parallel> will never support running aliases (see why
-http://www.perlmonks.org/index.pl?node_id=484296). However, scripts,
-composed commands, or functions exported with B<export -f> work just
-fine.
+scripts. GNU B<parallel> supports scripts directly, functions if they
+are exported using B<export -f>, and aliases if using B<env_parallel>
+described earlier.
 
 B<prll> generates a lot of status information on stderr (standard
 error) which makes it harder to use the stderr (standard error) output
@@ -4467,9 +4451,8 @@ or:
 
 it may be because I<command> is not known, but it could also be
 because I<command> is an alias or a function. If it is a function you
-need to B<export -f> the function first. An alias will, however, not
-work (see why http://www.perlmonks.org/index.pl?node_id=484296), so
-change your alias to a script.
+need to B<export -f> the function first. An alias will only work if you use 
+B<env_parallel> described earlier.
 
 
 =head1 REPORTING BUGS

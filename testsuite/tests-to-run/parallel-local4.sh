@@ -1,12 +1,6 @@
 #!/bin/bash
 
-cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj0 -k --joblog /tmp/jl-`basename $0` -L1
-echo '### bug #36595: silent loss of input with --pipe and --sshlogin'
-  seq 10000 | xargs | parallel --pipe -S 10/localhost cat 2>/dev/null | wc
-
-echo 'bug #36707: --controlmaster eats jobs'
-  seq 2 | parallel -k --controlmaster --sshlogin localhost echo OK{}
-
+cat <<'EOF' | sed -e 's/;$/; /;' | stdout parallel -vj0 -k --joblog /tmp/jl-`basename $0` -L1
 echo '### -L -n with pipe'
   seq 14 | parallel --pipe -k -L 3 -n 2 'cat;echo 6 Ln line record'
 

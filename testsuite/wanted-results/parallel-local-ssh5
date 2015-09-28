@@ -1,0 +1,86 @@
+echo '### bug #36595: silent loss of input with --pipe and --sshlogin'
+### bug #36595: silent loss of input with --pipe and --sshlogin
+  seq 10000 | xargs | parallel --pipe -S 10/localhost cat 2>/dev/null | wc
+      1   10000   48894
+echo 'bug #36707: --controlmaster eats jobs'
+bug #36707: --controlmaster eats jobs
+  seq 2 | parallel -k --controlmaster --sshlogin localhost echo OK{}
+OK1
+OK2
+echo '### --ssh lsh'
+### --ssh lsh
+  parallel --ssh lsh -S lo echo ::: OK
+OK
+  echo OK | parallel --ssh lsh --pipe -S csh@lo cat
+OK
+  # Todo rsync/trc csh@lo
+  # Test gl. parallel med --ssh lsh: Hvilke fejler? brug dem. Også hvis de fejler
+echo '### --ssh autossh - add commands that fail here'
+### --ssh autossh - add commands that fail here
+  export PARALLEL_SSH=autossh; export AUTOSSH_PORT=0;   parallel -S lo echo ::: OK;   echo OK | parallel --pipe -S lo cat;   parallel -S lo false ::: a || echo OK should fail;   touch foo_autossh; stdout parallel -S csh@lo --trc {}.out touch {}.out ::: foo_autossh; rm foo_autossh*;  
+OK
+OK
+/usr/lib/autossh/autossh: invalid option -- '-'
+usage: autossh [-V] [-M monitor_port[:echo_port]] [-f] [SSH_OPTIONS]
+
+    -M specifies monitor port. Overrides the environment
+       variable AUTOSSH_PORT. 0 turns monitoring loop off.
+       Alternatively, a port for an echo service on the remote
+       machine may be specified. (Normally port 7.)
+    -f run in background (autossh handles this, and does not
+       pass it to ssh.)
+    -V print autossh version and exit.
+
+Environment variables are:
+    AUTOSSH_GATETIME    - how long must an ssh session be established
+                          before we decide it really was established
+                          (in seconds). Default is 30 seconds; use of -f
+                          flag sets this to 0.
+    AUTOSSH_LOGFILE     - file to log to (default is to use the syslog
+                          facility)
+    AUTOSSH_LOGLEVEL    - level of log verbosity
+    AUTOSSH_MAXLIFETIME - set the maximum time to live (seconds)
+    AUTOSSH_MAXSTART    - max times to restart (default is no limit)
+    AUTOSSH_MESSAGE     - message to append to echo string (max 64 bytes)
+    AUTOSSH_PATH        - path to ssh if not default
+    AUTOSSH_PIDFILE     - write pid to this file
+    AUTOSSH_POLL        - how often to check the connection (seconds)
+    AUTOSSH_FIRST_POLL  - time before first connection check (seconds)
+    AUTOSSH_PORT        - port to use for monitor connection
+    AUTOSSH_DEBUG       - turn logging to maximum verbosity and log to
+                          stderr
+
+rsync: connection unexpectedly closed (0 bytes received so far) [sender]
+rsync error: error in rsync protocol data stream (code 12) at io.c(226) [sender=3.1.1]
+/usr/lib/autossh/autossh: invalid option -- '-'
+usage: autossh [-V] [-M monitor_port[:echo_port]] [-f] [SSH_OPTIONS]
+
+    -M specifies monitor port. Overrides the environment
+       variable AUTOSSH_PORT. 0 turns monitoring loop off.
+       Alternatively, a port for an echo service on the remote
+       machine may be specified. (Normally port 7.)
+    -f run in background (autossh handles this, and does not
+       pass it to ssh.)
+    -V print autossh version and exit.
+
+Environment variables are:
+    AUTOSSH_GATETIME    - how long must an ssh session be established
+                          before we decide it really was established
+                          (in seconds). Default is 30 seconds; use of -f
+                          flag sets this to 0.
+    AUTOSSH_LOGFILE     - file to log to (default is to use the syslog
+                          facility)
+    AUTOSSH_LOGLEVEL    - level of log verbosity
+    AUTOSSH_MAXLIFETIME - set the maximum time to live (seconds)
+    AUTOSSH_MAXSTART    - max times to restart (default is no limit)
+    AUTOSSH_MESSAGE     - message to append to echo string (max 64 bytes)
+    AUTOSSH_PATH        - path to ssh if not default
+    AUTOSSH_PIDFILE     - write pid to this file
+    AUTOSSH_POLL        - how often to check the connection (seconds)
+    AUTOSSH_FIRST_POLL  - time before first connection check (seconds)
+    AUTOSSH_PORT        - port to use for monitor connection
+    AUTOSSH_DEBUG       - turn logging to maximum verbosity and log to
+                          stderr
+
+rsync: connection unexpectedly closed (0 bytes received so far) [Receiver]
+rsync error: error in rsync protocol data stream (code 12) at io.c(226) [Receiver=3.1.1]

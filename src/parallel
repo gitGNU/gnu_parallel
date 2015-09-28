@@ -2861,8 +2861,9 @@ sub parse_host_filtering {
 	    my $host = $1;
 	    $host =~ tr/\\//d;
 	    $Global::host{$host} or next;
-	    if($col[6] eq "255" or $col[6] eq "-1") {
+	    if($col[6] eq "255" or $col[6] eq "-1" or $col[6] eq "1") {
 		# exit == 255 or exit == timeout (-1): ssh failed/timedout
+		# exit == 1: lsh failed
 		# Remove sshlogin
 		::debug("init", "--filtered $host\n");
 		push(@down_hosts, $host);
@@ -2932,11 +2933,11 @@ sub parallelized_host_filtering {
 	if($host eq ":") { next }
 	# The 'true' is used to get the $host out later
 	my $sshcmd = "true $host; exec " . $sshlogin->sshcommand()." ".$sshlogin->serverlogin();
-	push(@cores, $host."\t".$sshcmd." ".$envvar." parallel --number-of-cores\n\0");
-	push(@cpus, $host."\t".$sshcmd." ".$envvar." parallel --number-of-cpus\n\0");
-	push(@maxline, $host."\t".$sshcmd." ".$envvar." parallel --max-line-length-allowed\n\0");
+	push(@cores, $host."\t".$sshcmd." -- ".$envvar." parallel --number-of-cores\n\0");
+	push(@cpus, $host."\t".$sshcmd." -- ".$envvar." parallel --number-of-cpus\n\0");
+	push(@maxline, $host."\t".$sshcmd." -- ".$envvar." parallel --max-line-length-allowed\n\0");
 	# 'echo' is used to get the best possible value for an ssh login time
-	push(@echo, $host."\t".$sshcmd." echo\n\0");
+	push(@echo, $host."\t".$sshcmd." -- echo\n\0");
     }
     my ($fh, $tmpfile) = ::tmpfile(SUFFIX => ".ssh");
     print $fh @cores, @cpus, @maxline, @echo;
@@ -3765,7 +3766,7 @@ sub which {
 	    # posh rbash rc rush rzsh sash sh static-sh tcsh yash zsh
 	    my @shells = (qw(ash bash csh dash fdsh fish fizsh ksh
 	    ksh93 lksh mksh pdksh posh rbash rc rush rzsh sash sh
-	    static-sh tcsh yash zsh -sh -csh),
+	    static-sh tcsh yash zsh -sh -csh -bash),
 			  '-sh (sh)' # sh on FreeBSD
 		);
 	    # Can be formatted as:
@@ -3780,6 +3781,8 @@ sub which {
 		# csh and tcsh disguise themselves as -sh/-csh
 		"-sh" => ["csh", "tcsh"],
 		"-csh" => ["tcsh", "csh"],
+		# bash disguises itself as -bash
+		"-bash" => ["bash", "sh"],
 		);
 	}
 	my ($children_of_ref, $parent_of_ref, $name_of_ref) = pid_table();
@@ -4971,7 +4974,7 @@ sub simultaneous_sshlogin {
     my $serverlogin = $self->serverlogin();
     my $sshdelay = $opt::sshdelay ? "sleep $opt::sshdelay;" : "";
     # TODO sh -c wrapper to work for csh
-    my $cmd = "$sshdelay$sshcmd $serverlogin echo simultaneouslogin </dev/null 2>&1 &"x$wanted_processes;
+    my $cmd = "$sshdelay$sshcmd $serverlogin -- echo simultaneouslogin </dev/null 2>&1 &"x$wanted_processes;
     ::debug("init", "Trying $wanted_processes logins at $serverlogin\n");
     open (my $simul_fh, "-|", "($cmd)|grep simultaneouslogin | wc -l") or
 	::die_bug("simultaneouslogin");
@@ -5049,10 +5052,10 @@ sub ncpus {
             my $ncpu;
 	    my $sqe = ::shell_quote_scalar($Global::envvar);
             if($opt::use_cpus_instead_of_cores) {
-                $ncpu = qx(echo|$sshcmd $serverlogin $sqe parallel --number-of-cpus);
+                $ncpu = qx(echo|$sshcmd $serverlogin -- $sqe parallel --number-of-cpus);
             } else {
-		::debug("init",qq(echo|$sshcmd $serverlogin $sqe parallel --number-of-cores\n));
-                $ncpu = qx(echo|$sshcmd $serverlogin $sqe parallel --number-of-cores);
+		::debug("init",qq(echo|$sshcmd $serverlogin -- $sqe parallel --number-of-cores\n));
+                $ncpu = qx(echo|$sshcmd $serverlogin -- $sqe parallel --number-of-cores);
             }
 	    chomp $ncpu;
             if($ncpu =~ /^\s*[0-9]+\s*$/s) {
@@ -5580,7 +5583,7 @@ sub sshcommand_of_sshlogin {
                     my $sleep = ::shell_quote_scalar
 			('$|=1;while(1){sleep 1;print "foo\n"}');
                     my @master = ($opt::ssh, "-tt", "-MTS",
-				  $control_path, $serverlogin, "perl", "-e",
+				  $control_path, $serverlogin, "--", "perl", "-e",
 				  $sleep);
                     exec(@master);
                 }
@@ -5589,6 +5592,13 @@ sub sshcommand_of_sshlogin {
             $sshcmd = $opt::ssh; $serverlogin = $self->{'string'};
         }
     }
+    
+    if($serverlogin =~ s/(\S+)\@(\S+)/$2/) {
+	# convert user@server to '-l user server'
+	# because lsh does not support user@server
+	$sshcmd = $sshcmd." -l ".$1;
+    }
+
     $self->{'sshcommand'} = $sshcmd;
     $self->{'serverlogin'} = $serverlogin;
 }
@@ -5634,7 +5644,7 @@ sub rsync_transfer_cmd {
     my $rsync_opt = "-rlDzR -e" . ::shell_quote_scalar($sshcmd);
     my $serverlogin = $self->serverlogin();
     # Make dir if it does not exist
-    return "( $sshcmd $serverlogin mkdir -p $rsync_destdir;" .
+    return "( $sshcmd $serverlogin -- mkdir -p $rsync_destdir;" .
 	rsync()." $rsync_opt $file $serverlogin:$rsync_destdir )";
 }
 
@@ -5672,7 +5682,7 @@ sub cleanup_cmd {
     $f = ::shell_quote_file($f);
     my $sshcmd = $self->sshcommand();
     my $serverlogin = $self->serverlogin();
-    return "$sshcmd $serverlogin ".::shell_quote_scalar("(rm -f $f; $rmdir)");
+    return "$sshcmd $serverlogin -- ".::shell_quote_scalar("(rm -f $f; $rmdir)");
 }
 
 {
@@ -6799,7 +6809,7 @@ sub sshlogin_wrap {
 	    }
 	    $self->{'sshlogin_wrap'} =
 		($pre
-		 . "$sshcmd $serverlogin exec "
+		 . "$sshcmd $serverlogin -- exec "
 		 . $quoted_remote_command
 		 . ";"
 		 . $post);
@@ -6939,7 +6949,7 @@ sub sshcleanup {
 	$cleancmd .= $sshlogin->cleanup_cmd($file,$workdir).";";
     }
     if(defined $opt::workdir and $opt::workdir eq "...") {
-	$cleancmd .= "$sshcmd $serverlogin rm -rf " . ::shell_quote_scalar($workdir).';';
+	$cleancmd .= "$sshcmd $serverlogin -- rm -rf " . ::shell_quote_scalar($workdir).';';
     }
     return $cleancmd;
 }

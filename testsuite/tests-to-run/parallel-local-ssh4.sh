@@ -213,6 +213,9 @@ EOS
 echo
 echo "### Fish environment"
 stdout ssh -q fish@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated.'
+# All variables cannot reliably be exported
+# perl -e 'print map { "setenv///$_///$ENV{$_}\n"} grep !/^(PWD|SHLVL|PATH)$/, keys %ENV'| sh -c 'parallel --shellquote' | perl -pe 's:///: :g' |fish
+
 set myvar "myvar  works"
 setenv myenvvar "myenvvar  works"
 
@@ -220,6 +223,7 @@ set funky (perl -e 'print pack "c*", 1..255')
 setenv funkyenv (perl -e 'print pack "c*", 1..255')
 
 set myarray '' array_val2 3 '' 5
+# Assoc arrays do not exist
 #typeset -A assocarr
 #assocarr[a]=assoc_val_a
 #assocarr[b]=assoc_val_b
@@ -229,27 +233,39 @@ function func_echo
   echo $argv;
   echo "$myvar"
   echo "$myenvvar"
-  echo $myarray[2]
+# Arrays are not exported
+#  echo $myarray[2]
+# Assoc arrays do not exist in fish
 #  echo ${assocarr[a]}
+  echo
+  echo
+  echo
   echo Funky-"$funky"-funky
   echo Funky-"$funkyenv"-funky
+  echo
+  echo
+  echo
 end
 
 function env_parallel
-  setenv PARALLEL_ENV (functions -n | perl -pe 's/,/\n/g' | while read d; functions $d; end|perl -pe 's/\n/\001/')
+  setenv PARALLEL_ENV (begin; functions -n | perl -pe 's/,/\n/g' | while read d; functions $d; end; perl -e 'print map { "$_///$ENV{$_}\n"} grep !/^(PWD|SHLVL|PATH)$/, keys %ENV'| sh -c 'parallel --shellquote' | perl -pe 's:^([^/]+)///:setenv $1 :'; end |perl -pe 's/\001/\\cb/g;s/\n/\001/')
   parallel $argv;
   set -e PARALLEL_ENV
 end
 
-env_parallel alias_echo ::: alias_does_not_work
+env_parallel alias_echo ::: alias_works
 env_parallel func_echo ::: function_works
-env_parallel -S fish@lo alias_echo ::: alias_does_not_work_over_ssh
+env_parallel -S fish@lo alias_echo ::: alias_works_over_ssh
 env_parallel -S fish@lo func_echo ::: function_works_over_ssh
 EOS
 
 echo 
 echo "### csh environment"
 # http://hyperpolyglot.org/unix-shells
+# makealias:
+#   alias quote     "/bin/sed -e 's/\\!/\\\\\!/g' -e 's/'\\\''/'\\\'\\\\\\\'\\\''/g' -e 's/^/'\''/' -e 's/"\$"/'\''/'"
+#   alias makealias "quote | /bin/sed 's/^/alias \!:1 /' \!:2*"
+
 stdout ssh -q csh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated.'
 set myvar = "myvar  works"
 set funky = "`perl -e 'print pack q(c*), 1..255'`"
@@ -258,6 +274,7 @@ set myarray = ('' 'array_val2' '3' '' '5')
 #assocarr[a]=assoc_val_a
 #assocarr[b]=assoc_val_b
 alias alias_echo echo 3 arg;
+alias alias_echo_var 'echo $argv; echo $myvar; echo ${myarray[2]}; echo Funky-"$funky"-funky'
 
 #function func_echo
 #  echo $argv;
@@ -267,31 +284,42 @@ alias alias_echo echo 3 arg;
 #  echo Funky-"$funky"-funky
 #end
 
-# s/'/'"'"'/g;
-# ' => \047 " => \042
-# s/\047/\047\042\047\042\047/g;
-# Quoted: s/\\047/\\047\\042\\047\\042\\047/g\;
+# ALIAS TO EXPORT ALIASES:
 
-# s/^(\S+)(\s+)\((.*)\)/\1\2\3/
-# \047 => '
-# s/^(\S+)(\s+)\((.*)\)/\1\2\3/;
-# Quoted: s/\^\(\\S+\)\(\\s+\)\\\(\(.\*\)\\\)/\\1\\2\\3/\;
+#   Quote ' by putting it inside "
+#   s/'/'"'"'/g;
+#   ' => \047 " => \042
+#   s/\047/\047\042\047\042\047/g;
+#   Quoted: s/\\047/\\047\\042\\047\\042\\047/g\;
 
-# s/^(\S+)(\s+)(.*)/\1\2'\3'/
-# \047 => '
-# s/^(\S+)(\s+)(.*)/\1\2\047\3\047/;
-# Quoted: s/\^\(\\S+\)\(\\s+\)\(.\*\)/\\1\\2\\047\\3\\047/\;
+#   Remove () from second column
+#   s/^(\S+)(\s+)\((.*)\)/\1\2\3/
+#   \047 => '
+#   s/^(\S+)(\s+)\((.*)\)/\1\2\3/;
+#   Quoted: s/\^\(\\S+\)\(\\s+\)\\\(\(.\*\)\\\)/\\1\\2\\3/\;
 
-# s/^/\001alias /;
-# Quoted: s/\^/\\001alias\ /\;
+#   Add ' around second column
+#   s/^(\S+)(\s+)(.*)/\1\2'\3'/
+#   \047 => '
+#   s/^(\S+)(\s+)(.*)/\1\2\047\3\047/;
+#   Quoted: s/\^\(\\S+\)\(\\s+\)\(.\*\)/\\1\\2\\047\\3\\047/\;
 
-alias env_parallel 'setenv PARALLEL_ENV "`alias | perl -pe s/\\047/\\047\\042\\047\\042\\047/g\;s/\^\(\\S+\)\(\\s+\)\\\(\(.\*\)\\\)/\\1\\2\\3/\;s/\^\(\\S+\)\(\\s+\)\(.\*\)/\\1\\2\\047\\3\\047/\;s/\^/\\001alias\ /\;`"'
+#   Quote ! as \!
+#   s/\!/\\\!/g;
+#   Quoted: s/\\\!/\\\\\\\!/g;
 
-alias pp 'parallel \!*'
+#   Prepend with "\nalias "
+#   s/^/\001alias /;
+#   Quoted: s/\^/\\001alias\ /\;
+
+alias env_parallel 'setenv PARALLEL_ENV "`alias | perl -pe s/\\047/\\047\\042\\047\\042\\047/g\;s/\^\(\\S+\)\(\\s+\)\\\(\(.\*\)\\\)/\\1\\2\\3/\;s/\^\(\\S+\)\(\\s+\)\(.\*\)/\\1\\2\\047\\3\\047/\;s/\^/\\001alias\ /\;s/\\\!/\\\\\\\!/g;`";parallel \!*; setenv PARALLEL_ENV'
+
 
 env_parallel alias_echo ::: alias_works
-env_parallel func_echo ::: function_works
+env_parallel alias_echo_var ::: alias_var_does_not_work
+env_parallel func_echo ::: function_does_not_work
 env_parallel -S csh@lo alias_echo ::: alias_works_over_ssh
-env_parallel -S csh@lo func_echo ::: function_works_over_ssh
+env_parallel -S csh@lo alias_echo_var ::: alias_var_does_not_work
+env_parallel -S csh@lo func_echo ::: function_does_not_work_over_ssh
 EOS
 
