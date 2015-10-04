@@ -143,6 +143,8 @@ env_parallel alias_echo ::: alias_works
 env_parallel func_echo ::: function_works
 env_parallel -S lo alias_echo ::: alias_works_over_ssh
 env_parallel -S lo func_echo ::: function_works_over_ssh
+echo
+echo "$funky" | parallel --shellquote
 #EOS
 
 
@@ -178,6 +180,8 @@ env_parallel alias_echo ::: alias_does_not_work
 env_parallel func_echo ::: function_works
 env_parallel -S zsh@lo alias_echo ::: alias_does_not_work_over_ssh
 env_parallel -S zsh@lo func_echo ::: function_works_over_ssh
+echo
+echo "$funky" | parallel --shellquote
 EOS
 
 echo
@@ -208,6 +212,8 @@ env_parallel alias_echo ::: alias_works
 env_parallel func_echo ::: function_works
 env_parallel -S ksh@lo alias_echo ::: alias_works_over_ssh
 env_parallel -S ksh@lo func_echo ::: function_works_over_ssh
+echo
+echo "$funky" | parallel --shellquote
 EOS
 
 echo
@@ -257,6 +263,8 @@ env_parallel alias_echo ::: alias_works
 env_parallel func_echo ::: function_works
 env_parallel -S fish@lo alias_echo ::: alias_works_over_ssh
 env_parallel -S fish@lo func_echo ::: function_works_over_ssh
+echo 
+echo "$funky" | parallel --shellquote
 EOS
 
 echo 
@@ -265,6 +273,9 @@ echo "### csh environment"
 # makealias:
 #   alias quote     "/bin/sed -e 's/\\!/\\\\\!/g' -e 's/'\\\''/'\\\'\\\\\\\'\\\''/g' -e 's/^/'\''/' -e 's/"\$"/'\''/'"
 #   alias makealias "quote | /bin/sed 's/^/alias \!:1 /' \!:2*"
+#
+#   makealias_with_newline
+#   perl -e '$/=undef;$_=<>;s/\n/\\\n/g;s/\047/\047\042\047\042\047/g;print'
 
 stdout ssh -q csh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated.'
 set myvar = "myvar  works"
@@ -315,11 +326,51 @@ alias alias_echo_var 'echo $argv; echo $myvar; echo ${myarray[2]}; echo Funky-"$
 alias env_parallel 'setenv PARALLEL_ENV "`alias | perl -pe s/\\047/\\047\\042\\047\\042\\047/g\;s/\^\(\\S+\)\(\\s+\)\\\(\(.\*\)\\\)/\\1\\2\\3/\;s/\^\(\\S+\)\(\\s+\)\(.\*\)/\\1\\2\\047\\3\\047/\;s/\^/\\001alias\ /\;s/\\\!/\\\\\\\!/g;`";parallel \!*; setenv PARALLEL_ENV'
 
 
+##  set tmpfile=`tempfile`
+##  foreach v (`set | awk -e '{print $1}' |grep -v prompt2`);
+##  eval if'($?'$v' && ${#'$v'} <= 1) echo scalar'$v'="$'$v'"' >> $tmpfile;
+##  eval if'($?'$v' && ${#'$v'} > 1) echo array'$v'="$'$v'"' >> $tmpfile;
+##  end
+##  cat $tmpfile | parallel --shellquote | perl -pe 's/^scalar(\S+).=/set $1=/ or s/^array(\S+).=(.*)/set $1=($2)/ && s/\\ / /g;'; rm $tmpfile
+##  
+##  set tmpfile=`tempfile`
+##  foreach _vARnAmE (`set | awk -e '{print $1}' |grep -v prompt2`);
+##  eval if'($?'$_vARnAmE' && ${#'$_vARnAmE'} <= 1) echo scalar'$_vARnAmE'="$'$_vARnAmE'"' >> $tmpfile; eval if'($?'$_vARnAmE' && ${#'$_vARnAmE'} > 1) echo array'$_vARnAmE'="$'$_vARnAmE'"' >> $tmpfile;
+##  end
+##  cat $tmpfile | parallel --shellquote | perl -pe 's/^scalar(\S+).=/set $1=/ or s/^array(\S+).=(.*)/set $1=($2)/ && s/\\ / /g;'; rm $tmpfile; unset tmpfile
+##  
+##  #!/bin/csh
+##  
+##  set _tmpfile=`tempfile`;
+##  foreach _vARnAmE (`set | awk -e '{print $1}' |grep -Ev 'prompt2|_tmpfile'`);
+##  eval if'($?'$_vARnAmE' && ${#'$_vARnAmE'} <= 1) echo scalar'$_vARnAmE'="$'$_vARnAmE'"' >> $_tmpfile;
+##  eval if'($?'$_vARnAmE' && ${#'$_vARnAmE'} > 1) echo array'$_vARnAmE'="$'$_vARnAmE'"' >> $_tmpfile;
+##  end 
+##  setenv PARALLEL_ENV `cat $_tmpfile | parallel --shellquote | perl -pe 's/^scalar(\S+).=/set $1=/ or s/^array(\S+).=(.*)/set $1=($2)/ && s/\\ / /g; s/$/\001/';`
+##  rm $_tmpfile;
+##  unset _tmpfile
+##  
+##  setenv PARALLEL_ENV "$PARALLEL_ENV`alias | perl -pe s/\\047/\\047\\042\\047\\042\\047/g\;s/\^\(\\S+\)\(\\s+\)\\\(\(.\*\)\\\)/\\1\\2\\3/\;s/\^\(\\S+\)\(\\s+\)\(.\*\)/\\1\\2\\047\\3\\047/\;s/\^/\\001alias\ /\;s/\\\!/\\\\\\\!/g;`"
+##  parallel \!*
+##  setenv PARALLEL_ENV
+##  
+##  
+##  perl -e '$/=undef;$_=<>;s/\n/\\\\\n/g;s/\047/\047\042\047\042\047/g;print "eval \047$_\047"'
+##  
+##  foreach g (h i j)
+##  echo $g
+##  end
+##  
+##  
+
+
 env_parallel alias_echo ::: alias_works
 env_parallel alias_echo_var ::: alias_var_does_not_work
 env_parallel func_echo ::: function_does_not_work
 env_parallel -S csh@lo alias_echo ::: alias_works_over_ssh
 env_parallel -S csh@lo alias_echo_var ::: alias_var_does_not_work
 env_parallel -S csh@lo func_echo ::: function_does_not_work_over_ssh
+echo
+echo "$funky" | parallel --shellquote
 EOS
 

@@ -600,9 +600,9 @@ sub verbose {
 
 sub sleep_for_recheck {
     my $self = shift;
-    if($self->{'recheck'} < 0.5) {
-	# Never sleep less than 0.5 sec
-	$self->{'recheck'} = 0.5;
+    if($self->{'recheck'} < 0.01) {
+	# Never sleep less than 0.01 sec
+	$self->{'recheck'} = 0.01;
     }
     if($self->verbose()) {
 	$self->{'recheck'} = int($self->{'recheck'}*100)/100;

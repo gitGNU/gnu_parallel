@@ -212,9 +212,9 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20151022 ('<<>>') released <<[stable]>>
+Subject: GNU Parallel 20151022 ('Liquid Water') released <<[stable]>>
 
-GNU Parallel 20151022 ('<<>>') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20151022 ('Liquid Water') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
@@ -239,6 +239,8 @@ http://www.researchgate.net/profile/Christoph_Junghans/publication/276178326_TAD
 * GNU Parallel was cited in: Roary: rapid large-scale prokaryote pan genome analysis http://bioinformatics.oxfordjournals.org/content/early/2015/08/05/bioinformatics.btv421.full.pdf+html
 
 * GNU Parallel is used in TraitAR: https://testpypi.python.org/pypi/traitar/0.1.4
+
+* GNU Parallel is used in youtube-dl-parallel: https://github.com/dlh/youtube-dl-parallel
 
 * Bug fixes and man page updates.
 

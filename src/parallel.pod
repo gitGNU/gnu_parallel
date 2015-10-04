@@ -3013,6 +3013,73 @@ output.
 If you have a lot of hosts use '-j0' to access more hosts in parallel.
 
 
+=head1 EXAMPLE: Using remote computers behind NAT wall
+
+If the workers are behind a NAT wall, you need some trickery to get to
+them.
+
+If you can B<ssh> to a jump host, and reach the workers from there,
+then the obvious solution would be this, but it B<does not work>:
+
+  parallel --ssh 'ssh jumphost ssh' -S host1 echo ::: DOES NOT WORK
+
+It does not work because the command is dequoted by B<ssh> twice where
+as GNU B<parallel> only expects it to be dequoted once.
+
+So instead put this in B<~/.ssh/config>:
+
+  Host host1 host2 host3
+    ProxyCommand ssh jumphost.domain nc -w 1 %h 22
+
+It requires B<nc(netcat)> to be installed on jumphost. With this you
+can simply:
+
+  parallel -S host1,host2,host3 echo ::: This does work
+
+=head2 No jumphost, but port forwards
+
+If there is no jumphost but each server has port 22 forwarded from the
+firewall (e.g. the firewall's port 22001 = port 22 on host1, 22002 = host2,
+22003 = host3) then you can use B<~/.ssh/config>:
+
+  Host host1.v
+    Port 22001
+  Host host2.v
+    Port 22002
+  Host host3.v
+    Port 22003
+  Host *.v
+    Hostname firewall
+
+And then use host{1..3}.v as normal hosts:
+
+  parallel -S host1.v,host2.v,host3.v echo ::: a b c
+
+=head2 No jumphost, no port forwards
+
+If ports cannot be forwarded, you need some sort of VPN to traverse
+the NAT-wall. TOR is one options for that, as it is very easy to get
+working.
+
+You need to install TOR and setup a hidden service. In B<torrc> put:
+
+  HiddenServiceDir /var/lib/tor/hidden_service/
+  HiddenServicePort 22 127.0.0.1:22
+
+Then start TOR: B</etc/init.d/tor restart>
+
+The TOR hostname is now in B</var/lib/tor/hidden_service/hostname> and
+is something similar to B<izjafdceobowklhz.onion>. Now you simply
+prepend B<torsocks> to B<ssh>:
+
+  parallel --ssh 'torsocks ssh' -S izjafdceobowklhz.onion \
+    -S zfcdaeiojoklbwhz.onion,auclucjzobowklhi.onion echo ::: a b c
+
+If not all hosts are accessible through TOR:
+
+  parallel -S 'torsocks ssh izjafdceobowklhz.onion,host2,host3' echo ::: a b c
+
+
 =head1 EXAMPLE: Parallelizing rsync
 
 B<rsync> is a great tool, but sometimes it will not fill up the
@@ -4166,6 +4233,39 @@ B<11> xapply -f '[ -f %1 ] && echo %1' List | ...
 B<11> parallel '[ -f {} ] && echo {}' < List | ...
 
 
+=head2 DIFFERENCES BETWEEN AIX apply AND GNU Parallel
+
+B<apply> can build command lines based on a template and arguments -
+very much like GNU B<parallel>. B<apply> does not run jobs in
+parallel. B<apply> does not use an argument separator (like B<:::>);
+instead the template must be the first argument.
+
+Here are the examples from
+https://www-01.ibm.com/support/knowledgecenter/ssw_aix_71/com.ibm.aix.cmds1/apply.htm
+
+1. To obtain results similar to those of the B<ls> command, enter:
+
+  apply echo *
+  parallel echo ::: *
+
+2. To compare the file named B<a1> to the file named B<b1>, and the
+file named B<a2> to the file named B<b2>, enter:
+
+  apply -2 cmp a1 b1 a2 b2
+  parallel -N2 cmp ::: a1 b1 a2 b2
+
+3. To run the B<who> command five times, enter:
+
+  apply -0 who 1 2 3 4 5
+  parallel -N0 who ::: 1 2 3 4 5
+
+4. To link all files in the current directory to the directory
+B</usr/joe>, enter:
+
+  apply 'ln %1 /usr/joe' *
+  parallel ln {} /usr/joe ::: *
+
+
 =head2 DIFFERENCES BETWEEN paexec AND GNU Parallel
 
 B<paexec> can run jobs in parallel on both the local and remote computers.
@@ -4669,4 +4769,3 @@ B<make>(1), B<pexec>(1), B<ppss>(1), B<xjobs>(1), B<prll>(1),
 B<dxargs>(1), B<mdm>(1)
 
 =cut
-

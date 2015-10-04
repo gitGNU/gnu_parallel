@@ -1097,7 +1097,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20150923;
+    $Global::version = 20151001;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -6455,7 +6455,7 @@ sub wrapped {
 	if($opt::shellquote) {
 	    # Prepend \echo (echo no-\ is wrong in csh)
 	    # and quote twice
-	    $command = "\\echo " .
+	    $command = "/bin/echo " .
 		::shell_quote_scalar(::shell_quote_scalar($command));
 	}
 	if($opt::cat) {
