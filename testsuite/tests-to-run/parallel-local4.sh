@@ -1,5 +1,13 @@
 #!/bin/bash
 
+echo 'bug #46120: Suspend should suspend (at least local) children'
+  stdout bash -i -c 'stdout /usr/bin/time -f CPUTIME=%U parallel --timeout 5 burnP6 ::: 1 | grep -q CPUTIME=1 & 
+  sleep 1.1; 
+  kill -TSTP -$!; 
+  sleep 5; 
+  fg; 
+  echo Zero=OK $?' | grep -v '\[1\]'
+
 cat <<'EOF' | sed -e 's/;$/; /;' | stdout parallel -vj0 -k --joblog /tmp/jl-`basename $0` -L1
 echo '### -L -n with pipe'
   seq 14 | parallel --pipe -k -L 3 -n 2 'cat;echo 6 Ln line record'

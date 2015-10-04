@@ -3125,6 +3125,9 @@ sub save_original_signal_handler {
     %Global::original_sig = %SIG;
     $SIG{TERM} = sub {}; # Dummy until jobs really start
     $SIG{ALRM} = 'IGNORE';
+    # Allow Ctrl-Z to suspend and `fg` to continue
+    $SIG{TSTP} = sub { kill "STOP", map { -$_ } keys %Global::running, $$; };
+    $SIG{CONT} = sub { kill "CONT", map { -$_ } keys %Global::running, $$; };
 }
 
 sub list_running_jobs {
