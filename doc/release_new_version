@@ -242,6 +242,8 @@ http://www.researchgate.net/profile/Christoph_Junghans/publication/276178326_TAD
 
 * GNU Parallel is used in youtube-dl-parallel: https://github.com/dlh/youtube-dl-parallel
 
+* A parallel and fast way to download multiple files http://onetipperday.blogspot.com/2015/10/a-parallel-and-fast-way-to-download.html
+
 * Bug fixes and man page updates.
 
 GNU Parallel - For people who live life in the parallel lane.

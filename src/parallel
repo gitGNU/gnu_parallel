@@ -297,7 +297,7 @@ sub cat_partial {
     # Convert start_end to start_len
     my @start_len = map { if(++$i % 2) { $start = $_; } else { $_-$start } } @start_end;
     return "<". shell_quote_scalar($file) .
-	q{ perl -e 'while(@ARGV) { sysseek(STDIN,shift,0) || die; $left = shift; while($read = sysread(STDIN,$buf, ($left > 32768 ? 32768 : $left))){ $left -= $read; syswrite(STDOUT,$buf); } }' } .
+	q{ perl -e 'while(@ARGV) { sysseek(STDIN,shift,0) || die; $left = shift; while($read = sysread(STDIN,$buf, ($left > 131072 ? 131072 : $left))){ $left -= $read; syswrite(STDOUT,$buf); } }' } .
 	" @start_len";
 }
 
@@ -3109,6 +3109,18 @@ sub onall {
 
 sub __SIGNAL_HANDLING__ {}
 
+sub tstp {
+    # Send TSTP signal (Ctrl-Z) to all children process groups
+    # Uses:
+    #   %SIG
+    # Returns: N/A
+    kill "TSTP", map { -$_ } keys %Global::running;
+    # Use default signal handler to suspend GNU Parallel self
+    $SIG{TSTP} = undef;
+    kill "TSTP", $$;
+}
+
+
 sub save_original_signal_handler {
     # Remember the original signal handler
     # Uses:
@@ -3126,8 +3138,13 @@ sub save_original_signal_handler {
     $SIG{TERM} = sub {}; # Dummy until jobs really start
     $SIG{ALRM} = 'IGNORE';
     # Allow Ctrl-Z to suspend and `fg` to continue
-    $SIG{TSTP} = sub { kill "STOP", map { -$_ } keys %Global::running, $$; };
-    $SIG{CONT} = sub { kill "CONT", map { -$_ } keys %Global::running, $$; };
+    $SIG{TSTP} = \&tstp;
+    $SIG{CONT} = sub {
+	# Set $SIG{TSTP} again (it is undef'ed in tstp() )
+	$SIG{TSTP} = \&tstp;
+	# Send continue signal to all children process groups
+	kill "CONT", map { -$_ } keys %Global::running;
+    };
 }
 
 sub list_running_jobs {
@@ -5575,17 +5592,14 @@ sub sshcommand_of_sshlogin {
 		    $SIG{'TERM'} = undef;
                     # Ignore the 'foo' being printed
                     open(STDOUT,">","/dev/null");
-                    # With -tt OpenSSH_3.6.1p2 gives:
-		    # 'tcgetattr: Invalid argument'
                     # STDERR >/dev/null to ignore
-		    # "process_mux_new_session: tcgetattr: Invalid argument"
                     open(STDERR,">","/dev/null");
                     open(STDIN,"<","/dev/null");
                     # Run a sleep that outputs data, so it will discover
 		    # if the ssh connection closes.
                     my $sleep = ::shell_quote_scalar
 			('$|=1;while(1){sleep 1;print "foo\n"}');
-                    my @master = ($opt::ssh, "-tt", "-MTS",
+                    my @master = ($opt::ssh, "-MTS",
 				  $control_path, $serverlogin, "--", "perl", "-e",
 				  $sleep);
                     exec(@master);
@@ -5899,7 +5913,7 @@ sub slot {
 		    # clear EOF
 		    seek(IN,0,1);
 		    my $writer_running = kill 0, $writerpid;
-		    $read = sysread(IN,$buf,32768);
+		    $read = sysread(IN,$buf,131072);
 		    if($read) {
 			if($first_round) {
 			    # Only start the command if there any input to process
@@ -6047,7 +6061,11 @@ sub empty_input_wrapper {
 	    if(sysread(STDIN, $buf, 1)) {
 		open($fh, "|-", "@ARGV") || die;
 		syswrite($fh, $buf);
-		while($read = sysread(STDIN, $buf, 32768)) {
+		# Align up to 128k block
+		if($read = sysread(STDIN, $buf, 131071)) {
+		    syswrite($fh, $buf);
+		}
+		while($read = sysread(STDIN, $buf, 131072)) {
 		    syswrite($fh, $buf);
 		}
 		close $fh;
@@ -6412,7 +6430,7 @@ sub total_failed {
 		     $pid = fork || exec $s, "-c", $c;
 		     open($o,">",$f) || die $!;
 		     # cat > $PARALLEL_TMP
-		     while(sysread(STDIN,$buf,32768)){
+		     while(sysread(STDIN,$buf,131072)){
 			 syswrite $o, $buf;
 		     }
 		     close $o;
@@ -6497,7 +6515,7 @@ sub wrapped {
 	    # Prepend:
 	    # < /tmp/foo perl -e 'while(@ARGV) {
 	    #   sysseek(STDIN,shift,0) || die; $left = shift;
-	    #   while($read = sysread(STDIN,$buf, ($left > 32768 ? 32768 : $left))){
+	    #   while($read = sysread(STDIN,$buf, ($left > 131072 ? 131072 : $left))){
 	    #     $left -= $read; syswrite(STDOUT,$buf);
 	    #   }
 	    # }'  0 0 0 11 |
@@ -7630,16 +7648,8 @@ sub normal_print {
     }
     seek $in_fh, 0, 0;
     # $in_fh is now ready for reading at position 0
-    if($fdno == 2) {
-	# OpenSSH_3.6.1p2 gives 'tcgetattr: Invalid argument' with -tt
-	# This is a crappy way of ignoring it.
-	sysread($in_fh,$buf,1_000);
-	$buf =~ s/^(client_process_control: )?tcgetattr: Invalid argument\n//;
-	print $out_fd $buf;
-	$self->add_returnsize(length $buf);
-    }
     my $outputlength = 0;
-    while(sysread($in_fh,$buf,32768)) {
+    while(sysread($in_fh,$buf,131072)) {
 	print $out_fd $buf;
 	$outputlength += length $buf;
     }
