@@ -125,21 +125,28 @@ templates. Templates can be wrapped in other templates.
 
 =item --shellquote
 
-echo <<shell double quoted input>>
+echo I<shell double quoted input>
 
 =item --nice I<pri>
 
-\nice -n I<pri> $shell -c <<shell quoted input>>
+\nice -n I<pri> I<shell> -c I<shell quoted input>
 
 The \ is needed to avoid using the builtin nice command, which does not
-support -n in B<tcsh>. B<$shell -c> is needed to nice composed commands
+support -n in B<tcsh>. B<I<shell> -c> is needed to nice composed commands
 command.
 
 =item --cat
 
-(cat > {}; <<input>> {}; perl -e '$bash=shift; $csh=shift; for(@ARGV)
-{unlink;rmdir;} if($bash=~s/h//) {exit$bash;} exit$csh;' "$?h"
-"$status" {});
+cat > {}; I<input> {};
+perl -e '$bash = shift;
+         $csh = shift;
+         for(@ARGV) {
+           unlink;rmdir;
+         }
+         if($bash =~ s/h//) {
+           exit $bash;
+         }
+         exit $csh;' "$?h" "$status" {};
 
 {} is set to $PARALLEL_TMP which is a tmpfile. The Perl script saves
 the exit value, unlinks the tmpfile, and returns the exit value - no
@@ -148,30 +155,35 @@ matter if the shell is B<bash> (using $?) or B<*csh> (using $status).
 =item --fifo
 
 perl -e '($s,$c,$f) = @ARGV;
-system "mkfifo", $f;
-$pid = fork || exec $s, "-c", $c;
-open($o,">",$f) || die $!;
-while(sysread(STDIN,$buf,32768)){
-  syswrite $o, $buf;
-}
-close $o;
-waitpid $pid,0;
-unlink $f;
-exit $?/256;' $shell <<input>> $PARALLEL_TMP
+         # mkfifo $PARALLEL_TMP
+         system "mkfifo", $f;
+         # spawn $shell -c $command &
+         $pid = fork || exec $s, "-c", $c;
+         open($o,">",$f) || die $!;
+         # cat > $PARALLEL_TMP
+         while(sysread(STDIN,$buf,131072)){
+            syswrite $o, $buf;
+         }
+         close $o;
+         # waitpid to get the exit code from $command
+         waitpid $pid,0;
+         # Cleanup
+         unlink $f;
+         exit $?/256;' I<shell> I<input> $PARALLEL_TMP
 
-This is an elaborate way of: mkfifo {}; run <<input>> in the
-background using $shell; copying STDIN to {}; waiting for background
-to complete; remove {} and exit with the exit code from <<input>>.
+This is an elaborate way of: mkfifo {}; run I<input> in the
+background using I<shell>; copying STDIN to {}; waiting for background
+to complete; remove {} and exit with the exit code from I<input>.
 
 It is made this way to be compatible with B<*csh>.
 
 =item --sshlogin I<sln>
 
-ssh I<sln> <<shell quoted input>>
+ssh I<sln> I<shell quoted input>
 
 =item --transfer
 
-( ssh I<sln> mkdir -p ./I<workdir>;rsync --protocol 30 -rlDzR -essh ./{} I<sln>:./I<workdir> ); <<input>>
+( ssh I<sln> mkdir -p ./I<workdir>;rsync --protocol 30 -rlDzR -essh ./{} I<sln>:./I<workdir> ); I<input>
 
 Read about B<--protocol 30> in the section B<Rsync protocol version>.
 
@@ -181,7 +193,7 @@ Read about B<--protocol 30> in the section B<Rsync protocol version>.
 
 =item --return I<file>
 
-<<input>>; _EXIT_status=$?; mkdir -p I<workdir>; rsync --protocol 30 --rsync-path=cd\ ./I<workdir>\;\ rsync -rlDzR -essh I<sln>:./I<file> ./I<workdir>; exit $_EXIT_status;
+I<input>; _EXIT_status=$?; mkdir -p I<workdir>; rsync --protocol 30 --rsync-path=cd\ ./I<workdir>\;\ rsync -rlDzR -essh I<sln>:./I<file> ./I<workdir>; exit $_EXIT_status;
 
 The B<--rsync-path=cd ...> is needed because old versions of B<rsync>
 do not support B<--no-implied-dirs>.
@@ -192,7 +204,7 @@ wrapping 'sh -c' is enough?
 
 =item --cleanup
 
-<<input>> _EXIT_status=$?; <<return>>
+I<input> _EXIT_status=$?; <<return>>
 
 ssh I<sln> \(rm\ -f\ ./I<workdir>/{}\;\ rmdir\ ./I<workdir>\ \>\&/dev/null\;\); exit $_EXIT_status;
 
@@ -201,13 +213,31 @@ B<$_EXIT_status>: see B<--return> above.
 
 =item --pipe
 
-sh -c 'dd bs=1 count=1 of=I<tmpfile> 2>/dev/null'; test ! -s "I<tmpfile>" && rm -f "I<tmpfile>" && exec true; (cat I<tmpfile>; rm I<tmpfile>; cat - ) | ( <<input>> );
+perl -e 'if(sysread(STDIN, $buf, 1)) {
+		open($fh, "|-", "@ARGV") || die;
+		syswrite($fh, $buf);
+		# Align up to 128k block
+		if($read = sysread(STDIN, $buf, 131071)) {
+		    syswrite($fh, $buf);
+		}
+		while($read = sysread(STDIN, $buf, 131072)) {
+		    syswrite($fh, $buf);
+		}
+		close $fh;
+		exit ($?&127 ? 128+($?&127) : 1+$?>>8)
+	    }' I<shell> -c I<input>
 
-This small wrapper makes sure that <<input>> will never be run if
-there is no data. B<sh -c> is needed to hide stderr if the user's
-shell is B<csh> (which cannot hide stderr).
+This small wrapper makes sure that I<input> will never be run if
+there is no data.
 
 =item --tmux
+
+<<TODO Fixup>>
+mkfifo /tmp/tmx3cMEV &&
+  sh -c 'tmux -S /tmp/tmsaKpv1 new-session -s p334310 -d "sleep .2" >/dev/null 2>&1';
+tmux -S /tmp/tmsaKpv1 new-window -t p334310 -n wc\ 10 \(wc\ 10\)\;\ perl\ -e\ \'while\(\$t++\<3\)\{\ print\ \$ARGV\[0\],\"\\n\"\ \}\'\ \$\?h/\$status\ \>\>\ /tmp/tmx3cMEV\&echo\ wc\\\ 10\;\ echo\ \Job\ finished\ at:\ \`date\`\;sleep\ 10;
+exec perl -e '$/="/";$_=<>;$c=<>;unlink $ARGV; /(\d+)h/ and exit($1);exit$c' /tmp/tmx3cMEV
+
 
 mkfifo I<tmpfile.tmx>;
 tmux -S <tmpfile.tms> new-session -s pI<PID> -d 'sleep .2' >&/dev/null;

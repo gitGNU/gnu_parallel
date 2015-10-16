@@ -666,15 +666,8 @@ cannot be exported:
       'my_importer; echo "{}" "${indexed[{}]}" "${assoc[${indexed[{}]}]}"' ::: "${!indexed[@]}"
 
 To copy the full environment (both exported and not exported variables
-and functions) use this function (e.g. by putting it in .bashrc):
+and functions) use env_parallel as described under the option I<command>.
 
-    env_parallel() {
-      export parallel_bash_environment="$(echo "shopt -s expand_aliases 2>/dev/null"; alias;typeset -p | grep -vFf <(readonly; echo GROUPS; echo FUNCNAME; echo DIRSTACK; echo _; echo PIPESTATUS; echo USERNAME) | grep -v BASH_;typeset -f)";
-      `which parallel` "$@";
-      unset parallel_bash_environment;
-    }
-    # call as:
-    env_parallel [normal parallel options]
 
 See also: B<--record-env>.
 

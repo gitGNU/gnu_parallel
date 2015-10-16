@@ -109,20 +109,15 @@ if($opt::nonall or $opt::onall) {
 $Global::JobQueue = JobQueue->new(
     \@command,\@input_source_fh,$Global::ContextReplace,$number_of_args,\@Global::ret_files);
 
-if($opt::eta or $opt::bar or $opt::shuf or $Global::halt_pct) {
-    # Count the number of jobs or shuffle all jobs
-    # before starting any
-    $Global::JobQueue->total_jobs();
-}
-# Compute $Global::max_jobs_running
-for my $sshlogin (values %Global::host) {
-    $sshlogin->max_jobs_running();
-}
 if($opt::pipepart) {
     if($opt::roundrobin) {
 	# Compute size of -a
 	my $size = 0;
 	$size += -s $_ for @opt::a;
+	# Compute $Global::max_jobs_running
+	for my $sshlogin (values %Global::host) {
+	    $sshlogin->max_jobs_running();
+	}
 	$Global::max_jobs_running or ::die_bug("Global::max_jobs_running not set");
 	# Set --blocksize = size / no of proc
 	$opt::blocksize = 1 + $size / $Global::max_jobs_running;
@@ -132,6 +127,17 @@ if($opt::pipepart) {
     $Global::JobQueue->{'commandlinequeue'}->unget(
 	map { $Global::JobQueue->{'commandlinequeue'}->get() } @Global::cat_partials
 	);
+}
+if($opt::eta or $opt::bar or $opt::shuf or $Global::halt_pct) {
+    # Count the number of jobs or shuffle all jobs
+    # before starting any.
+    # Must be done after ungetting any --pipepart jobs.
+    $Global::JobQueue->total_jobs();
+}
+# Compute $Global::max_jobs_running
+# Must be done after ungetting any --pipepart jobs.
+for my $sshlogin (values %Global::host) {
+    $sshlogin->max_jobs_running();
 }
 
 init_run_jobs();
