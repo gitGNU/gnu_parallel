@@ -123,9 +123,9 @@ if($opt::pipepart) {
 	$opt::blocksize = 1 + $size / $Global::max_jobs_running;
     }
     @Global::cat_partials = map { pipe_part_files($_) } @opt::a;
-    # Unget the command as many times as there are parts
-    $Global::JobQueue->{'commandlinequeue'}->unget(
-	map { $Global::JobQueue->{'commandlinequeue'}->get() } @Global::cat_partials
+    # Unget the empty arg as many times as there are parts
+    $Global::JobQueue->{'commandlinequeue'}{'arg_queue'}->unget(
+	map { [Arg->new("\0")] } @Global::cat_partials
 	);
 }
 if($opt::eta or $opt::bar or $opt::shuf or $Global::halt_pct) {
