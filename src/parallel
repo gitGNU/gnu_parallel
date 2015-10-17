@@ -211,9 +211,6 @@ sub pipe_part_files {
     for(my $i=0; $i<$#pos; $i++) {
 	push @cat_partials, cat_partial($file, 0, length($header), $pos[$i], $pos[$i+1]);
     }
-    # Remote exec should look like:
-    #  ssh -oLogLevel=quiet lo  'eval `echo $SHELL | grep "/t\{0,1\}csh" > /dev/null  && echo setenv PARALLEL_SEQ '$PARALLEL_SEQ'\;  setenv PARALLEL_PID '$PARALLEL_PID'  || echo PARALLEL_SEQ='$PARALLEL_SEQ'\;export PARALLEL_SEQ\;  PARALLEL_PID='$PARALLEL_PID'\;export PARALLEL_PID` ;'  tty\ \>/dev/null\ \&\&\ stty\ isig\ -onlcr\ -echo\;echo\ \$SHELL\ \|\ grep\ \"/t\\\{0,1\\\}csh\"\ \>\ /dev/null\ \&\&\ setenv\ FOO\ /tmp/foo\ \|\|\ export\ FOO=/tmp/foo\; \(wc\ -\ \$FOO\)
-    # ssh -tt not allowed. Remote will die due to broken pipe anyway.
     return @cat_partials;
 }
 
@@ -5786,35 +5783,33 @@ sub empty {
 sub total_jobs {
     my $self = shift;
     if(not defined $self->{'total_jobs'}) {
-        my $job;
-        my @queue;
+	my $record;
+	my @arg_records;
+	my $record_queue = $self->{'commandlinequeue'}{'arg_queue'};
 	my $start = time;
-        while($job = $self->get()) {
+        while($record = $record_queue->get()) {
 	    if(time - $start > 10) {
-		::warning("Reading ".scalar(@queue)." arguments took longer than 10 seconds.");
+		::warning("Reading ".scalar(@arg_records)." arguments took longer than 10 seconds.");
 		$opt::eta && ::warning("Consider removing --eta.");
 		$opt::bar && ::warning("Consider removing --bar.");
 		$opt::shuf && ::warning("Consider removing --shuf.");
 		last;
 	    }
-            push @queue, $job;
+            push @arg_records, $record;
         }
-        while($job = $self->get()) {
-            push @queue, $job;
+        while($record = $record_queue->get()) {
+            push @arg_records, $record;
         }
 	if($opt::shuf) {
-	    my $i = @queue;
+	    my $i = @arg_records;
 	    while (--$i) {
 		my $j = int rand($i+1);
-		@queue[$i,$j] = @queue[$j,$i];
-	    }
-	    my $seq = 1;
-	    for my $job (@queue) {
-		$job->{'commandline'}->set_seq($seq++);
+		@arg_records[$i,$j] = @arg_records[$j,$i];
 	    }
 	}
-	$self->unget(@queue);
-        $self->{'total_jobs'} = $#queue+1;
+	$record_queue->unget(@arg_records);
+        $self->{'total_jobs'} = $#arg_records+1;
+	::debug("init","Total jobs: ".$self->{'total_jobs'}."\n");
     }
     return $self->{'total_jobs'};
 }
@@ -6480,7 +6475,7 @@ sub wrapped {
     if(not defined $self->{'wrapped'}) {
 	my $command = $self->replaced();
 	if($opt::shellquote) {
-	    # Prepend \echo (echo no-\ is wrong in csh)
+	    # Prepend /bin/echo (echo no-/bin is wrong in csh)
 	    # and quote twice
 	    $command = "/bin/echo " .
 		::shell_quote_scalar(::shell_quote_scalar($command));
@@ -8785,7 +8780,13 @@ sub get {
     my $self = shift;
     if(@{$self->{'unget'}}) {
 	$self->{'arg_number'}++;
-	return shift @{$self->{'unget'}};
+	# Flush cached computed replacements in Arg-objects
+	# To fix: parallel --bar echo {%} ::: a b c ::: d e f
+	my $ret = shift @{$self->{'unget'}};
+	if($ret) {
+	    map { $_->flush_cache() } map { @$_ } $ret;
+	}
+	return $ret;
     }
     my $ret = $self->{'arg_sub_queue'}->get();
     if(defined $Global::max_number_of_args
@@ -8794,6 +8795,11 @@ sub get {
 	# \0 => nothing (not the empty string)
 	return [Arg->new("\0")];
     } else {
+	# Flush cached computed replacements in Arg-objects
+	# To fix: parallel --bar echo {%} ::: a b c ::: d e f
+	if($ret) {
+	    map { $_->flush_cache() } map { @$_ } $ret;
+	}
 	return $ret;
     }
 }
@@ -8904,13 +8910,7 @@ sub get {
     if($opt::xapply) {
 	return $self->xapply_get();
     } else {
-	my $arglist = $self->nest_get();
-	# Flush cached computed values
-	# To fix: parallel echo {%} ::: 1 2 ::: 4 3
-	if($arglist) {
-	    map { $_->flush_cache() } @$arglist;
-	}
-	return $arglist;
+	return $self->nest_get();
     }
 }
 

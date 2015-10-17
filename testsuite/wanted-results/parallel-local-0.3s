@@ -477,5 +477,45 @@ parallel --wd . 'pwd; echo $OLDPWD; echo' ::: OK
 OK
 echo '**'
 **
+echo 'bug #46232: {%} with --bar/--eta/--shuf or --halt xx% broken'
+bug #46232: {%} with --bar/--eta/--shuf or --halt xx% broken
+  parallel --bar -kj2 echo {%} ::: a b  ::: c d e 2>/dev/null
+1
+2
+1
+2
+1
+2
+  parallel --halt now,fail=10% -kj2 echo {%} ::: a b  ::: c d e
+1
+2
+1
+2
+1
+2
+  parallel --eta -kj2 echo {%} ::: a b  ::: c d e 2>/dev/null
+1
+2
+1
+2
+1
+2
+  parallel --shuf -kj2 echo {%} ::: a b  ::: c d e 2>/dev/null
+1
+2
+1
+2
+1
+2
+echo '**'
+**
+echo 'bug #46231: {%} with --pipepart broken. Should give 1+2'
+bug #46231: {%} with --pipepart broken. Should give 1+2
+  seq 10000 > /tmp/num10000;   parallel --pipepart -ka /tmp/num10000 --block 10k -j2 echo {%};   rm /tmp/num10000
+1
+2
+1
+2
+1
 ### 1 .par file from --files expected
 1

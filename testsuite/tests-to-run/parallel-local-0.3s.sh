@@ -16,6 +16,9 @@ export SMALLDISK
   sudo chmod 777 /mnt/ram
 ) >/dev/null 2>/dev/null
 
+
+
+
 cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj8 -k --joblog /tmp/jl-`basename $0` -L1
 echo '### Test bug #45619: "--halt" erroneous error exit code (should give 0)'; 
   seq 10 | parallel --halt now,fail=1 true; 
@@ -229,6 +232,20 @@ parallel --wd . 'pwd; echo $OLDPWD; echo' ::: OK
 
 echo '**'
 
+echo 'bug #46232: {%} with --bar/--eta/--shuf or --halt xx% broken'
+  parallel --bar -kj2 echo {%} ::: a b  ::: c d e 2>/dev/null
+  parallel --halt now,fail=10% -kj2 echo {%} ::: a b  ::: c d e
+  parallel --eta -kj2 echo {%} ::: a b  ::: c d e 2>/dev/null
+  parallel --shuf -kj2 echo {%} ::: a b  ::: c d e 2>/dev/null
+
+echo '**'
+
+echo 'bug #46231: {%} with --pipepart broken. Should give 1+2'
+  seq 10000 > /tmp/num10000; 
+  parallel --pipepart -ka /tmp/num10000 --block 10k -j2 echo {%}; 
+  rm /tmp/num10000
+
+echo '**'
 
 EOF
 echo '### 1 .par file from --files expected'
