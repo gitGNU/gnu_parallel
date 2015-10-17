@@ -5783,6 +5783,10 @@ sub empty {
 sub total_jobs {
     my $self = shift;
     if(not defined $self->{'total_jobs'}) {
+	if($opt::pipe) {
+	    ::error("--pipe is incompatible with --eta/--bar/--shuf");
+	    ::wait_and_exit(255);
+	}
 	my $record;
 	my @arg_records;
 	my $record_queue = $self->{'commandlinequeue'}{'arg_queue'};
