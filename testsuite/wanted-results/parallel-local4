@@ -1,11 +1,13 @@
 bug #46120: Suspend should suspend (at least local) children
 2048 0a:c0:70:5b:ec:f6:c2:de:67:c3:53:7f:29:81:65:54 tange@hk (RSA1)
+1024 93:d1:21:c5:ff:e3:c3:be:6d:73:ea:aa:1e:a2:dc:06 /home/tange/.ssh/id_dsa (DSA)
 8192 e1:95:e3:ff:99:a6:3a:b5:53:5a:54:59:d0:72:94:7f /home/tange/.ssh/id_rsa (RSA)
 4096 94:2a:e3:cb:6b:66:63:21:13:51:8d:e8:4e:09:49:b2 /home/tange/.ssh/id_rsa_openindiana (RSA)
 
 stdout /usr/bin/time -f CPUTIME=%U parallel --timeout 5 burnP6 ::: 1 | grep --colour=auto -q CPUTIME=1
 Zero=OK 0
 2048 0a:c0:70:5b:ec:f6:c2:de:67:c3:53:7f:29:81:65:54 tange@hk (RSA1)
+1024 93:d1:21:c5:ff:e3:c3:be:6d:73:ea:aa:1e:a2:dc:06 /home/tange/.ssh/id_dsa (DSA)
 8192 e1:95:e3:ff:99:a6:3a:b5:53:5a:54:59:d0:72:94:7f /home/tange/.ssh/id_rsa (RSA)
 4096 94:2a:e3:cb:6b:66:63:21:13:51:8d:e8:4e:09:49:b2 /home/tange/.ssh/id_rsa_openindiana (RSA)
 

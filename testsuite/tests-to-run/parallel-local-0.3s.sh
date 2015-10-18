@@ -247,6 +247,14 @@ echo 'bug #46231: {%} with --pipepart broken. Should give 1+2'
 
 echo '**'
 
+echo '{##} bug #45841: Replacement string for total no of jobs'
+
+  parallel --plus echo {##} ::: {a..j};
+  parallel -k 'echo {= $::G++ > 3 and ($_=$Global::JobQueue->total_jobs());=}' ::: {1..10}
+
+echo '**'
+
+
 EOF
 echo '### 1 .par file from --files expected'
 find /tmp{/*,}/*.{par,tms,tmx} 2>/dev/null -mmin -10 | wc -l

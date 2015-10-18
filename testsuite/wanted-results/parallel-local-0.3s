@@ -519,5 +519,30 @@ bug #46231: {%} with --pipepart broken. Should give 1+2
 1
 echo '**'
 **
+echo '{##} bug #45841: Replacement string for total no of jobs'
+{##} bug #45841: Replacement string for total no of jobs
+  parallel --plus echo {##} ::: {a..j};   parallel -k 'echo {= $::G++ > 3 and ($_=$Global::JobQueue->total_jobs());=}' ::: {1..10}
+10
+10
+10
+10
+10
+10
+10
+10
+10
+10
+1
+2
+3
+4
+10
+10
+10
+10
+10
+10
+echo '**'
+**
 ### 1 .par file from --files expected
 1

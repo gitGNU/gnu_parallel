@@ -55,7 +55,7 @@ bash -c 'echo bug \#43358: shellshock breaks exporting functions using --env _;
   parallel --env funky -S parallel@192.168.1.72 funky ::: shellshock-hardened'
 
 echo '### Test --load (must give 1=true)'
-  parallel -j0 -N0 --timeout 5 --nice 10 'bzip2 < /dev/zero >/dev/null' ::: 1 2 3 & 
+  parallel -j0 -N0 --timeout 5 --nice 10 'bzip2 < /dev/zero >/dev/null' ::: 1 2 3 4 5 6 & 
   parallel --argsep ,, --joblog - -N0 parallel --load 100% echo ::: 1 ,, 1 | 
     parallel --colsep '\t' --header :  echo '{=4 $_=$_>5=}'
 

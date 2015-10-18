@@ -1131,6 +1131,8 @@ sub init_globals {
 	 '{...}' => 's:\.[^/.]+$::; s:\.[^/.]+$::; s:\.[^/.]+$::',
 	 '{/..}' => 's:.*/::; s:\.[^/.]+$::; s:\.[^/.]+$::',
 	 '{/...}' => 's:.*/::; s:\.[^/.]+$::; s:\.[^/.]+$::; s:\.[^/.]+$::',
+	 # {##} = number of jobs
+	 '{##}' => '$_=$Global::JobQueue->total_jobs()',
 	);
     # Modifiable copy of %Global::replace
     %Global::rpl = %Global::replace;
@@ -5746,6 +5748,7 @@ sub new {
     return bless {
         'unget' => \@unget,
         'commandlinequeue' => $commandlinequeue,
+        'this_job_no' => 1,
         'total_jobs' => undef,
     }, ref($class) || $class;
 }
@@ -5754,11 +5757,13 @@ sub get {
     my $self = shift;
 
     if(@{$self->{'unget'}}) {
+	$self->{'this_job_no'}++;
         my $job = shift @{$self->{'unget'}};
         return ($job);
     } else {
         my $commandline = $self->{'commandlinequeue'}->get();
         if(defined $commandline) {
+	    $self->{'this_job_no'}++;
             my $job = Job->new($commandline);
             return $job;
         } else {
@@ -5770,6 +5775,7 @@ sub get {
 sub unget {
     my $self = shift;
     unshift @{$self->{'unget'}}, @_;
+    $self->{'this_job_no'} -= @_;
 }
 
 sub empty {
@@ -5793,7 +5799,8 @@ sub total_jobs {
 	my $start = time;
         while($record = $record_queue->get()) {
 	    if(time - $start > 10) {
-		::warning("Reading ".scalar(@arg_records)." arguments took longer than 10 seconds.");
+		::warning("Reading ".scalar(@arg_records).
+			  " arguments took longer than 10 seconds.");
 		$opt::eta && ::warning("Consider removing --eta.");
 		$opt::bar && ::warning("Consider removing --bar.");
 		$opt::shuf && ::warning("Consider removing --shuf.");
@@ -5812,7 +5819,7 @@ sub total_jobs {
 	    }
 	}
 	$record_queue->unget(@arg_records);
-        $self->{'total_jobs'} = $#arg_records+1;
+        $self->{'total_jobs'} = $#arg_records+1+$self->{'this_job_no'};
 	::debug("init","Total jobs: ".$self->{'total_jobs'}."\n");
     }
     return $self->{'total_jobs'};
@@ -6094,16 +6101,20 @@ sub filter_through_compress {
 	my ($fh, $comfile) = ::tmpfile(SUFFIX => ".pac");
 	close $fh;
 	# Compressor: (echo > $comfile; compress pipe) > output
-	# When the echo is written to $comfile, it is known that output file is opened,
+	# When the echo is written to $comfile,
+	# it is known that output file is opened,
 	# thus output file can then be removed by the decompressor.
-        my $wpid = open(my $fdw,"|-", "(echo > $comfile; ".empty_input_wrapper($opt::compress_program).") >".
+        my $wpid = open(my $fdw,"|-", "(echo > $comfile; ".
+			empty_input_wrapper($opt::compress_program).") >".
 			$self->fh($fdno,'name')) || die $?;
 	$self->set_fh($fdno,'w',$fdw);
 	$self->set_fh($fdno,'wpid',$wpid);
-	# Decompressor: open output; -s $comfile > 0: rm $comfile output; decompress output > stdout
+	# Decompressor: open output; -s $comfile > 0: rm $comfile output;
+	#               decompress output > stdout
 	my $rpid = open(my $fdr, "-|", "perl", "-e", $cattail, $comfile,
 			$opt::decompress_program, $wpid,
-			$self->fh($fdno,'name'),$self->fh($fdno,'unlink')) || die $?;
+			$self->fh($fdno,'name'),$self->fh($fdno,'unlink'))
+	    || die $?;
 	$self->set_fh($fdno,'r',$fdr);
 	$self->set_fh($fdno,'rpid',$rpid);
     }
@@ -6125,9 +6136,14 @@ sub max_file_name_length {
     # Figure out the max length of a subdir
     # TODO and the max total length
     # Ext4 = 255,130816
+    # Uses:
+    #   $Global::max_file_length is set
+    # Returns:
+    #   $Global::max_file_length
     my $testdir = shift;
 
     my $upper = 8_000_000;
+    # Dir length of 8 chars is supported everywhere
     my $len = 8;
     my $dir = "x"x$len;
     do {
@@ -7107,8 +7123,10 @@ sub start {
 	open ERR, '>&', $stderr_fh or ::die_bug("Can't dup STDERR: $!");
 
 	my $pid;
-	my @setpgrp_wrap = ('perl','-e',
-			    "setpgrp\;eval\{setpriority\(0,0,$opt::nice\)\}\;exec '$Global::shell', '-c', \@ARGV");
+	my @setpgrp_wrap =
+	    ('perl','-e',
+	     "setpgrp\;eval\{setpriority\(0,0,$opt::nice\)\}\;".
+	     "exec '$Global::shell', '-c', \@ARGV");
 	# The eval is needed to catch exception from open3
 	eval {
 	    $pid = ::open3($stdin_fh, ">&OUT", ">&ERR", @setpgrp_wrap, $command)
@@ -7169,7 +7187,7 @@ sub start {
 	# The eval is needed to catch exception from open3
 	eval {
 	    no warnings;
-	    local(*IN) = $devtty_fh;
+	    local (*IN) = $devtty_fh;
 	    local (*OUT,*ERR);
 	    open OUT, '>&', $stdout_fh or ::die_bug("Can't dup STDOUT: $!");
 	    open ERR, '>&', $stderr_fh or ::die_bug("Can't dup STDERR: $!");
@@ -7191,7 +7209,8 @@ sub start {
 	*IN = *STDIN;
 	# The eval is needed to catch exception from open3
 	my @setpgrp_wrap = ('perl','-e',
-			    "setpgrp\;eval\{setpriority\(0,0,$opt::nice\)\}\;exec '$Global::shell', '-c', \@ARGV");
+			    "setpgrp\;eval\{setpriority\(0,0,$opt::nice\)\}\;".
+			    "exec '$Global::shell', '-c', \@ARGV");
 	eval {
 	    $pid = ::open3("<&IN", ">&OUT", ">&ERR", @setpgrp_wrap, $command)
 		|| ::die_bug("open3-<IN");
@@ -7394,7 +7413,7 @@ sub should_be_retried {
     my (%print_later,$job_end_sequence);
 
     sub print_earlier_jobs {
-	# Print jobs completed earlier
+	# Print jobs whose output is postponed due to --keep-order
 	# Returns: N/A
 	my $job = shift;
 	$print_later{$job->seq()} = $job;
@@ -7903,12 +7922,9 @@ sub populate {
     my $next_arg;
     my $max_len = $Global::minimal_command_line_length || Limits::Command::max_length();
 
-    if($opt::cat) {
-	# $PARALLEL_TMP will point to a tempfile that will be used as {}
-	$Global::JobQueue->{'commandlinequeue'}->{'arg_queue'}->
-	    unget([Arg->new('$PARALLEL_TMP')]);
-    }
-    if($opt::fifo) {
+    if($opt::cat or $opt::fifo) {
+	# Get the empty arg added by --pipepart (if any)
+	$Global::JobQueue->{'commandlinequeue'}->{'arg_queue'}->get();
 	# $PARALLEL_TMP will point to a tempfile that will be used as {}
 	$Global::JobQueue->{'commandlinequeue'}->{'arg_queue'}->
 	    unget([Arg->new('$PARALLEL_TMP')]);
@@ -8161,11 +8177,6 @@ sub len {
 	    $len += ($recargs -1 + $self->{'len'}{$replstring}) *
 		$self->{'replacecount'}{$replstring};
 	}
-    }
-    if($opt::nice) {
-	# Pessimistic length if --nice is set
-	# Worse than worst case: every char needs to be quoted with \
-	$len *= 2;
     }
     if($Global::quoting) {
 	# Pessimistic length if -q is set
