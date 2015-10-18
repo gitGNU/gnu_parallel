@@ -1198,12 +1198,15 @@ control on the command line (used by GNU B<parallel> internally when
 called with B<--sshlogin>).
 
 
-=item B<--plus>
+=item B<--plus> (alpha testing)
 
 Activate additional replacement strings: {+/} {+.} {+..} {+...} {..}
-{...} {/..} {/...}. The idea being that '{+foo}' matches the opposite of
+{...} {/..} {/...} {##}. The idea being that '{+foo}' matches the opposite of
 '{foo}' and {} = {+/}/{/} = {.}.{+.} = {+/}/{/.}.{+.} = {..}.{+..} =
 {+/}/{/..}.{+..} = {...}.{+...} = {+/}/{/...}.{+...}
+
+B<{##}> is the number of jobs to be run. It is incompatible with
+B<-X>/B<-m>/B<--xargs>.
 
 
 =item B<--progress>

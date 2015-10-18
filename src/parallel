@@ -5614,7 +5614,7 @@ sub sshcommand_of_sshlogin {
             $sshcmd = $opt::ssh; $serverlogin = $self->{'string'};
         }
     }
-    
+
     if($serverlogin =~ s/(\S+)\@(\S+)/$2/) {
 	# convert user@server to '-l user server'
 	# because lsh does not support user@server
@@ -5748,7 +5748,7 @@ sub new {
     return bless {
         'unget' => \@unget,
         'commandlinequeue' => $commandlinequeue,
-        'this_job_no' => 1,
+        'this_job_no' => 0,
         'total_jobs' => undef,
     }, ref($class) || $class;
 }
@@ -5756,17 +5756,15 @@ sub new {
 sub get {
     my $self = shift;
 
+    $self->{'this_job_no'}++;
     if(@{$self->{'unget'}}) {
-	$self->{'this_job_no'}++;
-        my $job = shift @{$self->{'unget'}};
-        return ($job);
+        return shift @{$self->{'unget'}};
     } else {
         my $commandline = $self->{'commandlinequeue'}->get();
         if(defined $commandline) {
-	    $self->{'this_job_no'}++;
-            my $job = Job->new($commandline);
-            return $job;
+            return Job->new($commandline);
         } else {
+	    $self->{'this_job_no'}--;
             return undef;
         }
     }
@@ -5819,8 +5817,11 @@ sub total_jobs {
 	    }
 	}
 	$record_queue->unget(@arg_records);
-        $self->{'total_jobs'} = $#arg_records+1+$self->{'this_job_no'};
-	::debug("init","Total jobs: ".$self->{'total_jobs'}."\n");
+	$self->{'total_jobs'} =
+	    ::ceil((1+$#arg_records+$self->{'this_job_no'})
+		   / ::max($Global::max_number_of_args,1));
+	::debug("init","Total jobs: ".$self->{'total_jobs'}.
+		" (".(1+$#arg_records)."+".$self->{'this_job_no'}.")\n");
     }
     return $self->{'total_jobs'};
 }

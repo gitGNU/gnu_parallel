@@ -233,10 +233,10 @@ parallel --wd . 'pwd; echo $OLDPWD; echo' ::: OK
 echo '**'
 
 echo 'bug #46232: {%} with --bar/--eta/--shuf or --halt xx% broken'
-  parallel --bar -kj2 echo {%} ::: a b  ::: c d e 2>/dev/null
-  parallel --halt now,fail=10% -kj2 echo {%} ::: a b  ::: c d e
-  parallel --eta -kj2 echo {%} ::: a b  ::: c d e 2>/dev/null
-  parallel --shuf -kj2 echo {%} ::: a b  ::: c d e 2>/dev/null
+  parallel --bar -kj2 --delay 0.1 echo {%} ::: a b  ::: c d e 2>/dev/null
+  parallel --halt now,fail=10% -kj2 --delay 0.1 echo {%} ::: a b  ::: c d e
+  parallel --eta -kj2 --delay 0.1 echo {%} ::: a b  ::: c d e 2>/dev/null
+  parallel --shuf -kj2 --delay 0.1 echo {%} ::: a b  ::: c d e 2>/dev/null
 
 echo '**'
 
@@ -251,6 +251,9 @@ echo '{##} bug #45841: Replacement string for total no of jobs'
 
   parallel --plus echo {##} ::: {a..j};
   parallel -k 'echo {= $::G++ > 3 and ($_=$Global::JobQueue->total_jobs());=}' ::: {1..10}
+  parallel -N7 --plus echo {#} {##} ::: {1..14}
+  parallel -N7 --plus echo {#} {##} ::: {1..15}
+  parallel -X --plus echo {#} {##} ::: {1..15}
 
 echo '**'
 
