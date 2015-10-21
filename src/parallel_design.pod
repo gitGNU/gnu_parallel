@@ -129,11 +129,9 @@ echo I<shell double quoted input>
 
 =item --nice I<pri>
 
-\nice -n I<pri> I<shell> -c I<shell quoted input>
+Remote: See B<The remote system wrapper>.
 
-The \ is needed to avoid using the builtin nice command, which does not
-support -n in B<tcsh>. B<I<shell> -c> is needed to nice composed commands
-command.
+Local: B<setpriority(0,0,$nice)>
 
 =item --cat
 
@@ -374,7 +372,12 @@ the %%-version, and the function definition works on both pre- and
 post-shellshock versions of B<bash>.
 
 
-=head2 Remote Ctrl-C and standard error (stderr)
+=head2 The remote system wrapper
+
+The remote system wrapper does some initialization before starting the
+command on the remote system.
+
+=head3 Ctrl-C and standard error (stderr)
 
 If the user presses Ctrl-C the user expects jobs to stop. This works
 out of the box if the jobs are run locally. Unfortunately it is not so
@@ -394,27 +397,50 @@ propagate the hang-up signal from B<sshd>. But when B<sshd> dies, the
 parent of the login shell becomes B<init> (process id 1). So by
 exec'ing a Perl wrapper to monitor the parent pid and kill the child
 if the parent pid becomes 1, then Ctrl-C works and stderr is kept on
-stderr. The wrapper looks like this:
+stderr.
 
+=head3 --nice
+
+B<nice>ing the remote process is done by B<setpriority(0,0,$nice)>. A
+few old systems do not implement this and is thus unsupported.
+
+=head3 Setting $PARALLEL_TMP
+
+B<$PARALLEL_TMP> is used by B<--fifo> and B<--cat> and must point to a
+non-exitent file in B<$TMPDIR>. This file name is computed on the
+remote system.
+
+=head3 The wrapper
+
+The wrapper looks like this:
+
+    $shell = $PARALLEL_SHELL || $SHELL;
+    $tmpdir = $TMPDIR;
+    $nice = $opt::nice;
+    # Set $PARALLEL_TMP to a non-existent file name in $TMPDIR
+    do {
+	$ENV{PARALLEL_TMP} = $tmpdir."/par".
+	    join"", map { (0..9,"a".."z","A".."Z")[rand(62)] } (1..5);
+    } while(-e $ENV{PARALLEL_TMP});
     $SIG{CHLD} = sub { $done = 1; };
     $pid = fork;
     unless($pid) {
-        # Make own process group to be able to kill HUP it later
-        setpgrp;
-        exec $ENV{SHELL}, "-c", ($bashfunc."@ARGV");
-        die "exec: $!\n";
+	# Make own process group to be able to kill HUP it later
+	setpgrp;
+	eval { setpriority(0,0,$nice) };
+	exec $shell, "-c", ($bashfunc."@ARGV");
+	die "exec: $!\n";
     }
     do {
-        # Parent is not init (ppid=1), so sshd is alive
-        # Exponential sleep up to 1 sec
-        $s = $s < 1 ? 0.001 + $s * 1.03 : $s;
-        select(undef, undef, undef, $s);
+	# Parent is not init (ppid=1), so sshd is alive
+	# Exponential sleep up to 1 sec
+	$s = $s < 1 ? 0.001 + $s * 1.03 : $s;
+	select(undef, undef, undef, $s);
     } until ($done || getppid == 1);
     # Kill HUP the process group if job not done
     kill(SIGHUP, -${pid}) unless $done;
     wait;
     exit ($?&127 ? 128+($?&127) : 1+$?>>8)
-
 
 =head2 Transferring of variables and functions
 

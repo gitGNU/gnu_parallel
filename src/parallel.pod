@@ -426,7 +426,7 @@ string that is not in the command line.
 See also: B<:::>.
 
 
-=item B<--bar>
+=item B<--bar> (alpha testing)
 
 Show progress as a progress bar. In the bar is shown: % of jobs
 completed, estimated seconds left, and number of jobs started.
@@ -513,7 +513,7 @@ I<size> defaults to 1M.
 See B<--pipe> and B<--pipepart> for use of this.
 
 
-=item B<--cat>
+=item B<--cat> (alpha testing)
 
 Create a temporary file with content. Normally B<--pipe>/B<--pipepart>
 will give data to the program on stdin (standard input). With B<--cat>
@@ -613,7 +613,7 @@ I<secs> seconds after starting each job. I<secs> can be less than 1
 second.
 
 
-=item B<--dry-run>
+=item B<--dry-run> (alpha testing)
 
 Print the job to run on stdout (standard output), but do not run the
 job. Use B<-v -v> to include the wrapping that GNU Parallel generates
@@ -672,7 +672,7 @@ and functions) use env_parallel as described under the option I<command>.
 See also: B<--record-env>.
 
 
-=item B<--eta>
+=item B<--eta> (alpha testing)
 
 Show the estimated number of seconds before finishing. This forces GNU
 B<parallel> to read all jobs before starting to find the number of
@@ -693,7 +693,7 @@ Implies B<--semaphore>.
 See also B<--bg>, B<man sem>.
 
 
-=item B<--fifo>
+=item B<--fifo> (alpha testing)
 
 Create a temporary fifo with content. Normally B<--pipe> and
 B<--pipepart> will give data to the program on stdin (standard
@@ -725,7 +725,7 @@ over B<--tollef>. The B<--tollef> option is now retired, and therefore
 may not be used. B<--gnu> is kept for compatibility.
 
 
-=item B<--group>
+=item B<--group> (alpha testing)
 
 Group output. Output from each jobs is grouped together and is only
 printed when the command is finished. stderr (standard error) first
@@ -747,9 +747,9 @@ See also: B<--line-buffer> B<--ungroup>
 Print a summary of the options to GNU B<parallel> and exit.
 
 
-=item B<--halt-on-error> I<val>
+=item B<--halt-on-error> I<val> (alpha testing)
 
-=item B<--halt> I<val>
+=item B<--halt> I<val> (alpha testing)
 
 When should GNU B<parallel> terminate? In some situations it makes no
 sense to run all jobs. GNU B<parallel> should simply give up as soon
@@ -1172,7 +1172,7 @@ performance is important use B<--pipepart>.
 See also: B<--recstart>, B<--recend>, B<--fifo>, B<--cat>, B<--pipepart>.
 
 
-=item B<--pipepart>
+=item B<--pipepart> (alpha testing)
 
 Pipe parts of a physical file. B<--pipepart> works similar to
 B<--pipe>, but is much faster. It has a few limitations:
@@ -1288,7 +1288,7 @@ Overrides an earlier B<--keep-order> (e.g. if set in
 B<~/.parallel/config>).
 
 
-=item B<--nice> I<niceness>
+=item B<--nice> I<niceness> (alpha testing)
 
 Run the command at this niceness. For simple commands you can just add
 B<nice> in front of the command. But if the command consists of more
@@ -1737,7 +1737,7 @@ Does not run the command but quotes it. Useful for making quoted
 composed commands for GNU B<parallel>.
 
 
-=item B<--shuf>
+=item B<--shuf> (alpha testing)
 
 Shuffle jobs. When having multiple input sources it is hard to
 randomize jobs. --shuf will generate all jobs, and shuffle them before
@@ -1765,13 +1765,13 @@ I<secs> seconds after starting each ssh. I<secs> can be less than 1
 seconds.
 
 
-=item B<-S> I<[@hostgroups/][ncpu/]sshlogin[,[@hostgroups/][ncpu/]sshlogin[,...]]>
+=item B<-S> I<[@hostgroups/][ncpu/]sshlogin[,[@hostgroups/][ncpu/]sshlogin[,...]]> (alpha testing)
 
-=item B<-S> I<@hostgroup>
+=item B<-S> I<@hostgroup> (alpha testing)
 
-=item B<--sshlogin> I<[@hostgroups/][ncpu/]sshlogin[,[@hostgroups/][ncpu/]sshlogin[,...]]>
+=item B<--sshlogin> I<[@hostgroups/][ncpu/]sshlogin[,[@hostgroups/][ncpu/]sshlogin[,...]]> (alpha testing)
 
-=item B<--sshlogin> I<@hostgroup>
+=item B<--sshlogin> I<@hostgroup> (alpha testing)
 
 Distribute jobs to remote computers. The jobs will be run on a list of
 remote computers.
@@ -2088,9 +2088,9 @@ Use B<-v> B<-v> to print the wrapping ssh command when running remotely.
 Print the version GNU B<parallel> and exit.
 
 
-=item B<--workdir> I<mydir>
+=item B<--workdir> I<mydir> (alpha testing)
 
-=item B<--wd> I<mydir>
+=item B<--wd> I<mydir> (alpha testing)
 
 Files transferred using B<--transfer> and B<--return> will be relative
 to I<mydir> on remote computers, and the command will be executed in
