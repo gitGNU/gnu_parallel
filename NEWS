@@ -1,3 +1,36 @@
+20151122
+
+* GNU Parallel packaged for CERN CentOS: http://linuxsoft.cern.ch/cern/centos/7/cern/x86_64/repoview/parallel.html
+
+* GNU Parallel was cited in: The Outer Solar System Origins Survey: I. Design and First-Quarter Discoveries http://arxiv.org/pdf/1511.02895.pdf
+
+* GNU Parallel was cited in: Contrasting genetic architectures of schizophrenia and other complex diseases using fast variance-components analysis http://www.nature.com/ng/journal/vaop/ncurrent/full/ng.3431.html
+
+* GNU Parallel was cited in: Named-Entity Chunking for Norwegian Text using Support Vector Machines http://ojs.bibsys.no/index.php/NIK/article/viewFile/248/211
+
+* GNU Parallel was cited in: Multiscale Estimation of Binding Kinetics Using Brownian Dynamics, Molecular Dynamics and Milestoning http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004381#pcbi.1004381.ref072
+
+* GNU Parallel was cited in: A Detailed Characterization of Errors in Logic Circuits due to Single-Event Transients http://ieeexplore.ieee.org/xpl/articleDetails.jsp?tp=&arnumber=7302348&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7302348
+
+* GNU Parallel was cited in: Exploiting Multiple Levels of Parallelism in Sparse Matrix-Matrix Multiplication http://arxiv.org/pdf/1510.00844.pdf
+
+* GNU Parallel was cited in: Arabic Speaker Emotion Classification Using Rhythm Metrics and Neural Networks http://www.eurasip.org/Proceedings/Eusipco/Eusipco2015/papers/1570104855.pdf
+
+* GNU Parallel was cited in: Stride Search: a general algorithm for storm detection in high resolution climate data http://www.geosci-model-dev-discuss.net/8/7727/2015/gmdd-8-7727-2015.pdf
+
+* GNU Parallel was cited in: Decomposing Digital Paintings into Layers via RGB-space Geometry http://arxiv.org/pdf/1509.03335.pdf
+
+* GNU Parallel was cited in: Structure and evolutionary history of a large family of NLR proteins in the zebrafish http://www.biorxiv.org/content/biorxiv/early/2015/09/18/027151.full.pdf
+
+* GNU Parallel was cited in: Evolution of movement strategies under competitive interactions http://digital.csic.es/bitstream/10261/115973/1/evolution_movement_strategies_Kiziridis.pdf
+
+* Automating large numbers of tasks https://rcc.uchicago.edu/docs/tutorials/kicp-tutorials/running-jobs.html
+
+* Max out your IOPs with GNU Parallel http://blog.bitratchet.com/2015/11/11/max-out-your-iops-with-gnu-parallel/
+
+* Bug fixes and man page updates.
+
+
 20151022
 
 * --plus makes it possible to use {##} as a shorthand for
