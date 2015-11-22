@@ -955,14 +955,7 @@ sub parse_options {
 	$opt::blocksize = 2**31-1;
     }
     $opt::memfree = multiply_binary_prefix($opt::memfree);
-    if(defined $opt::timeout and $opt::timeout !~ /^\d+(\.\d+)?%?$/) {
-	::error("--timeout must be seconds or percentage.");
-	wait_and_exit(255);
-    }
-    if(defined $opt::fifo and $opt::cat) {
-	::error("--fifo cannot be combined with --cat.");
-	::wait_and_exit(255);
-    }
+    check_invalid_option_combinations();
     if((defined $opt::fifo or defined $opt::cat)
        and not $opt::pipepart) {
 	$opt::pipe = 1;
@@ -1046,13 +1039,6 @@ sub parse_options {
 	# Default = {}
 	$opt::tagstring = $Global::parensleft.$Global::parensright;
     }
-    if(defined $opt::pipepart and
-       (defined $opt::L or defined $opt::max_lines
-	or defined $opt::max_replace_args)) {
-	::error("--pipepart is incompatible with --max-replace-args, ".
-		"--max-lines, and -L.");
-	wait_and_exit(255);
-    }
     if(grep /^$Global::arg_sep$|^$Global::arg_file_sep$/o, @ARGV) {
         # Deal with ::: and ::::
         @ARGV=read_args_from_command_line();
@@ -1065,23 +1051,6 @@ sub parse_options {
     if(defined $opt::bar) {
         $opt::progress = $opt::bar;
     }
-    if(defined $opt::retired) {
-	    ::error("-g has been retired. Use --group.",
-		    "-B has been retired. Use --bf.",
-		    "-T has been retired. Use --tty.",
-		    "-U has been retired. Use --er.",
-		    "-W has been retired. Use --wd.",
-		    "-Y has been retired. Use --shebang.",
-		    "-H has been retired. Use --halt.",
-		    "--ctrlc has been retired.",
-		    "--noctrlc has been retired.");
-            ::wait_and_exit(255);
-    }
-    if(defined $opt::tollef and not $opt::gnu) {
-       ::error("--tollef has been retired.","Remove --tollef or use --gnu to override --tollef.");
-       ::wait_and_exit(255);
-    }
-
     citation_notice();
 
     parse_halt();
@@ -1099,6 +1068,52 @@ sub parse_options {
         $opt::jobs = "100%";
     }
     open_joblog();
+}
+
+sub check_invalid_option_combinations {
+    if(defined $opt::timeout and $opt::timeout !~ /^\d+(\.\d+)?%?$/) {
+	::error("--timeout must be seconds or percentage.");
+	wait_and_exit(255);
+    }
+    if(defined $opt::fifo and $opt::cat) {
+	::error("--fifo cannot be combined with --cat.");
+	::wait_and_exit(255);
+    }
+    if(defined $opt::pipepart and
+       (defined $opt::L or defined $opt::max_lines
+	or defined $opt::max_replace_args)) {
+	::error("--pipepart is incompatible with --max-replace-args, ".
+		"--max-lines, and -L.");
+	wait_and_exit(255);
+    }
+    if(defined $opt::group and $opt::ungroup) {
+	::error("--group cannot be combined with --ungroup.");
+	::wait_and_exit(255);
+    }
+    if(defined $opt::group and $opt::linebuffer) {
+	::error("--group cannot be combined with --line-buffer.");
+	::wait_and_exit(255);
+    }
+    if(defined $opt::ungroup and $opt::linebuffer) {
+	::error("--ungroup cannot be combined with --line-buffer.");
+	::wait_and_exit(255);
+    }
+    if(defined $opt::tollef and not $opt::gnu) {
+       ::error("--tollef has been retired.","Remove --tollef or use --gnu to override --tollef.");
+       ::wait_and_exit(255);
+    }
+    if(defined $opt::retired) {
+	    ::error("-g has been retired. Use --group.",
+		    "-B has been retired. Use --bf.",
+		    "-T has been retired. Use --tty.",
+		    "-U has been retired. Use --er.",
+		    "-W has been retired. Use --wd.",
+		    "-Y has been retired. Use --shebang.",
+		    "-H has been retired. Use --halt.",
+		    "--ctrlc has been retired.",
+		    "--noctrlc has been retired.");
+            ::wait_and_exit(255);
+    }
 }
 
 sub init_globals {
