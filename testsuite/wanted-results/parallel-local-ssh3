@@ -1,6 +1,6 @@
 echo '### --hostgroup force ncpu'
 ### --hostgroup force ncpu
-  parallel --delay 0.1 --hgrp -S @g1/1/parallel@lo -S @g2/3/lo whoami\;sleep 0.2{} ::: {1..8} | sort
+  parallel --delay 0.1 --hgrp -S @g1/1/parallel@lo -S @g2/3/lo whoami\;sleep 0.3{} ::: {1..8} | sort
 parallel
 parallel
 tange
@@ -33,7 +33,7 @@ tange
 tange
 echo '### --hostgroup multiple group arg + unused group'
 ### --hostgroup multiple group arg + unused group
-  parallel --delay 0.1 --hgrp -S @g1/1/parallel@lo -S @g1/3/lo -S @g3/100/tcsh@lo whoami\;sleep 0.2{} ::: {1..8}@g1+g2 | sort
+  parallel --delay 0.1 --hgrp -S @g1/1/parallel@lo -S @g1/3/lo -S @g3/100/tcsh@lo whoami\;sleep 0.4{} ::: {1..8}@g1+g2 | sort
 parallel
 parallel
 tange

@@ -4,7 +4,7 @@
 
 Check that documentation is updated (compare to web):
 
-Fixet for 20150922
+Fixet for 20151022
 git diff last-release-commit
 Unmodified beta since last version => production
 Unmodified alpha since last version => beta
@@ -212,17 +212,15 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20151022 ('Liquid Water / 9N314M') released <<[stable]>>
+Subject: GNU Parallel 20151122 ('Kronan/Sharm el-Sheik/Bataclan') released <<[stable]>>
 
-GNU Parallel 20151022 ('Liquid Water') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20151122 ('Kronan/Sharm el-Sheik/Bataclan') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
 Haiku of the month:
 
-  In parallel land
-  everything is quick and fast
-  Use GNU Parallel.
+<<>>
     -- Ole Tange
 
 New in this release:
@@ -236,25 +234,15 @@ New in this release:
 * <<kontaktet 2015-06-22 Afventer svar fra journal>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
 http://www.researchgate.net/profile/Christoph_Junghans/publication/276178326_TADSim_Discrete_Event-Based_Performance_Prediction_for_Temperature-Accelerated_Dynamics/links/55562b6708ae980ca60c8369.pdf
 
-* --plus makes it possible to use {##} as a short had for {= $_=$Global::JobQueue->total_jobs() =} which gives the the number of jobs to run.
+* << Update forventet juni Rachel har lige svaret >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
+ 
+* GNU Parallel packaged for CERN CentOS: http://linuxsoft.cern.ch/cern/centos/7/cern/x86_64/repoview/parallel.html
 
-* {= $_=$Global::JobQueue->total_jobs() =} is incompatible with -X, -m, and --xargs.
+* Automating large numbers of tasks https://rcc.uchicago.edu/docs/tutorials/kicp-tutorials/running-jobs.html
 
-* GNU Parallel is now mostly compatible with lsh (http://www.lysator.liu.se/~nisse/lsh/) and somewhat compatible with autossh (http://www.harding.motd.ca/autossh/).
+* Max out your IOPs with GNU Parallel http://blog.bitratchet.com/2015/11/11/max-out-your-iops-with-gnu-parallel/
 
-* --workdir ... now also works when run locally.
-
-* GNU Parallel was cited in: There is no (75, 32, 10, 16) strongly regular graph http://arxiv.org/pdf/1509.05933.pdf
-
-* GNU Parallel was cited in: Roary: rapid large-scale prokaryote pan genome analysis http://bioinformatics.oxfordjournals.org/content/early/2015/08/05/bioinformatics.btv421.full.pdf+html
-
-* GNU Parallel is used in TraitAR: https://testpypi.python.org/pypi/traitar/0.1.4
-
-* GNU Parallel is used in youtube-dl-parallel: https://github.com/dlh/youtube-dl-parallel
-
-* A parallel and fast way to download multiple files http://onetipperday.blogspot.com/2015/10/a-parallel-and-fast-way-to-download.html
-
-* Usar GNU Parallel para aumentar el rendimiento de tus scripts http://adrianarroyocalle.github.io/blog/2015/10/20/usar-gnu-parallel/
+* GNU Parallel was cited in: Evolution of movement strategies under competitive interactions http://digital.csic.es/bitstream/10261/115973/1/evolution_movement_strategies_Kiziridis.pdf
 
 * Bug fixes and man page updates.
 

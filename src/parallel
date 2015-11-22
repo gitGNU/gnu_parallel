@@ -435,8 +435,8 @@ sub spreadstdin {
 	    my $something_written = 0;
 	    for my $pid (keys %incomplete_jobs) {
 		my $job = $incomplete_jobs{$pid};
-		if($job->stdin_buffer_length()) {
-		    $something_written += $job->non_block_write();
+		if($job->block_length()) {
+		    $something_written += $job->non_blocking_write();
 		} else {
 		    delete $incomplete_jobs{$pid}
 		}
@@ -509,7 +509,7 @@ sub nindex {
 	#   %Global::running
 	# Returns:
 	#   $something_written = amount of bytes written
-	my ($header_ref,$block_ref,$recstart,$recend,$endpos) = @_;
+	my ($header_ref,$buffer_ref,$recstart,$recend,$endpos) = @_;
 	my $something_written = 0;
 	my $block_passed = 0;
 	my $sleep = 1;
@@ -522,13 +522,13 @@ sub nindex {
 				    values %Global::running);
 	    }
 	    while(my $job = shift @robin_queue) {
-		if($job->stdin_buffer_length() > 0) {
-		    $something_written += $job->non_block_write();
+		if($job->block_length() > 0) {
+		    $something_written += $job->non_blocking_write();
 		} else {
-		    $job->set_stdin_buffer($header_ref,$block_ref,$endpos,$recstart,$recend);
+		    $job->set_block($header_ref,$buffer_ref,$endpos,$recstart,$recend);
 		    $block_passed = 1;
 		    $job->set_virgin(0);
-		    $something_written += $job->non_block_write();
+		    $something_written += $job->non_blocking_write();
 		    last;
 		}
 	    }
@@ -633,21 +633,21 @@ sub write_record_to_pipe {
     # Input:
     #   $chunk_number = sequence number - to see if already run
     #   $header_ref = reference to header string to prepend
-    #   $record_ref = reference to record to write
+    #   $buffer_ref = reference to record to write
     #   $recstart = start string of record
     #   $recend = end string of record
-    #   $endpos = position in $record_ref where record ends
+    #   $endpos = position in $buffer_ref where record ends
     # Uses:
     #   $Global::job_already_run
     #   $opt::roundrobin
     #   @Global::virgin_jobs
     # Returns:
     #   Number of chunks written (0 or 1)
-    my ($chunk_number,$header_ref,$record_ref,$recstart,$recend,$endpos) = @_;
+    my ($chunk_number,$header_ref,$buffer_ref,$recstart,$recend,$endpos) = @_;
     if($endpos == 0) { return 0; }
     if(vec($Global::job_already_run,$chunk_number,1)) { return 1; }
     if($opt::roundrobin) {
-	return round_robin_write($header_ref,$record_ref,$recstart,$recend,$endpos);
+	return round_robin_write($header_ref,$buffer_ref,$recstart,$recend,$endpos);
     }
     # If no virgin found, backoff
     my $sleep = 0.0001; # 0.01 ms - better performance on highend
@@ -655,28 +655,31 @@ sub write_record_to_pipe {
 	::debug("pipe", "No virgin jobs");
 	$sleep = ::reap_usleep($sleep);
 	# Jobs may not be started because of loadavg
-	# or too little time between each ssh login.
+	# or too little time between each ssh login
+	# or retrying failed jobs.
 	start_more_jobs();
     }
     my $job = shift @Global::virgin_jobs;
     # Job is no longer virgin
     $job->set_virgin(0);
-    # We ignore the removed rec_sep which is technically wrong.
-    $job->add_transfersize($endpos + length $$header_ref);
-    if(fork()) {
-	# Skip
-    } else {
-	# Chop of at $endpos as we do not know how many rec_sep will
-	# be removed.
-	substr($$record_ref,$endpos,length $$record_ref) = "";
-	# Remove rec_sep
-	if($opt::remove_rec_sep) {
-	    Job::remove_rec_sep($record_ref,$recstart,$recend);
+    if(1) {
+	# We ignore the removed rec_sep which is technically wrong.
+	$job->add_transfersize($endpos + length $$header_ref);
+	if(fork()) {
+	    # Skip
+	} else {
+	    # Chop of at $endpos as we do not know how many rec_sep will
+	    # be removed.
+	    substr($$buffer_ref,$endpos,length $$buffer_ref) = "";
+	    # Remove rec_sep
+	    if($opt::remove_rec_sep) {
+		Job::remove_rec_sep($buffer_ref,$recstart,$recend);
+	    }
+	    $job->write($header_ref);
+	    $job->write($buffer_ref);
+	    close $job->fh(0,"w");
+	    exit(0);
 	}
-	$job->write($header_ref);
-	$job->write($record_ref);
-	close $job->fh(0,"w");
-	exit(0);
     }
     close $job->fh(0,"w");
     return 1;
@@ -1100,7 +1103,7 @@ sub parse_options {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20151022;
+    $Global::version = 20151023;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -6198,32 +6201,38 @@ sub write {
     }
 }
 
-sub set_stdin_buffer {
+sub set_block {
     # Copy stdin buffer from $block_ref up to $endpos
-    # Prepend with $header_ref
+    # Prepend with $header_ref if virgin (i.e. not --roundrobin)
     # Remove $recstart and $recend if needed
     # Input:
     #   $header_ref = ref to $header to prepend
-    #   $block_ref = ref to $block to pass on
+    #   $buffer_ref = ref to $buffer containing the block
     #   $endpos = length of $block to pass on
     #   $recstart = --recstart regexp
     #   $recend = --recend regexp
     # Returns:
     #   N/A
     my $self = shift;
-    my ($header_ref,$block_ref,$endpos,$recstart,$recend) = @_;
-    $self->{'stdin_buffer'} = ($self->virgin() ? $$header_ref : "").substr($$block_ref,0,$endpos);
+    my ($header_ref,$buffer_ref,$endpos,$recstart,$recend) = @_;
+    $self->{'block'} = ($self->virgin() ? $$header_ref : "").substr($$buffer_ref,0,$endpos);
     if($opt::remove_rec_sep) {
-	remove_rec_sep(\$self->{'stdin_buffer'},$recstart,$recend);
+	remove_rec_sep(\$self->{'block'},$recstart,$recend);
     }
-    $self->{'stdin_buffer_length'} = length $self->{'stdin_buffer'};
-    $self->{'stdin_buffer_pos'} = 0;
-    $self->add_transfersize($self->{'stdin_buffer_length'});
+    $self->{'block_length'} = length $self->{'block'};
+    $self->{'block_pos'} = 0;
+    $self->add_transfersize($self->{'block_length'});
 }
 
-sub stdin_buffer_length {
+sub block_ref {
     my $self = shift;
-    return $self->{'stdin_buffer_length'};
+    return \$self->{'block'};
+}
+
+
+sub block_length {
+    my $self = shift;
+    return $self->{'block_length'};
 }
 
 sub remove_rec_sep {
@@ -6234,26 +6243,26 @@ sub remove_rec_sep {
     $$block_ref =~ s/$recend$//os;
 }
 
-sub non_block_write {
+sub non_blocking_write {
     my $self = shift;
     my $something_written = 0;
     use POSIX qw(:errno_h);
     # for loop used to avoid copying substr: $buf will be an alias for the substr
-    for my $buf (substr($self->{'stdin_buffer'},$self->{'stdin_buffer_pos'})) {
+    for my $buf (substr($self->{'block'},$self->{'block_pos'})) {
 	my $in = $self->fh(0,"w");
 	my $rv = syswrite($in, $buf);
 	if (!defined($rv) && $! == EAGAIN) {
 	    # would block
 	    $something_written = 0;
-	} elsif ($self->{'stdin_buffer_pos'}+$rv != $self->{'stdin_buffer_length'}) {
+	} elsif ($self->{'block_pos'}+$rv != $self->{'block_length'}) {
 	    # incomplete write
 	    # Remove the written part
-	    $self->{'stdin_buffer_pos'} += $rv;
+	    $self->{'block_pos'} += $rv;
 	    $something_written = $rv;
 	} else {
 	    # successfully wrote everything
 	    my $a = "";
-	    $self->set_stdin_buffer(\$a,\$a,0,"","");
+	    $self->set_block(\$a,\$a,0,"","");
 	    $something_written = $rv;
 	}
     }
@@ -8001,11 +8010,13 @@ sub push {
 	if($perlexpr =~ /^(\d+) /) {
 	    # Positional
 	    defined($record->[$1-1]) or next;
-	    $self->{'len'}{$perlexpr} += length $record->[$1-1]->replace($perlexpr,$quote_arg,$self);
+	    $self->{'len'}{$perlexpr} +=
+		length $record->[$1-1]->replace($perlexpr,$quote_arg,$self);
 	} else {
 	    for my $arg (@$record) {
 		if(defined $arg) {
-		    $self->{'len'}{$perlexpr} += length $arg->replace($perlexpr,$quote_arg,$self);
+		    $self->{'len'}{$perlexpr} +=
+			length $arg->replace($perlexpr,$quote_arg,$self);
 		}
 	    }
 	}
@@ -8604,7 +8615,7 @@ sub get {
 	if($opt::pipe or $opt::pipepart) {
 	    if($cmd_line->replaced() eq "") {
 		# Empty command - pipe requires a command
-		::error("--pipe must have a command to pipe into (e.g. 'cat').");
+		::error("--pipe/--pipepart must have a command to pipe into (e.g. 'cat').");
 		::wait_and_exit(255);
 	    }
 	} else {

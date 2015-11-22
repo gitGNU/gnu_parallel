@@ -1,8 +1,8 @@
 20151022
 
-* --plus makes it possible to use {##} as a short had for {=
-  $_=$Global::JobQueue->total_jobs() =} which gives the the number of
-  jobs to run.
+* --plus makes it possible to use {##} as a shorthand for
+  {= $_=$Global::JobQueue->total_jobs() =} which gives the the number
+  of jobs to run in total.
 
 * {= $_=$Global::JobQueue->total_jobs() =} is incompatible with -X,
   -m, and --xargs.
@@ -37,30 +37,48 @@
 
 20150922
 
-* GNU Parallel was cited in: Flexible Modeling of Epidemics with an Empirical Bayes Framework http://journals.plos.org/ploscompbiol/article?id=10.1371%2Fjournal.pcbi.1004382
+* GNU Parallel was cited in: Flexible Modeling of Epidemics with an
+  Empirical Bayes Framework
+  http://journals.plos.org/ploscompbiol/article?id=10.1371%2Fjournal.pcbi.1004382
 
-* GNU Parallel was cited in: BL1: 2D Potts Model with a Twist https://sucs.swan.ac.uk/~rjames93/Dissertation.pdf
+* GNU Parallel was cited in: BL1: 2D Potts Model with a Twist
+  https://sucs.swan.ac.uk/~rjames93/Dissertation.pdf
 
-* GNU Parallel was cited in: DockBench: An Integrated Informatic Platform Bridging the Gap between the Robust Validation of Docking Protocols and Virtual Screening Simulations http://www.mdpi.com/1420-3049/20/6/9977/pdf
+* GNU Parallel was cited in: DockBench: An Integrated Informatic
+  Platform Bridging the Gap between the Robust Validation of Docking
+  Protocols and Virtual Screening Simulations
+  http://www.mdpi.com/1420-3049/20/6/9977/pdf
 
-* GNU Parallel was cited in: A Scalable Parallel Implementation of Evolutionary Algorithms for
-Multi-Objective Optimization on GPUs http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7257074
+* GNU Parallel was cited in: A Scalable Parallel Implementation of
+  Evolutionary Algorithms for Multi-Objective Optimization on GPUs
+  http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7257074
 
-* GNU Parallel was cited in: Tools and techniques for computational reproducibility http://biorxiv.org/content/biorxiv/early/2015/07/17/022707.full.pdf
+* GNU Parallel was cited in: Tools and techniques for computational
+  reproducibility
+  http://biorxiv.org/content/biorxiv/early/2015/07/17/022707.full.pdf
 
-* GNU Parallel was cited in: How Can We Measure the Similarity Between Résumés of Selected Candidates for a Job? http://www.researchgate.net/publication/275954089_How_can_we_measure_the_similarity_between_rsums_of_selected_candidates_for_a_job
+* GNU Parallel was cited in: How Can We Measure the Similarity Between
+  Résumés of Selected Candidates for a Job?
+  http://www.researchgate.net/publication/275954089_How_can_we_measure_the_similarity_between_rsums_of_selected_candidates_for_a_job
 
-* GNU Parallel was cited in: Interplay of cell dynamics and epithelial tension during morphogenesis of the Drosophila pupal wing http://www.researchgate.net/profile/Raphael_Etournay/publication/279061859_Interplay_of_cell_dynamics_and_epithelial_tension_during_morphogenesis_of_the_Drosophila_pupal_wing/links/558a95ad08aeae8413bcceea.pdf
+* GNU Parallel was cited in: Interplay of cell dynamics and epithelial
+  tension during morphogenesis of the Drosophila pupal wing
+  http://www.researchgate.net/profile/Raphael_Etournay/publication/279061859_Interplay_of_cell_dynamics_and_epithelial_tension_during_morphogenesis_of_the_Drosophila_pupal_wing/links/558a95ad08aeae8413bcceea.pdf
 
-* Third-party selling GNU Parallel T-shirts http://www.aliexpress.com/item/2015F-BSO-GNU-LOGO-GNU-PARALLEL-men-s-shirt-sleeve-visual-illusion-error/32464827966.html
+* Third-party selling GNU Parallel T-shirts
+  http://www.aliexpress.com/item/2015F-BSO-GNU-LOGO-GNU-PARALLEL-men-s-shirt-sleeve-visual-illusion-error/32464827966.html
 
-* Joys of gnu parallel http://scottolesen.com/index.php/2015/08/26/joys-of-gnu-parallel/
+* Joys of gnu parallel
+  http://scottolesen.com/index.php/2015/08/26/joys-of-gnu-parallel/
 
-* Crop and resize images with bash and ImageMagick https://www.simonholywell.com/post/2015/08/image-resize-crop-bash-imagemagick/
+* Crop and resize images with bash and ImageMagick
+  https://www.simonholywell.com/post/2015/08/image-resize-crop-bash-imagemagick/
 
-* Three Ways to Script Processes in Parallel http://www.codeword.xyz/2015/09/02/three-ways-to-script-processes-in-parallel/
+* Three Ways to Script Processes in Parallel
+  http://www.codeword.xyz/2015/09/02/three-ways-to-script-processes-in-parallel/
 
-* What It Looks Like to Process 3.5 Million Books http://blog.gdeltproject.org/what-it-looks-like-to-process-3-5-million-books/
+* What It Looks Like to Process 3.5 Million Books
+  http://blog.gdeltproject.org/what-it-looks-like-to-process-3-5-million-books/
 
 * Bug fixes and man page updates.
 
