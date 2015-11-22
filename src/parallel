@@ -4247,7 +4247,8 @@ sub memfree_recompute {
     my $script = memfreescript();
 
     # TODO add sshlogin and backgrounding
-    $self->{'memfree'} = qx{ $script };
+    # Run it twice if it gives 0
+    $self->{'memfree'} = qx{ $script } || qx{ $script };
     if(not $self->{'memfree'}) {
 	::die_bug("Less than 1 byte free");
     }
