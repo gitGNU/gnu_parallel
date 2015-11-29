@@ -1118,7 +1118,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20151122;
+    $Global::version = 20151123;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1150,7 +1150,7 @@ sub init_globals {
 	 '{/..}' => 's:.*/::; s:\.[^/.]+$::; s:\.[^/.]+$::',
 	 '{/...}' => 's:.*/::; s:\.[^/.]+$::; s:\.[^/.]+$::; s:\.[^/.]+$::',
 	 # {##} = number of jobs
-	 '{##}' => '$_=$Global::JobQueue->total_jobs()',
+	 '{##}' => '$_=total_jobs()',
 	);
     # Modifiable copy of %Global::replace
     %Global::rpl = %Global::replace;
@@ -1682,7 +1682,7 @@ sub cleanup {
     # Returns: N/A
     unlink keys %Global::unlink;
     map { rmdir $_ } keys %Global::unlink;
-    if(@opt::basefile) { cleanup_basefile(); }
+    if(@opt::basefile and $opt::cleanup) { cleanup_basefile(); }
 }
 
 sub __QUOTING_ARGUMENTS_FOR_SHELL__ {}
@@ -2508,7 +2508,7 @@ sub progress {
 	    $last_column_time = time;
 	    $columns = $ENV{'COLUMNS'};
 	    if(not $columns) {
-		my $stty = qx{ stty -a </dev/tty };
+		my $stty = ::qqx("stty -a </dev/tty");
 		# FreeBSD/OpenBSD/NetBSD/Dragonfly/MirOS
 		# MacOSX/IRIX/AIX/Tru64
 		$stty =~ /(\d+) columns/ and do { $columns = $1; };
@@ -2520,7 +2520,7 @@ sub progress {
 		$stty =~ /rows=\d+,(\d+)/ and do { $columns = $1; };
 	    }
 	    if(not $columns) {
-		my $resize = qx{ sh -c 'resize 2>/dev/null' };
+		my $resize = ::qqx("resize");
 		$resize =~ /COLUMNS=(\d+);/ and do { $columns = $1; };
 	    }
 	    $columns ||= 80;
@@ -3116,7 +3116,7 @@ sub onall {
     close $parallel_fh;
     $Global::exitstatus = $? >> 8;
     debug("init", "--onall exitvalue ", $?);
-    if(@opt::basefile) { cleanup_basefile(); }
+    if(@opt::basefile and $opt::cleanup) { cleanup_basefile(); }
     $Global::debug or unlink(@argfiles);
     my %seen;
     for my $joblog (@joblogs) {
@@ -3150,11 +3150,11 @@ sub save_original_signal_handler {
     #   %Global::original_sig
     # Returns: N/A
     $SIG{INT} = sub {
-	if($opt::tmux) { qx { tmux kill-session -t p$$ }; }
+	if($opt::tmux) { ::qqx("tmux kill-session -t p$$"); }
 	wait_and_exit(255);
     };
     $SIG{TERM} = sub {
-	if($opt::tmux) { qx { tmux kill-session -t p$$ }; }
+	if($opt::tmux) { ::qqx("tmux kill-session -t p$$"); }
 	wait_and_exit(255);
     };
     %Global::original_sig = %SIG;
@@ -3399,7 +3399,7 @@ sub usage {
 	 "  O. Tange (2011): GNU Parallel - The Command-Line Power Tool,",
 	 "  ;login: The USENIX Magazine, February 2011:42-47.",
 	 "",
-	 "This helps funding further development; and it won't cost you a cent.",
+	 "This helps funding further development; AND IT WON'T COST YOU A CENT.",
 	 "If you pay 10000 EUR you should feel free to use GNU Parallel without citing.\n",
 	 "");
 }
@@ -3427,7 +3427,7 @@ sub citation_notice {
 	     "  O. Tange (2011): GNU Parallel - The Command-Line Power Tool,\n",
 	     "  ;login: The USENIX Magazine, February 2011:42-47.\n",
 	     "\n",
-	     "This helps funding further development; and it won't cost you a cent.\n",
+	     "This helps funding further development; AND IT WON'T COST YOU A CENT.\n",
 	     "If you pay 10000 EUR you should feel free to use GNU Parallel without citing.\n",
 	     "\n",
 	     "To silence the citation notice: run 'parallel --bibtex'.\n\n",
@@ -3507,7 +3507,7 @@ sub bibtex {
 	       "",
 	       "(Feel free to use \\nocite{Tange2011a})",
 	       "",
-	       "This helps funding further development; and it won't cost you a cent.",
+	       "This helps funding further development; AND IT WON'T COST YOU A CENT.",
 	       "If you pay 10000 EUR you should feel free to use GNU Parallel without citing.",
 	       "",
 	       "If you send a copy of your published article to tange\@gnu.org, it will be",
@@ -3598,6 +3598,19 @@ sub tmpfifo {
     my $tmpfifo = tmpname("fif",@_);
     mkfifo($tmpfifo,0600);
     return $tmpfifo;
+}
+
+sub qqx {
+    # Like qx but with clean environment (except for $PATH)
+    # and STDERR ignored
+    # This is needed if the environment contains functions 
+    # that /bin/sh does not understand
+    my $devnull = $Global::debug ? "" : "exec 2>/dev/null;";
+    return qx{ $devnull @_ };
+    my $PATH = $ENV{'PATH'};
+    local(%ENV);
+    $ENV{'PATH'} = $PATH;
+    return qx{ ( @_ ) 2>/dev/null };
 }
 
 sub uniq {
@@ -4247,8 +4260,8 @@ sub memfree_recompute {
     my $script = memfreescript();
 
     # TODO add sshlogin and backgrounding
-    # Run it twice if it gives 0
-    $self->{'memfree'} = qx{ $script } || qx{ $script };
+    # Run the script twice if it gives 0 (typically intermittent error)
+    $self->{'memfree'} = ::qqx($script) || ::qqx($script);
     if(not $self->{'memfree'}) {
 	::die_bug("Less than 1 byte free");
     }
@@ -4366,7 +4379,7 @@ sub swap_activity {
         my $file = $self->{'swap_activity_file'};
         my ($dummy_fh, $tmpfile) = ::tmpfile(SUFFIX => ".swp");
 	::debug("swap", "\n", $swap_activity, "\n");
-        qx{ ($swap_activity > $tmpfile && mv $tmpfile $file || rm $tmpfile) & };
+        ::qqx("($swap_activity > $tmpfile && mv $tmpfile $file || rm $tmpfile) &");
     }
     return $self->{'swap_activity'};
 }
@@ -4664,7 +4677,7 @@ sub loadavg {
         ::debug("load", "Cmd: ", $cmd);
         my $file = $self->{'loadavg_file'};
         my ($dummy_fh, $tmpfile) = ::tmpfile(SUFFIX => ".loa");
-        qx{ ($cmd > $tmpfile && mv $tmpfile $file || rm $tmpfile) & };
+        ::qqx(" ($cmd > $tmpfile && mv $tmpfile $file || rm $tmpfile) & ");
     }
     return $self->{'loadavg'};
 }
@@ -5096,10 +5109,10 @@ sub ncpus {
             my $ncpu;
 	    my $sqe = ::shell_quote_scalar($Global::envvar);
             if($opt::use_cpus_instead_of_cores) {
-                $ncpu = qx(echo|$sshcmd $serverlogin -- $sqe parallel --number-of-cpus);
+                $ncpu = ::qqx("echo|$sshcmd $serverlogin -- $sqe parallel --number-of-cpus");
             } else {
 		::debug("init",qq(echo|$sshcmd $serverlogin -- $sqe parallel --number-of-cores\n));
-                $ncpu = qx(echo|$sshcmd $serverlogin -- $sqe parallel --number-of-cores);
+                $ncpu = ::qqx("echo|$sshcmd $serverlogin -- $sqe parallel --number-of-cores");
             }
 	    chomp $ncpu;
             if($ncpu =~ /^\s*[0-9]+\s*$/s) {
@@ -5232,7 +5245,7 @@ sub no_of_cores {
 sub nproc {
     # Returns:
     #   Number of cores using `nproc`
-    my $no_of_cores = qx{ sh -c 'nproc 2>/dev/null' };
+    my $no_of_cores = ::qqx("nproc");
     return $no_of_cores;
 }
 
@@ -5308,9 +5321,9 @@ sub no_of_cpus_freebsd {
     #   Number of physical CPUs on FreeBSD
     #   undef if not FreeBSD
     my $no_of_cpus =
-	(qx{ sh -c 'sysctl -a dev.cpu 2>/dev/null' | grep \%parent | awk '{ print \$2 }' | uniq | wc -l | awk '{ print \$1 }' }
+	(::qqx(qq{ sysctl -a dev.cpu | grep \%parent | awk '{ print \$2 }' | uniq | wc -l | awk '{ print \$1 }' })
 	 or
-	 qx{ sh -c 'sysctl hw.ncpu 2>/dev/null' | awk '{ print \$2 }' });
+	 ::qqx(qq{ sysctl hw.ncpu | awk '{ print \$2 }' }));
     chomp $no_of_cpus;
     return $no_of_cpus;
 }
@@ -5320,9 +5333,9 @@ sub no_of_cores_freebsd {
     #   Number of CPU cores on FreeBSD
     #   undef if not FreeBSD
     my $no_of_cores =
-	(qx{ sh -c 'sysctl hw.ncpu 2>/dev/null' | awk '{ print \$2 }' }
+	(::qqx(qq{ sysctl hw.ncpu | awk '{ print \$2 }' })
 	 or
-	 qx{ sh -c 'sysctl -a hw  2>/dev/null' | grep [^a-z]logicalcpu[^a-z] | awk '{ print \$2 }' });
+	 ::qqx(qq{ sysctl -a dev.cpu | grep \%parent | awk '{ print \$2 }' | uniq | wc -l | awk '{ print \$1 }' }));
     chomp $no_of_cores;
     return $no_of_cores;
 }
@@ -5331,7 +5344,7 @@ sub no_of_cpus_netbsd {
     # Returns:
     #   Number of physical CPUs on NetBSD
     #   undef if not NetBSD
-    my $no_of_cpus = qx{ sh -c 'sysctl -n hw.ncpu 2>/dev/null' };
+    my $no_of_cpus = ::qqx("sysctl -n hw.ncpu");
     chomp $no_of_cpus;
     return $no_of_cpus;
 }
@@ -5340,7 +5353,7 @@ sub no_of_cores_netbsd {
     # Returns:
     #   Number of CPU cores on NetBSD
     #   undef if not NetBSD
-    my $no_of_cores = qx{ sh -c 'sysctl -n hw.ncpu 2>/dev/null' };
+    my $no_of_cores = ::qqx("sysctl -n hw.ncpu");
     chomp $no_of_cores;
     return $no_of_cores;
 }
@@ -5349,7 +5362,7 @@ sub no_of_cpus_openbsd {
     # Returns:
     #   Number of physical CPUs on OpenBSD
     #   undef if not OpenBSD
-    my $no_of_cpus = qx{ sh -c 'sysctl -n hw.ncpu 2>/dev/null' };
+    my $no_of_cpus = ::qqx('sysctl -n hw.ncpu');
     chomp $no_of_cpus;
     return $no_of_cpus;
 }
@@ -5358,7 +5371,7 @@ sub no_of_cores_openbsd {
     # Returns:
     #   Number of CPU cores on OpenBSD
     #   undef if not OpenBSD
-    my $no_of_cores = qx{ sh -c 'sysctl -n hw.ncpu 2>/dev/null' };
+    my $no_of_cores = ::qqx('sysctl -n hw.ncpu');
     chomp $no_of_cores;
     return $no_of_cores;
 }
@@ -5367,7 +5380,7 @@ sub no_of_cpus_hurd {
     # Returns:
     #   Number of physical CPUs on HURD
     #   undef if not HURD
-    my $no_of_cpus = qx{ nproc };
+    my $no_of_cpus = ::qqx("nproc");
     chomp $no_of_cpus;
     return $no_of_cpus;
 }
@@ -5376,19 +5389,19 @@ sub no_of_cores_hurd {
     # Returns:
     #   Number of physical CPUs on HURD
     #   undef if not HURD
-    my $no_of_cores = `nproc`;
+    my $no_of_cores = ::qqx("nproc");
     chomp $no_of_cores;
     return $no_of_cores;
 }
 
 sub no_of_cpus_darwin {
     # Returns:
-    #   Number of physical CPUs on Mac Darwin
-    #   undef if not Mac Darwin
+    #   Number of physical CPUs on MacOSX Darwin
+    #   undef if not MacOSX Darwin
     my $no_of_cpus =
-	(qx{ sh -c 'sysctl -n hw.physicalcpu 2>/dev/null' }
+	(::qqx('sysctl -n hw.physicalcpu')
 	 or
-	 qx{ sh -c 'sysctl -a hw 2>/dev/null' | grep [^a-z]physicalcpu[^a-z] | awk '{ print \$2 }' });
+	 ::qqx(qq{ sysctl -a hw | grep [^a-z]physicalcpu[^a-z] | awk '{ print \$2 }' }));
     return $no_of_cpus;
 }
 
@@ -5397,9 +5410,9 @@ sub no_of_cores_darwin {
     #   Number of CPU cores on Mac Darwin
     #   undef if not Mac Darwin
     my $no_of_cores =
-	(qx{ sh -c 'sysctl -n hw.logicalcpu 2>/dev/null' }
+	(::qqx('sysctl -n hw.logicalcpu')
 	 or
-	 qx{ sh -c 'sysctl -a hw  2>/dev/null' | grep [^a-z]logicalcpu[^a-z] | awk '{ print \$2 }' });
+	 ::qqx(qq{ sysctl -a hw | grep [^a-z]logicalcpu[^a-z] | awk '{ print \$2 }' }));
     return $no_of_cores;
 }
 
@@ -5408,13 +5421,13 @@ sub no_of_cpus_solaris {
     #   Number of physical CPUs on Solaris
     #   undef if not Solaris
     if(-x "/usr/sbin/psrinfo") {
-        my @psrinfo = `/usr/sbin/psrinfo`;
+        my @psrinfo = ::qqx("/usr/sbin/psrinfo");
         if($#psrinfo >= 0) {
             return $#psrinfo +1;
         }
     }
     if(-x "/usr/sbin/prtconf") {
-        my @prtconf = qx{ /usr/sbin/prtconf | grep cpu..instance };
+        my @prtconf = ::qqx("/usr/sbin/prtconf | grep cpu..instance");
         if($#prtconf >= 0) {
             return $#prtconf +1;
         }
@@ -5427,13 +5440,13 @@ sub no_of_cores_solaris {
     #   Number of CPU cores on Solaris
     #   undef if not Solaris
     if(-x "/usr/sbin/psrinfo") {
-        my @psrinfo = `/usr/sbin/psrinfo`;
+        my @psrinfo = ::qqx("/usr/sbin/psrinfo");
         if($#psrinfo >= 0) {
             return $#psrinfo +1;
         }
     }
     if(-x "/usr/sbin/prtconf") {
-        my @prtconf = qx{ /usr/sbin/prtconf | grep cpu..instance };
+        my @prtconf = ::qqx("/usr/sbin/prtconf | grep cpu..instance");
         if($#prtconf >= 0) {
             return $#prtconf +1;
         }
@@ -5476,7 +5489,7 @@ sub no_of_cpus_hpux {
     #   Number of physical CPUs on HP-UX
     #   undef if not HP-UX
     my $no_of_cpus =
-        qx{ sh -c '/usr/bin/mpsched -s 2>&1' | grep 'Locality Domain Count' | awk '{ print \$4 }'};
+        ::qqx(qq{ /usr/bin/mpsched -s 2>&1 | grep 'Locality Domain Count' | awk '{ print \$4 }'});
     return $no_of_cpus;
 }
 
@@ -5485,7 +5498,7 @@ sub no_of_cores_hpux {
     #   Number of CPU cores on HP-UX
     #   undef if not HP-UX
     my $no_of_cores =
-        qx{ sh -c '/usr/bin/mpsched -s 2>&1' | perl -ne '/Processor Count\\D+(\\d+)/ and print "\$1\n"'};
+        ::qqx(qq{ /usr/bin/mpsched -s 2>&1 | perl -ne '/Processor Count\\D+(\\d+)/ and print "\$1\n"'});
     return $no_of_cores;
 }
 
@@ -5513,7 +5526,7 @@ sub no_of_cpus_openserver {
     #   undef if not SCO OpenServer
     my $no_of_cpus = 0;
     if(-x "/usr/sbin/psrinfo") {
-        my @psrinfo = `/usr/sbin/psrinfo`;
+        my @psrinfo = ::qqx("/usr/sbin/psrinfo");
         if($#psrinfo >= 0) {
             return $#psrinfo +1;
         }
@@ -5527,7 +5540,7 @@ sub no_of_cores_openserver {
     #   undef if not SCO OpenServer
     my $no_of_cores = 0;
     if(-x "/usr/sbin/psrinfo") {
-        my @psrinfo = `/usr/sbin/psrinfo`;
+        my @psrinfo = ::qqx("/usr/sbin/psrinfo");
         if($#psrinfo >= 0) {
             return $#psrinfo +1;
         }
@@ -5539,7 +5552,7 @@ sub no_of_cpus_irix {
     # Returns:
     #   Number of physical CPUs on IRIX
     #   undef if not IRIX
-    my $no_of_cpus = `hinv | grep HZ | grep Processor | awk '{print \$1}'`;
+    my $no_of_cpus = ::qqx(qq{ hinv | grep HZ | grep Processor | awk '{print \$1}' });
     return $no_of_cpus;
 }
 
@@ -5547,7 +5560,7 @@ sub no_of_cores_irix {
     # Returns:
     #   Number of CPU cores on IRIX
     #   undef if not IRIX
-    my $no_of_cores = `hinv | grep HZ | grep Processor | awk '{print \$1}'`;
+    my $no_of_cores = ::qqx(qq{ hinv | grep HZ | grep Processor | awk '{print \$1}' });
     return $no_of_cores;
 }
 
@@ -5555,7 +5568,7 @@ sub no_of_cpus_tru64 {
     # Returns:
     #   Number of physical CPUs on Tru64
     #   undef if not Tru64
-    my $no_of_cpus = `sizer -pr`;
+    my $no_of_cpus = ::qqx("sizer -pr");
     return $no_of_cpus;
 }
 
@@ -5563,7 +5576,7 @@ sub no_of_cores_tru64 {
     # Returns:
     #   Number of CPU cores on Tru64
     #   undef if not Tru64
-    my $no_of_cores = `sizer -pr`;
+    my $no_of_cores = ::qqx("sizer -pr");
     return $no_of_cores;
 }
 
@@ -8777,9 +8790,9 @@ sub tmux_length {
 	my @out;
 	for my $l (1, 2020, 16320, 100000, $len) {
 	    my $tmpfile = ::tmpname("tms");
-	    my $tmuxcmd = "sh -c '".$ENV{'TMUX'}." -S $tmpfile new-session -d -n echo $l".
-		("x"x$l). " 2>/dev/null' && echo $l; rm -f $tmpfile";
-	    push @out, qx{ $tmuxcmd };
+	    my $tmuxcmd = $ENV{'TMUX'}." -S $tmpfile new-session -d -n echo $l".
+		("x"x$l). " && echo $l; rm -f $tmpfile";
+	    push @out, ::qqx($tmuxcmd);
 	    unlink $tmpfile;
 	}
 	::debug("tmux","tmux-length ",@out);
@@ -9189,6 +9202,10 @@ sub Q {
     my $a = ::shell_quote_scalar(@_);
     *Q = \&::shell_quote_scalar;
     return $a;
+}
+
+sub total_jobs {
+    return $Global::JobQueue->total_jobs()
 }
 
 {

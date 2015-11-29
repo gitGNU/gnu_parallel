@@ -249,11 +249,11 @@ echo '**'
 
 echo '{##} bug #45841: Replacement string for total no of jobs'
 
-  parallel --plus echo {##} ::: {a..j};
+  parallel -k --plus echo {##} ::: {a..j};
   parallel -k 'echo {= $::G++ > 3 and ($_=$Global::JobQueue->total_jobs());=}' ::: {1..10}
-  parallel -N7 --plus echo {#} {##} ::: {1..14}
-  parallel -N7 --plus echo {#} {##} ::: {1..15}
-  parallel -X --plus echo {#} {##} ::: {1..15}
+  parallel -k -N7 --plus echo {#} {##} ::: {1..14}
+  parallel -k -N7 --plus echo {#} {##} ::: {1..15}
+  parallel -k -X --plus echo {#} {##} ::: {1..15}
 
 echo '**'
 

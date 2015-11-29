@@ -44,7 +44,7 @@ It
 worked
 echo 'bug #40134: FreeBSD: --shebang(-wrap) not working'
 bug #40134: FreeBSD: --shebang(-wrap) not working
-  (echo '#!/usr/bin/env -S parallel --shebang-wrap /usr/bin/perl :::'; echo 'print @ARGV,"\n";') > shebang-wrap;   chmod 755 ./shebang-wrap; ./shebang-wrap wrap works
+  (echo '#!/usr/bin/env -S parallel --shebang-wrap /usr/bin/perl :::'; echo 'print @ARGV,"\n";') > shebang-wrap;   chmod 755 ./shebang-wrap; ./shebang-wrap wrap works | sort -r
 wrap
 works
 echo 'bug #40134: FreeBSD: --shebang(-wrap) with options not working'

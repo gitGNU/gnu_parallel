@@ -36,7 +36,7 @@ echo 'bug #40134: FreeBSD: --shebang not working'
 
 echo 'bug #40134: FreeBSD: --shebang(-wrap) not working'
   (echo '#!/usr/bin/env -S parallel --shebang-wrap /usr/bin/perl :::'; echo 'print @ARGV,"\n";') > shebang-wrap; 
-  chmod 755 ./shebang-wrap; ./shebang-wrap wrap works
+  chmod 755 ./shebang-wrap; ./shebang-wrap wrap works | sort -r
 
 echo 'bug #40134: FreeBSD: --shebang(-wrap) with options not working'
   (echo '#!/usr/bin/env -S parallel --shebang-wrap -v -k -j 0 /usr/bin/perl -w :::'; echo 'print @ARGV,"\n";') > shebang-wrap-opt; 
