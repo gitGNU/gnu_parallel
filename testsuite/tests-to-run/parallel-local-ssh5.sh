@@ -19,6 +19,10 @@ echo '### --ssh autossh - add commands that fail here'
   parallel -S lo echo ::: OK; 
   echo OK | parallel --pipe -S lo cat; 
   parallel -S lo false ::: a || echo OK should fail; 
-  touch foo_autossh; stdout parallel -S csh@lo --trc {}.out touch {}.out ::: foo_autossh; rm foo_autossh*;  
+  touch foo_autossh; stdout parallel -S csh@lo --trc {}.out touch {}.out ::: foo_autossh; rm foo_autossh*;
+
+echo '### bug #45025: --pipe --retries does not reschedule on other host'
+  seq 1 300030| stdout parallel -k --retries 2 -S a.a,: --pipe 'wc;hostname'
+  stdout parallel --retries 2 --roundrobin echo ::: should fail
 
 EOF

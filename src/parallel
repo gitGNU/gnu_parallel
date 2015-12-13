@@ -424,6 +424,23 @@ sub spreadstdin {
     # If there is anything left in the buffer write it
     write_record_to_pipe($chunk_number++,\$header,\$buf,$recstart,$recend,length $buf);
 
+    if($opt::retries) {
+	$Global::no_more_input = 1;
+	# We need to start no more jobs: At most we need to retry some
+	# of the already running.
+	my @running = values %Global::running;
+	# Stop any virgins.
+	for my $job (@running) {
+	    if(defined $job and $job->virgin()) {
+		close $job->fh(0,"w");
+	    }
+	}
+	# Wait for running jobs to be done
+	my $sleep =1;
+	while($Global::total_running > 0) {
+	    $sleep = ::reap_usleep($sleep);
+	}
+    }
     $Global::start_no_new_jobs ||= 1;
     if($opt::roundrobin) {
 	for my $job (values %Global::running) {
@@ -662,7 +679,20 @@ sub write_record_to_pipe {
     my $job = shift @Global::virgin_jobs;
     # Job is no longer virgin
     $job->set_virgin(0);
-    if(1) {
+
+    if($opt::retries) {
+	# Copy $buffer[0..$endpos] to $job->{'block'}
+	# Remove rec_sep
+	# Run $job->add_transfersize
+	$job->set_block($header_ref,$buffer_ref,$endpos,$recstart,$recend);
+	if(fork()) {
+	    # Skip
+	} else {
+	    $job->write($job->block_ref());
+	    close $job->fh(0,"w");
+	    exit(0);
+	}
+    } else {
 	# We ignore the removed rec_sep which is technically wrong.
 	$job->add_transfersize($endpos + length $$header_ref);
 	if(fork()) {
@@ -1075,8 +1105,12 @@ sub check_invalid_option_combinations {
 	::error("--timeout must be seconds or percentage.");
 	wait_and_exit(255);
     }
-    if(defined $opt::fifo and $opt::cat) {
+    if(defined $opt::fifo and defined $opt::cat) {
 	::error("--fifo cannot be combined with --cat.");
+	::wait_and_exit(255);
+    }
+    if(defined $opt::retries and defined $opt::roundrobin) {
+	::error("--retries cannot be combined with --roundrobin.");
 	::wait_and_exit(255);
     }
     if(defined $opt::pipepart and
@@ -2153,7 +2187,20 @@ sub init_run_jobs {
 		      $job->replaced(),"'\n");
 		if($job->start()) {
 		    if($opt::pipe) {
-			push(@Global::virgin_jobs,$job);
+			if($job->virgin()) {
+			    push(@Global::virgin_jobs,$job);
+			} else {
+			    # Block already set: This is a retry
+			    if(fork()) {
+				::debug("pipe","\n\nWriting ",length ${$job->block_ref()},
+					" to ", $job->seq(),"\n");
+				close $job->fh(0,"w");
+			    } else {
+				$job->write($job->block_ref());
+				close $job->fh(0,"w");
+				exit(0);
+			    }
+			}
 		    }
 		    debug("start", "Started as seq ", $job->seq(),
 			  " pid:", $job->pid(), "\n");
@@ -3501,7 +3548,7 @@ sub bibtex {
 	       "  volume = {36},",
 	       "  url = {http://www.gnu.org/s/parallel},",
 	       "  year = {2011},",
-	       "  pages = {42-47}",
+	       "  pages = {42-47},",
 	       "  doi = {10.5281/zenodo.16303}",
 	       "}",
 	       "",
@@ -6244,7 +6291,8 @@ sub set_block {
     #   N/A
     my $self = shift;
     my ($header_ref,$buffer_ref,$endpos,$recstart,$recend) = @_;
-    $self->{'block'} = ($self->virgin() ? $$header_ref : "").substr($$buffer_ref,0,$endpos);
+    $self->{'block'} = ($self->virgin() ? $$header_ref : "").
+	substr($$buffer_ref,0,$endpos);
     if($opt::remove_rec_sep) {
 	remove_rec_sep(\$self->{'block'},$recstart,$recend);
     }
@@ -7427,10 +7475,10 @@ sub should_be_retried {
     if (not $opt::retries) {
 	return 0;
     }
-    if(not $self->exitstatus()) {
+    if(not $self->exitstatus() and not $self->exitsignal()) {
 	# Completed with success. If there is a recorded failure: forget it
 	$self->reset_failed_here();
-	return 0
+	return 0;
     } else {
 	# The job failed. Should it be retried?
 	$self->add_failed_here();
@@ -7445,7 +7493,7 @@ sub should_be_retried {
 	    ::debug("run", "Retry ", $self->seq(), "\n");
 	    return 1;
 	}
-}
+    }
 }
 
 {
@@ -8641,10 +8689,11 @@ sub get {
 	$cmd_line->populate();
 	::debug("init","cmd_line->number_of_args ",
 		$cmd_line->number_of_args(), "\n");
-	if($opt::pipe or $opt::pipepart) {
+	if(not $Global::no_more_input and ($opt::pipe or $opt::pipepart)) {
 	    if($cmd_line->replaced() eq "") {
 		# Empty command - pipe requires a command
-		::error("--pipe/--pipepart must have a command to pipe into (e.g. 'cat').");
+		::error("--pipe/--pipepart must have a command to pipe into ".
+			"(e.g. 'cat').");
 		::wait_and_exit(255);
 	    }
 	} else {

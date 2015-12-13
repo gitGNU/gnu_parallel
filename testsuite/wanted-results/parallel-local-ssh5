@@ -17,7 +17,7 @@ OK
   # Test gl. parallel med --ssh lsh: Hvilke fejler? brug dem. Også hvis de fejler
 echo '### --ssh autossh - add commands that fail here'
 ### --ssh autossh - add commands that fail here
-  export PARALLEL_SSH=autossh; export AUTOSSH_PORT=0;   parallel -S lo echo ::: OK;   echo OK | parallel --pipe -S lo cat;   parallel -S lo false ::: a || echo OK should fail;   touch foo_autossh; stdout parallel -S csh@lo --trc {}.out touch {}.out ::: foo_autossh; rm foo_autossh*;  
+  export PARALLEL_SSH=autossh; export AUTOSSH_PORT=0;   parallel -S lo echo ::: OK;   echo OK | parallel --pipe -S lo cat;   parallel -S lo false ::: a || echo OK should fail;   touch foo_autossh; stdout parallel -S csh@lo --trc {}.out touch {}.out ::: foo_autossh; rm foo_autossh*;
 OK
 OK
 /usr/lib/autossh/autossh: invalid option -- '-'
@@ -84,3 +84,13 @@ Environment variables are:
 
 rsync: connection unexpectedly closed (0 bytes received so far) [Receiver]
 rsync error: error in rsync protocol data stream (code 12) at io.c(226) [Receiver=3.1.1]
+echo '### bug #45025: --pipe --retries does not reschedule on other host'
+### bug #45025: --pipe --retries does not reschedule on other host
+  seq 1 300030| stdout parallel -k --retries 2 -S a.a,: --pipe 'wc;hostname'
+parallel: Warning: Could not figure out number of cpus on a.a (). Using 1.
+ 165668  165668 1048571
+aspire
+ 134362  134362  940534
+aspire
+  stdout parallel --retries 2 --roundrobin echo ::: should fail
+parallel: Error: --retries cannot be combined with --roundrobin.
