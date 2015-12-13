@@ -445,7 +445,7 @@ I<file> will be transferred to each sshlogin before a jobs is
 started. It will be removed if B<--cleanup> is active. The file may be
 a script to run or some common base data needed for the jobs.
 Multiple B<--bf> can be specified to transfer more basefiles. The
-I<file> will be transferred the same way as B<--transfer>.
+I<file> will be transferred the same way as B<--transferfile>.
 
 
 =item B<--basenamereplace> I<replace-str>
@@ -527,22 +527,23 @@ See also B<--fifo>.
 
 =item B<--cleanup>
 
-Remove transferred files. B<--cleanup> will remove the transferred files
-on the remote computer after processing is done.
+Remove transferred files. B<--cleanup> will remove the transferred
+files on the remote computer after processing is done.
 
   find log -name '*gz' | parallel \
-    --sshlogin server.example.com --transfer \
+    --sshlogin server.example.com --transferfile {} \
     --return {.}.bz2 --cleanup "zcat {} | bzip -9 >{.}.bz2"
 
-With B<--transfer> the file transferred to the remote computer will be
-removed on the remote computer.  Directories created will not be removed
-- even if they are empty.
+With B<--transferfile {}> the file transferred to the remote computer
+will be removed on the remote computer.  Directories created will not
+be removed - even if they are empty.
 
 With B<--return> the file transferred from the remote computer will be
-removed on the remote computer.  Directories created will not be removed
-- even if they are empty.
+removed on the remote computer.  Directories created will not be
+removed - even if they are empty.
 
-B<--cleanup> is ignored when not used with B<--transfer> or B<--return>.
+B<--cleanup> is ignored when not used with B<--transferfile> or
+B<--return>.
 
 
 =item B<--colsep> I<regexp>
@@ -1541,7 +1542,7 @@ times:
     --sshlogin server.example.com \
     --return {.}.out --return {.}.out2 touch {.}.out {.}.out2
 
-B<--return> is often used with B<--transfer> and B<--cleanup>.
+B<--return> is often used with B<--transferfile> and B<--cleanup>.
 
 B<--return> is ignored when used with B<--sshlogin :> or when not used
 with B<--sshlogin>.
@@ -1824,7 +1825,7 @@ The remote host must have GNU B<parallel> installed.
 
 B<--sshlogin> is known to cause problems with B<-m> and B<-X>.
 
-B<--sshlogin> is often used with B<--transfer>, B<--return>,
+B<--sshlogin> is often used with B<--transferfile>, B<--return>,
 B<--cleanup>, and B<--trc>.
 
 
@@ -1979,38 +1980,46 @@ Print the job to be run on stderr (standard error).
 See also B<-v>, B<-p>.
 
 
-=item B<--transfer>
+=item B<--transfer> (alpha testing)
 
-Transfer files to remote computers. B<--transfer> is used with
-B<--sshlogin> when the arguments are files and should be transferred
-to the remote computers. The files will be transferred using B<rsync>
-and will be put relative to the default work dir. If the path contains
-/./ the remaining path will be relative to the work dir. E.g.
+Transfer files to remote computers. Shorthand for: B<--transferfile {}>.
+
+
+=item B<--transferfile> I<filename> (alpha testing)
+
+=item B<--tf> I<filename> (alpha testing)
+
+B<--transferfile> is used with B<--sshlogin> to transfer files to the
+remote computers. The files will be transferred using B<rsync> and
+will be put relative to the default work dir. If the path contains /./
+the remaining path will be relative to the work dir. E.g.
 
   echo foo/bar.txt | parallel \
-    --sshlogin server.example.com --transfer wc
+    --sshlogin server.example.com --transferfile {} wc
 
 This will transfer the file I<foo/bar.txt> to the computer
 I<server.example.com> to the file I<$HOME/foo/bar.txt> before running
 B<wc foo/bar.txt> on I<server.example.com>.
 
   echo /tmp/foo/bar.txt | parallel \
-    --sshlogin server.example.com --transfer wc
+    --sshlogin server.example.com --transferfile {} wc
 
 This will transfer the file I<foo/bar.txt> to the computer
 I<server.example.com> to the file I</tmp/foo/bar.txt> before running
 B<wc /tmp/foo/bar.txt> on I<server.example.com>.
 
-B<--transfer> is often used with B<--return> and B<--cleanup>.
+B<--transferfile> is often used with B<--return> and B<--cleanup>. A
+shorthand for B<--transferfile {}> is B<--transfer>.
 
-B<--transfer> is ignored when used with B<--sshlogin :> or when not used with B<--sshlogin>.
+B<--transferfile> is ignored when used with B<--sshlogin :> or when
+not used with B<--sshlogin>.
 
 
 =item B<--trc> I<filename>
 
-Transfer, Return, Cleanup. Short hand for:
+Transfer, Return, Cleanup. Shorthand for:
 
-B<--transfer> B<--return> I<filename> B<--cleanup>
+B<--transferfile {}> B<--return> I<filename> B<--cleanup>
 
 
 =item B<--trim> <n|l|r|lr|rl>
@@ -2105,9 +2114,9 @@ Print the version GNU B<parallel> and exit.
 
 =item B<--wd> I<mydir>
 
-Files transferred using B<--transfer> and B<--return> will be relative
-to I<mydir> on remote computers, and the command will be executed in
-the dir I<mydir>.
+Files transferred using B<--transferfile> and B<--return> will be
+relative to I<mydir> on remote computers, and the command will be
+executed in the dir I<mydir>.
 
 The special I<mydir> value B<...> will create working dirs under
 B<~/.parallel/tmp/> on the remote computers. If B<--cleanup> is given

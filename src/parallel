@@ -78,7 +78,7 @@ if($opt::header and not $opt::pipe) {
 	for my $s (split /$delimiter/o, $line) {
 	    ::debug("init", "Colname: '$s'");
 	    # Replace {colname} with {2}
-	    for(@command,@Global::ret_files) {
+	    for(@command,@Global::ret_files,@Global::transfer_files) {
 	      s:\{$s(|/|//|\.|/\.)\}:\{$id$1\}:g;
 	    }
 	    $Global::input_source_header{$id} = $s;
@@ -107,7 +107,8 @@ if($opt::nonall or $opt::onall) {
 # multiple --transfer and --basefile with different /./
 
 $Global::JobQueue = JobQueue->new(
-    \@command,\@input_source_fh,$Global::ContextReplace,$number_of_args,\@Global::ret_files);
+    \@command,\@input_source_fh,$Global::ContextReplace,
+    $number_of_args,\@Global::transfer_files,\@Global::ret_files);
 
 if($opt::pipepart) {
     if($opt::roundrobin) {
@@ -797,6 +798,8 @@ sub options_hash {
 	 "sshloginfile|slf=s" => \@opt::sshloginfile,
 	 "controlmaster|M" => \$opt::controlmaster,
 	 "ssh=s" => \$opt::ssh,
+	 "transfer-file|transferfile|transfer-files|transferfiles|tf=s"
+	 => \@opt::transfer_files,
 	 "return=s" => \@opt::return,
 	 "trc=s" => \@opt::trc,
 	 "transfer" => \$opt::transfer,
@@ -976,6 +979,8 @@ sub parse_options {
     if(@opt::sshlogin) { @Global::sshlogin = @opt::sshlogin; }
     if(@opt::sshloginfile) { read_sshloginfiles(@opt::sshloginfile); }
     if(@opt::return) { push @Global::ret_files, @opt::return; }
+    if($opt::transfer) { push @Global::transfer_files, $opt::i || $opt::I || "{}"; }
+    if(@opt::transfer_files) { push @Global::transfer_files, @opt::transfer_files; }
     if(not defined $opt::recstart and
        not defined $opt::recend) { $opt::recend = "\n"; }
     if(not defined $opt::blocksize) { $opt::blocksize = "1M"; }
@@ -1028,7 +1033,10 @@ sub parse_options {
     }
     if(@opt::trc) {
         push @Global::ret_files, @opt::trc;
-        $opt::transfer = 1;
+	if(not @Global::transfer_files) {
+	    # Defaults to --transferfile {}
+	    push @Global::transfer_files, $opt::i || $opt::I || "{}";
+	}
         $opt::cleanup = 1;
     }
     if(defined $opt::max_lines) {
@@ -1293,8 +1301,8 @@ sub parse_replacement_string_options {
     $Global::parensright = substr($parens,$parenslen);
     if(defined $opt::plus) { %Global::rpl = (%Global::plus,%Global::rpl); }
     if(defined $opt::I) { rpl('{}',$opt::I); }
-    if(defined $opt::U) { rpl('{.}',$opt::U); }
     if(defined $opt::i and $opt::i) { rpl('{}',$opt::i); }
+    if(defined $opt::U) { rpl('{.}',$opt::U); }
     if(defined $opt::basenamereplace) { rpl('{/}',$opt::basenamereplace); }
     if(defined $opt::dirnamereplace) { rpl('{//}',$opt::dirnamereplace); }
     if(defined $opt::seqreplace) { rpl('{#}',$opt::seqreplace); }
@@ -2788,13 +2796,15 @@ sub parse_sshlogin {
     }
 
     # debug("start", "sshlogin: ", my_dump(%Global::host),"\n");
-    if($opt::transfer or @opt::return or $opt::cleanup or @opt::basefile) {
+    if(@Global::transfer_files or @opt::return or $opt::cleanup or @opt::basefile) {
         if(not remote_hosts()) {
             # There are no remote hosts
             if(@opt::trc) {
 		::warning("--trc ignored as there are no remote --sshlogin.");
             } elsif (defined $opt::transfer) {
 		::warning("--transfer ignored as there are no remote --sshlogin.");
+            } elsif (@opt::transfer_files) {
+		::warning("--transferfile ignored as there are no remote --sshlogin.");
             } elsif (@opt::return) {
                 ::warning("--return ignored as there are no remote --sshlogin.");
             } elsif (defined $opt::cleanup) {
@@ -3650,7 +3660,7 @@ sub tmpfifo {
 sub qqx {
     # Like qx but with clean environment (except for $PATH)
     # and STDERR ignored
-    # This is needed if the environment contains functions 
+    # This is needed if the environment contains functions
     # that /bin/sh does not understand
     my $devnull = $Global::debug ? "" : "exec 2>/dev/null;";
     return qx{ $devnull @_ };
@@ -5819,10 +5829,11 @@ sub new {
     my $read_from = shift;
     my $context_replace = shift;
     my $max_number_of_args = shift;
+    my $transfer_files = shift;
     my $return_files = shift;
     my $commandlinequeue = CommandLineQueue->new
 	($commandref, $read_from, $context_replace, $max_number_of_args,
-	 $return_files);
+	 $transfer_files, $return_files);
     my @unget = ();
     return bless {
         'unget' => \@unget,
@@ -6949,21 +6960,18 @@ sub sshlogin_wrap {
 
 sub transfer {
     # Files to transfer
+    # Non-quoted and with {...} substituted
     # Returns:
     #   @transfer - File names of files to transfer
     my $self = shift;
-    my @transfer = ();
     $self->{'transfersize'} = 0;
-    if($opt::transfer) {
-	for my $record (@{$self->{'commandline'}{'arg_list'}}) {
-	    # Merge arguments from records into args
-	    for my $arg (@$record) {
-		CORE::push @transfer, $arg->orig();
-		# filesize
-		if(-e $arg->orig()) {
-		    $self->{'transfersize'} += (stat($arg->orig()))[7];
-		}
-	    }
+
+    my @transfer = $self->{'commandline'}->
+	replace_placeholders($self->{'commandline'}{'transfer_files'},0,0);
+    for(@transfer) {
+	# filesize
+	if(-e $_) {
+	    $self->{'transfersize'} += (stat($_))[7];
 	}
     }
     return @transfer;
@@ -6988,7 +6996,7 @@ sub sshtransfer {
     my $sshlogin = $self->sshlogin();
     my $workdir = $self->workdir();
     for my $file ($self->transfer()) {
-      push @pre, $sshlogin->rsync_transfer_cmd($file,$workdir).";";
+	push @pre, $sshlogin->rsync_transfer_cmd($file,$workdir).";";
     }
     return join("",@pre);
 }
@@ -7936,6 +7944,7 @@ sub new {
     my $arg_queue = shift;
     my $context_replace = shift;
     my $max_number_of_args = shift; # for -N and normal (-n1)
+    my $transfer_files = shift;
     my $return_files = shift;
     my $replacecount_ref = shift;
     my $len_ref = shift;
@@ -7956,6 +7965,7 @@ sub new {
 	'max_number_of_args' => $max_number_of_args,
 	'replacecount' => \%replacecount,
 	'context_replace' => $context_replace,
+	'transfer_files' => $transfer_files,
 	'return_files' => $return_files,
 	'replaced' => undef,
     }, ref($class) || $class;
@@ -8466,6 +8476,7 @@ sub new {
     my $read_from = shift;
     my $context_replace = shift || 0;
     my $max_number_of_args = shift;
+    my $transfer_files = shift;
     my $return_files = shift;
     my @unget = ();
     my ($count,$posrpl,$perlexpr);
@@ -8488,7 +8499,7 @@ sub new {
     # Protect matching inside {= perl expr =}
     # by replacing {= and =} with \257< and \257>
     # in @command, --return and --tagstring (if used)
-    for(@command,@$return_files,
+    for(@command,@$transfer_files,@$return_files,
 	(defined $opt::tagstring ? $opt::tagstring : $dummy)) {
 	# Disallow \257 to avoid nested {= {= =} =}
 	if(/\257/) {
@@ -8525,7 +8536,7 @@ sub new {
 
     # Add {} if no replacement strings in @command
     ($replacecount_ref, $len_ref, @command) =
-	replacement_counts_and_lengths($return_files,@command);
+	replacement_counts_and_lengths($transfer_files,$return_files,@command);
     if("@command" =~ /^[^ \t\n=]*\257</) {
 	# Replacement string is (part of) the command (and not just
 	# argument or variable definition V1={})
@@ -8543,6 +8554,7 @@ sub new {
 	'len' => $len_ref,
 	'max_number_of_args' => $max_number_of_args,
 	'size' => undef,
+	'transfer_files' => $transfer_files,
 	'return_files' => $return_files,
 	'seq' => 1,
     }, ref($class) || $class;
@@ -8590,10 +8602,12 @@ sub replacement_counts_and_lengths {
     # If no {} found in @command: add it to @command
     #
     # Input:
+    #   \@transfer_files = array of filenames to transfer
     #   \@return_files = array of filenames to return
     #   @command = command template
     # Output:
     #   \%replacecount, \%len, @command
+    my $transfer_files = shift;
     my $return_files = shift;
     my @command = @_;
     my (%replacecount,%len);
@@ -8623,7 +8637,7 @@ sub replacement_counts_and_lengths {
 	    # All {= perl expr =} have been removed: The rest is non-context
 	    $noncontextlen += length $c;
 	}
-	for(@$return_files) {
+	for(@$transfer_files,@$return_files) {
 	    my $t = $_;
 	    while($t =~ s/ \257<([^\257]*)\257> //x) {
 		# %replacecount = { "perlexpr" => number of times seen }
@@ -8682,6 +8696,7 @@ sub get {
 					$self->{'arg_queue'},
 					$self->{'context_replace'},
 					$self->{'max_number_of_args'},
+					$self->{'transfer_files'},
 					$self->{'return_files'},
 					$self->{'replacecount'},
 					$self->{'len'},
