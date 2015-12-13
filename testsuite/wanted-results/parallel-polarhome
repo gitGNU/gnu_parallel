@@ -22,7 +22,7 @@ netbsd.polarhome.com	Error in tempfile() using template /XXXXXXXX.arg: Could not
 copy_and_test debian.polarhome.com
 debian.polarhome.com	### Run the test on debian.polarhome.com
 debian.polarhome.com	Works on debian.polarhome.com
-debian.polarhome.com	Error in tempfile() using /XXXXXXXX.arg: Could not create temp file /XXXXXXXX.arg: Permission denied at bin/parallel line 0000
+debian.polarhome.com	Error in tempfile() using template /XXXXXXXX.arg: Could not create temp file /XXXXXXXX.arg: Permission denied at bin/parallel line 0000.
 copy_and_test aix.polarhome.com
 aix.polarhome.com	### Run the test on aix.polarhome.com
 aix.polarhome.com	Works on aix.polarhome.com
@@ -30,7 +30,7 @@ aix.polarhome.com	Error in tempfile() using /XXXXXXXX.arg: Could not create temp
 copy_and_test redhat.polarhome.com
 redhat.polarhome.com	### Run the test on redhat.polarhome.com
 redhat.polarhome.com	Works on redhat.polarhome.com
-redhat.polarhome.com	Error in tempfile() using template /XXXXXXXX.arg: Could not create temp file /XXXXXXXX.arg: Permission denied at bin/parallel line 0000.
+redhat.polarhome.com	Error in tempfile() using /XXXXXXXX.arg: Could not create temp file /XXXXXXXX.arg: Permission denied at bin/parallel line 0000
 copy_and_test hpux.polarhome.com
 hpux.polarhome.com	### Run the test on hpux.polarhome.com
 hpux.polarhome.com	Works on hpux.polarhome.com
