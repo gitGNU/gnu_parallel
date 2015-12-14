@@ -1160,7 +1160,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20151123;
+    $Global::version = 20151213;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -3012,25 +3012,31 @@ sub parallelized_host_filtering {
     while (my ($host, $sshlogin) = each %Global::host) {
 	if($host eq ":") { next }
 	# The 'true' is used to get the $host out later
-	my $sshcmd = "true $host; exec " . $sshlogin->sshcommand()." ".$sshlogin->serverlogin();
-	push(@cores, $host."\t".$sshcmd." -- ".$envvar." parallel --number-of-cores\n\0");
-	push(@cpus, $host."\t".$sshcmd." -- ".$envvar." parallel --number-of-cpus\n\0");
-	push(@maxline, $host."\t".$sshcmd." -- ".$envvar." parallel --max-line-length-allowed\n\0");
+	my $sshcmd = "true $host; exec " .$sshlogin->sshcommand()." ".
+	    $sshlogin->serverlogin();
+	push(@cores, $host."\t".$sshcmd." -- ".$envvar.
+	     " parallel --number-of-cores\n\0");
+	push(@cpus, $host."\t".$sshcmd." -- ".$envvar.
+	     " parallel --number-of-cpus\n\0");
+	push(@maxline, $host."\t".$sshcmd." -- ".$envvar.
+	     " parallel --max-line-length-allowed\n\0");
 	# 'echo' is used to get the best possible value for an ssh login time
 	push(@echo, $host."\t".$sshcmd." -- echo\n\0");
     }
     my ($fh, $tmpfile) = ::tmpfile(SUFFIX => ".ssh");
     print $fh @cores, @cpus, @maxline, @echo;
     close $fh;
-    # --timeout 5: Setting up an SSH connection and running a simple
-    #              command should never take > 5 sec.
-    # --delay 0.1: If multiple sshlogins use the same proxy the delay
-    #              will make it less likely to overload the ssh daemon.
-    # --retries 3: If the ssh daemon it overloaded, try 3 times
-    # -s 16000: Half of the max line on UnixWare
+    # --timeout 10: Setting up an SSH connection and running a simple
+    #               command should never take > 10 sec.
+    # --delay 0.1:  If multiple sshlogins use the same proxy the delay
+    #               will make it less likely to overload the ssh daemon.
+    # --retries 3:  If the ssh daemon it overloaded, try 3 times
+    # -s 16000:     Half of the max line on UnixWare
     # TODO sh -c wrapper to work in csh
     my $unlinkcmd = $Global::debug ? "true" : "rm $tmpfile";
-    my $cmd = "($unlinkcmd; cat -) < $tmpfile | $0 -j0 --timeout 5 -s 16000 --joblog - --plain --delay 0.1 --retries 3 --tag --tagstring {1} -0 --colsep '\t' -k eval {2} 2>/dev/null";
+    my $cmd = "($unlinkcmd; cat -) < $tmpfile | ".
+	"$0 -j0 --timeout 10 -s 16000 --joblog - --plain --delay 0.1 --retries 3 ".
+	"--tag --tagstring {1} -0 --colsep '\t' -k eval {2} 2>/dev/null";
     ::debug("init", $cmd, "\n");
     my @out;
     my $prepend = "";
@@ -4703,15 +4709,7 @@ sub loadavg {
 	    ::die_bug("loadavg_invalid_content: " .
 		      $self->{'loadavg_file'} . "\n$load_out");
 	}
-	# Because of instant load average, it should not be delayed 10 secs
-	# The instant load does not give 2 R if there is only 1 cpu.
-#        ::debug("load", "Last update: ", $self->{'last_loadavg_update'});
-#        if(time - $self->{'last_loadavg_update'} > 10) {
-#            # last loadavg was started 10 seconds ago
-#            ::debug("load", time - $self->{'last_loadavg_update'}, " secs old: ",
-#		    $self->{'loadavg_file'});
-            $update_loadavg_file = 1;
-#        }
+	$update_loadavg_file = 1;
     } else {
         ::debug("load", "No loadavg file: ", $self->{'loadavg_file'});
         $self->{'loadavg'} = undef;

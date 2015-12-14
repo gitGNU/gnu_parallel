@@ -35,9 +35,8 @@ sense to wait for a job to finish. Instead the load average must be
 checked again. Load average is not the only reason: --timeout has a
 similar problem.
 
-To not burn up too up too much CPU GNU B<parallel> sleeps
-exponentially longer and longer if nothing happens, maxing out at 1
-second.
+To not burn up too much CPU GNU B<parallel> sleeps exponentially
+longer and longer if nothing happens, maxing out at 1 second.
 
 
 =head2 Shell compatibility
@@ -59,7 +58,7 @@ job from the queue will be run in that slot. But originally GNU
 B<parallel> did not model job slots in the code. Job slots have been
 added to make it possible to use {%} as a replacement string.
 
-Job slots were added to the code in 20140522, but while the job
+While the job
 sequence number can be computed in advance, the job slot can only be
 computed the moment a slot becomes available. So it has been
 implemented as a stack with lazy evaluation: Draw one from an empty
@@ -184,6 +183,10 @@ ssh I<sln> I<shell quoted input>
 ( ssh I<sln> mkdir -p ./I<workdir>;rsync --protocol 30 -rlDzR -essh ./{} I<sln>:./I<workdir> ); I<input>
 
 Read about B<--protocol 30> in the section B<Rsync protocol version>.
+
+=item --transferfile I<file>
+
+<<todo>>
 
 =item --basefile
 
