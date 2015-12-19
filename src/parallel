@@ -2889,10 +2889,14 @@ sub filter_hosts {
     $Global::minimal_command_line_length = 8_000_000;
     while (my ($sshlogin, $obj) = each %Global::host) {
 	if($sshlogin eq ":") { next }
-	$ncpus_ref->{$sshlogin} or ::die_bug("ncpus missing: ".$obj->serverlogin());
-	$ncores_ref->{$sshlogin} or ::die_bug("ncores missing: ".$obj->serverlogin());
-	$time_to_login_ref->{$sshlogin} or ::die_bug("time_to_login missing: ".$obj->serverlogin());
-	$maxlen_ref->{$sshlogin} or ::die_bug("maxlen missing: ".$obj->serverlogin());
+	$ncpus_ref->{$sshlogin} or
+	    ::die_bug("ncpus missing: ".$obj->serverlogin());
+	$ncores_ref->{$sshlogin} or
+	    ::die_bug("ncores missing: ".$obj->serverlogin());
+	$time_to_login_ref->{$sshlogin} or
+	    ::die_bug("time_to_login missing: ".$obj->serverlogin());
+	$maxlen_ref->{$sshlogin} or
+	    ::die_bug("maxlen missing: ".$obj->serverlogin());
 	if($opt::use_cpus_instead_of_cores) {
 	    $obj->set_ncpus($ncpus_ref->{$sshlogin});
 	} else {
@@ -2903,7 +2907,8 @@ sub filter_hosts {
 	$Global::minimal_command_line_length =
 	    ::min($Global::minimal_command_line_length,
 		  int($maxlen_ref->{$sshlogin}/2));
-	::debug("init", "Timing from -S:$sshlogin ncpus:",$ncpus_ref->{$sshlogin},
+	::debug("init", "Timing from -S:$sshlogin ",
+		" ncpus:",$ncpus_ref->{$sshlogin},
 		" ncores:", $ncores_ref->{$sshlogin},
 		" time_to_login:", $time_to_login_ref->{$sshlogin},
 		" maxlen:", $maxlen_ref->{$sshlogin},
@@ -5717,11 +5722,11 @@ sub control_path_dir {
     #   path to directory
     my $self = shift;
     if(not defined $self->{'control_path_dir'}) {
-        -e $ENV{'HOME'}."/.parallel" or mkdir $ENV{'HOME'}."/.parallel";
-        -e $ENV{'HOME'}."/.parallel/tmp" or mkdir $ENV{'HOME'}."/.parallel/tmp";
         $self->{'control_path_dir'} =
-	    File::Temp::tempdir($ENV{'HOME'}
-				. "/.parallel/tmp/control_path_dir-XXXX",
+	    # Use $ENV{'TMPDIR'} as that is typically not
+	    # NFS mounted
+	    File::Temp::tempdir($ENV{'TMPDIR'}
+				. "/control_path_dir-XXXX",
 				CLEANUP => 1);
     }
     return $self->{'control_path_dir'};

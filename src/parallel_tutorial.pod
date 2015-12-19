@@ -1779,7 +1779,7 @@ lines).
 
 =head2 Record separators
 
-GNU Parallel uses separators to determine where two record split.
+GNU Parallel uses separators to determine where two records split.
 
 --recstart gives the string that starts a record; --recend gives the
 string that ends a record. The default is --recend '\n' (newline).
