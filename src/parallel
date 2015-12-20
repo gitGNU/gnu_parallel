@@ -1016,8 +1016,10 @@ sub parse_options {
 	$opt::compress_program ||= $compress;
 	$opt::decompress_program ||= $decompress;
     }
-    if(defined $opt::nonall) {
-	# Append a dummy empty argument
+    if(defined $opt::nonall
+       and not grep /\Q$Global::arg_sep\E|\Q$Global::arg_sep\E/, @ARGV) {
+	# Append a dummy empty argument if there are no arguments
+	# on the command line to avoid reading from STDIN.
 	# \0 => nothing (not the empty string)
 	push @ARGV, $Global::arg_sep, "\0";
     }
@@ -3118,7 +3120,7 @@ sub onall {
     # Copy all @input_source_fh (-a and :::) into tempfiles
     my @argfiles = ();
     for my $fh (@$input_source_fh_ref) {
-	my ($outfh, $name) = ::tmpfile(SUFFIX => ".all", UNLINK => 1);
+	my ($outfh, $name) = ::tmpfile(SUFFIX => ".all", UNLINK => not $opt::D);
 	print $outfh (<$fh>);
 	close $outfh;
 	push @argfiles, $name;
@@ -3131,32 +3133,37 @@ sub onall {
     # -P should only go to the first, and -S should not be copied at all.
     my $options =
 	join(" ",
-	     ((defined $opt::jobs) ? "-P $opt::jobs" : ""),
-	     ((defined $opt::linebuffer) ? "--linebuffer" : ""),
-	     ((defined $opt::ungroup) ? "-u" : ""),
-	     ((defined $opt::group) ? "-g" : ""),
-	     ((defined $opt::keeporder) ? "--keeporder" : ""),
 	     ((defined $opt::D) ? "-D $opt::D" : ""),
-	     ((defined $opt::plain) ? "--plain" : ""),
+	     ((defined $opt::group) ? "-g" : ""),
+	     ((defined $opt::jobs) ? "-P $opt::jobs" : ""),
+	     ((defined $opt::keeporder) ? "--keeporder" : ""),
+	     ((defined $opt::linebuffer) ? "--linebuffer" : ""),
 	     ((defined $opt::max_chars) ? "--max-chars ".$opt::max_chars : ""),
+	     ((defined $opt::plain) ? "--plain" : ""),
+	     ((defined $opt::ungroup) ? "-u" : ""),
 	);
     my $suboptions =
 	join(" ",
-	     ((defined $opt::ungroup) ? "-u" : ""),
-	     ((defined $opt::linebuffer) ? "--linebuffer" : ""),
-	     ((defined $opt::group) ? "-g" : ""),
-	     ((defined $opt::files) ? "--files" : ""),
-	     ((defined $opt::keeporder) ? "--keeporder" : ""),
-	     ((defined $opt::colsep) ? "--colsep ".shell_quote($opt::colsep) : ""),
-	     ((@opt::v) ? "-vv" : ""),
 	     ((defined $opt::D) ? "-D $opt::D" : ""),
-	     ((defined $opt::timeout) ? "--timeout ".$opt::timeout : ""),
+	     ((defined $opt::arg_file_sep) ? "--arg-file-sep ".$opt::arg_file_sep : ""),
+	     ((defined $opt::arg_sep) ? "--arg-sep ".$opt::arg_sep : ""),
+	     ((defined $opt::colsep) ? "--colsep ".shell_quote($opt::colsep) : ""),
+	     ((defined $opt::files) ? "--files" : ""),
+	     ((defined $opt::group) ? "-g" : ""),
+	     ((defined $opt::cleanup) ? "--cleanup" : ""),
+	     ((defined $opt::keeporder) ? "--keeporder" : ""),
+	     ((defined $opt::linebuffer) ? "--linebuffer" : ""),
+	     ((defined $opt::max_chars) ? "--max-chars ".$opt::max_chars : ""),
 	     ((defined $opt::plain) ? "--plain" : ""),
 	     ((defined $opt::retries) ? "--retries ".$opt::retries : ""),
-	     ((defined $opt::max_chars) ? "--max-chars ".$opt::max_chars : ""),
-	     ((defined $opt::arg_sep) ? "--arg-sep ".$opt::arg_sep : ""),
-	     ((defined $opt::arg_file_sep) ? "--arg-file-sep ".$opt::arg_file_sep : ""),
+	     ((defined $opt::timeout) ? "--timeout ".$opt::timeout : ""),
+	     ((defined $opt::ungroup) ? "-u" : ""),
+	     (@Global::transfer_files ? map { "--tf ".::shell_quote_scalar($_) }
+	      @Global::transfer_files : ""),
+	     (@Global::ret_files ? map { "--return ".::shell_quote_scalar($_) }
+	      @Global::ret_files : ""),
 	     (@opt::env ? map { "--env ".::shell_quote_scalar($_) } @opt::env : ""),
+	     (@opt::v ? "-vv" : ""),
 	);
     ::debug("init", "| $0 $options\n");
     open(my $parallel_fh, "|-", "$0 --will-cite -j0 $options") ||
@@ -3896,7 +3903,7 @@ sub which {
 	    # Can be formatted as:
 	    #   [sh]  -sh  sh  busybox sh  -sh (sh)
 	    #   /bin/sh /sbin/sh /opt/csw/sh
-	    # NOT: foo.sh sshd crash flush pdflush scosh fsflush ssh
+	    # But not: foo.sh sshd crash flush pdflush scosh fsflush ssh
 	    my $shell = "(?:".join("|",map { "\Q$_\E" } @shells).")";
 	    $regexp = '^((\[)('. $shell. ')(\])|(|\S+/|busybox )('. $shell. '))($| [^(])';
 	    %fakename = (
@@ -4075,7 +4082,9 @@ sub kill_youngster_if_not_enough_mem {
     for my $sshlogin (@sshlogins) {
 	for my $job (sort { $b->seq() <=> $a->seq() } @{$jobs_of{$sshlogin}}) {
 	    if($sshlogin->memfree() < $opt::memfree * 0.5) {
-		::debug("mem","\n",map { $_->seq()." " } (sort { $b->seq() <=> $a->seq() } @{$jobs_of{$sshlogin}}));
+		::debug("mem","\n",map { $_->seq()." " }
+			(sort { $b->seq() <=> $a->seq() }
+			 @{$jobs_of{$sshlogin}}));
 		::debug("mem","\n", $job->seq(), "killed ",
 			$sshlogin->memfree()," < ",$opt::memfree * 0.5);
 		$job->kill();
@@ -4084,7 +4093,8 @@ sub kill_youngster_if_not_enough_mem {
 		last;
 	    }
 	}
-	::debug("mem","Free mem OK ", $sshlogin->memfree()," > ",$opt::memfree * 0.5);
+	::debug("mem","Free mem OK ",
+		$sshlogin->memfree()," > ",$opt::memfree * 0.5);
     }
 }
 
