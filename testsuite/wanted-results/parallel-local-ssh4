@@ -142,7 +142,7 @@ Funky-
 
 0 updates are security updates.
 
-zsh:129: command not found: alias_echo
+zsh:130: command not found: alias_echo
 function_works
 myvar  works
 array_val2
@@ -150,7 +150,7 @@ assoc_val_a
 Funky-
 	
  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-zsh:129: command not found: alias_echo
+zsh:130: command not found: alias_echo
 function_works_over_ssh
 myvar  works
 array_val2

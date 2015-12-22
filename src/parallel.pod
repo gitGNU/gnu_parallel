@@ -312,20 +312,35 @@ Replace with calculated I<perl expression>. B<$_> will contain the
 same as B<{}>. After evaluating I<perl expression> B<$_> will be used
 as the value. It is recommended to only change $_ but you have full
 access to all of GNU B<parallel>'s internal functions and data
-structures. You can use the function B<Q(>I<string>B<)> to shell quote
-a string.
+structures. A few convenience functions have been made:
 
-The B<{=>I<perl expression>B<=}> must be given as a single string.
+=over 15
+
+=item Z<> B<Q(>I<string>B<)>
+
+shell quote a string
+
+=item Z<> B<total_jobs()>
+
+number of jobs in total (alpha testing)
+
+=back
+
+Example:
+
+  seq 10 | parallel echo {} + 1 is {= '$_++' =}
+  parallel csh -c {= '$_="mkdir ".Q($_)' =} ::: '12" dir'
+  seq 50 | parallel echo job {#} of {= '$_=total_jobs()' =}
 
 See also: B<--rpl> B<--parens>
 
 
 =item B<{=>I<n> I<perl expression>B<=}>
 
-Positional equivalent to B<{= perl expression =}>. To understand
+Positional equivalent to B<{=perl expression=}>. To understand
 positional replacement strings see B<{>I<n>B<}>.
 
-See also: B<{= perl expression =}> B<{>I<n>B<}>.
+See also: B<{=perl expression=}> B<{>I<n>B<}>.
 
 
 =item B<:::> I<arguments>
@@ -437,9 +452,9 @@ It is compatible with B<zenity>:
     2> >(zenity --progress --auto-kill) | wc
 
 
-=item B<--basefile> I<file>
+=item B<--basefile> I<file> (alpha testing)
 
-=item B<--bf> I<file>
+=item B<--bf> I<file> (alpha testing)
 
 I<file> will be transferred to each sshlogin before a jobs is
 started. It will be removed if B<--cleanup> is active. The file may be
@@ -525,7 +540,7 @@ Implies B<--pipe> unless B<--pipepart> is used.
 See also B<--fifo>.
 
 
-=item B<--cleanup>
+=item B<--cleanup> (alpha testing)
 
 Remove transferred files. B<--cleanup> will remove the transferred
 files on the remote computer after processing is done.
@@ -712,6 +727,11 @@ See also B<--cat>.
 
 Remove down hosts. For each remote host: check that login through ssh
 works. If not: do not use this host.
+
+For performance reasons, this check is performed only at the start and
+every time B<--sshloginfile> is changed. If an host goes down after
+the first check, it will go undetected until B<--sshloginfile> is
+changed; B<--retries> can be used to mitigate this.
 
 Currently you can I<not> put B<--filter-hosts> in a profile,
 $PARALLEL, /etc/parallel/config or similar. This is because GNU
@@ -1040,9 +1060,9 @@ the same syntax as B<--jobs>, so I<100%> for one per CPU is a valid
 setting. Only difference is 0 which is interpreted as 0.01.
 
 
-=item B<--controlmaster>
+=item B<--controlmaster> (alpha testing)
 
-=item B<-M>
+=item B<-M> (alpha testing)
 
 Use ssh's ControlMaster to make ssh connections faster. Useful if jobs
 run remote and are very fast to run. This is disabled for sshlogins
@@ -1080,7 +1100,7 @@ See also B<-X> for context replace. If in doubt use B<-X> as that will
 most likely do what is needed.
 
 
-=item B<--memfree> I<size>
+=item B<--memfree> I<size> (beta testing)
 
 Minimum memory free when starting another job. The I<size> can be
 postfixed with K, M, G, T, P, k, m, g, t, or p which would multiply
@@ -1116,7 +1136,7 @@ This is useful for running the same command (e.g. uptime) on a list of
 servers.
 
 
-=item B<--onall>
+=item B<--onall> (alpha testing)
 
 Run all the jobs on all computers given with B<--sshlogin>. GNU
 B<parallel> will log into B<--jobs> number of computers in parallel
@@ -1141,9 +1161,9 @@ of each job is saved in a file and the filename is then printed.
 
 See also: B<--results>
 
-=item B<--pipe>
+=item B<--pipe> (alpha testing)
 
-=item B<--spreadstdin>
+=item B<--spreadstdin> (alpha testing)
 
 Spread input to jobs on stdin (standard input). Read a block of data
 from stdin (standard input) and give one block of data as input to one
@@ -1504,7 +1524,7 @@ the joblog.
 See also B<--joblog>, B<--resume>, B<--resume-failed>.
 
 
-=item B<--retries> I<n>
+=item B<--retries> I<n> (alpha testing)
 
 If a job fails, retry it on another computer on which it has not
 failed. Do this I<n> times. If there are fewer than I<n> computers in
@@ -1513,7 +1533,7 @@ useful if some jobs fail for no apparent reason (such as network
 failure).
 
 
-=item B<--return> I<filename>
+=item B<--return> I<filename> (alpha testing)
 
 Transfer files from remote computers. B<--return> is used with
 B<--sshlogin> when the arguments are files on the remote computers. When
@@ -1528,6 +1548,12 @@ This will transfer the file I<$HOME/foo/bar.out> from the computer
 I<server.example.com> to the file I<foo/bar.out> after running
 B<touch foo/bar.out> on I<server.example.com>.
 
+  parallel -S server --trc out/./{}.out touch {}.out ::: in/file
+
+This will transfer the file I<in/file.out> from the computer
+I<server.example.com> to the files I<out/in/file.out> after running
+B<touch in/file.out> on I<server>.
+
   echo /tmp/foo/bar.txt | parallel --return {.}.out \
     --sshlogin server.example.com touch {.}.out
 
@@ -1535,7 +1561,7 @@ This will transfer the file I</tmp/foo/bar.out> from the computer
 I<server.example.com> to the file I</tmp/foo/bar.out> after running
 B<touch /tmp/foo/bar.out> on I<server.example.com>.
 
-Multiple files can be transferred by repeating the options multiple
+Multiple files can be transferred by repeating the option multiple
 times:
 
   echo /tmp/foo/bar.txt | parallel \
@@ -2004,9 +2030,16 @@ B<wc foo/bar.txt> on I<server.example.com>.
   echo /tmp/foo/bar.txt | parallel \
     --sshlogin server.example.com --transferfile {} wc
 
-This will transfer the file I<foo/bar.txt> to the computer
+This will transfer the file I</tmp/foo/bar.txt> to the computer
 I<server.example.com> to the file I</tmp/foo/bar.txt> before running
 B<wc /tmp/foo/bar.txt> on I<server.example.com>.
+
+  echo /tmp/./foo/bar.txt | parallel \
+    --sshlogin server.example.com --transferfile {} wc
+
+This will transfer the file I</tmp/foo/bar.txt> to the computer
+I<server.example.com> to the file I<foo/bar.txt> before running
+B<wc /tmp/./foo/bar.txt> on I<server.example.com>.
 
 B<--transferfile> is often used with B<--return> and B<--cleanup>. A
 shorthand for B<--transferfile {}> is B<--transfer>.

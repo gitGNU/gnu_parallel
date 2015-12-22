@@ -220,10 +220,18 @@ GNU Parallel 20151222 ('') <<[stable]>> has been released. It is available for d
 
 Haiku of the month:
 
-<<>>
-    -- Ole Tange
+  |||||
+  |||||||
+  Use GNU Parallel
+    -- Malcolm Cook
 
 New in this release:
+
+* --transfer is now an alias for --transferfile {}.
+
+* --transferfile works like --transfer, but takes an argument like --return. This makes it possible to combine transferring files with multiple input sources: parallel -S server --tf {1} wc {2} {1} ::: * ::: -l -w -c
+
+* total_jobs() can now be used in {= =}: parallel echo job {#} of '{= $_=total_jobs() =}' ::: {1..50}
 
 * << kontakt GNU Parallel was used (unfortunately without citation) in: Instrumentation and Trace Analysis for Ad-hoc Python Workflows in Cloud Environments http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=7214035>>
 
@@ -248,6 +256,8 @@ for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumb
 * GNU Parallel was cited in: Efficient Retrieval of Key Material for Inspecting Potentially Malicious Traffic in the Cloud http://www.cs.bham.ac.uk/~bxb/Papres/2015.1.pdf 
 
 * GNU Parallel was cited in: Achieving Consistent Doppler Measurements from SDO/HMI Vector Field Inversions http://arxiv.org/pdf/1511.06500.pdf
+
+* Flo uses GNU Parallel: https://github.com/wurmlab/flo
 
 * 使用 GNU parallel 來平行運算http://mutolisp.logdown.com/posts/316959-using-gnu-parallel-to-parallel-computing
 

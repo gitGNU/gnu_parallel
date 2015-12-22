@@ -1,3 +1,26 @@
+20151222
+
+* --transfer is now an alias for --transferfile {}.
+
+* --transferfile works like --transfer, but takes an argument like --return. This makes it possible to combine transferring files with multiple input sources: parallel -S server --tf {1} wc {2} {1} ::: * ::: -l -w -c
+
+* total_jobs() can now be used in {= =}: parallel echo job {#} of '{= $_=total_jobs() =}' ::: {1..50}
+
+* GNU Parallel was cited in: Evolution and Learning in Heterogeneous Environments http://research.gold.ac.uk/15078/1/COM_thesis_JonesD_2015.pdf
+
+* GNU Parallel was cited in: Contrasting genetic architectures of schizophrenia and other complex diseases using fast variance-components analysis http://www.nature.com/ng/journal/v47/n12/full/ng.3431.html
+
+* GNU Parallel was cited in: Efficient Retrieval of Key Material for Inspecting Potentially Malicious Traffic in the Cloud http://www.cs.bham.ac.uk/~bxb/Papres/2015.1.pdf
+
+* GNU Parallel was cited in: Achieving Consistent Doppler Measurements from SDO/HMI Vector Field Inversions http://arxiv.org/pdf/1511.06500.pdf
+
+* Flo uses GNU Parallel: https://github.com/wurmlab/flo
+
+* 使用 GNU parallel 來平行運算http://mutolisp.logdown.com/posts/316959-using-gnu-parallel-to-parallel-computing
+
+* Bug fixes and man page updates.
+
+
 20151122
 
 * GNU Parallel packaged for CERN CentOS:
