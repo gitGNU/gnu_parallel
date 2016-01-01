@@ -32,7 +32,7 @@ is CentOS 3.9 and Perl 5.8.0.
 GNU B<parallel> busy waits. This is because the reason why a job is
 not started may be due to load average, and thus it will not make
 sense to wait for a job to finish. Instead the load average must be
-checked again. Load average is not the only reason: --timeout has a
+checked again. Load average is not the only reason: B<--timeout> has a
 similar problem.
 
 To not burn up too much CPU GNU B<parallel> sleeps exponentially
@@ -56,14 +56,13 @@ The easiest way to explain what GNU B<parallel> does is to assume that
 there are a number of job slots, and when a slot becomes available a
 job from the queue will be run in that slot. But originally GNU
 B<parallel> did not model job slots in the code. Job slots have been
-added to make it possible to use {%} as a replacement string.
+added to make it possible to use B<{%}> as a replacement string.
 
-While the job
-sequence number can be computed in advance, the job slot can only be
-computed the moment a slot becomes available. So it has been
-implemented as a stack with lazy evaluation: Draw one from an empty
-stack and the stack is extended by one. When a job is done, push the
-available job slot back on the stack.
+While the job sequence number can be computed in advance, the job slot
+can only be computed the moment a slot becomes available. So it has
+been implemented as a stack with lazy evaluation: Draw one from an
+empty stack and the stack is extended by one. When a job is done, push
+the available job slot back on the stack.
 
 This implementation also means that if you use remote executions, you
 cannot assume that a given job slot will remain on the same remote
@@ -89,7 +88,7 @@ B<--compress> compresses the data in the temporary files. This is a
 bit tricky because there should be no files to clean up if GNU
 B<parallel> is killed by a power outage.
 
-GNU B<parallel> first selects a compress program. If the user has not
+GNU B<parallel> first selects a compression program. If the user has not
 selected one, the first of these that are in $PATH is used: B<lz4 pigz
 lzop plzip pbzip2 pxz gzip lzma xz bzip2 lzip>. They are sorted by
 speed on a 16 core machine.
@@ -102,16 +101,16 @@ Schematically the setup is as follows:
 The setup is duplicated for both standard output (stdout) and standard
 error (stderr).
 
-GNU B<parallel> pipes output from the command run into the compress
+GNU B<parallel> pipes output from the command run into the compression
 program which saves to a tmpfile. GNU B<parallel> records the pid of
 the compress program.  At the same time a small perl script (called
 B<cattail> above) is started: It basically does B<cat> followed by
 B<tail -f>, but it also removes the tmpfile as soon as the first byte
-is read, and it continously checks if the pid of the compress program
-is dead. If the compress program is dead, B<cattail> reads the rest of
-tmpfile and exits.
+is read, and it continously checks if the pid of the compression
+program is dead. If the compress program is dead, B<cattail> reads the
+rest of tmpfile and exits.
 
-As most compress programs write out a header when they start, the
+As most compression programs write out a header when they start, the
 tmpfile in practice is unlinked after around 40 ms.
 
 
@@ -134,16 +133,12 @@ Local: B<setpriority(0,0,$nice)>
 
 =item --cat
 
-cat > {}; I<input> {};
-perl -e '$bash = shift;
-         $csh = shift;
-         for(@ARGV) {
-           unlink;rmdir;
-         }
-         if($bash =~ s/h//) {
-           exit $bash;
-         }
-         exit $csh;' "$?h" "$status" {};
+  cat > {}; I<input> {};
+  perl -e '$bash = shift;
+    $csh = shift;
+    for(@ARGV) { unlink;rmdir; }
+    if($bash =~ s/h//) { exit $bash;  }
+    exit $csh;' "$?h" "$status" {};
 
 {} is set to $PARALLEL_TMP which is a tmpfile. The Perl script saves
 the exit value, unlinks the tmpfile, and returns the exit value - no
@@ -151,22 +146,22 @@ matter if the shell is B<bash> (using $?) or B<*csh> (using $status).
 
 =item --fifo
 
-perl -e '($s,$c,$f) = @ARGV;
-         # mkfifo $PARALLEL_TMP
-         system "mkfifo", $f;
-         # spawn $shell -c $command &
-         $pid = fork || exec $s, "-c", $c;
-         open($o,">",$f) || die $!;
-         # cat > $PARALLEL_TMP
-         while(sysread(STDIN,$buf,131072)){
-            syswrite $o, $buf;
-         }
-         close $o;
-         # waitpid to get the exit code from $command
-         waitpid $pid,0;
-         # Cleanup
-         unlink $f;
-         exit $?/256;' I<shell> I<input> $PARALLEL_TMP
+  perl -e '($s,$c,$f) = @ARGV;
+    # mkfifo $PARALLEL_TMP
+    system "mkfifo", $f;
+    # spawn $shell -c $command &
+    $pid = fork || exec $s, "-c", $c;
+    open($o,">",$f) || die $!;
+    # cat > $PARALLEL_TMP
+    while(sysread(STDIN,$buf,131072)){
+       syswrite $o, $buf;
+    }
+    close $o;
+    # waitpid to get the exit code from $command
+    waitpid $pid,0;
+    # Cleanup
+    unlink $f;
+    exit $?/256;' I<shell> I<input> $PARALLEL_TMP
 
 This is an elaborate way of: mkfifo {}; run I<input> in the
 background using I<shell>; copying STDIN to {}; waiting for background
@@ -214,19 +209,19 @@ B<$_EXIT_status>: see B<--return> above.
 
 =item --pipe
 
-perl -e 'if(sysread(STDIN, $buf, 1)) {
-		open($fh, "|-", "@ARGV") || die;
-		syswrite($fh, $buf);
-		# Align up to 128k block
-		if($read = sysread(STDIN, $buf, 131071)) {
-		    syswrite($fh, $buf);
-		}
-		while($read = sysread(STDIN, $buf, 131072)) {
-		    syswrite($fh, $buf);
-		}
-		close $fh;
-		exit ($?&127 ? 128+($?&127) : 1+$?>>8)
-	    }' I<shell> -c I<input>
+  perl -e 'if(sysread(STDIN, $buf, 1)) {
+	open($fh, "|-", "@ARGV") || die;
+	syswrite($fh, $buf);
+	# Align up to 128k block
+	if($read = sysread(STDIN, $buf, 131071)) {
+	    syswrite($fh, $buf);
+	}
+	while($read = sysread(STDIN, $buf, 131072)) {
+	    syswrite($fh, $buf);
+	}
+	close $fh;
+	exit ($?&127 ? 128+($?&127) : 1+$?>>8)
+    }' I<shell> -c I<input>
 
 This small wrapper makes sure that I<input> will never be run if
 there is no data.
@@ -261,8 +256,6 @@ the FIFO, and this value is used as exit value.
 To make it compatible with B<csh> and B<bash> the exit value is
 printed as: $?h/$status and this is parsed by B<perl>.
 
-Works in B<csh>.
-
 There is a bug that makes it necessary to print the exit value 3
 times.
 
@@ -272,17 +265,17 @@ are added to the title to force it to be outside the limits.
 
 You can map the bad limits using:
 
-perl -e 'sub r { int(rand(shift)).($_[0] && "\t".r(@_)) } print map { r(@ARGV)."\n" } 1..10000' 1600 1500 90 |
-  perl -ane '$F[0]+$F[1]+$F[2] < 2037 and print ' | 
-  parallel --colsep '\t' --tagstring '{1}\t{2}\t{3}' tmux -S /tmp/p{%}-'{=3 $_="O"x$_ =}' \
-    new-session -d -n '{=1 $_="O"x$_ =}' true'\ {=2 $_="O"x$_ =};echo $?;rm -f /tmp/p{%}-O*' 
+  perl -e 'sub r { int(rand(shift)).($_[0] && "\t".r(@_)) } print map { r(@ARGV)."\n" } 1..10000' 1600 1500 90 |
+    perl -ane '$F[0]+$F[1]+$F[2] < 2037 and print ' | 
+    parallel --colsep '\t' --tagstring '{1}\t{2}\t{3}' tmux -S /tmp/p{%}-'{=3 $_="O"x$_ =}' \
+      new-session -d -n '{=1 $_="O"x$_ =}' true'\ {=2 $_="O"x$_ =};echo $?;rm -f /tmp/p{%}-O*' 
 
-perl -e 'sub r { int(rand(shift)).($_[0] && "\t".r(@_)) } print map { r(@ARGV)."\n" } 1..10000' 17000 17000 90 |
-  parallel --colsep '\t' --tagstring '{1}\t{2}\t{3}' \
-tmux -S /tmp/p{%}-'{=3 $_="O"x$_ =}' new-session -d -n '{=1 $_="O"x$_ =}' true'\ {=2 $_="O"x$_ =};echo $?;rm /tmp/p{%}-O*'
-> value.csv 2>/dev/null
+  perl -e 'sub r { int(rand(shift)).($_[0] && "\t".r(@_)) } print map { r(@ARGV)."\n" } 1..10000' 17000 17000 90 |
+    parallel --colsep '\t' --tagstring '{1}\t{2}\t{3}' \
+  tmux -S /tmp/p{%}-'{=3 $_="O"x$_ =}' new-session -d -n '{=1 $_="O"x$_ =}' true'\ {=2 $_="O"x$_ =};echo $?;rm /tmp/p{%}-O*'
+  > value.csv 2>/dev/null
 
-R -e 'a<-read.table("value.csv");X11();plot(a[,1],a[,2],col=a[,3]+5,cex=0.1);Sys.sleep(1000)'
+  R -e 'a<-read.table("value.csv");X11();plot(a[,1],a[,2],col=a[,3]+5,cex=0.1);Sys.sleep(1000)'
 
 For B<tmux 1.8> 17000 can be lowered to 2100.
 
@@ -304,23 +297,6 @@ B<--nice>/B<--cat>/B<--fifo> should be done on the remote machine
 B<--pipepart>/B<--pipe> should be done on the local machine inside B<--tmux>
 
 =back
-
-
-=head2 --block-size adjustment
-
-Every time GNU B<parallel> detects a record bigger than
-B<--block-size> it increases the block size by 30%. A small
-B<--block-size> gives very poor performance; by exponentially
-increasing the block size performance will not suffer.
-
-GNU B<parallel> will waste CPU power if B<--block-size> does not
-contain a full record, because it tries to find a full record and will
-fail to do so. The recommendation is therefore to use a
-B<--block-size> > 2 records, so you always get at least one full
-record when you read one block.
-
-If you use B<-N> then B<--block-size> should be big enough to contain
-N+1 records.
 
 
 =head2 Convenience options --nice --basefile --transfer --return
@@ -358,6 +334,23 @@ up the tmpfile and keep the exit code of the command.
 The real killer comes when you try to combine several of these: Doing
 that correctly for all corner cases is next to impossible to do by
 hand.
+
+
+=head2 --block-size adjustment
+
+Every time GNU B<parallel> detects a record bigger than
+B<--block-size> it increases the block size by 30%. A small
+B<--block-size> gives very poor performance; by exponentially
+increasing the block size performance will not suffer.
+
+GNU B<parallel> will waste CPU power if B<--block-size> does not
+contain a full record, because it tries to find a full record and will
+fail to do so. The recommendation is therefore to use a
+B<--block-size> > 2 records, so you always get at least one full
+record when you read one block.
+
+If you use B<-N> then B<--block-size> should be big enough to contain
+N+1 records.
 
 
 =head2 Shell shock
@@ -402,10 +395,14 @@ exec'ing a Perl wrapper to monitor the parent pid and kill the child
 if the parent pid becomes 1, then Ctrl-C works and stderr is kept on
 stderr.
 
+To be able to kill all (grand)*children a new process group is
+started.
+
 =head3 --nice
 
 B<nice>ing the remote process is done by B<setpriority(0,0,$nice)>. A
-few old systems do not implement this and is thus unsupported.
+few old systems do not implement this and B<--nice> is unsupported on
+those.
 
 =head3 Setting $PARALLEL_TMP
 
@@ -417,39 +414,39 @@ remote system.
 
 The wrapper looks like this:
 
-    $shell = $PARALLEL_SHELL || $SHELL;
-    $tmpdir = $TMPDIR;
-    $nice = $opt::nice;
-    # Set $PARALLEL_TMP to a non-existent file name in $TMPDIR
-    do {
-	$ENV{PARALLEL_TMP} = $tmpdir."/par".
-	    join"", map { (0..9,"a".."z","A".."Z")[rand(62)] } (1..5);
-    } while(-e $ENV{PARALLEL_TMP});
-    $SIG{CHLD} = sub { $done = 1; };
-    $pid = fork;
-    unless($pid) {
-	# Make own process group to be able to kill HUP it later
-	setpgrp;
-	eval { setpriority(0,0,$nice) };
-	exec $shell, "-c", ($bashfunc."@ARGV");
-	die "exec: $!\n";
-    }
-    do {
-	# Parent is not init (ppid=1), so sshd is alive
-	# Exponential sleep up to 1 sec
-	$s = $s < 1 ? 0.001 + $s * 1.03 : $s;
-	select(undef, undef, undef, $s);
-    } until ($done || getppid == 1);
-    # Kill HUP the process group if job not done
-    kill(SIGHUP, -${pid}) unless $done;
-    wait;
-    exit ($?&127 ? 128+($?&127) : 1+$?>>8)
+  $shell = $PARALLEL_SHELL || $SHELL;
+  $tmpdir = $TMPDIR;
+  $nice = $opt::nice;
+  # Set $PARALLEL_TMP to a non-existent file name in $TMPDIR
+  do {
+      $ENV{PARALLEL_TMP} = $tmpdir."/par".
+  	join"", map { (0..9,"a".."z","A".."Z")[rand(62)] } (1..5);
+  } while(-e $ENV{PARALLEL_TMP});
+  $SIG{CHLD} = sub { $done = 1; };
+  $pid = fork;
+  unless($pid) {
+      # Make own process group to be able to kill HUP it later
+      setpgrp;
+      eval { setpriority(0,0,$nice) };
+      exec $shell, "-c", ($bashfunc."@ARGV");
+      die "exec: $!\n";
+  }
+  do {
+      # Parent is not init (ppid=1), so sshd is alive
+      # Exponential sleep up to 1 sec
+      $s = $s < 1 ? 0.001 + $s * 1.03 : $s;
+      select(undef, undef, undef, $s);
+  } until ($done || getppid == 1);
+  # Kill HUP the process group if job not done
+  kill(SIGHUP, -${pid}) unless $done;
+  wait;
+  exit ($?&127 ? 128+($?&127) : 1+$?>>8)
 
 =head2 Transferring of variables and functions
 
 Transferring of variables and functions given by B<--env> is done by
 running a Perl script remotely that calls the actual command. The Perl
-script sets $ENV{variable} to the correct value before exec'ing the a
+script sets B<$ENV{>I<variable>B<}> to the correct value before exec'ing the a
 shell that runs the function definition followed by the actual
 command.
 
@@ -512,9 +509,9 @@ shell is used when GNU B<parallel> executes commands.
 GNU B<parallel> tries hard to use the right shell. If GNU B<parallel>
 is called from B<tcsh> it will use B<tcsh>.  If it is called from
 B<bash> it will use B<bash>. It does this by looking at the
-(grand*)parent process: If the (grand*)parent process is a shell, use
-this shell; otherwise look at the parent of this (grand*)parent. If
-none of the (grand*)parents are shells, then $SHELL is used.
+(grand)*parent process: If the (grand)*parent process is a shell, use
+this shell; otherwise look at the parent of this (grand)*parent. If
+none of the (grand)*parents are shells, then $SHELL is used.
 
 This will do the right thing if called from:
 
@@ -570,7 +567,7 @@ not known to B<bash>.
 =back
 
 If GNU B<parallel> guesses wrong in these situation, set the shell using
-$PARALLEL_SHELL.
+B<$PARALLEL_SHELL>.
 
 =head2 Quoting
 
@@ -596,7 +593,7 @@ implemented very differently.
 With B<--pipe> GNU B<parallel> reads the blocks from standard input
 (stdin), which is then given to the command on standard input (stdin);
 so every block is being processed by GNU B<parallel> itself. This is
-the reason why B<--pipe> maxes out at around 100 MB/sec.
+the reason why B<--pipe> maxes out at around 500 MB/sec.
 
 B<--pipepart>, on the other hand, first identifies at which byte
 positions blocks start and how long they are. It does that by seeking
@@ -766,42 +763,32 @@ B<ps> and put the result in a file, which is then used next time.
 
 =head2 Killing jobs
 
-B<--memfree>, B<--halt> and when GNU B<parallel> meets a condition
-from which it cannot recover, jobs are killed. This is done by finding
-the (grand)*children of the jobs and killing those processes.
+GNU B<parallel> kills jobs. It can be due to B<--memfree>, B<--halt>,
+or when GNU B<parallel> meets a condition from which it cannot
+recover. Every job is started as its own process group. This way any
+(grand)*children will get killed, too. The process group is killed with
+the specification mentioned in B<--termseq>.
 
-More specifically GNU B<parallel> maintains a list of processes to be
-killed, sends a signal to all processes (first round this is a TERM).
-It weeds out the processes that exited from the list then waits a
-while and weeds out again. It does that until all processes are dead
-or 200 ms passed. Then it does another round with TERM, and finally a
-round with KILL.
 
-  pids = family_pids(jobs)
-  for signal in TERM, TERM, KILL:
-    for pid in pids:
-      kill signal, pid
-    while kill 0, pids and slept < 200 ms:
-      sleep sleeptime
-      pids = kill 0, pids
-      slept += sleeptime
-      sleeptime = sleeptime * 1.1
+=head2 SQL interface
 
-By doing so there is a tiny risk, that GNU B<parallel> will kill
-processes that are not started from GNU B<parallel>. It, however,
-requires all of these to be true:
+GNU B<parallel> uses the DBURL from GNU B<sql> to give database
+software, username, password, host, port, database, and table in a
+single string.
 
-* Process A is sent a signal
-* It dies during a I<sleep sleeptime> cycle
-* A new process B is spawned (by an unrelated process)
-* This is done during the same I<sleep sleeptime> cycle
-* B is owned by the same user
-* B reuses the pid of the A
+The DBURL must point to a table name. The table will be dropped and
+created. The reason for not reusing an exising table is that the user
+may have added more input sources which would require more columns in
+the table.
 
-It is considered unlikely to ever happen due to:
+The table columns are similar to joblog with the addition of B<V1>
+.. B<Vn> which are values from the input sources, and stdout and
+stderr which are the output from standard output and standard error,
+respectively.
 
-* The longest I<sleep sleeptime> sleeps is 10 ms
-* Re-use of a dead pid rarely happens within a few seconds
+The Signal column has been renamed to _Signal due to Signal being a
+reserved word in MySQL.
+
 
 
 =head1 Ideas for new design

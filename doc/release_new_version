@@ -212,9 +212,9 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20151222 ('') released <<[stable]>>
+Subject: GNU Parallel 20160122 ('') released <<[stable]>>
 
-GNU Parallel 20151222 ('') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20160122 ('') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
@@ -227,11 +227,19 @@ Haiku of the month:
 
 New in this release:
 
-* --transfer is now an alias for --transferfile {}.
+* --sql DBURL uses DBURL as storage for jobs and output. It does not run any jobs so it requires at least one --sqlworker. DBURL must point to a table.
 
-* --transferfile works like --transfer, but takes an argument like --return. This makes it possible to combine transferring files with multiple input sources: parallel -S server --tf {1} wc {2} {1} ::: * ::: -l -w -c
+* --sqlworker DBURL gets jobs from DBURL and stores the result back to DBURL.
 
-* total_jobs() can now be used in {= =}: parallel echo job {#} of '{= $_=total_jobs() =}' ::: {1..50}
+* --sqlandworker is a shorthand for --sql and --sqlworker.
+
+* --sqlworker requires the output of a single job to fit in memory.
+
+* --results now also saves a file called 'seq' containing the sequence number.
+
+* If $PARALLEL_ENV is a file, then that file will be read into $PARALLEL_ENV.
+
+* man parallel_tutorial has been given an overhaul.
 
 * << kontakt GNU Parallel was used (unfortunately without citation) in: Instrumentation and Trace Analysis for Ad-hoc Python Workflows in Cloud Environments http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=7214035>>
 
@@ -249,17 +257,13 @@ for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumb
 
 * <<Citation needed: Introspecting for RSA Key Material to Assist Intrusion Detection http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=7331177&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7331177>>
 
-* GNU Parallel was cited in: Evolution and Learning in Heterogeneous Environments http://research.gold.ac.uk/15078/1/COM_thesis_JonesD_2015.pdf
+* GNU Parallel is used in LAST: http://last.cbrc.jp/
 
-* GNU Parallel was cited in: Contrasting genetic architectures of schizophrenia and other complex diseases using fast variance-components analysis http://www.nature.com/ng/journal/v47/n12/full/ng.3431.html
+* GNU Parallel was cited in: Possum - A Framework for Three-Dimensional Reconstruction of Brain Images rfom Serial Sections http://link.springer.com/article/10.1007/s12021-015-9286-1
 
-* GNU Parallel was cited in: Efficient Retrieval of Key Material for Inspecting Potentially Malicious Traffic in the Cloud http://www.cs.bham.ac.uk/~bxb/Papres/2015.1.pdf 
+* GNU Parallel was used in: Mission Impossible: you have 1 minute to analyze the Ebola Genome https://www.biostars.org/p/119397
 
-* GNU Parallel was cited in: Achieving Consistent Doppler Measurements from SDO/HMI Vector Field Inversions http://arxiv.org/pdf/1511.06500.pdf
-
-* Flo uses GNU Parallel: https://github.com/wurmlab/flo
-
-* 使用 GNU parallel 來平行運算http://mutolisp.logdown.com/posts/316959-using-gnu-parallel-to-parallel-computing
+* Distributed Log Search Using GNU Parallel http://blog.codehate.com/post/134320079974/distributed-log-search-using-gnu-parallel
 
 * Bug fixes and man page updates.
 

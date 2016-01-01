@@ -40,7 +40,7 @@ parse_options();
 ::debug("init", "Open file descriptors: ", join(" ",keys %Global::fd), "\n");
 my $number_of_args;
 if($Global::max_number_of_args) {
-    $number_of_args=$Global::max_number_of_args;
+    $number_of_args = $Global::max_number_of_args;
 } elsif ($opt::X or $opt::m or $opt::xargs) {
     $number_of_args = undef;
 } else {
@@ -57,6 +57,15 @@ if($opt::pipepart) {
     @input_source_fh = map { open_or_exit($_) } @opt::a;
     if(not @input_source_fh and not $opt::pipe) {
 	@input_source_fh = (*STDIN);
+    }
+}
+if($opt::sql) {
+    # Create SQL table to hold joblog + output
+    $Global::sql->create_table($#input_source_fh+1);
+    if($opt::sqlworker) {
+	# Start a real --sqlworker in the background later
+	$Global::sqlworker = 1;
+	$opt::sqlworker = undef;
     }
 }
 
@@ -751,6 +760,9 @@ sub options_hash {
 	 "m" => \$opt::m,
 	 "X" => \$opt::X,
 	 "v" => \@opt::v,
+	 "sql=s" => \$opt::sql,
+	 "sqlworker=s" => \$opt::sqlworker,
+	 "sqlandworker=s" => \$opt::sqlandworker,
 	 "joblog=s" => \$opt::joblog,
 	 "results|result|res=s" => \$opt::results,
 	 "resume" => \$opt::resume,
@@ -935,7 +947,7 @@ sub get_options_from_array {
 sub parse_options {
     # Returns: N/A
     init_globals();
-    @ARGV=read_options();
+    @ARGV = read_options();
 
     # no-* overrides *
     if($opt::nokeeporder) { $opt::keeporder = undef; }
@@ -960,6 +972,7 @@ sub parse_options {
     if(defined $opt::tmpdir) { $ENV{'TMPDIR'} = $opt::tmpdir; }
     $opt::nice ||= 0;
     if(defined $opt::help) { die_usage(); }
+    if(defined $opt::sqlandworker) { $opt::sql = $opt::sqlworker = $opt::sqlandworker; }
     if(defined $opt::colsep) { $Global::trim = 'lr'; }
     if(defined $opt::header) { $opt::colsep = defined $opt::colsep ? $opt::colsep : "\t"; }
     if(defined $opt::trim) { $Global::trim = $opt::trim; }
@@ -1108,6 +1121,7 @@ sub parse_options {
         $opt::jobs = "100%";
     }
     open_joblog();
+    ($opt::sql or $opt::sqlworker) and $Global::sql = SQL->new($opt::sql || $opt::sqlworker);
 }
 
 sub check_invalid_option_combinations {
@@ -1162,7 +1176,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20151222;
+    $Global::version = 20160101;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1595,6 +1609,7 @@ sub read_options {
 
     Getopt::Long::Configure("bundling","require_order");
     my @ARGV_copy = @ARGV;
+    my @ARGV_orig = @ARGV;
     # Check if there is a --profile to set @opt::profile
     get_options_from_array(\@ARGV_copy,"profile|J=s","plain") || die_usage();
     my @ARGV_profile = ();
@@ -1644,10 +1659,27 @@ sub read_options {
     get_options_from_array(\@ARGV_profile) || die_usage();
     get_options_from_array(\@ARGV_env) || die_usage();
     get_options_from_array(\@ARGV) || die_usage();
-
+    # What were the options given on the command line?
+    # Used to start --sqlworker
+    my $ai = arrayindex(\@ARGV_orig, \@ARGV);
+    @Global::options_in_argv = @ARGV_orig[0..$ai-1];
     # Prepend non-options to @ARGV (such as commands like 'nice')
     unshift @ARGV, @ARGV_profile, @ARGV_env;
     return @ARGV;
+}
+
+sub arrayindex {
+    # Similar to Perl's index function, but for arrays
+    # Input:
+    #   $arr_ref1 = ref to @array1 to search in
+    #   $arr_ref2 = ref to @array2 to search for
+    my ($arr_ref1,$arr_ref2) = @_;
+    my $array1_as_string = join "", map { "\257\257".$_ } @$arr_ref1;
+    my $array2_as_string = join "", map { "\257\257".$_ } @$arr_ref2;
+    my $i = index($array1_as_string,$array2_as_string,0);
+    if($i == -1) { return -1 }
+    my @before = split /\257\257/, substr($array1_as_string,0,$i);
+    return $#before;
 }
 
 sub read_args_from_command_line {
@@ -2322,9 +2354,27 @@ sub drain_job_queue {
 		::warning("There are no job slots available. Increase --jobs.");
 	    }
         }
+	while($opt::sql and not $Global::sql->finished()) {
+	    # SQL master
+	    $sleep = ::reap_usleep($sleep);
+	    if($Global::sqlworker) {
+		# Start an SQL worker as we are now sure there is work to do
+		$Global::sqlworker = 0;
+		if(fork()) {
+		    # skip
+		} else {
+		    # Replace --sql/--sqlandworker with --sqlworker
+		    my @ARGV = map { s/^--sql(andworker)?$/--sqlworker/; $_ } @Global::options_in_argv;
+		    # exec the --sqlworker
+		    exec($0,::shell_quote(@ARGV),@command);
+		}
+	    }
+	}
     } while ($Global::total_running > 0
 	     or
-	     not $Global::start_no_new_jobs and not $Global::JobQueue->empty());
+	     not $Global::start_no_new_jobs and not $Global::JobQueue->empty()
+	     or
+	     $opt::sql and not $Global::sql->finished());
     if($opt::progress) {
 	my %progress = progress();
 	::status("\r", $progress{'status'}, "\n");
@@ -3291,6 +3341,8 @@ sub reaper {
     my $stiff;
     my @pids_reaped;
     debug("run", "Reaper ");
+    # For efficiency surround with BEGIN/COMMIT when using $opt::sql
+    $opt::sql and $Global::sql->run("BEGIN;");
     while (($stiff = waitpid(-1, &WNOHANG)) > 0) {
 	# $stiff = pid of dead process
 	push(@pids_reaped,$stiff);
@@ -3348,6 +3400,7 @@ sub reaper {
 	    ::status("\r",$progress{'status'});
 	}
     }
+    $opt::sql and $Global::sql->run("COMMIT;");
     debug("run", "done ");
     return @pids_reaped;
 }
@@ -3739,6 +3792,13 @@ sub undef_as_zero {
 sub undef_as_empty {
     my $a = shift;
     return $a ? $a : "";
+}
+
+sub undef_if_empty {
+    if(defined($_[0]) and $_[0] eq "") {
+	return undef;
+    }
+    return $_[0];
 }
 
 sub multiply_binary_prefix {
@@ -6092,6 +6152,15 @@ sub openoutputfiles {
 	    $dir = $opt::results."/".$args_as_dirname;
 	    File::Path::mkpath($dir);
 	}
+	# prefix/name1/val1/name2/val2/seq
+	my $seqname = "$dir/seq";
+	my $seqfhw;
+	if(not open($seqfhw, "+>", $seqname)) {
+	    ::error("Cannot write to `$seqname'.");
+	    ::wait_and_exit(255);
+	}
+	print $seqfhw $self->seq();
+	close $seqfhw;
 	# prefix/name1/val1/name2/val2/stdout
 	$outname = "$dir/stdout";
 	if(not open($outfhw, "+>", $outname)) {
@@ -6106,6 +6175,13 @@ sub openoutputfiles {
 	}
 	$self->set_fh(1,"unlink","");
 	$self->set_fh(2,"unlink","");
+	if($opt::sqlworker) {
+	    # Save the filenames in SQL table
+	    $Global::sql->update("SET Stdout = ? WHERE Seq = ".$self->seq(),
+				 $outname);
+	    $Global::sql->update("SET Stderr = ? WHERE Seq = ".$self->seq(),
+				 $errname);
+	}
     } elsif(not $opt::ungroup) {
 	# To group we create temporary files for STDOUT and STDERR
 	# To avoid the cleanup unlink the files immediately (but keep them open)
@@ -6404,6 +6480,9 @@ sub set_starttime {
     my $self = shift;
     my $starttime = shift || ::now();
     $self->{'starttime'} = $starttime;
+    $opt::sqlworker and
+	$Global::sql->update("SET Starttime = ? WHERE Seq = ".$self->seq(),
+			     $starttime);
 }
 
 sub runtime {
@@ -6425,6 +6504,9 @@ sub set_endtime {
     my $self = shift;
     my $endtime = shift;
     $self->{'endtime'} = $endtime;
+    $opt::sqlworker and
+	$Global::sql->update("SET JobRuntime = ? WHERE Seq = ".$self->seq(),
+			     $self->runtime());
 }
 
 sub is_timedout {
@@ -6635,6 +6717,14 @@ sub wrapped {
 		';';
 	}
 	if($ENV{'PARALLEL_ENV'}) {
+	    if(-e $ENV{'PARALLEL_ENV'}) {
+		# This is a file/fifo: Replace envvar with content of file
+		open(my $parallel_env, "<", $ENV{'PARALLEL_ENV'}) ||
+		    ::die_bug("Cannot read parallel_env from $ENV{'PARALLEL_ENV'}");
+		local $/;
+		$ENV{'PARALLEL_ENV'} = <$parallel_env>;
+		close $parallel_env;
+	    }
 	    # If $PARALLEL_ENV set, put that in front of the command
 	    # Used for importing functions for fish
 	    # Map \001 to \n to make it easer to quote \n in $PARALLEL_ENV
@@ -6664,8 +6754,11 @@ sub wrapped {
 	   and
 	   length $command > 499) {
 	    # csh does not like words longer than 1000 (499 quoted)
-	    $command = "perl -e '".base64_zip_eval()."' ".
-		join" ",string_zip_base64('exec "'.::perl_quote_scalar($command).'"');
+	    # bzip2 breaks --sql mysql://...
+	    # $command = "perl -e '".base64_zip_eval()."' ".
+	    # join" ",string_zip_base64('exec "'.::perl_quote_scalar($command).'"');
+	    $command = "perl -e '".base64_eval()."' ".
+		join" ",string_base64('exec "'.::perl_quote_scalar($command).'"');
 	}
 	$self->{'wrapped'} = $command;
     }
@@ -6678,11 +6771,26 @@ sub set_sshlogin {
     $self->{'sshlogin'} = $sshlogin;
     delete $self->{'sshlogin_wrap'}; # If sshlogin is changed the wrap is wrong
     delete $self->{'wrapped'};
+    $opt::sqlworker and
+	$Global::sql->update("SET Host = ? WHERE Seq = ".$self->seq(),
+			     $sshlogin->string());
 }
 
 sub sshlogin {
     my $self = shift;
     return $self->{'sshlogin'};
+}
+
+sub string_base64 {
+    # Base64 encode it into 1000 byte blocks.
+    # 1000 bytes is the largest word size csh supports
+    # Input:
+    #   @strings = to be encoded
+    # Returns:
+    #   @base64 = 1000 byte block
+    $Global::use{"MIME::Base64"} ||= eval "use MIME::Base64; 1;";
+    my @base64 = unpack("(A1000)*",encode_base64((join"",@_),""));
+    return @base64;
 }
 
 sub string_zip_base64 {
@@ -6707,7 +6815,7 @@ sub string_zip_base64 {
 	close $zipin_fh;
 	exit;
     }
-    ::debug("base64","Orig:@_\nAs base64:@base64\n");
+    ::debug("base64","Orig:@_\nAs bzip2 base64:@base64\n");
     return @base64;
 }
 
@@ -6725,11 +6833,11 @@ sub base64_zip_eval {
         @GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");
         eval "@GNU_Parallel";
 
-        $SIG{CHLD}="IGNORE";
-        # Search for bzip2. Not found => use default path
+	$SIG{CHLD}="IGNORE";
+	# Search for bzip2. Not found => use default path
 	my $zip = (grep { -x $_ } "/usr/local/bin/bzip2")[0] || "bzip2";
-        # $in = stdin on $zip, $out = stdout from $zip
-        my($in, $out,$eval);
+	# $in = stdin on $zip, $out = stdout from $zip
+	my($in, $out,$eval);
 	open3($in,$out,">&STDERR",$zip,"-dc");
 	if(my $perlpid = fork) {
 	    close $in;
@@ -6742,7 +6850,27 @@ sub base64_zip_eval {
 	    close $in;
 	    exit;
 	}
-        wait;
+	wait;
+	eval $eval;
+			     });
+    ::debug("base64",$script,"\n");
+    return $script;
+}
+
+sub base64_eval {
+    # Script that:
+    #   * reads base64 strings from @ARGV
+    #   * decodes them
+    #   * evals the result
+    # Reverse of string_base64 + eval
+    # Will be wrapped in ' so single quote is forbidden
+    # Returns:
+    #   $script = 1-liner for perl -e
+    my $script = ::spacefree(0,q{
+        @GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");
+        eval "@GNU_Parallel";
+        my $eval;
+	$eval = decode_base64(join"",@ARGV);
 	eval $eval;
 			     });
     ::debug("base64",$script,"\n");
@@ -6913,8 +7041,11 @@ sub sshlogin_wrap {
 		   $command =~ /\n/) {
 		    # csh does not deal well with > 1000 chars in one word
 		    # csh does not deal well with $ENV with \n
-		    $env_command = "perl -e '".base64_zip_eval()."' ".
-			join" ",string_zip_base64($env_command);
+		    # bzip2 breaks --sql mysql://...
+		    # $env_command = "perl -e '".base64_zip_eval()."' ".
+		    # join" ",string_zip_base64($env_command);
+		    $env_command = "perl -e '".base64_eval()."' ".
+			join" ",string_base64($env_command);
 		    $self->{'sshlogin_wrap'} = $env_command;
 		} else {
 		    $self->{'sshlogin_wrap'} = "perl -e ".::shell_quote_scalar($env_command);
@@ -6942,8 +7073,11 @@ sub sshlogin_wrap {
 	       $command =~ /\n/) {
 		# csh does not deal well with > 1000 chars in one word
 		# csh does not deal well with $ENV with \n
-		$quoted_remote_command = "perl -e \\''".base64_zip_eval()."'\\' ".
-		    join" ",string_zip_base64($remote_command);
+		# bzip2 breaks --sql mysql://...
+		# $quoted_remote_command = "perl -e \\''".base64_zip_eval()."'\\' "."".
+		# join" ",string_zip_base64($remote_command);
+		$quoted_remote_command = "perl -e \\''".base64_eval()."'\\' ".
+		    join" ",string_base64($remote_command);
 	    } else {
 		$quoted_remote_command = $dq_remote_command;
 	    }
@@ -6999,6 +7133,9 @@ sub add_transfersize {
     my $self = shift;
     my $transfersize = shift;
     $self->{'transfersize'} += $transfersize;
+    $opt::sqlworker and
+	$Global::sql->update("SET Send = ? WHERE Seq = ".$self->seq(),
+			     $self->{'transfersize'});
 }
 
 sub sshtransfer {
@@ -7041,6 +7178,9 @@ sub add_returnsize {
     my $self = shift;
     my $returnsize = shift;
     $self->{'returnsize'} += $returnsize;
+    $opt::sqlworker and
+	$Global::sql->update("SET Receive = ? WHERE Seq = ".$self->seq(),
+			     $self->{'returnsize'});
 }
 
 sub sshreturn {
@@ -7275,10 +7415,10 @@ sub start {
     }
     $job->openoutputfiles();
     my($stdout_fh,$stderr_fh) = ($job->fh(1,"w"),$job->fh(2,"w"));
-    if($opt::ungroup) {
+    if($opt::ungroup or $opt::sqlworker) {
 	print_dryrun_and_verbose($stdout_fh,$job,$command);
     }
-    if($opt::dryrun) { $command = "true"; }
+    if($opt::dryrun or $opt::sql) { $command = "true"; }
     $ENV{'PARALLEL_SEQ'} = $job->seq();
     $ENV{'PARALLEL_PID'} = $$;
     $ENV{'PARALLEL_TMP'} = ::tmpname("par");
@@ -7380,6 +7520,10 @@ sub print_dryrun_and_verbose {
 	    # Verbose level > 1: Print the rsync and stuff
 	    print $stdout_fh $command,"\n";
 	}
+    }
+    if($opt::sqlworker) {
+	$Global::sql->update("SET Command = ? WHERE Seq = ".$job->seq(),
+			     $job->replaced());
     }
 }
 
@@ -7567,7 +7711,11 @@ sub print {
 
 	if(($opt::dryrun or $Global::verbose)
 	   and
-	   not $self->{'verbose_printed'}) {
+	   not $self->{'verbose_printed'}
+	   and
+	   not $opt::sql
+	   and
+	   not $opt::sqlworker) {
 	    $self->{'verbose_printed'}++;
 	    if($Global::verbose <= 1) {
 		print STDOUT $self->replaced(),"\n";
@@ -7638,6 +7786,10 @@ sub files_print {
 	}
     } elsif($fdno == 1 and $self->fh($fdno,"name")) {
 	print $out_fd $self->tag(),$self->fh($fdno,"name"),"\n";
+	if($opt::sqlworker) {
+	    $Global::sql->update("SET Stdout = ? WHERE Seq = ".$self->seq(),
+				 $self->tag().$self->fh($fdno,"name"));
+	}
 	$self->add_returnsize(-s $self->fh($fdno,"name"));
     }
 }
@@ -7781,12 +7933,25 @@ sub normal_print {
     seek $in_fh, 0, 0;
     # $in_fh is now ready for reading at position 0
     my $outputlength = 0;
+    my @output;
     while(sysread($in_fh,$buf,131072)) {
 	print $out_fd $buf;
 	$outputlength += length $buf;
+	if($opt::sqlworker) {
+	    push @output, $buf;
+	}
     }
     if($fdno == 1) {
 	$self->add_returnsize($outputlength);
+	if($opt::sqlworker and not $opt::results) {
+	    $Global::sql->update("SET Stdout = ? WHERE Seq = ".$self->seq(),
+				 join("",@output));
+	}
+    } else {
+	if($opt::sqlworker and not $opt::results) {
+	    $Global::sql->update("SET Stderr = ? WHERE Seq = ".$self->seq(),
+				 join("",@output));
+	}
     }
     close $in_fh;
     if($? and $opt::compress) {
@@ -7851,6 +8016,9 @@ sub set_exitstatus {
 	# Status may have been set by --timeout
 	$self->{'exitstatus'} ||= $exitstatus;
     }
+    $opt::sqlworker and
+	$Global::sql->update("SET Exitval = ? WHERE Seq = ".$self->seq(),
+			     $exitstatus);
 }
 
 sub reset_exitstatus {
@@ -7867,8 +8035,10 @@ sub set_exitsignal {
     my $self = shift;
     my $exitsignal = shift;
     $self->{'exitsignal'} = $exitsignal;
+    $opt::sqlworker and
+	$Global::sql->update("SET _Signal = ? WHERE Seq = ".$self->seq(),
+			     $exitsignal);
 }
-
 
 {
     my $status_printed;
@@ -8091,6 +8261,10 @@ sub populate {
 		$self->push($self->{'arg_queue'}->get());
 	    }
 	}
+    }
+    if($opt::sql) {
+	# Insert the V1..Vn for this $seq in SQL table instead of generating one
+	$Global::sql->insert_records($self->seq(),$self->{'arg_list_flat_orig'});
     }
 }
 
@@ -8715,6 +8889,10 @@ sub get {
 					$self->{'len'},
 	    );
 	$cmd_line->populate();
+	if($opt::sqlworker) {
+	    # Get the sequence number from the SQL table
+	    $cmd_line->set_seq($SQL::next_seq);
+	}
 	::debug("init","cmd_line->number_of_args ",
 		$cmd_line->number_of_args(), "\n");
 	if(not $Global::no_more_input and ($opt::pipe or $opt::pipepart)) {
@@ -8893,7 +9071,10 @@ sub new {
     my $colsep = shift;
     my @unget = ();
     my $arg_sub_queue;
-    if($colsep) {
+    if($opt::sqlworker) {
+	# Open SQL table
+	$arg_sub_queue = SQLRecordQueue->new();
+    } elsif($colsep) {
 	# Open one file with colsep
 	$arg_sub_queue = RecordColQueue->new($fhs);
     } else {
@@ -8978,7 +9159,7 @@ sub get {
     if(@{$self->{'unget'}}) {
 	return shift @{$self->{'unget'}};
     }
-    my $unget_ref=$self->{'unget'};
+    my $unget_ref = $self->{'unget'};
     if($self->{'arg_sub_queue'}->empty()) {
 	return undef;
     }
@@ -9013,6 +9194,45 @@ sub empty {
     my $self = shift;
     my $empty = (not @{$self->{'unget'}} and $self->{'arg_sub_queue'}->empty());
     ::debug("run", "RecordColQueue->empty $empty");
+    return $empty;
+}
+
+
+package SQLRecordQueue;
+
+sub new {
+    my $class = shift;
+    my @unget = ();
+    return bless {
+	'unget' => \@unget,
+    }, ref($class) || $class;
+}
+
+sub get {
+    # Returns:
+    #   reference to array of Arg-objects
+    my $self = shift;
+    if(@{$self->{'unget'}}) {
+	return shift @{$self->{'unget'}};
+    }
+    return $Global::sql->get_record();
+}
+
+sub unget {
+    my $self = shift;
+    ::debug("run", "SQLRecordQueue-unget '@_'\n");
+    unshift @{$self->{'unget'}}, @_;
+}
+
+sub empty {
+    my $self = shift;
+    if(@{$self->{'unget'}}) { return 0; }
+    my $get = $self->get();
+    if(defined $get) {
+	$self->unget($get);
+    }
+    my $empty = not $get;
+    ::debug("run", "SQLRecordQueue->empty $empty");
     return $empty;
 }
 
@@ -9462,6 +9682,323 @@ sub insert {
     push @{$self->{'queue'}}, $in;
 }
 
+
+package SQL;
+
+sub new {
+    my $class = shift;
+    my $dburl = shift;
+    $Global::use{"DBI"} ||= eval "use DBI; 1;";
+    my %options = parse_dburl(get_alias($dburl));
+    my %driveralias = ("sqlite" => "SQLite",
+		       "sqlite3" => "SQLite",
+		       "pg" => "Pg",
+		       "postgres" => "Pg",
+		       "postgresql" => "Pg");
+    my $driver = $driveralias{$options{'databasedriver'}} || $options{'databasedriver'};
+    my $database = $options{'database'};
+    my $host = $options{'host'} ? ";host=".$options{'host'} : "";
+    my $port = $options{'port'} ? ";port=".$options{'port'} : "";
+    my $dsn = "DBI:$driver:dbname=$database$host$port";
+    my $userid = $options{'user'};
+    my $password = $options{'password'};;
+    my $dbh = DBI->connect($dsn, $userid, $password, { RaiseError => 1 })
+	or die $DBI::errstr;
+    return bless {
+	'dbh' => $dbh,
+	'max_number_of_args' => undef,
+	'table' => $options{'table'},
+    }, ref($class) || $class;
+}
+
+sub get_alias {
+    my $alias = shift;
+    $alias =~ s/^(sql:)*//; # Accept aliases prepended with sql:
+    if ($alias !~ /^:/) {
+	return $alias;
+    }
+
+    # Find the alias
+    my $path;
+    if (-l $0) {
+	($path) = readlink($0) =~ m|^(.*)/|;
+    } else {
+	($path) = $0 =~ m|^(.*)/|;
+    }
+
+    my @deprecated = ("$ENV{HOME}/.dburl.aliases",
+		      "$path/dburl.aliases", "$path/dburl.aliases.dist");
+    for (@deprecated) {
+	if(-r $_) {
+	    print STDERR "$_ is deprecated. Use .sql/aliases instead (read man sql)\n";
+	}
+    }
+    my @urlalias=();
+    check_permissions("$ENV{HOME}/.sql/aliases");
+    check_permissions("$ENV{HOME}/.dburl.aliases");
+    my @search = ("$ENV{HOME}/.sql/aliases",
+		  "$ENV{HOME}/.dburl.aliases", "/etc/sql/aliases",
+		  "$path/dburl.aliases", "$path/dburl.aliases.dist");
+    for my $alias_file (@search) {
+	if(-r $alias_file) {
+	    push @urlalias, `cat "$alias_file"`;
+	}
+    }
+    my ($alias_part,$rest) = $alias=~/(:\w*)(.*)/;
+    # If we saw this before: we have an alias loop
+    if(grep {$_ eq $alias_part } @Private::seen_aliases) {
+	print STDERR "$alias_part is a cyclic alias\n";
+	exit -1;
+    } else {
+	push @Private::seen_aliases, $alias_part;
+    }
+
+    my $dburl;
+    for (@urlalias) {
+	/^$alias_part\s+(\S+.*)/ and do { $dburl = $1; last; }
+    }
+
+    if($dburl) {
+	return get_alias($dburl.$rest);
+    } else {
+	Usage("$alias is not defined in @search");
+	exit(-1);
+    }
+}
+
+sub check_permissions {
+    my $file = shift;
+
+    if(-e $file) {
+	if(not -o $file) {
+	    my $username = (getpwuid($<))[0];
+	    print STDERR "$file should be owned by $username: chown $username $file\n";
+	}
+	my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,
+	    $atime,$mtime,$ctime,$blksize,$blocks) = stat($file);
+	if($mode & 077) {
+	    my $username = (getpwuid($<))[0];
+	    print STDERR "$file should be only be readable by $username: chmod 600 $file\n";
+	}
+    }
+}
+
+sub parse_dburl {
+    my $url = shift;
+    my %options = ();
+    # sql:mysql://[[user][:password]@][host][:port]/[database[/table][?sql query]]
+
+    if($url=~m!(?:sql:)? # You can prefix with 'sql:'
+               ((?:oracle|ora|mysql|pg|postgres|postgresql)(?:s|ssl|)|
+                 (?:sqlite|sqlite2|sqlite3)):// # Databasedriver ($1)
+               (?:
+                ([^:@/][^:@]*|) # Username ($2)
+                (?:
+                 :([^@]*) # Password ($3)
+                )?
+               @)?
+               ([^:/]*)? # Hostname ($4)
+               (?:
+                :
+                ([^/]*)? # Port ($5)
+               )?
+               (?:
+                /
+                ([^/?]*)? # Database ($6)
+               )?
+               (?:
+                /
+                ([^?]*)? # Table ($7)
+               )?
+               (?:
+                \?
+                (.*)? # Query ($8)
+               )?
+              !ix) {
+	$options{databasedriver} = ::undef_if_empty(lc(uri_unescape($1)));
+	$options{user} = ::undef_if_empty(uri_unescape($2));
+	$options{password} = ::undef_if_empty(uri_unescape($3));
+	$options{host} = ::undef_if_empty(uri_unescape($4));
+	$options{port} = ::undef_if_empty(uri_unescape($5));
+	$options{database} = ::undef_if_empty(uri_unescape($6));
+	$options{table} = ::undef_if_empty(uri_unescape($7));
+	$options{query} = ::undef_if_empty(uri_unescape($8));
+	::debug("sql","dburl $url\n");
+	::debug("sql","databasedriver ",$options{databasedriver}, " user ", $options{user},
+	      " password ", $options{password}, " host ", $options{host},
+	      " port ", $options{port}, " database ", $options{database},
+	      " table ",$options{table}," query ",$options{query}, "\n");
+
+    } else {
+	::error("$url is not a valid DBURL");
+	exit 255;
+    }
+    return %options;
+}
+
+sub uri_unescape {
+    # Copied from http://cpansearch.perl.org/src/GAAS/URI-1.55/URI/Escape.pm
+    # to avoid depending on URI::Escape
+    # This section is (C) Gisle Aas.
+    # Note from RFC1630:  "Sequences which start with a percent sign
+    # but are not followed by two hexadecimal characters are reserved
+    # for future extension"
+    my $str = shift;
+    if (@_ && wantarray) {
+	# not executed for the common case of a single argument
+	my @str = ($str, @_);  # need to copy
+	foreach (@str) {
+	    s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
+	}
+	return @str;
+    }
+    $str =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg if defined $str;
+    $str;
+}
+
+sub run {
+    my $self = shift;
+    my $stmt = shift;
+    my @retval;
+    my $dbh = $self->{'dbh'};
+    ::debug("sql","$opt::sql$opt::sqlworker run $stmt\n");
+    # Execute with the rest of the args - if any
+    my $rv;
+    my $sth;
+    my $lockretry = 0;
+    while($lockretry < 10) {
+	$sth = $dbh->prepare($stmt);
+	if($rv = $sth->execute(@_)) {
+	    last;
+	} else {
+	    if($DBI::errstr =~ /locked/) {
+		::debug("sql","Lock retry: $lockretry");
+		$lockretry++;
+	    } else {
+		::error($DBI::errstr);
+	    }
+	}
+    }
+    if($rv < 0){
+	print $DBI::errstr;
+    }
+    return $sth;
+}
+
+sub get {
+    my $self = shift;
+    my $sth = $self->run(@_);
+    my @retval;
+    while(1) {
+	my @row = $sth->fetchrow_array();
+	@row or last;
+	push @retval, \@row;
+    }
+    return \@retval;
+}
+
+sub table {
+    my $self = shift;
+    return $self->{'table'};
+}
+
+sub update {
+    my $self = shift;
+    my $stmt = shift;
+    my $table = $self->table();
+    $self->run("UPDATE $table $stmt",@_);
+}
+
+sub max_number_of_args {
+    # Maximal number of args for this table
+    my $self = shift;
+    if(not $self->{'max_number_of_args'}) {
+	# Read the number of args from the SQL table
+	my $table = $self->table();
+	my $v = $self->get("SELECT * FROM $table LIMIT 1;");
+	my @reserved_columns = qw(Seq Host Starttime JobRuntime Send
+	    Receive Exitval _Signal Command Stdout Stderr);
+	if(not $v) {
+	    ::error("$table contains no records");
+	}
+	# Count the number of Vx columns
+	$self->{'max_number_of_args'} = $#{$v->[0]} - $#reserved_columns;
+    }
+    return $self->{'max_number_of_args'};
+}
+
+sub set_max_number_of_args {
+    my $self = shift;
+    $self->{'max_number_of_args'} = shift;
+}
+
+sub create_table {
+    my $self = shift;
+    my $max_number_of_args = shift;
+    $self->set_max_number_of_args($max_number_of_args);
+    my $table = $self->table();
+    $self->run(qq(DROP TABLE IF EXISTS $table;));
+    my $v_def = join "", map { "V$_ TEXT," } (1..$self->max_number_of_args());
+    $self->run(qq{CREATE TABLE $table
+		(Seq INT,
+		 Host TEXT,
+		 Starttime REAL,
+		 JobRuntime REAL,
+		 Send INT,
+		 Receive INT,
+		 Exitval INT,
+		 _Signal INT,
+		 Command TEXT,}.
+	       $v_def.
+	       qq{Stdout TEXT,
+		 Stderr TEXT);});
+}
+
+sub insert_records {
+    my $self = shift;
+    my $seq = shift;
+    my $record_ref = shift;
+    my $table = $self->table();
+    my $v_cols = join ",", map { "V$_" } (1..$self->max_number_of_args());
+    # Two extra value due to $seq, Exitval
+    my $v_vals = join ",", map { "?" } (1..$self->max_number_of_args()+2);
+    $self->run("INSERT INTO $table (Seq,Exitval,$v_cols) ".
+	       "VALUES ($v_vals);", $seq, -1000, @$record_ref[1..$#$record_ref]);
+}
+
+sub get_record {
+    my $self = shift;
+    my @retval;
+    my $table = $self->table();
+    my $v_cols = join ",", map { "V$_" } (1..$self->max_number_of_args());
+    my $v = $self->get("SELECT Seq, $v_cols FROM $table ".
+		       "WHERE Exitval = -1000 ORDER BY Seq LIMIT 1;");
+    if($v->[0]) {
+	my $val_ref = $v->[0];
+	# Mark record as taken
+	my $seq = shift @$val_ref;
+	# Save the sequence number to use when running the job
+	$SQL::next_seq = $seq;
+	$self->update("SET Exitval = ? WHERE Seq = ".$seq, -1220);
+	for (@$val_ref) {
+	    push @retval, Arg->new($_);
+	}
+    }
+    if(@retval) {
+	return \@retval;
+    } else {
+	return undef;
+    }
+}
+
+sub finished {
+    # Check if there are any jobs left in the SQL table that do not
+    # have a "real" exitval
+    my $self = shift;
+    my $table = $self->table();
+    my $rv = $self->get("select Seq,Exitval from $table where Exitval <= -1000 limit 1");
+    return not $rv->[0];
+}
 
 package Semaphore;
 

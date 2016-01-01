@@ -514,7 +514,7 @@ should feel free to use B<--will-cite>.
 Size of block in bytes to read at a time. The I<size> can be postfixed
 with K, M, G, T, P, k, m, g, t, or p which would multiply the size
 with 1024, 1048576, 1073741824, 1099511627776, 1125899906842624, 1000,
-1000000, 1000000000, 1000000000000, or 1000000000000000 respectively.
+1000000, 1000000000, 1000000000000, or 1000000000000000, respectively.
 
 GNU B<parallel> tries to meet the block size but can be off by the
 length of one record. For performance reasons I<size> should be bigger
@@ -1088,7 +1088,7 @@ most likely do what is needed.
 
 Multiple arguments. Insert as many arguments as the command line
 length permits. If multiple jobs are being run in parallel: distribute
-the arguments evenly among the jobs. Use B<-j1> to avoid this.
+the arguments evenly among the jobs. Use B<-j1> or B<--xargs> to avoid this.
 
 If B<{}> is not used the arguments will be appended to the
 line.  If B<{}> is used multiple times each B<{}> will be replaced
@@ -1106,7 +1106,7 @@ Minimum memory free when starting another job. The I<size> can be
 postfixed with K, M, G, T, P, k, m, g, t, or p which would multiply
 the size with 1024, 1048576, 1073741824, 1099511627776,
 1125899906842624, 1000, 1000000, 1000000000, 1000000000000, or
-1000000000000000 respectively.
+1000000000000000, respectively.
 
 If the jobs take up very different amount of RAM, GNU B<parallel> will
 only start as many as there is memory for. If less than I<size> bytes
@@ -1789,6 +1789,50 @@ before running the full batch.
 
 Do not use the first line of input (used by GNU B<parallel> itself
 when called with B<--shebang>).
+
+
+=item B<--sql> I<DBURL> (alpha testing)
+
+Submit jobs via SQL server. I<DBURL> must point to a table, which will
+contain the same information as B<--joblog>, the values from the input
+sources (stored in columns V1 .. Vn), and the output (stored in
+columns Stdout and Stderr).
+
+The table will be dropped and created with the correct amount of
+V-columns.
+
+B<--sql> does not run any jobs, but it creates the values for the jobs
+to be run and wait for them to complete. One or more B<--sqlworker>
+must be run to actually execute the jobs.
+
+The format of a DBURL is:
+
+  [sql:]vendor://[[user][:password]@][host][:port]/[database]/table
+
+E.g.
+
+  sql:mysql://hr:hr@localhost:3306/hrdb/jobs
+  mysql://scott:tiger@my.example.com/pardb/paralleljobs
+  sql:oracle://scott:tiger@ora.example.com/xe/parjob
+  postgresql://scott:tiger@pg.example.com/pgdb/parjob
+  pg:///parjob
+  sqlite3:///pardb/parjob
+
+It can also be an alias from ~/.sql/aliases:
+
+  :myalias mysql:///mydb/paralleljobs
+
+
+=item B<--sqlandworker> I<DBURL> (alpha testing)
+
+Shorthand for: B<--sql> I<DBURL> B<--sqlworker> I<DBURL>.
+
+
+=item B<--sqlworker> I<DBURL> (alpha testing)
+
+Execute jobs via SQL server. Read the input sources variables from the
+table pointed to by I<DBURL>. The I<command> on the command line
+should be the same as given by B<--sql>.
 
 
 =item B<--ssh> I<sshcommand>
@@ -2579,7 +2623,8 @@ files.
   tar xvf foo.tgz | perl -ne 'print $l;$l=$_;END{print $l}' | \
     parallel echo
 
-The Perl one-liner is needed to avoid race condition.
+The Perl one-liner is needed to make sure the file is complete before
+handing it to GNU B<parallel>.
 
 
 =head1 EXAMPLE: Rewriting a for-loop and a while-read-loop
@@ -3410,6 +3455,35 @@ computers:
 
   true >jobqueue; tail -n+0 -f jobqueue | parallel -S ..
 
+If you keep this running for a long time, jobqueue will grow. A way of
+removing the jobs already run is by making GNU B<parallel> stop when
+it hits a special value and then restart. To use B<--eof> to make GNU
+B<parallel> exit, B<tail> also needs to be forced to exit:
+
+  true >jobqueue;
+  while true; do
+    tail -n+0 -f jobqueue |
+      (parallel -E StOpHeRe -S ..; echo GNU Parallel is now done;
+       perl -e 'while(<>){/StOpHeRe/ and last};print <>' jobqueue > j2;
+       (seq 1000 >> jobqueue &);
+       echo Done appending dummy data forcing tail to exit)
+    echo tail exited;
+    mv j2 jobqueue
+  done
+
+In some cases you can run on more CPUs and computers during the night:
+
+  # Day time
+  echo 50% > jobfile
+  cp day_server_list ~/.parallel/sshloginfile
+  # Night time
+  echo 100% > jobfile
+  cp night_server_list ~/.parallel/sshloginfile
+  tail -n+0 -f jobqueue | parallel --jobs jobfile -S ..
+
+GNU Parallel discovers if B<jobfile> or B<~/.parallel/sshloginfile>
+changes.
+
 There is a a small issue when using GNU B<parallel> as queue
 system/batch manager: You have to submit JobSlot number of jobs before
 they will start, and after that you can submit one at a time, and job
@@ -3420,14 +3494,6 @@ in which case the output from the jobs are printed immediately).
 E.g. if you have 10 jobslots then the output from the first completed
 job will only be printed when job 11 has started, and the output of
 second completed job will only be printed when job 12 has started.
-
-To use B<--eof> to make GNU B<parallel> exit, B<tail> also needs to be
-forced to exit:
-
-  tail -n+0 -f command-list.txt |
-    (parallel --eof=EXIT {}; echo Parallel is now done;
-     (seq 1000 >> command-list.txt &);
-    echo Done appending dummy data forcing tail to exit)
 
 
 =head1 EXAMPLE: GNU Parallel as dir processor
@@ -3772,6 +3838,26 @@ More than 100 jobs failed.
 =item Z<>255
 
 Other error.
+
+=item Z<>-1 (In joblog and SQL table)
+
+Killed by Ctrl-C, timeout, not enough memory or similar.
+
+=item Z<>-2 (In joblog and SQL table)
+
+$job->skip() was called in {= =}.
+
+=item Z<>-1200 (In SQL table)
+
+Job is ready to run (used with --sql).
+
+=item Z<>-1220 (In SQL table)
+
+Job is taken by worker to be started (used with --sql).
+
+=item Z<>-1250 (In SQL table)
+
+Job is running (used with --sql).
 
 =back
 
