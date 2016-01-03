@@ -275,7 +275,7 @@ You can map the bad limits using:
   tmux -S /tmp/p{%}-'{=3 $_="O"x$_ =}' new-session -d -n '{=1 $_="O"x$_ =}' true'\ {=2 $_="O"x$_ =};echo $?;rm /tmp/p{%}-O*'
   > value.csv 2>/dev/null
 
-  R -e 'a<-read.table("value.csv");X11();plot(a[,1],a[,2],col=a[,3]+5,cex=0.1);Sys.sleep(1000)'
+  R -e 'a<-read.table("value.csv");X11();plot(a[,1],a[,2],col=a[,4]+5,cex=0.1);Sys.sleep(1000)'
 
 For B<tmux 1.8> 17000 can be lowered to 2100.
 

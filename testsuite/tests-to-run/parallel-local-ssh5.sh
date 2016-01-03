@@ -29,7 +29,7 @@ echo '### --ssh lsh'
   # Test gl. parallel med --ssh lsh: Hvilke fejler? brug dem. Også hvis de fejler
 
 echo '### bug #45025: --pipe --retries does not reschedule on other host'
-  seq 1 300030| stdout parallel -k --retries 2 -S a.a,: --pipe 'wc;hostname'
+  seq 1 300030| stdout parallel -k --retries 2 -S a.a,: --pipe 'wc;hostname' | perl -pe 's/'`hostname`'/localhost-:/'
   stdout parallel --retries 2 --roundrobin echo ::: should fail
 
 EOF

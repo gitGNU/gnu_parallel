@@ -38,6 +38,10 @@ prereqlocal: installparallel
 	niceload true || (echo niceload is required for testsuite; /bin/false)
 	which burnP6 || (echo burnP6 is required for testsuite; /bin/false)
 	which timeout || (echo timeout is required for testsuite; /bin/false)
+	which autossh || (echo autossh is required for testsuite; /bin/false)
+	which lsh || (echo lsh is required for testsuite; /bin/false)
+	timeout 10 ssh sh@lo true || (echo ssh sh@lo is required for testsuite; /bin/false)
+	timeout 5 ssh csh@lo true || (echo ssh csh@lo is required for testsuite; /bin/false)
 
 prereqremote: installparallel startvm
 	parallel --timeout 10 --tag ssh parallel@parallel-server{} parallel --minversion 20121021 ::: 1 2 3 || (echo parallel on remote required for testsuite; /bin/true)

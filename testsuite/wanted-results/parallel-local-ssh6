@@ -106,3 +106,11 @@ echo '### Test --workdir .';   ssh parallel@lo mkdir -p mydir;   mkdir -p $HOME/
 echo '### Test --wd .';   ssh csh@lo mkdir -p mydir;   mkdir -p $HOME/mydir; cd $HOME/mydir;   parallel --workdir . -S csh@lo ::: pwd
 ### Test --wd .
 /home/csh/mydir
+echo '### Test --wd {}';   ssh csh@lo rm -rf wd1 wd2;   mkdir -p $HOME/mydir; cd $HOME/mydir;   parallel --workdir {} -S csh@lo touch ::: wd1 wd2;   ssh csh@lo ls -d wd1 wd2
+### Test --wd {}
+wd1
+wd2
+echo '### Test --wd {= =}';   ssh csh@lo rm -rf WD1 WD2;   mkdir -p $HOME/mydir; cd $HOME/mydir;   parallel --workdir '{= $_=uc($_) =}' -S csh@lo touch ::: wd1 wd2;   ssh csh@lo ls -d WD1 WD2
+### Test --wd {= =}
+WD1
+WD2

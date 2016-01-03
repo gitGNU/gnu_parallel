@@ -2146,7 +2146,7 @@
 
 <p>With <b>--shebang</b> the <i>input_file</i> and <b>parallel</b> can be combined into the same script.</p>
 
-<p>UNIX-scripts start with a shebang line like this:</p>
+<p>UNIX shell scripts start with a shebang line like this:</p>
 
 <pre><code>  #!/bin/bash</code></pre>
 
@@ -2166,17 +2166,15 @@
 
 <h2 id="Parallelizing-existing-scripts">Parallelizing existing scripts</h2>
 
-<p>GNU <b>parallel</b> is often called as:</p>
+<p>GNU <b>parallel</b> is often called as this:</p>
 
 <pre><code>  cat input_file | parallel command
   parallel command ::: foo bar</code></pre>
 
-<p>If command is a script <b>parallel</b> can be combined into a single file so:</p>
+<p>If <b>command</b> is a script, <b>parallel</b> can be combined into a single file so this will run the script in parallel:</p>
 
 <pre><code>  cat input_file | command
   command foo bar</code></pre>
-
-<p>will run the script in <b>parallel</b>.</p>
 
 <p>This <b>perl</b> script <b>perl_echo</b> works like <b>echo</b>:</p>
 
@@ -2184,7 +2182,7 @@
 
   print &quot;@ARGV\n&quot;</code></pre>
 
-<p>It can be called as:</p>
+<p>It can be called as this:</p>
 
 <pre><code>  parallel perl_echo ::: foo bar</code></pre>
 
@@ -2210,69 +2208,136 @@
 <dt id="Perl">Perl:</dt>
 <dd>
 
-<p>#!/usr/bin/parallel --shebang-wrap /usr/bin/perl</p>
-
-<p>print &quot;Arguments @ARGV\n&quot;;</p>
+<pre><code>  #!/usr/bin/parallel --shebang-wrap /usr/bin/perl
+  
+  print &quot;Arguments @ARGV\n&quot;;</code></pre>
 
 </dd>
 <dt id="Python">Python:</dt>
 <dd>
 
-<p>#!/usr/bin/parallel --shebang-wrap /usr/bin/python</p>
-
-<p>import sys</p>
-
-<p>print &#39;Arguments&#39;, str(sys.argv)</p>
+<pre><code>  #!/usr/bin/parallel --shebang-wrap /usr/bin/python
+  
+  import sys
+  print &#39;Arguments&#39;, str(sys.argv)</code></pre>
 
 </dd>
-<dt id="Bash">Bash:</dt>
+<dt id="Bash-sh-zsh-Korn-shell">Bash/sh/zsh/Korn shell:</dt>
 <dd>
 
-<p>#!/usr/bin/parallel --shebang-wrap /bin/bash</p>
+<pre><code>  #!/usr/bin/parallel --shebang-wrap /bin/bash
+  
+  echo Arguments &quot;$@&quot;</code></pre>
 
-<p>echo Arguments &quot;$@&quot;</p>
+</dd>
+<dt id="csh">csh:</dt>
+<dd>
+
+<pre><code>  #!/usr/bin/parallel --shebang-wrap /bin/csh
+  
+  echo Arguments &quot;$argv&quot;</code></pre>
+
+</dd>
+<dt id="Tcl">Tcl:</dt>
+<dd>
+
+<pre><code>  #!/usr/bin/parallel --shebang-wrap /usr/bin/tclsh
+  
+  puts &quot;Arguments $argv&quot;</code></pre>
 
 </dd>
 <dt id="R">R:</dt>
 <dd>
 
-<p>#!/usr/bin/parallel --shebang-wrap /usr/bin/Rscript --vanilla --slave</p>
-
-<p>args &lt;- commandArgs(trailingOnly = TRUE) print(paste(&quot;Arguments &quot;,args))</p>
+<pre><code>  #!/usr/bin/parallel --shebang-wrap /usr/bin/Rscript --vanilla --slave
+  
+  args &lt;- commandArgs(trailingOnly = TRUE)
+  print(paste(&quot;Arguments &quot;,args))</code></pre>
 
 </dd>
 <dt id="GNUplot">GNUplot:</dt>
 <dd>
 
-<p>#!/usr/bin/parallel --shebang-wrap ARG={} /usr/bin/gnuplot</p>
-
-<p>print &quot;Arguments &quot;, system(&#39;echo $ARG&#39;)</p>
+<pre><code>  #!/usr/bin/parallel --shebang-wrap ARG={} /usr/bin/gnuplot
+  
+  print &quot;Arguments &quot;, system(&#39;echo $ARG&#39;)</code></pre>
 
 </dd>
 <dt id="Ruby">Ruby:</dt>
 <dd>
 
-<p>#!/usr/bin/parallel --shebang-wrap /usr/bin/ruby</p>
-
-<p>print &quot;Arguments &quot; puts ARGV</p>
+<pre><code>  #!/usr/bin/parallel --shebang-wrap /usr/bin/ruby
+  
+  print &quot;Arguments &quot;
+  puts ARGV</code></pre>
 
 </dd>
 <dt id="Octave">Octave:</dt>
 <dd>
 
-<p>#!/usr/bin/parallel --shebang-wrap /usr/bin/octave</p>
-
-<p>printf (&quot;Arguments&quot;); arg_list = argv (); for i = 1:nargin printf (&quot; %s&quot;, arg_list{i}); endfor printf (&quot;\n&quot;);</p>
+<pre><code>  #!/usr/bin/parallel --shebang-wrap /usr/bin/octave
+  
+  printf (&quot;Arguments&quot;);
+  arg_list = argv ();
+  for i = 1:nargin
+    printf (&quot; %s&quot;, arg_list{i});
+  endfor
+  printf (&quot;\n&quot;);</code></pre>
 
 </dd>
 <dt id="Common-LISP">Common LISP:</dt>
 <dd>
 
-<p>#!/usr/bin/parallel --shebang-wrap /usr/bin/clisp</p>
+<pre><code>  #!/usr/bin/parallel --shebang-wrap /usr/bin/clisp
+  
+  (format t &quot;~&amp;~S~&amp;&quot; &#39;Arguments)
+  (format t &quot;~&amp;~S~&amp;&quot; *args*)</code></pre>
 
-<p>(format t &quot;~&amp;~S~&amp;&quot; &#39;Arguments) (format t &quot;~&amp;~S~&amp;&quot; *args*)</p>
+</dd>
+<dt id="PHP">PHP:</dt>
+<dd>
 
-<p>LUA PHP Javascript nodejs Tcl C#?</p>
+<pre><code>  #!/usr/bin/parallel --shebang-wrap /usr/bin/php
+  &lt;?php
+  echo &quot;Arguments&quot;;
+  foreach(array_slice($argv,1) as $v)
+  {
+    echo &quot; $v&quot;;
+  }
+  echo &quot;\n&quot;;
+  ?&gt;</code></pre>
+
+</dd>
+<dt id="Node.js">Node.js:</dt>
+<dd>
+
+<pre><code>  #!/usr/bin/parallel --shebang-wrap /usr/bin/node
+
+  var myArgs = process.argv.slice(2);
+  console.log(&#39;Arguments &#39;, myArgs);</code></pre>
+
+</dd>
+<dt id="LUA">LUA:</dt>
+<dd>
+
+<pre><code>  #!/usr/bin/parallel --shebang-wrap /usr/bin/lua
+  
+  io.write &quot;Arguments&quot;
+  for a = 1, #arg do
+    io.write(&quot; &quot;)
+    io.write(arg[a])
+  end
+  print(&quot;&quot;)</code></pre>
+
+</dd>
+<dt id="C">C#:</dt>
+<dd>
+
+<pre><code>  #!/usr/bin/parallel --shebang-wrap ARGV={} /usr/bin/csharp
+  
+  var argv = Environment.GetEnvironmentVariable(&quot;ARGV&quot;);
+  print(&quot;Arguments &quot;+argv);
+  </code></pre>
 
 </dd>
 </dl>

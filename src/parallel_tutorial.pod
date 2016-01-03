@@ -2177,7 +2177,7 @@ GNU B<parallel> is often called as this:
 
 With B<--shebang> the I<input_file> and B<parallel> can be combined into the same script.
 
-UNIX-scripts start with a shebang line like this:
+UNIX shell scripts start with a shebang line like this:
 
   #!/bin/bash
 
@@ -2199,17 +2199,16 @@ Output (the order may be different):
 
 =head2 Parallelizing existing scripts
 
-GNU B<parallel> is often called as:
+GNU B<parallel> is often called as this:
 
   cat input_file | parallel command
   parallel command ::: foo bar
 
-If command is a script B<parallel> can be combined into a single file so:
+If B<command> is a script, B<parallel> can be combined into a single
+file so this will run the script in parallel:
 
   cat input_file | command
   command foo bar
-
-will run the script in B<parallel>.
 
 This B<perl> script B<perl_echo> works like B<echo>:
 
@@ -2217,7 +2216,7 @@ This B<perl> script B<perl_echo> works like B<echo>:
 
   print "@ARGV\n"
 
-It can be called as:
+It can be called as this:
 
   parallel perl_echo ::: foo bar
 
@@ -2242,75 +2241,118 @@ This technique can be used for:
 
 =item Perl:
 
-#!/usr/bin/parallel --shebang-wrap /usr/bin/perl
-
-print "Arguments @ARGV\n";
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/perl
+  
+  print "Arguments @ARGV\n";
 
 
 =item Python:
 
-#!/usr/bin/parallel --shebang-wrap /usr/bin/python
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/python
+  
+  import sys
+  print 'Arguments', str(sys.argv)
 
-import sys
 
-print 'Arguments', str(sys.argv)
+=item Bash/sh/zsh/Korn shell:
+
+  #!/usr/bin/parallel --shebang-wrap /bin/bash
+  
+  echo Arguments "$@"
 
 
-=item Bash:
+=item csh:
 
-#!/usr/bin/parallel --shebang-wrap /bin/bash
+  #!/usr/bin/parallel --shebang-wrap /bin/csh
+  
+  echo Arguments "$argv"
 
-echo Arguments "$@"
+
+=item Tcl:
+
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/tclsh
+  
+  puts "Arguments $argv"
 
 
 =item R:
 
-#!/usr/bin/parallel --shebang-wrap /usr/bin/Rscript --vanilla --slave
-
-args <- commandArgs(trailingOnly = TRUE)
-print(paste("Arguments ",args))
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/Rscript --vanilla --slave
+  
+  args <- commandArgs(trailingOnly = TRUE)
+  print(paste("Arguments ",args))
 
 
 =item GNUplot:
 
-#!/usr/bin/parallel --shebang-wrap ARG={} /usr/bin/gnuplot
-
-print "Arguments ", system('echo $ARG')
+  #!/usr/bin/parallel --shebang-wrap ARG={} /usr/bin/gnuplot
+  
+  print "Arguments ", system('echo $ARG')
 
 
 =item Ruby:
 
-#!/usr/bin/parallel --shebang-wrap /usr/bin/ruby
-
-print "Arguments "
-puts ARGV
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/ruby
+  
+  print "Arguments "
+  puts ARGV
 
 
 =item Octave:
 
-#!/usr/bin/parallel --shebang-wrap /usr/bin/octave
-
-printf ("Arguments");
-arg_list = argv ();
-for i = 1:nargin
-  printf (" %s", arg_list{i});
-endfor
-printf ("\n");
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/octave
+  
+  printf ("Arguments");
+  arg_list = argv ();
+  for i = 1:nargin
+    printf (" %s", arg_list{i});
+  endfor
+  printf ("\n");
 
 =item Common LISP:
 
-#!/usr/bin/parallel --shebang-wrap /usr/bin/clisp
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/clisp
+  
+  (format t "~&~S~&" 'Arguments)
+  (format t "~&~S~&" *args*)
 
-(format t "~&~S~&" 'Arguments)
-(format t "~&~S~&" *args*)
+=item PHP:
 
-LUA
-PHP
-Javascript
-nodejs
-Tcl
-C#?
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/php
+  <?php
+  echo "Arguments";
+  foreach(array_slice($argv,1) as $v)
+  {
+    echo " $v";
+  }
+  echo "\n";
+  ?>
 
+=item Node.js:
+
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/node
+
+  var myArgs = process.argv.slice(2);
+  console.log('Arguments ', myArgs);
+
+=item LUA:
+
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/lua
+  
+  io.write "Arguments"
+  for a = 1, #arg do
+    io.write(" ")
+    io.write(arg[a])
+  end
+  print("")
+
+=item C#:
+
+  #!/usr/bin/parallel --shebang-wrap ARGV={} /usr/bin/csharp
+  
+  var argv = Environment.GetEnvironmentVariable("ARGV");
+  print("Arguments "+argv);
+  
 
 =back
 

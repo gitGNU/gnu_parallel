@@ -68,4 +68,17 @@ echo '### Test --wd .';
   ssh $SSHLOGIN2 mkdir -p mydir; 
   mkdir -p $HOME/mydir; cd $HOME/mydir; 
   parallel --workdir . -S $SSHLOGIN2 ::: pwd
+
+echo '### Test --wd {}'; 
+  ssh $SSHLOGIN2 rm -rf wd1 wd2; 
+  mkdir -p $HOME/mydir; cd $HOME/mydir; 
+  parallel --workdir {} -S $SSHLOGIN2 touch ::: wd1 wd2; 
+  ssh $SSHLOGIN2 ls -d wd1 wd2
+
+echo '### Test --wd {= =}'; 
+  ssh $SSHLOGIN2 rm -rf WD1 WD2; 
+  mkdir -p $HOME/mydir; cd $HOME/mydir; 
+  parallel --workdir '{= $_=uc($_) =}' -S $SSHLOGIN2 touch ::: wd1 wd2; 
+  ssh $SSHLOGIN2 ls -d WD1 WD2
+
 EOF
