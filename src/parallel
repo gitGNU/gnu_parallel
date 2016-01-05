@@ -9736,18 +9736,23 @@ sub new {
 		       "sqlite3" => "SQLite",
 		       "pg" => "Pg",
 		       "postgres" => "Pg",
-		       "postgresql" => "Pg");
-    my $driver = $driveralias{$options{'databasedriver'}} || $options{'databasedriver'};
+		       "postgresql" => "Pg",
+		       "oracle" => "Oracle",
+		       "ora" => "Oracle");
+    my $driver = $driveralias{$options{'databasedriver'}} ||
+	$options{'databasedriver'};
     my $database = $options{'database'};
     my $host = $options{'host'} ? ";host=".$options{'host'} : "";
     my $port = $options{'port'} ? ";port=".$options{'port'} : "";
     my $dsn = "DBI:$driver:dbname=$database$host$port";
     my $userid = $options{'user'};
     my $password = $options{'password'};;
-    my $dbh = DBI->connect($dsn, $userid, $password, { RaiseError => 1 })
+    my $dbh = DBI->connect($dsn, $userid, $password,
+			   { RaiseError => 1, AutoInactiveDestroy => 1 })
 	or die $DBI::errstr;
     return bless {
 	'dbh' => $dbh,
+	'driver' => $driver,
 	'max_number_of_args' => undef,
 	'table' => $options{'table'},
     }, ref($class) || $class;
@@ -9772,7 +9777,8 @@ sub get_alias {
 		      "$path/dburl.aliases", "$path/dburl.aliases.dist");
     for (@deprecated) {
 	if(-r $_) {
-	    print STDERR "$_ is deprecated. Use .sql/aliases instead (read man sql)\n";
+	    ::warning("$_ is deprecated. ".
+		      "Use .sql/aliases instead (read man sql).");
 	}
     }
     my @urlalias=();
@@ -9789,7 +9795,7 @@ sub get_alias {
     my ($alias_part,$rest) = $alias=~/(:\w*)(.*)/;
     # If we saw this before: we have an alias loop
     if(grep {$_ eq $alias_part } @Private::seen_aliases) {
-	print STDERR "$alias_part is a cyclic alias\n";
+	::error("$alias_part is a cyclic alias.");
 	exit -1;
     } else {
 	push @Private::seen_aliases, $alias_part;
@@ -9814,13 +9820,15 @@ sub check_permissions {
     if(-e $file) {
 	if(not -o $file) {
 	    my $username = (getpwuid($<))[0];
-	    print STDERR "$file should be owned by $username: chown $username $file\n";
+	    ::warning("$file should be owned by $username: ".
+		      "chown $username $file");
 	}
 	my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,
 	    $atime,$mtime,$ctime,$blksize,$blocks) = stat($file);
 	if($mode & 077) {
 	    my $username = (getpwuid($<))[0];
-	    print STDERR "$file should be only be readable by $username: chmod 600 $file\n";
+	    ::warning("$file should be only be readable by $username: ".
+		      "chmod 600 $file");
 	}
     }
 }
@@ -9980,20 +9988,29 @@ sub create_table {
     $self->set_max_number_of_args($max_number_of_args);
     my $table = $self->table();
     $self->run(qq(DROP TABLE IF EXISTS $table;));
-    my $v_def = join "", map { "V$_ TEXT," } (1..$self->max_number_of_args());
+    # BIGINT and TEXT are not supported in these databases or are too small
+    my %vartype = (
+	"Oracle" => { "BIGINT" => "NUMBER(19,0)",
+		      "TEXT" => "CLOB", },
+	"mysql" => { "TEXT" => "LONGTEXT", },
+	);
+    my $BIGINT = $vartype{$self->{'driver'}}{"BIGINT"} || "BIGINT";
+    my $TEXT = $vartype{$self->{'driver'}}{"TEXT"} || "TEXT";
+    my $FLOAT = "FLOAT(44)";
+    my $v_def = join "", map { "V$_ $TEXT," } (1..$self->max_number_of_args());
     $self->run(qq{CREATE TABLE $table
-		(Seq INT,
-		 Host TEXT,
-		 Starttime REAL,
-		 JobRuntime REAL,
-		 Send INT,
-		 Receive INT,
-		 Exitval INT,
-		 _Signal INT,
-		 Command TEXT,}.
+		(Seq $BIGINT,
+		 Host $TEXT,
+		 Starttime $FLOAT,
+		 JobRuntime $FLOAT,
+		 Send $BIGINT,
+		 Receive $BIGINT,
+		 Exitval $BIGINT,
+		 _Signal $BIGINT,
+		 Command $TEXT,}.
 	       $v_def.
-	       qq{Stdout TEXT,
-		 Stderr TEXT);});
+	       qq{Stdout $TEXT,
+		 Stderr $TEXT);});
 }
 
 sub insert_records {
