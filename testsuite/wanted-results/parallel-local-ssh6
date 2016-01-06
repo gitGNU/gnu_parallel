@@ -114,3 +114,6 @@ echo '### Test --wd {= =}';   ssh csh@lo rm -rf WD1 WD2;   mkdir -p $HOME/mydir;
 ### Test --wd {= =}
 WD1
 WD2
+echo '### Test --nonall --wd';   parallel --workdir /tmp -S csh@lo --nonall pwd
+### Test --nonall --wd
+/tmp

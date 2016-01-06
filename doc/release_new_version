@@ -241,6 +241,8 @@ New in this release:
 
 * man parallel_tutorial has been given an overhaul.
 
+* --workdir now accepts replacementstrings.
+
 * << kontakt GNU Parallel was used (unfortunately without citation) in: Instrumentation and Trace Analysis for Ad-hoc Python Workflows in Cloud Environments http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=7214035>>
 
 * <<Har angiveligt submittet ny version - afventer opdatering>> GNU Parallel was used (unfortunately without citation) in: MUGBAS: a species free gene-based programme suite for post-GWAS analysis http://www.ncbi.nlm.nih.gov/pubmed/25765345
@@ -257,11 +259,17 @@ for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumb
 
 * <<Citation needed: Introspecting for RSA Key Material to Assist Intrusion Detection http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=7331177&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7331177>>
 
-* GNU Parallel is used in LAST: http://last.cbrc.jp/
-
 * GNU Parallel was cited in: Possum - A Framework for Three-Dimensional Reconstruction of Brain Images rfom Serial Sections http://link.springer.com/article/10.1007/s12021-015-9286-1
 
+* GNU Parallel was cited in: A Genetic Algorithm for the selection of structural MRI features for classification of Mild Cognitive Impairment and Alzheimer's Disease http://ieeexplore.ieee.org/xpl/abstractReferences.jsp?tp=&arnumber=7359909&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7359909
+
+* GNU Parallel was cited in: The Effect of Domain Modeling on Performance of Planning Algorithms http://isaim2016.cs.virginia.edu/papers/ISAIM2016_Bartak_Vodrazka.pdf
+
+* Plotting time tables for jobs run by GNU Parallel https://github.com/ziotom78/plot_joblog
+
 * GNU Parallel was used in: Mission Impossible: you have 1 minute to analyze the Ebola Genome https://www.biostars.org/p/119397
+
+* GNU Parallel is used in LAST: http://last.cbrc.jp/
 
 * Distributed Log Search Using GNU Parallel http://blog.codehate.com/post/134320079974/distributed-log-search-using-gnu-parallel
 

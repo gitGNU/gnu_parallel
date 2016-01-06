@@ -3208,6 +3208,7 @@ sub onall {
 	     ((defined $opt::retries) ? "--retries ".$opt::retries : ""),
 	     ((defined $opt::timeout) ? "--timeout ".$opt::timeout : ""),
 	     ((defined $opt::ungroup) ? "-u" : ""),
+	     ((defined $opt::workdir) ? "--wd ".$opt::workdir : ""),
 	     (@Global::transfer_files ? map { "--tf ".::shell_quote_scalar($_) }
 	      @Global::transfer_files : ""),
 	     (@Global::ret_files ? map { "--return ".::shell_quote_scalar($_) }
@@ -9737,6 +9738,7 @@ sub new {
 		       "pg" => "Pg",
 		       "postgres" => "Pg",
 		       "postgresql" => "Pg",
+		       "csv" => "CSV",
 		       "oracle" => "Oracle",
 		       "ora" => "Oracle");
     my $driver = $driveralias{$options{'databasedriver'}} ||
@@ -9840,7 +9842,7 @@ sub parse_dburl {
 
     if($url=~m!(?:sql:)? # You can prefix with 'sql:'
                ((?:oracle|ora|mysql|pg|postgres|postgresql)(?:s|ssl|)|
-                 (?:sqlite|sqlite2|sqlite3)):// # Databasedriver ($1)
+                 (?:sqlite|sqlite2|sqlite3|csv)):// # Databasedriver ($1)
                (?:
                 ([^:@/][^:@]*|) # Username ($2)
                 (?:

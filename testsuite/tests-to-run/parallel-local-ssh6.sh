@@ -81,4 +81,7 @@ echo '### Test --wd {= =}';
   parallel --workdir '{= $_=uc($_) =}' -S $SSHLOGIN2 touch ::: wd1 wd2; 
   ssh $SSHLOGIN2 ls -d WD1 WD2
 
+echo '### Test --nonall --wd'; 
+  parallel --workdir /tmp -S $SSHLOGIN2 --nonall pwd
+
 EOF

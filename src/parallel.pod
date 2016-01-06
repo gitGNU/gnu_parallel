@@ -322,7 +322,7 @@ shell quote a string
 
 =item Z<> B<total_jobs()>
 
-number of jobs in total (alpha testing)
+number of jobs in total (beta testing)
 
 =back
 
@@ -452,9 +452,9 @@ It is compatible with B<zenity>:
     2> >(zenity --progress --auto-kill) | wc
 
 
-=item B<--basefile> I<file> (alpha testing)
+=item B<--basefile> I<file> (beta testing)
 
-=item B<--bf> I<file> (alpha testing)
+=item B<--bf> I<file> (beta testing)
 
 I<file> will be transferred to each sshlogin before a jobs is
 started. It will be removed if B<--cleanup> is active. The file may be
@@ -540,7 +540,7 @@ Implies B<--pipe> unless B<--pipepart> is used.
 See also B<--fifo>.
 
 
-=item B<--cleanup> (alpha testing)
+=item B<--cleanup> (beta testing)
 
 Remove transferred files. B<--cleanup> will remove the transferred
 files on the remote computer after processing is done.
@@ -1060,9 +1060,9 @@ the same syntax as B<--jobs>, so I<100%> for one per CPU is a valid
 setting. Only difference is 0 which is interpreted as 0.01.
 
 
-=item B<--controlmaster> (alpha testing)
+=item B<--controlmaster> (beta testing)
 
-=item B<-M> (alpha testing)
+=item B<-M> (beta testing)
 
 Use ssh's ControlMaster to make ssh connections faster. Useful if jobs
 run remote and are very fast to run. This is disabled for sshlogins
@@ -1100,7 +1100,7 @@ See also B<-X> for context replace. If in doubt use B<-X> as that will
 most likely do what is needed.
 
 
-=item B<--memfree> I<size> (beta testing)
+=item B<--memfree> I<size>
 
 Minimum memory free when starting another job. The I<size> can be
 postfixed with K, M, G, T, P, k, m, g, t, or p which would multiply
@@ -1161,9 +1161,9 @@ of each job is saved in a file and the filename is then printed.
 
 See also: B<--results>
 
-=item B<--pipe> (alpha testing)
+=item B<--pipe> (beta testing)
 
-=item B<--spreadstdin> (alpha testing)
+=item B<--spreadstdin> (beta testing)
 
 Spread input to jobs on stdin (standard input). Read a block of data
 from stdin (standard input) and give one block of data as input to one
@@ -1524,7 +1524,7 @@ the joblog.
 See also B<--joblog>, B<--resume>, B<--resume-failed>.
 
 
-=item B<--retries> I<n> (alpha testing)
+=item B<--retries> I<n> (beta testing)
 
 If a job fails, retry it on another computer on which it has not
 failed. Do this I<n> times. If there are fewer than I<n> computers in
@@ -1533,7 +1533,7 @@ useful if some jobs fail for no apparent reason (such as network
 failure).
 
 
-=item B<--return> I<filename> (alpha testing)
+=item B<--return> I<filename> (beta testing)
 
 Transfer files from remote computers. B<--return> is used with
 B<--sshlogin> when the arguments are files on the remote computers. When
@@ -2050,14 +2050,14 @@ Print the job to be run on stderr (standard error).
 See also B<-v>, B<-p>.
 
 
-=item B<--transfer> (alpha testing)
+=item B<--transfer> (beta testing)
 
 Transfer files to remote computers. Shorthand for: B<--transferfile {}>.
 
 
-=item B<--transferfile> I<filename> (alpha testing)
+=item B<--transferfile> I<filename> (beta testing)
 
-=item B<--tf> I<filename> (alpha testing)
+=item B<--tf> I<filename> (beta testing)
 
 B<--transferfile> is used with B<--sshlogin> to transfer files to the
 remote computers. The files will be transferred using B<rsync> and
@@ -2187,9 +2187,9 @@ Use B<-v> B<-v> to print the wrapping ssh command when running remotely.
 Print the version GNU B<parallel> and exit.
 
 
-=item B<--workdir> I<mydir>
+=item B<--workdir> I<mydir> (alpha testing)
 
-=item B<--wd> I<mydir>
+=item B<--wd> I<mydir> (alpha testing)
 
 Files transferred using B<--transferfile> and B<--return> will be
 relative to I<mydir> on remote computers, and the command will be
@@ -2210,6 +2210,8 @@ To see the difference try:
   parallel -S server pwd ::: ""
   parallel --wd . -S server pwd ::: ""
   parallel --wd ... -S server pwd ::: ""
+
+I<mydir> can contain GNU B<parallel>'s replacement strings.
 
 
 =item B<--wait>
