@@ -4,7 +4,7 @@
 
 Check that documentation is updated (compare to web):
 
-Fixet for 20151122
+Fixet for 20160122
 git diff last-release-commit
 Unmodified beta since last version => production
 Unmodified alpha since last version => beta
@@ -212,18 +212,16 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20160122 ('') released <<[stable]>>
+Subject: GNU Parallel 20160122 ('Bowie') released
 
-GNU Parallel 20160122 ('') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
-
-<<No new functionality was introduced so this is a good candidate for a stable release.>>
+GNU Parallel 20160122 ('Bowie') has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
 Haiku of the month:
 
-  |||||
-  |||||||
+  Dash dash pipe too slow?
+  Dash dash pipepart is your friend.
   Use GNU Parallel
-    -- Malcolm Cook
+    -- Ole Tange
 
 New in this release:
 
@@ -243,22 +241,6 @@ New in this release:
 
 * --workdir now accepts replacementstrings.
 
-* << kontakt GNU Parallel was used (unfortunately without citation) in: Instrumentation and Trace Analysis for Ad-hoc Python Workflows in Cloud Environments http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=7214035>>
-
-* <<Har angiveligt submittet ny version - afventer opdatering>> GNU Parallel was used (unfortunately without citation) in: MUGBAS: a species free gene-based programme suite for post-GWAS analysis http://www.ncbi.nlm.nih.gov/pubmed/25765345
-
-* <<Afventer updateret publisering>> GNU Parallel was used in: Large Scale Author Name Disambiguation in Digital Libraries http://ieeexplore.ieee.org/xpl/abstractReferences.jsp?tp=&arnumber=7004487&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7004487
-
-* <<kontaktet 2015-06-22 Afventer svar fra journal>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
-http://www.researchgate.net/profile/Christoph_Junghans/publication/276178326_TADSim_Discrete_Event-Based_Performance_Prediction_for_Temperature-Accelerated_Dynamics/links/55562b6708ae980ca60c8369.pdf
-
-* << Update forventet juni Rachel har lige svaret >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
-
-* <<Citation needed: A Cache- and Memory-Aware Mapping Algorithm
-for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7323015>>
-
-* <<Citation needed: Introspecting for RSA Key Material to Assist Intrusion Detection http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=7331177&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7331177>>
-
 * GNU Parallel was cited in: Possum - A Framework for Three-Dimensional Reconstruction of Brain Images rfom Serial Sections http://link.springer.com/article/10.1007/s12021-015-9286-1
 
 * GNU Parallel was cited in: A Genetic Algorithm for the selection of structural MRI features for classification of Mild Cognitive Impairment and Alzheimer's Disease http://ieeexplore.ieee.org/xpl/abstractReferences.jsp?tp=&arnumber=7359909&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7359909
@@ -271,7 +253,7 @@ for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumb
 
 * GNU Parallel is used in LAST: http://last.cbrc.jp/
 
-* Distributed Log Search Using GNU Parallel http://blog.codehate.com/post/134320079974/distributed-log-search-using-gnu-parallel
+* Distributed Log Search Using GNU Parallel http://codehate.com/blog/2015/12/01/distributed-log-search-using-gnu-parallel/
 
 * Bug fixes and man page updates.
 

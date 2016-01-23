@@ -1,3 +1,53 @@
+20160122
+
+* --sql DBURL uses DBURL as storage for jobs and output. It does not
+  run any jobs so it requires at least one --sqlworker. DBURL must
+  point to a table.
+
+* --sqlworker DBURL gets jobs from DBURL and stores the result back to
+  DBURL.
+
+* --sqlandworker is a shorthand for --sql and --sqlworker.
+
+* --sqlworker requires the output of a single job to fit in memory.
+
+* --results now also saves a file called 'seq' containing the sequence
+  number.
+
+* If $PARALLEL_ENV is a file, then that file will be read into
+  $PARALLEL_ENV.
+
+* man parallel_tutorial has been given an overhaul.
+
+* --workdir now accepts replacementstrings.
+
+* GNU Parallel was cited in: Possum - A Framework for
+  Three-Dimensional Reconstruction of Brain Images rfom Serial
+  Sections http://link.springer.com/article/10.1007/s12021-015-9286-1
+
+* GNU Parallel was cited in: A Genetic Algorithm for the selection of
+  structural MRI features for classification of Mild Cognitive
+  Impairment and Alzheimer's Disease
+  http://ieeexplore.ieee.org/xpl/abstractReferences.jsp?tp=&arnumber=7359909&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7359909
+
+* GNU Parallel was cited in: The Effect of Domain Modeling on
+  Performance of Planning Algorithms
+  http://isaim2016.cs.virginia.edu/papers/ISAIM2016_Bartak_Vodrazka.pdf
+
+* Plotting time tables for jobs run by GNU Parallel
+  https://github.com/ziotom78/plot_joblog
+
+* GNU Parallel was used in: Mission Impossible: you have 1 minute to
+  analyze the Ebola Genome https://www.biostars.org/p/119397
+
+* GNU Parallel is used in LAST: http://last.cbrc.jp/
+
+* Distributed Log Search Using GNU Parallel
+  http://codehate.com/blog/2015/12/01/distributed-log-search-using-gnu-parallel/
+
+* Bug fixes and man page updates.
+
+
 20151222
 
 * --transfer is now an alias for --transferfile {}.
