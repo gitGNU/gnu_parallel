@@ -150,7 +150,7 @@ echo "$funky" | parallel --shellquote
 
 echo
 echo "### Zsh environment"
-stdout ssh -q zsh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated.'
+stdout ssh -q zsh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated|security updates'
 myvar="myvar  works"
 funky=$(perl -e 'print pack "c*", 1..255')
 myarray=('' array_val2 3 '' 5)
@@ -186,7 +186,7 @@ EOS
 
 echo
 echo "### Ksh environment"
-stdout ssh -q ksh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated.'
+stdout ssh -q ksh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated|security updates'
 myvar="myvar  works"
 funky=$(perl -e 'print pack "c*", 1..255')
 myarray=('' array_val2 3 '' 5)
@@ -218,7 +218,7 @@ EOS
 
 echo
 echo "### Fish environment"
-stdout ssh -q fish@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated.'
+stdout ssh -q fish@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated|security updates'
 # All variables cannot reliably be exported
 # perl -e 'print map { "setenv///$_///$ENV{$_}\n"} grep !/^(PWD|SHLVL|PATH)$/, keys %ENV'| sh -c 'parallel --shellquote' | perl -pe 's:///: :g' |fish
 
@@ -277,7 +277,7 @@ echo "### csh environment"
 #   makealias_with_newline
 #   perl -e '$/=undef;$_=<>;s/\n/\\\n/g;s/\047/\047\042\047\042\047/g;print'
 
-stdout ssh -q csh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated.'
+stdout ssh -q csh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated|security updates'
 set myvar = "myvar  works"
 set funky = "`perl -e 'print pack q(c*), 1..255'`"
 set myarray = ('' 'array_val2' '3' '' '5')

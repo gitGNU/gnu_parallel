@@ -187,6 +187,26 @@ B
 1
   parallel echo '{= s:\.[^.]+$::;s:\.[^.]+$::; =}' ::: foo.tar.gz
 foo
+  parallel echo Job {#} of {= '$_=total_jobs()' =} ::: {1..5}
+Job 1 of 5
+Job 2 of 5
+Job 3 of 5
+Job 4 of 5
+Job 5 of 5
+  parallel echo {} shell quoted is {= '$_=Q($_)' =} ::: '*/!#$'
+*/!#$ shell quoted is \*/\!\#\$
+  parallel echo {= 'if($_==3) { $job->skip() }' =} ::: {1..5}
+1
+2
+4
+5
+  parallel echo {= 'if($arg[1]==$arg[2]) { $job->skip() }' =} ::: {1..3} ::: {1..3}
+1 2
+1 3
+2 1
+2 3
+3 1
+3 2
   parallel --parens ,,,, echo ',, s:\.[^.]+$::;s:\.[^.]+$::; ,,' ::: foo.tar.gz
 foo
   parallel --rpl '.. s:\.[^.]+$::;s:\.[^.]+$::;' echo '..' ::: foo.tar.gz
@@ -240,6 +260,28 @@ f1=B f2=D
   parallel --header : --colsep '\t' echo f1={f1} f2={f2} :::: tsv-file.tsv
 f1=A f2=B
 f1=C f2=D
+  parallel --plus echo {} ::: dir/sub/file.ext1.ext2.ext3
+  parallel --plus echo {+/}/{/} ::: dir/sub/file.ext1.ext2.ext3
+  parallel --plus echo {.}.{+.} ::: dir/sub/file.ext1.ext2.ext3
+  parallel --plus echo {+/}/{/.}.{+.} ::: dir/sub/file.ext1.ext2.ext3
+  parallel --plus echo {..}.{+..} ::: dir/sub/file.ext1.ext2.ext3
+  parallel --plus echo {+/}/{/..}.{+..} ::: dir/sub/file.ext1.ext2.ext3
+  parallel --plus echo {...}.{+...} ::: dir/sub/file.ext1.ext2.ext3
+  parallel --plus echo {+/}/{/...}.{+...} ::: dir/sub/file.ext1.ext2.ext3
+dir/sub/file.ext1.ext2.ext3
+dir/sub/file.ext1.ext2.ext3
+dir/sub/file.ext1.ext2.ext3
+dir/sub/file.ext1.ext2.ext3
+dir/sub/file.ext1.ext2.ext3
+dir/sub/file.ext1.ext2.ext3
+dir/sub/file.ext1.ext2.ext3
+dir/sub/file.ext1.ext2.ext3
+  parallel --plus echo Job {#} of {##} ::: {1..5}
+Job 1 of 5
+Job 2 of 5
+Job 3 of 5
+Job 4 of 5
+Job 5 of 5
   cat num30000 | parallel --xargs echo | wc -l
 3
   cat num30000 | parallel --xargs -s 10000 echo | wc -l
@@ -356,39 +398,53 @@ echo C
 A
 B
 C
+  outdir/1/A/seq
   outdir/1/A/stderr
   outdir/1/A/stdout
+  outdir/1/B/seq
   outdir/1/B/stderr
   outdir/1/B/stdout
+  outdir/1/C/seq
   outdir/1/C/stderr
   outdir/1/C/stdout
-/bin/bash: outdir/1/A/stderr: No such file or directory
-/bin/bash: line 1: outdir/1/A/stdout: No such file or directory
-/bin/bash: line 2: outdir/1/B/stderr: No such file or directory
-/bin/bash: line 3: outdir/1/B/stdout: No such file or directory
-/bin/bash: line 4: outdir/1/C/stderr: No such file or directory
-/bin/bash: line 5: outdir/1/C/stdout: No such file or directory
+/bin/bash: outdir/1/A/seq: No such file or directory
+/bin/bash: line 1: outdir/1/A/stderr: No such file or directory
+/bin/bash: line 2: outdir/1/A/stdout: No such file or directory
+/bin/bash: line 3: outdir/1/B/seq: No such file or directory
+/bin/bash: line 4: outdir/1/B/stderr: No such file or directory
+/bin/bash: line 5: outdir/1/B/stdout: No such file or directory
+/bin/bash: line 6: outdir/1/C/seq: No such file or directory
+/bin/bash: line 7: outdir/1/C/stderr: No such file or directory
+/bin/bash: line 8: outdir/1/C/stdout: No such file or directory
   parallel --header : --results outdir echo ::: f1 A B ::: f2 C D
 A C
 A D
 B C
 B D
+  outdir/f1/A/f2/C/seq
   outdir/f1/A/f2/C/stderr
   outdir/f1/A/f2/C/stdout
+  outdir/f1/A/f2/D/seq
   outdir/f1/A/f2/D/stderr
   outdir/f1/A/f2/D/stdout
+  outdir/f1/B/f2/C/seq
   outdir/f1/B/f2/C/stderr
   outdir/f1/B/f2/C/stdout
+  outdir/f1/B/f2/D/seq
   outdir/f1/B/f2/D/stderr
   outdir/f1/B/f2/D/stdout
-/bin/bash: outdir/f1/A/f2/C/stderr: No such file or directory
-/bin/bash: line 1: outdir/f1/A/f2/C/stdout: No such file or directory
-/bin/bash: line 2: outdir/f1/A/f2/D/stderr: No such file or directory
-/bin/bash: line 3: outdir/f1/A/f2/D/stdout: No such file or directory
-/bin/bash: line 4: outdir/f1/B/f2/C/stderr: No such file or directory
-/bin/bash: line 5: outdir/f1/B/f2/C/stdout: No such file or directory
-/bin/bash: line 6: outdir/f1/B/f2/D/stderr: No such file or directory
-/bin/bash: line 7: outdir/f1/B/f2/D/stdout: No such file or directory
+/bin/bash: outdir/f1/A/f2/C/seq: No such file or directory
+/bin/bash: line 1: outdir/f1/A/f2/C/stderr: No such file or directory
+/bin/bash: line 2: outdir/f1/A/f2/C/stdout: No such file or directory
+/bin/bash: line 3: outdir/f1/A/f2/D/seq: No such file or directory
+/bin/bash: line 4: outdir/f1/A/f2/D/stderr: No such file or directory
+/bin/bash: line 5: outdir/f1/A/f2/D/stdout: No such file or directory
+/bin/bash: line 6: outdir/f1/B/f2/C/seq: No such file or directory
+/bin/bash: line 7: outdir/f1/B/f2/C/stderr: No such file or directory
+/bin/bash: line 8: outdir/f1/B/f2/C/stdout: No such file or directory
+/bin/bash: line 9: outdir/f1/B/f2/D/seq: No such file or directory
+/bin/bash: line 10: outdir/f1/B/f2/D/stderr: No such file or directory
+/bin/bash: line 11: outdir/f1/B/f2/D/stdout: No such file or directory
   /usr/bin/time -f %e parallel -N0 -j64 sleep 1 :::: num128
 2
   /usr/bin/time -f %e parallel -N0 sleep 1 :::: num128
@@ -474,6 +530,8 @@ BASE64  parallel --joblog /tmp/log exit  ::: 1 2 3 0
   cat /tmp/log;
   parallel --resume-failed --joblog /tmp/log exit  ::: 1 2 3 0 0 0
   cat /tmp/log;
+  parallel --resume-failed --joblog /tmp/log
+  cat /tmp/log;
   parallel -j2 --halt soon,fail=1 echo {}\; exit {} ::: 0 0 1 2 3
 Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
 1	:	TIMESTAMP	9.999	0	0	1	0	exit 1
@@ -492,6 +550,16 @@ Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
 4	:	TIMESTAMP	9.999	0	0	0	0	exit 0
 5	:	TIMESTAMP	9.999	0	0	0	0	exit 0
 6	:	TIMESTAMP	9.999	0	0	0	0	exit 0
+Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
+1	:	TIMESTAMP	9.999	0	0	1	0	exit 1
+2	:	TIMESTAMP	9.999	0	0	2	0	exit 2
+3	:	TIMESTAMP	9.999	0	0	3	0	exit 3
+4	:	TIMESTAMP	9.999	0	0	0	0	exit 0
+5	:	TIMESTAMP	9.999	0	0	0	0	exit 0
+6	:	TIMESTAMP	9.999	0	0	0	0	exit 0
+1	:	TIMESTAMP	9.999	0	0	1	0	exit 1
+2	:	TIMESTAMP	9.999	0	0	2	0	exit 2
+3	:	TIMESTAMP	9.999	0	0	3	0	exit 3
 Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
 1	:	TIMESTAMP	9.999	0	0	1	0	exit 1
 2	:	TIMESTAMP	9.999	0	0	2	0	exit 2
@@ -529,15 +597,13 @@ echo X; exit X
 parallel: Starting no more jobs. Waiting for 1 jobs to finish.
 parallel: This job failed:
 echo X; exit X
-  parallel -j2 --halt soon,success=1 echo {}\; exit {} ::: 1 2 3 0 4 5 6
+  parallel -j2 --halt now,success=1 echo {}\; exit {} ::: 1 2 3 0 4 5 6
 1
 2
 3
 0
-4
 parallel: This job succeeded:
 echo X; exit X
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
   parallel -k --retries 3 'echo tried {} >>/tmp/runs; echo completed {}; exit {}' ::: 1 2 0
   cat /tmp/runs
 completed 1
@@ -547,10 +613,19 @@ tried 1
 tried 0
 tried 1
 tried 1
+  show_signals() {
+    perl -e 'for(keys %SIG) { $SIG{$_} = eval "sub { print \"Got $_\\n\"; }";} while(1){sleep 1}' 
+  }
+  export -f show_signals
+  echo | parallel --termseq TERM,200,TERM,100,TERM,50,KILL,25 -u --timeout 1 show_signals
+  echo | parallel --termseq INT,200,TERM,100,KILL,25 -u --timeout 1 show_signals
+/bin/bash: show_signals: command not found
   parallel --load 100% echo load is less than {} job per cpu ::: 1 
 load is less than 1 job per cpu
   parallel --noswap echo the system is not swapping ::: now
 the system is not swapping now
+  parallel --memfree 1G echo will run if more than 1 GB is ::: free
+will run if more than 1 GB is free
   parallel --nice 17 echo this is being run with nice -n ::: 17
 this is being run with nice -n 17
   parallel -S $SERVER1 echo running on ::: $SERVER1
@@ -560,6 +635,11 @@ running on username@parallel@lo
   parallel -S : echo running on ::: the_local_machine
 running on the_local_machine
   parallel -S '/usr/bin/ssh '$SERVER1 echo custom ::: ssh
+custom ssh
+  parallel --ssh /usr/bin/ssh -S $SERVER1 echo custom ::: ssh
+custom ssh
+  export PARALLEL_SSH=/usr/bin/ssh
+  parallel -S $SERVER1 echo custom ::: ssh
 custom ssh
   parallel -S $SERVER1 -S $SERVER2 echo ::: running on more hosts
 running
@@ -576,18 +656,19 @@ more
 hosts
   parallel -S 4/$SERVER1 echo force {} cpus on server ::: 4
 force 4 cpus on server
-  parallel --hostgroup -S @grp1/$SERVER1 -S @grp2/$SERVER2 echo {} ::: run_on_grp1@grp1 run_on_grp2@grp2
+  parallel --hostgroup -S @grp1/$SERVER1 -S @grp2/$SERVER2 echo {} ::: \
+    run_on_grp1@grp1 run_on_grp2@grp2
 run_on_grp1
 run_on_grp2
   echo This is input_file > input_file
-  parallel -S $SERVER1 --transfer cat ::: input_file 
+  parallel -S $SERVER1 --transferfile {} cat ::: input_file 
 This is input_file
   echo This is input_file > input_file
-  parallel -S $SERVER1 --transfer --return {}.out cat {} ">"{}.out ::: input_file 
+  parallel -S $SERVER1 --transferfile {} --return {}.out cat {} ">"{}.out ::: input_file 
   cat input_file.out
 This is input_file
   echo This is input_file > input_file
-  parallel -S $SERVER1 --transfer --return {}.out --cleanup cat {} ">"{}.out ::: input_file 
+  parallel -S $SERVER1 --transferfile {} --return {}.out --cleanup cat {} ">"{}.out ::: input_file 
   cat input_file.out
 This is input_file
   echo This is input_file > input_file
@@ -735,14 +816,34 @@ _
 
 /bin/bash: my_func2: command not found
   parallel -vv -S $SERVER1 echo ::: bar
-ssh -l parallel lo -- exec perl -e \''@GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");eval"@GNU_Parallel";$SIG{CHLD}="IGNORE";my$zip=(grep{-x$_}"/usr/local/bin/bzip2")[0]||"bzip2";my($in,$out,$eval);open3($in,$out,">&STDERR",$zip,"-dc");if(my$perlpid=fork){close$in;$eval=join"",<$out>;close$out;}else{close$out;print$in(decode_base64(join"",@ARGV));close$in;exit;}wait;eval$eval;'\' BASE64;
+ssh -l parallel lo -- exec perl -e \''@GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");eval"@GNU_Parallel";my$eval;$eval=decode_base64(join"",@ARGV);eval$eval;'\' BASE64;
 bar
   my_func3() {
     echo in my_func $1 > $1.out
   }
   export -f my_func3
   parallel -vv --workdir ... --nice 17 --env _ --trc {}.out -S $SERVER1 my_func3 {} ::: abc-file
-( ssh -l parallel lo -- mkdir -p ./.TMPWORKDIR;rsync --protocol 30 -rlDzR -essh\ -l\ parallel ./abc-file lo:./.TMPWORKDIR );ssh -l parallel lo -- exec perl -e \''@GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");eval"@GNU_Parallel";$SIG{CHLD}="IGNORE";my$zip=(grep{-x$_}"/usr/local/bin/bzip2")[0]||"bzip2";my($in,$out,$eval);open3($in,$out,">&STDERR",$zip,"-dc");if(my$perlpid=fork){close$in;$eval=join"",<$out>;close$out;}else{close$out;print$in(decode_base64(join"",@ARGV));close$in;exit;}wait;eval$eval;'\' BASE64;_EXIT_status=$?; mkdir -p ./.; rsync --protocol 30 --rsync-path=cd\ ./.TMPWORKDIR/./.\;\ rsync -rlDzR -essh\ -l\ parallel lo:./abc-file.out ./.;ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file.out\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh -l parallel lo -- rm -rf .TMPWORKDIR; exit $_EXIT_status;
+( ssh -l parallel lo -- mkdir -p ./.TMPWORKDIR;rsync --protocol 30 -rlDzR -essh\ -l\ parallel ./abc-file lo:./.TMPWORKDIR );ssh -l parallel lo -- exec perl -e \''@GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");eval"@GNU_Parallel";my$eval;$eval=decode_base64(join"",@ARGV);eval$eval;'\' BASE64 BASE64;_EXIT_status=$?; mkdir -p ./.; rsync --protocol 30 --rsync-path=cd\ ./.TMPWORKDIR/./.\;\ rsync -rlDzR -essh\ -l\ parallel lo:./abc-file.out ./.;ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file.out\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh -l parallel lo -- rm -rf .TMPWORKDIR; exit $_EXIT_status;
+  vendor://[[user][:password]@][host][:port]/[database[/table]
+/bin/bash: vendor://[[user][:password]@][host][:port]/[database[/table]: No such file or directory
+  sqlite3:///%2Ftmp%2Fmydatabase/mytable
+/bin/bash: sqlite3:///%2Ftmp%2Fmydatabase/mytable: No such file or directory
+  DBURL=sqlite3:///%2Ftmp%2Fmydatabase
+  DBURLTABLE=$DBURL/mytable
+  parallel --sqlandworker $DBURLTABLE echo ::: foo bar ::: baz quuz
+foo baz
+foo quuz
+bar baz
+bar quuz
+  sql $DBURL 'SELECT * FROM mytable ORDER BY Seq;'
+Error:
+SELECT * FROM mytable ORDER BY Seq; is not a valid DBURL
+
+sql [-hnr] [--table-size] [--db-size] [-p pass-through] [-s string] dburl [command]
+  parallel --sql $DBURLTABLE echo ::: foo bar ::: baz quuz
+parallel: Error: echo is not a valid DBURL
+  parallel --sqlworker $DBURLTABLE echo ::: foo bar ::: baz quuz
+parallel: Error: echo is not a valid DBURL
   cat num1000000 | parallel --pipe wc
  165668  165668 1048571
  149796  149796 1048572
@@ -789,7 +890,7 @@ JOB3
 JOB4
 qux/,
 END
-  echo /foo, bar/, /baz, qux/, | parallel -kN1 --recstart '/' --pipe echo JOB{#}\;cat\;echo END
+  echo /foo, bar/, /baz, qux/, | parallel -kN1 --recstart / --pipe echo JOB{#}\;cat\;echo END
 JOB1
 /foo, barEND
 JOB2
@@ -799,13 +900,13 @@ JOB3
 JOB4
 /,
 END
-  echo /foo, bar/, /baz, qux/, | parallel -kN1 --recend ', ' --recstart '/' --pipe echo JOB{#}\;cat\;echo END
+  echo /foo, bar/, /baz, qux/, | parallel -kN1 --recend ', ' --recstart / --pipe echo JOB{#}\;cat\;echo END
 JOB1
 /foo, bar/, END
 JOB2
 /baz, qux/,
 END
-  echo foo,bar,_baz,__qux, | parallel -kN1 --regexp --recend ',_+' --pipe echo JOB{#}\;cat\;echo END
+  echo foo,bar,_baz,__qux, | parallel -kN1 --regexp --recend ,_+ --pipe echo JOB{#}\;cat\;echo END
 JOB1
 foo,bar,_END
 JOB2
@@ -813,7 +914,7 @@ baz,__END
 JOB3
 qux,
 END
-  echo foo,bar,_baz,__qux, | parallel -kN1 --rrs --regexp --recend ',_+' --pipe echo JOB{#}\;cat\;echo END
+  echo foo,bar,_baz,__qux, | parallel -kN1 --rrs --regexp --recend ,_+ --pipe echo JOB{#}\;cat\;echo END
 JOB1
 foo,barEND
 JOB2
@@ -902,6 +1003,99 @@ Warning: unknown mime-type for "@ARGV\n" -- using "application/octet-stream"
 Error: no such file "@ARGV\n"
   perl_echo foo bar
 /bin/bash: perl_echo: command not found
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/perl
+  
+  print "Arguments @ARGV\n";
+Warning: unknown mime-type for "Arguments @ARGV\n" -- using "application/octet-stream"
+Error: no such file "Arguments @ARGV\n"
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/python
+  
+  
+  print 'Arguments', str(sys.argv)
+/bin/bash: -c: line 3: syntax error near unexpected token `('
+/bin/bash: -c: line 3: `  print 'Arguments', str(sys.argv)'
+  #!/usr/bin/parallel --shebang-wrap /bin/bash
+  
+  echo Arguments "$@"
+Arguments
+  #!/usr/bin/parallel --shebang-wrap /bin/csh
+  
+  echo Arguments "$argv"
+Arguments 
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/tclsh
+  
+  puts "Arguments $argv"
+/bin/bash: line 2: puts: command not found
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/Rscript --vanilla --slave
+  
+  args <- commandArgs(trailingOnly = TRUE)
+  print(paste("Arguments ",args))
+/bin/bash: -c: line 2: syntax error near unexpected token `('
+/bin/bash: -c: line 2: `  args <- commandArgs(trailingOnly = TRUE)'
+  #!/usr/bin/parallel --shebang-wrap ARG={} /usr/bin/gnuplot
+  
+  print "Arguments ", system('echo $ARG')
+/bin/bash: -c: line 2: syntax error near unexpected token `('
+/bin/bash: -c: line 2: `  print "Arguments ", system('echo $ARG')'
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/ruby
+  
+  print "Arguments "
+  puts ARGV
+Warning: unknown mime-type for "Arguments " -- using "application/octet-stream"
+Error: no such file "Arguments "
+/bin/bash: line 3: puts: command not found
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/octave
+  
+  printf ("Arguments");
+  arg_list = argv ();
+  for i = 1:nargin
+    printf (" %s", arg_list{i});
+  endfor
+  printf ("\n");
+/bin/bash: -c: line 2: syntax error near unexpected token `"Arguments"'
+/bin/bash: -c: line 2: `  printf ("Arguments");'
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/clisp
+  
+  (format t "~&~S~&" 'Arguments)
+  (format t "~&~S~&" *args*)
+/bin/bash: -c: line 2: unexpected EOF while looking for matching `''
+/bin/bash: -c: line 4: syntax error: unexpected end of file
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/php
+  <?php
+  echo "Arguments";
+  foreach(array_slice($argv,1) as $v)
+  {
+    echo " $v";
+  }
+  echo "\n";
+  ?>
+Arguments
+/bin/bash: line 1: ?php: No such file or directory
+/bin/bash: -c: line 3: syntax error near unexpected token `array_slice'
+/bin/bash: -c: line 3: `  foreach(array_slice($argv,1) as $v)'
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/node
+  var myArgs = process.argv.slice(2);
+  console.log('Arguments ', myArgs);
+/bin/bash: -c: line 0: syntax error near unexpected token `('
+/bin/bash: -c: line 0: `  var myArgs = process.argv.slice(2);'
+  #!/usr/bin/parallel --shebang-wrap /usr/bin/lua
+  
+  io.write "Arguments"
+  for a = 1, #arg do
+    io.write(" ")
+    io.write(arg[a])
+  end
+  print("")
+/bin/bash: line 2: io.write: command not found
+/bin/bash: -c: line 3: syntax error near unexpected token `='
+/bin/bash: -c: line 3: `  for a = 1, #arg do'
+  #!/usr/bin/parallel --shebang-wrap ARGV={} /usr/bin/csharp
+  
+  var argv = Environment.GetEnvironmentVariable("ARGV");
+  print("Arguments "+argv);
+  
+/bin/bash: -c: line 2: syntax error near unexpected token `('
+/bin/bash: -c: line 2: `  var argv = Environment.GetEnvironmentVariable("ARGV");'
   sem 'sleep 1; echo The first finished' &&
     echo The first is now running in the background &&
     sem 'sleep 1; echo The second finished' &&
@@ -910,7 +1104,6 @@ Error: no such file "@ARGV\n"
 The first is now running in the background
 The first finished
 The second is now running in the background
-The second finished
   sem --fg 'sleep 1; echo The first finished' &&
     echo The first finished running in the foreground &&
     sem --fg 'sleep 1; echo The second finished' &&
@@ -918,7 +1111,6 @@ The second finished
   sem --wait
 The first finished
 The first finished running in the foreground
-The second finished
 The second finished running in the foreground
   sem --id my_id -u 'echo First started; sleep 10; echo The first finished'
 First started
@@ -932,7 +1124,6 @@ The first finished
 First started
 The first finished
 Third started
-The second finished
 Fourth started
 The third finished
 The fourth finished
@@ -983,18 +1174,6 @@ please cite:
 This helps funding further development; AND IT WON'T COST YOU A CENT.
 If you pay 10000 EUR you should feel free to use GNU Parallel without citing.
 
-  parallel --version
-GNU parallel VERSION
-Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015 Ole Tange
-and Free Software Foundation, Inc.
-License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-This is free software: you are free to change and redistribute it.
-GNU parallel comes with no warranty.
-
-Web site: http://www.gnu.org/software/parallel
-
-When using programs that use GNU Parallel to process data for publication
-please cite as described in 'parallel --bibtex'.
   parallel --minversion VERSION && echo Your version is at least VERSION.
 VERSION
 Your version is at least VERSION.

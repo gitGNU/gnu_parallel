@@ -27,7 +27,16 @@ parallel: Waiting for these 1 jobs to finish. Send SIGTERM again to stop now.
 parallel: bash -c sleep\ 120\ \&\ pid\=\$\!\;\ wait\ \$pid 1
 echo '### Are children killed if GNU Parallel receives INT twice? There should be no sleep at the end'
 ### Are children killed if GNU Parallel receives INT twice? There should be no sleep at the end
-  parallel -q bash -c 'sleep 120 & pid=$!; wait $pid' ::: 1 &     T=$!;     sleep 5;     pstree $$;     kill -INT $T;     sleep 1;     pstree $$; 
+  parallel -q bash -c 'sleep 120 & pid=$!; wait $pid' ::: 1 &     T=$!;     sleep 5;     pstree $$;     kill -INT $T;     sleep 1;     pstree $$; echo '**'
 bash-+-perl---bash---sleep
      `-pstree
 bash---pstree
+**
+echo '### Do children receive --termseq signals'
+### Do children receive --termseq signals
+  show_signals() {     perl -e 'for(keys %SIG) { $SIG{$_} = eval "sub { print STDERR \"Got $_\\n\"; }";} while(1){sleep 1}';   };   export -f show_signals;   echo | stdout parallel --termseq TERM,200,TERM,100,TERM,50,KILL,25 -u --timeout 1 show_signals;   echo | stdout parallel --termseq INT,200,TERM,100,KILL,25 -u --timeout 1 show_signals;   sleep 3; 
+Got TERM
+Got TERM
+Got TERM
+Got INT
+Got TERM

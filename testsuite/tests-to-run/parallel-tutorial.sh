@@ -19,6 +19,8 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
             s:ignored_vars:ignored_vars|sort:;
             # Remove \n to join all joblogs into the previous block
             s:cat /tmp/log\n:cat /tmp/log;:;
+            # Remove import (python code)
+            s:import.*::;
             # When parallelized: Sleep to make sure the abc-files are made
             /%head1/ and $_.="sleep .3\n\n"x10;
 ' |
@@ -56,6 +58,7 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
             s/.*command_[ABC].*\n//;
             # Due to multiple jobs "Second started" often ends up wrong
             s/Second started\n//;
+            s/The second finished\n//;
             # Due to multiple jobs "tried 2" often ends up wrong
             s/tried 2\n//;
             # Due to order is often mixed up

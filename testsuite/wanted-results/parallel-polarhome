@@ -3,7 +3,7 @@ Setup on polarhome machines
 copy_and_test freebsd.polarhome.com
 freebsd.polarhome.com	### Run the test on freebsd.polarhome.com
 freebsd.polarhome.com	Works on freebsd.polarhome.com
-freebsd.polarhome.com	Error in tempfile() using /XXXXXXXX.arg: Could not create temp file /XXXXXXXX.arg: Permission denied at bin/parallel line 0000.
+freebsd.polarhome.com	Error in tempfile() using template /XXXXXXXX.arg: Could not create temp file /XXXXXXXX.arg: Permission denied at bin/parallel line 0000.
 copy_and_test solaris.polarhome.com
 solaris.polarhome.com	### Run the test on solaris.polarhome.com
 solaris.polarhome.com	Works on solaris.polarhome.com
@@ -68,10 +68,6 @@ copy_and_test unixware.polarhome.com
 unixware.polarhome.com	### Run the test on unixware.polarhome.com
 unixware.polarhome.com	Works on unixware.polarhome.com
 unixware.polarhome.com	Error in tempfile() using /XXXXXXXX.arg: Could not create temp file /XXXXXXXX.arg: Permission denied at bin/parallel line 0000
-copy_and_test dragonfly.polarhome.com
-dragonfly.polarhome.com	### Run the test on dragonfly.polarhome.com
-dragonfly.polarhome.com	Works on dragonfly.polarhome.com
-dragonfly.polarhome.com	Error in tempfile() using /XXXXXXXX.arg: Could not create temp file /XXXXXXXX.arg: Permission denied at bin/parallel line 0000
 copy_and_test centos.polarhome.com
 centos.polarhome.com	### Run the test on centos.polarhome.com
 centos.polarhome.com	Works on centos.polarhome.com
@@ -102,7 +98,6 @@ pidora.polarhome.com	Error in tempfile() using template /XXXXXXXX.arg: Could not
 aix7
 centos.polarhome.com
 debian
-dragonfly.polarhome.com
 freebsd.polarhome.com
 hpux-ia64
 hpux64

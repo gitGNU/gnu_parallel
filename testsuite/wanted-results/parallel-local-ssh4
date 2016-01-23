@@ -140,7 +140,6 @@ Funky-
 
  * Documentation:  http://www.linuxmint.com
 
-0 updates are security updates.
 
 zsh:130: command not found: alias_echo
 function_works
@@ -166,7 +165,6 @@ Funky-
 
  * Documentation:  http://www.linuxmint.com
 
-0 updates are security updates.
 
 3 arg alias_works
 function_works
@@ -190,7 +188,6 @@ Funky-
 
  * Documentation:  http://www.linuxmint.com
 
-0 updates are security updates.
 
 3 arg alias_works
 function_works
@@ -223,7 +220,6 @@ Funky-	   !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJ
 
  * Documentation:  http://www.linuxmint.com
 
-0 updates are security updates.
 
 Warning: no access to tty (Bad file descriptor).
 Thus no job control in this shell.

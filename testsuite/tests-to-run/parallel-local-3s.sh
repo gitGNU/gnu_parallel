@@ -27,7 +27,7 @@ echo '### Are children killed if GNU Parallel receives TERM twice? There should 
     pstree $$; 
     kill -TERM $T; 
     sleep 1; 
-    pstree $$; 
+    pstree $$;
 
 echo '**'
 
@@ -39,6 +39,20 @@ echo '### Are children killed if GNU Parallel receives INT twice? There should b
     pstree $$; 
     kill -INT $T; 
     sleep 1; 
-    pstree $$; 
+    pstree $$;
+
+echo '**'
+
+echo '### Do children receive --termseq signals'
+
+  show_signals() { 
+    perl -e 'for(keys %SIG) { $SIG{$_} = eval "sub { print STDERR \"Got $_\\n\"; }";} while(1){sleep 1}'; 
+  }; 
+  export -f show_signals; 
+  echo | stdout parallel --termseq TERM,200,TERM,100,TERM,50,KILL,25 -u --timeout 1 show_signals; 
+  echo | stdout parallel --termseq INT,200,TERM,100,KILL,25 -u --timeout 1 show_signals; 
+  sleep 3;
+
+
 
 EOF
