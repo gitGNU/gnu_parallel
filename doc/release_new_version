@@ -57,7 +57,8 @@ pushd
 
 == Upload ==
 
-export YYYYMMDD=`yyyymmdd`
+YYYYMMDD=`yyyymmdd`
+export YYYYMMDD
 eval `gpg-agent --daemon`
 make upload
 
@@ -212,48 +213,42 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20160122 ('Bowie') released
+Subject: GNU Parallel 20160122 ('') released <<[stable]>>
 
-GNU Parallel 20160122 ('Bowie') has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20160122 ('') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+
+<<No new functionality was introduced so this is a good candidate for a stable release.>>
 
 Haiku of the month:
 
-  Dash dash pipe too slow?
-  Dash dash pipepart is your friend.
-  Use GNU Parallel
     -- Ole Tange
 
 New in this release:
 
-* --sql DBURL uses DBURL as storage for jobs and output. It does not run any jobs so it requires at least one --sqlworker. DBURL must point to a table.
 
-* --sqlworker DBURL gets jobs from DBURL and stores the result back to DBURL.
+* << kontakt GNU Parallel was used (unfortunately without citation) in: Instrumentation and Trace Analysis for Ad-hoc Python Workflows in Cloud Environments http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=7214035>>
 
-* --sqlandworker is a shorthand for --sql and --sqlworker.
+* <<Har angiveligt submittet ny version - afventer opdatering>> GNU Parallel was used (unfortunately without citation) in: MUGBAS: a species free gene-based programme suite for post-GWAS analysis http://www.ncbi.nlm.nih.gov/pubmed/25765345
 
-* --sqlworker requires the output of a single job to fit in memory.
+* <<Afventer updateret publisering>> GNU Parallel was used in: Large Scale Author Name Disambiguation in Digital Libraries http://ieeexplore.ieee.org/xpl/abstractReferences.jsp?tp=&arnumber=7004487&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7004487
 
-* --results now also saves a file called 'seq' containing the sequence number.
+* <<kontaktet 2015-06-22 Afventer svar fra journal>> GNU Parallel was used (unfortunately with wrong citation) in: TADSim: Discrete Event-Based Performance Prediction for Temperature-Accelerated Dynamics http://vruehle.de/publications/2015c.pdf
+http://www.researchgate.net/profile/Christoph_Junghans/publication/276178326_TADSim_Discrete_Event-Based_Performance_Prediction_for_Temperature-Accelerated_Dynamics/links/55562b6708ae980ca60c8369.pdf
 
-* If $PARALLEL_ENV is a file, then that file will be read into $PARALLEL_ENV.
+* << Update forventet juni Rachel har lige svaret >> GNU Parallel was used in: SISRS: Site Identification from Short Read Sequences https://github.com/rachelss/SISRS/
 
-* man parallel_tutorial has been given an overhaul.
+* <<Citation needed: A Cache- and Memory-Aware Mapping Algorithm
+for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7323015>>
 
-* --workdir now accepts replacementstrings.
+* <<Citation needed: Introspecting for RSA Key Material to Assist Intrusion Detection http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=7331177&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7331177>>
 
-* GNU Parallel was cited in: Possum - A Framework for Three-Dimensional Reconstruction of Brain Images rfom Serial Sections http://link.springer.com/article/10.1007/s12021-015-9286-1
+* Using GNU Parallel and ImageMagick for Conversions http://blog.fractalcomic.com/tutorials/using-gnu-parallel-and-imagemagick-for-conversions/
 
-* GNU Parallel was cited in: A Genetic Algorithm for the selection of structural MRI features for classification of Mild Cognitive Impairment and Alzheimer's Disease http://ieeexplore.ieee.org/xpl/abstractReferences.jsp?tp=&arnumber=7359909&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7359909
+* Running bash commands in parallel http://linuxcommando.blogspot.dk/2016/01/running-bash-commands-in-parallel.html
 
-* GNU Parallel was cited in: The Effect of Domain Modeling on Performance of Planning Algorithms http://isaim2016.cs.virginia.edu/papers/ISAIM2016_Bartak_Vodrazka.pdf
+* A Million Text Files And A Single Laptop http://randyzwitch.com/gnu-parallel-medium-data/
 
-* Plotting time tables for jobs run by GNU Parallel https://github.com/ziotom78/plot_joblog
-
-* GNU Parallel was used in: Mission Impossible: you have 1 minute to analyze the Ebola Genome https://www.biostars.org/p/119397
-
-* GNU Parallel is used in LAST: http://last.cbrc.jp/
-
-* Distributed Log Search Using GNU Parallel http://codehate.com/blog/2015/12/01/distributed-log-search-using-gnu-parallel/
+* 「今日から使い切る」ための GNU Parallelによる並列処理入門 http://www.slideshare.net/koji_matsuda/gnu-parallel
 
 * Bug fixes and man page updates.
 
@@ -262,7 +257,7 @@ GNU Parallel - For people who live life in the parallel lane.
 
 = About GNU Parallel =
 
-GNU Parallel is a shell tool for executing jobs in parallel using one or more computers. A job is can be a single command or a small script that has to be run for each of the lines in the input. The typical input is a list of files, a list of hosts, a list of users, a list of URLs, or a list of tables. A job can also be a command that reads from a pipe. GNU Parallel can then split the input and pipe it into commands in parallel.
+GNU Parallel is a shell tool for executing jobs in parallel using one or more computers. A job can be a single command or a small script that has to be run for each of the lines in the input. The typical input is a list of files, a list of hosts, a list of users, a list of URLs, or a list of tables. A job can also be a command that reads from a pipe. GNU Parallel can then split the input and pipe it into commands in parallel.
 
 If you use xargs and tee today you will find GNU Parallel very easy to use as GNU Parallel is written to have the same options as xargs. If you write loops in shell, you will find GNU Parallel may be able to replace most of the loops and make them run faster by running several jobs in parallel. GNU Parallel can even replace nested loops.
 

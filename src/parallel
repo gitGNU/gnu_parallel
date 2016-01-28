@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015 Ole Tange
-# and Free Software Foundation, Inc.
+# Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015,2016
+# Ole Tange and Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1176,7 +1176,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160122;
+    $Global::version = 20160123;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -3601,8 +3601,8 @@ sub version {
     # Returns: N/A
     print join("\n",
                "GNU $Global::progname $Global::version",
-               "Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015 Ole Tange",
-	       "and Free Software Foundation, Inc.",
+               "Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015,2016",
+	       "Ole Tange and Free Software Foundation, Inc.",
                "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>",
                "This is free software: you are free to change and redistribute it.",
                "GNU $Global::progname comes with no warranty.",
@@ -7917,6 +7917,7 @@ sub tag_print {
     my $self = shift;
     my ($fdno,$in_fh,$out_fd) = @_;
     my $buf;
+    local $/ = "\n";
     close $self->fh($fdno,"w");
     if($? and $opt::compress) {
 	::error($opt::compress_program." failed.");
@@ -9288,7 +9289,7 @@ sub new {
     my $class = shift;
     my $fhs = shift;
     for my $fh (@$fhs) {
-	if(-t $fh) {
+	if(-t $fh and -t ($Global::status_fd || *STDERR)) {
 	    ::warning("Input is read from the terminal.",
 		      "Only experts do this on purpose. ".
 		      "Press CTRL-D to exit.");

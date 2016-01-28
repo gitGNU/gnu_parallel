@@ -32,6 +32,11 @@ if test "$GET" = ""; then
   exit 1
 fi
 
+if ! perl -e 1; then
+  echo No perl installed. GNU Parallel depends on perl. Install perl and retry.
+  exit 1
+fi
+
 LANG=C
 LATEST=$($GET http://ftpmirror.gnu.org/parallel | perl -ne '/.*(parallel-\d{8})/ and print $1."\n"' | sort | $TAIL -n1)
 if test \! -e $LATEST.tar.bz2; then

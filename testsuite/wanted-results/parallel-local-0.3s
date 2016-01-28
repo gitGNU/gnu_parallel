@@ -560,5 +560,20 @@ echo '{##} bug #45841: Replacement string for total no of jobs'
 8 15
 echo '**'
 **
+echo 'bug #47002: --tagstring with -d \n\n'
+bug #47002: --tagstring with -d \n\n
+  (seq 3;echo;seq 4) | parallel -d '\n\n' --tagstring {%} echo ABC';'echo
+1	ABC
+1	1
+1	2
+1	3
+2	ABC
+2	1
+2	2
+2	3
+2	4
+2	
+echo '**'
+**
 ### 1 .par file from --files expected
 1
