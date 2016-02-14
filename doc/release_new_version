@@ -225,6 +225,7 @@ Haiku of the month:
 
 New in this release:
 
+* Vote for new community on Superuser, Ask Ubuntu, Unix&Linux http://meta.superuser.com/questions/11127/community-promotion-ads-2016/11225#11225 http://meta.askubuntu.com/questions/14925/community-promotion-ads-2016/15046#15046 http://meta.unix.stackexchange.com/questions/3854/community-promotion-ads-2016/3893#3893
 
 * << kontakt GNU Parallel was used (unfortunately without citation) in: Instrumentation and Trace Analysis for Ad-hoc Python Workflows in Cloud Environments http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=7214035>>
 
@@ -242,9 +243,13 @@ for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumb
 
 * <<Citation needed: Introspecting for RSA Key Material to Assist Intrusion Detection http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=7331177&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7331177>>
 
+* Downloading a list of URLs http://blog.gypsydave5.com/2016/02/04/xargs-and-curl/
+
 * Using GNU Parallel and ImageMagick for Conversions http://blog.fractalcomic.com/tutorials/using-gnu-parallel-and-imagemagick-for-conversions/
 
 * Running bash commands in parallel http://linuxcommando.blogspot.dk/2016/01/running-bash-commands-in-parallel.html
+
+*  parallel processing in PDAL https://smathermather.wordpress.com/2016/01/28/parallel-processing-in-pdal/
 
 * A Million Text Files And A Single Laptop http://randyzwitch.com/gnu-parallel-medium-data/
 

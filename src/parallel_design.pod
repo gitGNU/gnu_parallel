@@ -816,6 +816,10 @@ Will that require 2x record size memory?
 
 Will that require 2x block size memory?
 
+=head2 Logo
+
+The logo is inpired by the Cafe Wall illusion. The font is DejaVu Sans.
+
 
 =head1 Historical decisions
 

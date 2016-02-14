@@ -4012,7 +4012,7 @@ supports (See REPORTING BUGS).
 
 B<xargs> offers some of the same possibilities as GNU B<parallel>.
 
-B<xargs> deals badly with special characters (such as space, ' and
+B<xargs> deals badly with special characters (such as space, \, ' and
 "). To see the problem try this:
 
   touch important_file
@@ -4020,6 +4020,8 @@ B<xargs> deals badly with special characters (such as space, ' and
   ls not* | xargs rm
   mkdir -p "My brother's 12\" records"
   ls | xargs rmdir
+  touch 'c:\windows\system32\clfs.sys'
+  echo 'c:\windows\system32\clfs.sys' | xargs ls -l
 
 You can specify B<-0>, but many input generators are not
 optimized for using B<NUL> as separator but are optimized for
@@ -4028,7 +4030,7 @@ B<sed>, B<tar -v>, B<perl> (B<-0> and \0 instead of \n), B<locate>
 (requires using B<-0>), B<find> (requires using B<-print0>), B<grep>
 (requires user to use B<-z> or B<-Z>), B<sort> (requires using B<-z>).
 
-So GNU B<parallel>'s newline separation can be emulated with:
+GNU B<parallel>'s newline separation can be emulated with:
 
 B<cat | xargs -d "\n" -n1 I<command>>
 

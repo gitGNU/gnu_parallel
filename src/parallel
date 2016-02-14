@@ -4713,10 +4713,12 @@ sub loadavg_too_high {
 	    # svr5 => sysv
 	    # ultrix => ps -ax | awk '{print $3,$5}'
 	    # unixware => ps -el|awk '{print $2,$14,$15}'
-	    my $ps = q{
+	    my $ps = ::spacefree(1,q{
 		$sysv="ps -ef -o s -o comm";
 		$sysv2="ps -ef -o state -o comm";
 		$bsd="ps ax -o state,command";
+		# Treat threads as processes
+		$bsd2="ps axH -o state,command";
 		$psel="ps -el|awk '{ print \$2,\$14,\$15 }'";
 		$cygwin=q{ perl -ne 'close STDERR; /Name/ and print"\n";
                     /(Name|Pid|Ppid|State):\s+(\S+)/ and print "$2\t";' /proc/*/status |
@@ -4728,11 +4730,11 @@ sub loadavg_too_high {
 		    'darwin' => $bsd,
 		    'dec_osf' => $sysv2,
 		    'dragonfly' => $bsd,
-		    'freebsd' => $bsd,
+		    'freebsd' => $bsd2,
 		    'gnu' => $bsd,
 		    'hpux' => $psel,
 		    'irix' => $sysv2,
-		    'linux' => $bsd,
+		    'linux' => $bsd2,
 		    'minix' => "ps el|awk '{print \$1,\$11}'",
 		    'mirbsd' => $bsd,
 		    'msys' => $sysv,
@@ -4746,7 +4748,6 @@ sub loadavg_too_high {
 		    );
 		print `$ps{$^O}`;
 	    };
-	    $ps =~ s/[ \t\n]+/ /g;
 	    $cmd = "perl -e ".::shell_quote_scalar($ps);
 	}
 	return $cmd;
