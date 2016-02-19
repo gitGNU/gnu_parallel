@@ -2420,6 +2420,14 @@ Find the files in a list that do not exist
   cat file_list | parallel 'if [ ! -e {} ] ; then echo {}; fi'
 
 
+=head1 EXAMPLE: Composed command with multiple input sources
+
+You have a dir with files named as 24 hours in 5 minute intervals:
+00:00, 00:05, 00:10 .. 23:55. You want to find the files missing:
+
+  parallel [ -f {1}:{2} ] "||" echo {1}:{2} does not exist ::: {00..23} ::: {00..55..5}
+
+
 =head1 EXAMPLE: Calling Bash functions
 
 If the composed command is longer than a line, it becomes hard to

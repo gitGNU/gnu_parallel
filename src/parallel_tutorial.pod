@@ -477,6 +477,10 @@ B<Q(...)> shell quotes the string:
 
   parallel echo {} shell quoted is {= '$_=Q($_)' =} ::: '*/!#$'
 
+Output:
+
+  */!#$ shell quoted is \*/\!\#\$
+
 B<$job->>B<skip()> skips the job:
 
   parallel echo {= 'if($_==3) { $job->skip() }' =} ::: {1..5}

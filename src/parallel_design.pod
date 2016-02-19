@@ -754,8 +754,8 @@ Unfortunately it is not always possible to predict the root cause of the error.
 
 Contrary to the obvious B<--load> does not use load average. This is
 due to load average rising too slowly. Instead it uses B<ps> to list
-the number of jobs in running or blocked state (state D, O or R). This
-gives an instant load.
+the number of threads in running or blocked state (state D, O or
+R). This gives an instant load.
 
 As remote calculation of load can be slow, a process is spawned to run
 B<ps> and put the result in a file, which is then used next time.

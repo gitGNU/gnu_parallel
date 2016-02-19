@@ -1182,6 +1182,7 @@ sub init_globals {
     $Global::debug = 0;
     $Global::verbose = 0;
     $Global::quoting = 0;
+    $Global::total_completed = 0;
     # Read only table with default --rpl values
     %Global::replace =
 	(
@@ -1460,6 +1461,7 @@ sub open_joblog {
 			if(/$joblog_regexp/o) {
 			    # This is 30% faster than set_job_already_run($1);
 			    vec($Global::job_already_run,($1||0),1) = 1;
+			    $Global::total_completed++;
 			    $group[$1-1] = "true";
 			} elsif(/(\d+)\s+\S+(\s+[-0-9.]+){6}\s+(.*)$/) {
 			    $group[$1-1] = $3
@@ -1495,6 +1497,7 @@ sub open_joblog {
 			if(/$joblog_regexp/o) {
 			    # This is 30% faster than set_job_already_run($1);
 			    vec($Global::job_already_run,($1||0),1) = 1;
+			    $Global::total_completed++;
 			} elsif(not /\d+\s+[^\s]+\s+([-0-9.]+\s+){6}/) {
 			    ::error("Format of '$opt::joblog' is wrong: $_");
 			    ::wait_and_exit(255);
@@ -2026,7 +2029,6 @@ sub init_run_jobs {
     # Returns: N/A
     $Global::total_running = 0;
     $Global::total_started = 0;
-    $Global::total_completed = 0;
     $Global::tty_taken = 0;
     $SIG{USR1} = \&list_running_jobs;
     $SIG{USR2} = \&toggle_progress;
@@ -4747,7 +4749,7 @@ sub loadavg_too_high {
 		    'ultrix' => "ps -ax | awk '{print \$3,\$5}'",
 		    );
 		print `$ps{$^O}`;
-	    };
+	    });
 	    $cmd = "perl -e ".::shell_quote_scalar($ps);
 	}
 	return $cmd;

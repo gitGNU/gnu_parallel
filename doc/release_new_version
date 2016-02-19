@@ -213,9 +213,9 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20160122 ('') released <<[stable]>>
+Subject: GNU Parallel 20160222 ('N977GA') released <<[stable]>>
 
-GNU Parallel 20160122 ('') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20160222 ('N977GA') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
@@ -242,6 +242,8 @@ http://www.researchgate.net/profile/Christoph_Junghans/publication/276178326_TAD
 for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7323015>>
 
 * <<Citation needed: Introspecting for RSA Key Material to Assist Intrusion Detection http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=7331177&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7331177>>
+
+* Daily Quick Tip: parallel https://medium.com/@jacaetevha/daily-quick-tip-parallel-8772435f6582
 
 * Downloading a list of URLs http://blog.gypsydave5.com/2016/02/04/xargs-and-curl/
 

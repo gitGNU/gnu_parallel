@@ -125,26 +125,26 @@ echo 'bug #41613: --compress --line-buffer - no newline';
   parallel --line-buffer echo {} O ::: -n;  echo "K"
 
 echo 'Compress with failing (de)compressor'
-  parallel -k --tag --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: tag true true
-  parallel -k --tag --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: tag false true
-  parallel -k --tag --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: tag false false
-  parallel -k --tag --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: tag true false
-  parallel -k --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: true true
-  parallel -k --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: false true
-  parallel -k --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: false false
-  parallel -k --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: true false
-  parallel -k --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: line-buffer true true
-  parallel -k --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: line-buffer false true
-  parallel -k --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: line-buffer false false
+  parallel -k --tag               --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: tag true true
+  parallel -k --tag               --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: tag false true
+  parallel -k --tag               --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: tag false false
+  parallel -k --tag               --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: tag true false
+  parallel -k                     --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: true true
+  parallel -k                     --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: false true
+  parallel -k                     --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: false false
+  parallel -k                     --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: true false
+  parallel -k       --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: line-buffer true true
+  parallel -k       --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: line-buffer false true
+  parallel -k       --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: line-buffer false false
   parallel -k --tag --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: tag line-buffer true false
   parallel -k --tag --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: tag line-buffer true true
   parallel -k --tag --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: tag line-buffer false true
   parallel -k --tag --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: tag line-buffer false false
   parallel -k --tag --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: tag line-buffer true false
-  parallel -k --files --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: files true true   | parallel rm
-  parallel -k --files --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: files false true  | parallel rm
-  parallel -k --files --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: files false false | parallel rm
-  parallel -k --files --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: files true false  | parallel rm
+  parallel -k --files             --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: files true true   | parallel rm
+  parallel -k --files             --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: files false true  | parallel rm
+  parallel -k --files             --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: files false false | parallel rm
+  parallel -k --files             --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: files true false  | parallel rm
 
 echo 'bug #44250: pxz complains File format not recognized but decompresses anyway'
   # The first line dumps core if run from make file. Why?!
@@ -260,6 +260,14 @@ echo '**'
 echo 'bug #47002: --tagstring with -d \n\n'
 
   (seq 3;echo;seq 4) | parallel -d '\n\n' --tagstring {%} echo ABC';'echo
+
+echo '**'
+
+echo 'bug #47086: [PATCH] Initialize total_completed from joblog'
+
+  rm -f /tmp/parallel-47086; 
+  parallel -j1 --joblog /tmp/parallel-47086 --halt now,fail=1          echo '{= $_=$Global::total_completed =};exit {}' ::: 0 0 0 1 0 0; 
+  parallel -j1 --joblog /tmp/parallel-47086 --halt now,fail=1 --resume echo '{= $_=$Global::total_completed =};exit {}' ::: 0 0 0 1 0 0
 
 echo '**'
 

@@ -590,6 +590,10 @@
 
 <pre><code>  parallel echo {} shell quoted is {= &#39;$_=Q($_)&#39; =} ::: &#39;*/!#$&#39;</code></pre>
 
+<p>Output:</p>
+
+<pre><code>  */!#$ shell quoted is \*/\!\#\$</code></pre>
+
 <p><b>$job-</b>&gt;<b>skip()</b> skips the job:</p>
 
 <pre><code>  parallel echo {= &#39;if($_==3) { $job-&gt;skip() }&#39; =} ::: {1..5}</code></pre>
