@@ -45,7 +45,7 @@ export -f copy_and_test
 stdout parallel -j0 -k --retries $RETRIES --timeout $TIMEOUT --delay 0.1 --tag  -v copy_and_test {} ::: $POLAR
 
 # Test remote wrapper working on all platforms
-parallel -j0 --nonall -k $S_POLAR hostname
+parallel -j0 --nonall -k --timeout $TIMEOUT $S_POLAR hostname
 
 cat /tmp/test_empty_cmd
 rm /tmp/test_empty_cmd

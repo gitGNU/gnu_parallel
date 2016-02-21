@@ -1,3 +1,34 @@
+20160222
+
+* Vote for new community on Superuser, Ask Ubuntu, Unix&Linux
+  http://meta.superuser.com/questions/11127/community-promotion-ads-2016/11225#11225
+  http://meta.askubuntu.com/questions/14925/community-promotion-ads-2016/15046#15046
+  http://meta.unix.stackexchange.com/questions/3854/community-promotion-ads-2016/3893#3893
+
+* Daily Quick Tip: parallel
+  https://medium.com/@jacaetevha/daily-quick-tip-parallel-8772435f6582
+
+* Downloading a list of URLs
+  http://blog.gypsydave5.com/2016/02/04/xargs-and-curl/
+
+* Using GNU Parallel and ImageMagick for Conversions
+  http://blog.fractalcomic.com/tutorials/using-gnu-parallel-and-imagemagick-for-conversions/
+
+* Running bash commands in parallel
+  http://linuxcommando.blogspot.dk/2016/01/running-bash-commands-in-parallel.html
+
+* parallel processing in PDAL
+  https://smathermather.wordpress.com/2016/01/28/parallel-processing-in-pdal/
+
+* A Million Text Files And A Single Laptop
+  http://randyzwitch.com/gnu-parallel-medium-data/
+
+* 「今日から使い切る」ための GNU Parallelによる並列処理入門
+  http://www.slideshare.net/koji_matsuda/gnu-parallel
+
+* Bug fixes and man page updates.
+
+
 20160122
 
 * --sql DBURL uses DBURL as storage for jobs and output. It does not
@@ -52,21 +83,35 @@
 
 * --transfer is now an alias for --transferfile {}.
 
-* --transferfile works like --transfer, but takes an argument like --return. This makes it possible to combine transferring files with multiple input sources: parallel -S server --tf {1} wc {2} {1} ::: * ::: -l -w -c
+* --transferfile works like --transfer, but takes an argument like
+  --return. This makes it possible to combine transferring files
+  with multiple input sources: parallel -S server --tf {1} wc {2}
+  {1} ::: * ::: -l -w -c
 
-* total_jobs() can now be used in {= =}: parallel echo job {#} of '{= $_=total_jobs() =}' ::: {1..50}
+* total_jobs() can now be used in {= =}: parallel echo job {#} of '{=
+  $_=total_jobs() =}' ::: {1..50}
 
-* GNU Parallel was cited in: Evolution and Learning in Heterogeneous Environments http://research.gold.ac.uk/15078/1/COM_thesis_JonesD_2015.pdf
+* GNU Parallel was cited in: Evolution and Learning in Heterogeneous
+  Environments
+  http://research.gold.ac.uk/15078/1/COM_thesis_JonesD_2015.pdf
 
-* GNU Parallel was cited in: Contrasting genetic architectures of schizophrenia and other complex diseases using fast variance-components analysis http://www.nature.com/ng/journal/v47/n12/full/ng.3431.html
+* GNU Parallel was cited in: Contrasting genetic architectures of
+  schizophrenia and other complex diseases using fast
+  variance-components analysis
+  http://www.nature.com/ng/journal/v47/n12/full/ng.3431.html
 
-* GNU Parallel was cited in: Efficient Retrieval of Key Material for Inspecting Potentially Malicious Traffic in the Cloud http://www.cs.bham.ac.uk/~bxb/Papres/2015.1.pdf
+* GNU Parallel was cited in: Efficient Retrieval of Key Material for
+  Inspecting Potentially Malicious Traffic in the Cloud
+  http://www.cs.bham.ac.uk/~bxb/Papres/2015.1.pdf
 
-* GNU Parallel was cited in: Achieving Consistent Doppler Measurements from SDO/HMI Vector Field Inversions http://arxiv.org/pdf/1511.06500.pdf
+* GNU Parallel was cited in: Achieving Consistent Doppler Measurements
+  from SDO/HMI Vector Field Inversions
+  http://arxiv.org/pdf/1511.06500.pdf
 
 * Flo uses GNU Parallel: https://github.com/wurmlab/flo
 
-* 使用 GNU parallel 來平行運算http://mutolisp.logdown.com/posts/316959-using-gnu-parallel-to-parallel-computing
+* 使用 GNU parallel 來平行運算
+  http://mutolisp.logdown.com/posts/316959-using-gnu-parallel-to-parallel-computing
 
 * Bug fixes and man page updates.
 

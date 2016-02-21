@@ -322,7 +322,7 @@ shell quote a string
 
 =item Z<> B<total_jobs()>
 
-number of jobs in total (beta testing)
+number of jobs in total
 
 =back
 
@@ -452,9 +452,9 @@ It is compatible with B<zenity>:
     2> >(zenity --progress --auto-kill) | wc
 
 
-=item B<--basefile> I<file> (beta testing)
+=item B<--basefile> I<file>
 
-=item B<--bf> I<file> (beta testing)
+=item B<--bf> I<file>
 
 I<file> will be transferred to each sshlogin before a jobs is
 started. It will be removed if B<--cleanup> is active. The file may be
@@ -540,7 +540,7 @@ Implies B<--pipe> unless B<--pipepart> is used.
 See also B<--fifo>.
 
 
-=item B<--cleanup> (beta testing)
+=item B<--cleanup>
 
 Remove transferred files. B<--cleanup> will remove the transferred
 files on the remote computer after processing is done.
@@ -1060,9 +1060,9 @@ the same syntax as B<--jobs>, so I<100%> for one per CPU is a valid
 setting. Only difference is 0 which is interpreted as 0.01.
 
 
-=item B<--controlmaster> (beta testing)
+=item B<--controlmaster>
 
-=item B<-M> (beta testing)
+=item B<-M>
 
 Use ssh's ControlMaster to make ssh connections faster. Useful if jobs
 run remote and are very fast to run. This is disabled for sshlogins
@@ -1136,7 +1136,7 @@ This is useful for running the same command (e.g. uptime) on a list of
 servers.
 
 
-=item B<--onall> (alpha testing)
+=item B<--onall> (beta testing)
 
 Run all the jobs on all computers given with B<--sshlogin>. GNU
 B<parallel> will log into B<--jobs> number of computers in parallel
@@ -1161,9 +1161,9 @@ of each job is saved in a file and the filename is then printed.
 
 See also: B<--results>
 
-=item B<--pipe> (beta testing)
+=item B<--pipe>
 
-=item B<--spreadstdin> (beta testing)
+=item B<--spreadstdin>
 
 Spread input to jobs on stdin (standard input). Read a block of data
 from stdin (standard input) and give one block of data as input to one
@@ -1524,7 +1524,7 @@ the joblog.
 See also B<--joblog>, B<--resume>, B<--resume-failed>.
 
 
-=item B<--retries> I<n> (beta testing)
+=item B<--retries> I<n>
 
 If a job fails, retry it on another computer on which it has not
 failed. Do this I<n> times. If there are fewer than I<n> computers in
@@ -1533,7 +1533,7 @@ useful if some jobs fail for no apparent reason (such as network
 failure).
 
 
-=item B<--return> I<filename> (beta testing)
+=item B<--return> I<filename>
 
 Transfer files from remote computers. B<--return> is used with
 B<--sshlogin> when the arguments are files on the remote computers. When
@@ -1791,7 +1791,7 @@ Do not use the first line of input (used by GNU B<parallel> itself
 when called with B<--shebang>).
 
 
-=item B<--sql> I<DBURL> (alpha testing)
+=item B<--sql> I<DBURL> (beta testing)
 
 Submit jobs via SQL server. I<DBURL> must point to a table, which will
 contain the same information as B<--joblog>, the values from the input
@@ -1823,12 +1823,12 @@ It can also be an alias from ~/.sql/aliases:
   :myalias mysql:///mydb/paralleljobs
 
 
-=item B<--sqlandworker> I<DBURL> (alpha testing)
+=item B<--sqlandworker> I<DBURL> (beta testing)
 
 Shorthand for: B<--sql> I<DBURL> B<--sqlworker> I<DBURL>.
 
 
-=item B<--sqlworker> I<DBURL> (alpha testing)
+=item B<--sqlworker> I<DBURL> (beta testing)
 
 Execute jobs via SQL server. Read the input sources variables from the
 table pointed to by I<DBURL>. The I<command> on the command line
@@ -2050,14 +2050,14 @@ Print the job to be run on stderr (standard error).
 See also B<-v>, B<-p>.
 
 
-=item B<--transfer> (beta testing)
+=item B<--transfer>
 
 Transfer files to remote computers. Shorthand for: B<--transferfile {}>.
 
 
-=item B<--transferfile> I<filename> (beta testing)
+=item B<--transferfile> I<filename>
 
-=item B<--tf> I<filename> (beta testing)
+=item B<--tf> I<filename>
 
 B<--transferfile> is used with B<--sshlogin> to transfer files to the
 remote computers. The files will be transferred using B<rsync> and
@@ -2187,9 +2187,9 @@ Use B<-v> B<-v> to print the wrapping ssh command when running remotely.
 Print the version GNU B<parallel> and exit.
 
 
-=item B<--workdir> I<mydir> (alpha testing)
+=item B<--workdir> I<mydir> (beta testing)
 
-=item B<--wd> I<mydir> (alpha testing)
+=item B<--wd> I<mydir> (beta testing)
 
 Files transferred using B<--transferfile> and B<--return> will be
 relative to I<mydir> on remote computers, and the command will be

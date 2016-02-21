@@ -40,7 +40,7 @@ prereqlocal: installparallel
 	which timeout || (echo timeout is required for testsuite; /bin/false)
 	which autossh || (echo autossh is required for testsuite; /bin/false)
 	which lsh || (echo lsh is required for testsuite; /bin/false)
-	timeout 10 ssh sh@lo true || (echo ssh sh@lo is required for testsuite; /bin/false)
+	timeout 20 ssh sh@lo true || (echo ssh sh@lo is required for testsuite; /bin/false)
 	timeout 5 ssh csh@lo true || (echo ssh csh@lo is required for testsuite; /bin/false)
 
 prereqremote: installparallel startvm
