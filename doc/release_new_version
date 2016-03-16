@@ -213,9 +213,10 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20160222 ('N977GA') released <<[stable]>>
+Subject: GNU Parallel 20160322 ('Gravitational') released <<[stable]>>
+Scott Kelly, Hillary Donald
 
-GNU Parallel 20160222 ('N977GA') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20160322 ('Gravitational') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
@@ -224,8 +225,6 @@ Haiku of the month:
     -- Ole Tange
 
 New in this release:
-
-* Vote for new community on Superuser, Ask Ubuntu, Unix&Linux http://meta.superuser.com/questions/11127/community-promotion-ads-2016/11225#11225 http://meta.askubuntu.com/questions/14925/community-promotion-ads-2016/15046#15046 http://meta.unix.stackexchange.com/questions/3854/community-promotion-ads-2016/3893#3893
 
 * << kontakt GNU Parallel was used (unfortunately without citation) in: Instrumentation and Trace Analysis for Ad-hoc Python Workflows in Cloud Environments http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=7214035>>
 
@@ -243,19 +242,14 @@ for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumb
 
 * <<Citation needed: Introspecting for RSA Key Material to Assist Intrusion Detection http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=7331177&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7331177>>
 
-* Daily Quick Tip: parallel https://medium.com/@jacaetevha/daily-quick-tip-parallel-8772435f6582
+* GNU Parallel was cited in: Random Forest DBSCAN for USPTO Inventor Name Disambiguation http://arxiv.org/pdf/1602.01792.pdf
 
-* Downloading a list of URLs http://blog.gypsydave5.com/2016/02/04/xargs-and-curl/
+* GNU Parallel was mentioned with wrong citation in: Dual Level Parallel Computations for LargeScale High-Fidelity Database to Design Aerospace Vehicles http://www.nas.nasa.gov/assets/pdf/papers/Guruswamy_2013_DualLevelParallelComputations.pdf
 
-* Using GNU Parallel and ImageMagick for Conversions http://blog.fractalcomic.com/tutorials/using-gnu-parallel-and-imagemagick-for-conversions/
+* Using ‘Parallel’ in Unix https://shearnrylan.wordpress.com/2016/02/22/using-parallel-in-unix/
 
-* Running bash commands in parallel http://linuxcommando.blogspot.dk/2016/01/running-bash-commands-in-parallel.html
+* JPEG Squish uses (and co-distributes) GNU Parallel: http://dantidswell.co.uk/jpeg-squish/
 
-*  parallel processing in PDAL https://smathermather.wordpress.com/2016/01/28/parallel-processing-in-pdal/
-
-* A Million Text Files And A Single Laptop http://randyzwitch.com/gnu-parallel-medium-data/
-
-* 「今日から使い切る」ための GNU Parallelによる並列処理入門 http://www.slideshare.net/koji_matsuda/gnu-parallel
 
 * Bug fixes and man page updates.
 

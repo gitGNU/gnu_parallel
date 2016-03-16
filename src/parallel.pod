@@ -1136,7 +1136,7 @@ This is useful for running the same command (e.g. uptime) on a list of
 servers.
 
 
-=item B<--onall> (beta testing)
+=item B<--onall>
 
 Run all the jobs on all computers given with B<--sshlogin>. GNU
 B<parallel> will log into B<--jobs> number of computers in parallel
@@ -1791,7 +1791,7 @@ Do not use the first line of input (used by GNU B<parallel> itself
 when called with B<--shebang>).
 
 
-=item B<--sql> I<DBURL> (beta testing)
+=item B<--sql> I<DBURL>
 
 Submit jobs via SQL server. I<DBURL> must point to a table, which will
 contain the same information as B<--joblog>, the values from the input
@@ -1823,12 +1823,12 @@ It can also be an alias from ~/.sql/aliases:
   :myalias mysql:///mydb/paralleljobs
 
 
-=item B<--sqlandworker> I<DBURL> (beta testing)
+=item B<--sqlandworker> I<DBURL>
 
 Shorthand for: B<--sql> I<DBURL> B<--sqlworker> I<DBURL>.
 
 
-=item B<--sqlworker> I<DBURL> (beta testing)
+=item B<--sqlworker> I<DBURL>
 
 Execute jobs via SQL server. Read the input sources variables from the
 table pointed to by I<DBURL>. The I<command> on the command line
@@ -2187,9 +2187,9 @@ Use B<-v> B<-v> to print the wrapping ssh command when running remotely.
 Print the version GNU B<parallel> and exit.
 
 
-=item B<--workdir> I<mydir> (beta testing)
+=item B<--workdir> I<mydir>
 
-=item B<--wd> I<mydir> (beta testing)
+=item B<--wd> I<mydir>
 
 Files transferred using B<--transferfile> and B<--return> will be
 relative to I<mydir> on remote computers, and the command will be

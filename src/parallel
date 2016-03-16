@@ -1176,7 +1176,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160222;
+    $Global::version = 20160223;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -9915,6 +9915,13 @@ sub uri_unescape {
 sub run {
     my $self = shift;
     my $stmt = shift;
+    if($self->{'driver'} eq "CSV") {
+	$stmt=~ s/;$//;
+	if($stmt eq "BEGIN" or
+	   $stmt eq "COMMIT") {
+	    return undef;
+	}
+    }
     my @retval;
     my $dbh = $self->{'dbh'};
     ::debug("sql","$opt::sql$opt::sqlworker run $stmt\n");
@@ -9999,10 +10006,12 @@ sub create_table {
 	"Oracle" => { "BIGINT" => "NUMBER(19,0)",
 		      "TEXT" => "CLOB", },
 	"mysql" => { "TEXT" => "LONGTEXT", },
+	"CSV" => { "BIGINT" => "INT",
+		   "FLOAT" => "REAL", },
 	);
     my $BIGINT = $vartype{$self->{'driver'}}{"BIGINT"} || "BIGINT";
     my $TEXT = $vartype{$self->{'driver'}}{"TEXT"} || "TEXT";
-    my $FLOAT = "FLOAT(44)";
+    my $FLOAT = $vartype{$self->{'driver'}}{"FLOAT"} || "FLOAT(44)";
     my $v_def = join "", map { "V$_ $TEXT," } (1..$self->max_number_of_args());
     $self->run(qq{CREATE TABLE $table
 		(Seq $BIGINT,

@@ -15,9 +15,9 @@ To run this tutorial you must have the following:
 
 =over 9
 
-=item parallel >= version 20140622
+=item parallel >= version 20160222
 
-Install the newest version with:
+Install the newest version using your package manager or with:
 
   (wget -O - pi.dk/3 || curl pi.dk/3/ || fetch -o - http://pi.dk/3) | bash
 
