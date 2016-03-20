@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO ksh fish
+
 unset run_test
 
 # SSH only allowed to localhost/lo
@@ -18,11 +20,7 @@ echo 'bug #40137: SHELL not bash: Warning when exporting funcs'
   . <(printf 'myfunc() {\necho $1\n}'); export -f myfunc; SHELL=/bin/sh parallel --env myfunc -S lo myfunc ::: warning
 
 echo 'env_parallel from man page - transfer non-exported var'
-  env_parallel() { 
-    export parallel_bash_environment="$(echo "shopt -s expand_aliases 2>/dev/null"; alias;typeset -p | grep -vFf <(readonly; echo GROUPS; echo FUNCNAME; echo DIRSTACK; echo _; echo PIPESTATUS; echo USERNAME) | grep -v BASH_;typeset -f)"; 
-    `which parallel` "$@"; 
-    unset parallel_bash_environment; 
-  }; 
+  source $(which env_parallel.bash); 
   var=nonexported env_parallel -S parallel@lo echo '$var' ::: variable
 
 echo 'compared to parallel - no transfer non-exported var'
@@ -95,7 +93,8 @@ echo '### bug #43746: --transfer and --return of multiple inputs {1} and {2}'
 echo '### and:'
 echo '### bug #44371: --trc with csh complains'
   cd /tmp; echo 1 > file1; echo 2 > file2; 
-  parallel -Scsh@lo --trc {1}.a --trc {2}.b 'echo A {1} > {1}.a; echo B {2} > {2}.b' ::: file1 ::: file2; 
+  parallel -Scsh@lo --transferfile {1} --transferfile {2} --trc {1}.a --trc {2}.b 
+   '(cat {1}; echo A {1}) > {1}.a; (cat {2};echo B {2}) > {2}.b' ::: file1 ::: file2; 
   cat file1.a file2.b; 
   rm /tmp/file1 /tmp/file2 /tmp/file1.a /tmp/file2.b
 

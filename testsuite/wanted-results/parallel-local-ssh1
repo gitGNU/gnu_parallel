@@ -147,8 +147,17 @@ ls: No match.
 ls: cannot access ./?--.a: No such file or directory
 ls: No match.
 ls: cannot access ./--?.a: No such file or directory
-echo '### bug #46519: --onall ignores --transfer'
+echo '### Test --trc "/tmp/./--- /A" "/tmp/./ ---/B"'
+### Test --trc "/tmp/./--- /A" "/tmp/./ ---/B"
+  mkdir -p '/tmp/./--- '   '/tmp/ ---';   touch -- '/tmp/./--- /A' '/tmp/ ---/B';   rm -f ./---?/A.a ./?---/B.a;   parallel --trc {=s:.*/./::=}.a -S csh@lo,sh@lo touch ./{=s:.*/./::=}.a ::: '/tmp/./--- /A' '/tmp/./ ---/B';   ls ./---?/A.a ./?---/B.a;   parallel --nonall -k -S csh@lo,sh@lo 'ls ./?--- ./---? || echo OK'; echo '### bug #46519: --onall ignores --transfer'
+./ ---/B.a
+./--- /A.a
+OK
+OK
 ### bug #46519: --onall ignores --transfer
+ls: No match.
+ls: cannot access ./?---: No such file or directory
+ls: cannot access ./---?: No such file or directory
   touch bug46519.{a,b,c}; rm -f bug46519.?? bug46519.???;   parallel --onall --tf bug46519.{} --trc bug46519.{}{} --trc bug46519.{}{}{} -S csh@lo,sh@lo     'ls bug46519.{}; touch bug46519.{}{} bug46519.{}{}{}' ::: a b c;   ls bug46519.?? bug46519.???;   parallel --onall -S csh@lo,sh@lo ls bug46519.{}{} bug46519.{}{}{} ::: a b c && echo Cleanup failed
 bug46519.a
 bug46519.b

@@ -51,6 +51,7 @@ parallel: Error: -U has been retired. Use --er.
 parallel: Error: -W has been retired. Use --wd.
 parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
+parallel: Error: --sql has been retired. Use --sqlmaster.
 parallel: Error: --ctrlc has been retired.
 parallel: Error: --noctrlc has been retired.
   stdout parallel -g
@@ -61,6 +62,7 @@ parallel: Error: -U has been retired. Use --er.
 parallel: Error: -W has been retired. Use --wd.
 parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
+parallel: Error: --sql has been retired. Use --sqlmaster.
 parallel: Error: --ctrlc has been retired.
 parallel: Error: --noctrlc has been retired.
   stdout parallel -H 1
@@ -71,6 +73,7 @@ parallel: Error: -U has been retired. Use --er.
 parallel: Error: -W has been retired. Use --wd.
 parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
+parallel: Error: --sql has been retired. Use --sqlmaster.
 parallel: Error: --ctrlc has been retired.
 parallel: Error: --noctrlc has been retired.
   stdout parallel -T
@@ -81,6 +84,7 @@ parallel: Error: -U has been retired. Use --er.
 parallel: Error: -W has been retired. Use --wd.
 parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
+parallel: Error: --sql has been retired. Use --sqlmaster.
 parallel: Error: --ctrlc has been retired.
 parallel: Error: --noctrlc has been retired.
   stdout parallel -U foo
@@ -91,6 +95,7 @@ parallel: Error: -U has been retired. Use --er.
 parallel: Error: -W has been retired. Use --wd.
 parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
+parallel: Error: --sql has been retired. Use --sqlmaster.
 parallel: Error: --ctrlc has been retired.
 parallel: Error: --noctrlc has been retired.
   stdout parallel -W foo
@@ -101,6 +106,7 @@ parallel: Error: -U has been retired. Use --er.
 parallel: Error: -W has been retired. Use --wd.
 parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
+parallel: Error: --sql has been retired. Use --sqlmaster.
 parallel: Error: --ctrlc has been retired.
 parallel: Error: --noctrlc has been retired.
   stdout parallel -Y
@@ -111,6 +117,7 @@ parallel: Error: -U has been retired. Use --er.
 parallel: Error: -W has been retired. Use --wd.
 parallel: Error: -Y has been retired. Use --shebang.
 parallel: Error: -H has been retired. Use --halt.
+parallel: Error: --sql has been retired. Use --sqlmaster.
 parallel: Error: --ctrlc has been retired.
 parallel: Error: --noctrlc has been retired.
 echo '### Test --joblog followed by --resume --joblog'

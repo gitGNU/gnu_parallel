@@ -164,7 +164,7 @@ Output: Same as above.
 
 STDIN (standard input) can be one of the input sources using B<->:
 
-  cat abc-file | parallel -a - -a def-file echo 
+  cat abc-file | parallel -a - -a def-file echo
 
 Output: Same as above.
 
@@ -1045,7 +1045,7 @@ The directories are named after the variables and their values.
 
 =head1 Controlling the execution
 
-=head2 Number of simultaneous jobs 
+=head2 Number of simultaneous jobs
 
 The number of concurrent jobs is given with B<--jobs>/B<-j>:
 
@@ -1080,7 +1080,7 @@ The first second only 50% of the CPU cores will run a job. Then B<0> is
 put into B<my_jobs> and then the rest of the jobs will be started in
 parallel.
 
-Instead of basing the percentage on the number of CPU cores 
+Instead of basing the percentage on the number of CPU cores
 GNU B<parallel> can base it on the number of CPUs:
 
   parallel --use-cpus-instead-of-cores -N0 sleep 1 :::: num8
@@ -1188,7 +1188,7 @@ Output:
   1:local / 2 / 2
 
   Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
-  ETA: 2s 0left 1.11avg  local:0/9/100%/1.1s 
+  ETA: 2s 0left 1.11avg  local:0/9/100%/1.1s
 
 GNU B<parallel> can give progress information with B<--progress>:
 
@@ -1212,7 +1212,7 @@ And a graphic bar can be shown with B<--bar> and B<zenity>:
 
 A logfile of the jobs completed so far can be generated with B<--joblog>:
 
-  parallel --joblog /tmp/log exit  ::: 1 2 3 0 
+  parallel --joblog /tmp/log exit  ::: 1 2 3 0
   cat /tmp/log
 
 Output:
@@ -1232,7 +1232,7 @@ With a joblog GNU B<parallel> can be stopped and later pickup where it
 left off. It it important that the input of the completed jobs is
 unchanged.
 
-  parallel --joblog /tmp/log exit  ::: 1 2 3 0 
+  parallel --joblog /tmp/log exit  ::: 1 2 3 0
   cat /tmp/log
   parallel --resume --joblog /tmp/log exit  ::: 1 2 3 0 0 0
   cat /tmp/log
@@ -1338,7 +1338,7 @@ before GNU B<parallel> stops spawning more jobs:
   parallel -j2 --halt soon,fail=20% echo {}\; exit {} ::: 0 1 2 3 4 5 6 7 8 9
 
 Output:
-                    
+
   0
   1
   parallel: This job failed:
@@ -1396,7 +1396,7 @@ B<SIGTERM>, waiting 50 ms, then a B<SIGKILL>, finally waiting 25 ms
 before giving up. It looks like this:
 
   show_signals() {
-    perl -e 'for(keys %SIG) { $SIG{$_} = eval "sub { print \"Got $_\\n\"; }";} while(1){sleep 1}' 
+    perl -e 'for(keys %SIG) { $SIG{$_} = eval "sub { print \"Got $_\\n\"; }";} while(1){sleep 1}'
   }
   export -f show_signals
   echo | parallel --termseq TERM,200,TERM,100,TERM,50,KILL,25 -u --timeout 1 show_signals
@@ -1417,7 +1417,7 @@ You can change this to B<SIGINT>, B<SIGTERM>, B<SIGKILL>:
 
   echo | parallel --termseq INT,200,TERM,100,KILL,25 -u --timeout 1 show_signals
 
-Output:                               
+Output:
 
   Got INT
   Got TERM
@@ -1430,14 +1430,14 @@ The B<SIGKILL> does not show because it cannot be caught, and thus the child die
 To avoid overloading systems GNU B<parallel> can look at the system load
 before starting another job:
 
-  parallel --load 100% echo load is less than {} job per cpu ::: 1 
+  parallel --load 100% echo load is less than {} job per cpu ::: 1
 
 Output:
 
   [when then load is less than the number of cpu cores]
   load is less than 1 job per cpu
 
-GNU B<parallel> can also check if the system is swapping. 
+GNU B<parallel> can also check if the system is swapping.
 
   parallel --noswap echo the system is not swapping ::: now
 
@@ -1466,7 +1466,7 @@ Output:
 =head1 Remote execution
 
 GNU B<parallel> can run jobs on remote servers. It uses B<ssh> to
-communicate with the remote machines. 
+communicate with the remote machines.
 
 =head2 Sshlogin
 
@@ -1587,7 +1587,7 @@ GNU B<parallel> can transfer the files to be processed to the remote
 host. It does that using rsync.
 
   echo This is input_file > input_file
-  parallel -S $SERVER1 --transferfile {} cat ::: input_file 
+  parallel -S $SERVER1 --transferfile {} cat ::: input_file
 
 Output:
 
@@ -1597,7 +1597,7 @@ If the files are processed into another file, the resulting file can be
 transferred back:
 
   echo This is input_file > input_file
-  parallel -S $SERVER1 --transferfile {} --return {}.out cat {} ">"{}.out ::: input_file 
+  parallel -S $SERVER1 --transferfile {} --return {}.out cat {} ">"{}.out ::: input_file
   cat input_file.out
 
 Output: Same as above.
@@ -1605,7 +1605,7 @@ Output: Same as above.
 To remove the input and output file on the remote server use B<--cleanup>:
 
   echo This is input_file > input_file
-  parallel -S $SERVER1 --transferfile {} --return {}.out --cleanup cat {} ">"{}.out ::: input_file 
+  parallel -S $SERVER1 --transferfile {} --return {}.out --cleanup cat {} ">"{}.out ::: input_file
   cat input_file.out
 
 Output: Same as above.
@@ -1613,7 +1613,7 @@ Output: Same as above.
 There is a shorthand for B<--transferfile {} --return --cleanup> called B<--trc>:
 
   echo This is input_file > input_file
-  parallel -S $SERVER1 --trc {}.out cat {} ">"{}.out ::: input_file 
+  parallel -S $SERVER1 --trc {}.out cat {} ">"{}.out ::: input_file
   cat input_file.out
 
 Output: Same as above.
@@ -1689,7 +1689,7 @@ Output: Same as above.
 In clusters with many hosts a few of them are often down. GNU B<parallel>
 can ignore those hosts. In this case the host 173.194.32.46 is down:
 
-  parallel --filter-hosts -S 173.194.32.46,$SERVER1 echo ::: bar 
+  parallel --filter-hosts -S 173.194.32.46,$SERVER1 echo ::: bar
 
 Output:
 
@@ -1794,9 +1794,9 @@ the workdir, and setting B<--nice> value. B<-vv> shows all of this.
   parallel -vv -S $SERVER1 echo ::: bar
 
 Output:
-                        
+
   ssh lo -- exec perl -e \''@GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");
-  eval"@GNU_Parallel";my$eval;$eval=decode_base64(join"",@ARGV);eval$eval;'\' 
+  eval"@GNU_Parallel";my$eval=decode_base64(join"",@ARGV);eval$eval;'\'
   JEVOVnsiUEFSQUxMRUxfUElEIn09IjI3MzQiOyRFTlZ7IlBBUkFMTEVMX1NFUSJ9PSIx
   IjskYmFzaGZ1bmMgPSAiIjtAQVJHVj0iZWNobyBiYXIiOyRzaGVsbD0iJEVOVntTSEVM
   TH0iOyR0bXBkaXI9Ii90bXAiOyRuaWNlPTA7ZG97JEVOVntQQVJBTExFTF9UTVB9PSR0
@@ -1810,7 +1810,8 @@ Output:
   JD8mMTI3PzEyOCsoJD8mMTI3KToxKyQ/Pj44KQ==;
   bar
 
-When the command gets more complex, the output is so hard to read, that it is only useful for debugging:
+When the command gets more complex, the output is so hard to read,
+that it is only useful for debugging:
 
   my_func3() {
     echo in my_func $1 > $1.out
@@ -1823,7 +1824,7 @@ Output will be similar to:
   ( ssh lo -- mkdir -p ./.parallel/tmp/hk-3492-1;rsync --protocol 30
   -rlDzR -essh ./abc-file lo:./.parallel/tmp/hk-3492-1 );ssh lo --
   exec perl -e \''@GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");
-  eval"@GNU_Parallel";my$eval;$eval=decode_base64(join"",@ARGV);eval$eval;'\'
+  eval"@GNU_Parallel";my$eval=decode_base64(join"",@ARGV);eval$eval;'\'
   c3lzdGVtKCJta2RpciIsIi1wIiwiLS0iLCIucGFyYWxsZWwvdG1wL2hrLTM0OTItMSIp
   OyBjaGRpciAiLnBhcmFsbGVsL3RtcC9oay0zNDkyLTEiIHx8cHJpbnQoU1RERVJSICJw
   YXJhbGxlbDogQ2Fubm90IGNoZGlyIHRvIC5wYXJhbGxlbC90bXAvaGstMzQ5Mi0xXG4i
@@ -1863,7 +1864,42 @@ Output will be similar to:
 
 GNU B<parallel> can save into an SQL base. Point GNU B<parallel> to a
 table and it will put the joblog there together with the variables and
-the outout each in their own column.
+the output each in their own column.
+
+=head2 CSV as SQL base
+
+The simplest is to use a CSV file as the storage table:
+
+  parallel --sqlandworker csv:////%2Ftmp%2Flog.csv seq ::: 10 ::: 12 13 14
+  cat /tmp/log.csv
+
+Note how '/' in the path must be written as %2F.
+
+Output will be similar to:
+
+  Seq,Host,Starttime,JobRuntime,Send,Receive,Exitval,_Signal,Command,V1,V2,Stdout,Stderr
+  1,:,1458254498.254,0.069,0,9,0,0,"seq 10 12",10,12,"10
+  11
+  12
+  ",
+  2,:,1458254498.278,0.080,0,12,0,0,"seq 10 13",10,13,"10
+  11
+  12
+  13
+  ",
+  3,:,1458254498.301,0.083,0,15,0,0,"seq 10 14",10,14,"10
+  11
+  12
+  13
+  14
+  ",
+
+A proper CSV reader (like LibreOffice or R's read.csv) will read this
+format correctly - even with fields containing newlines as above.
+
+=head2 DBURL as table
+
+The CSV file is an example of a DBURL.
 
 GNU B<parallel> uses a DBURL to address the table. A DBURL has this format:
 
@@ -1874,8 +1910,10 @@ Example:
   mysql://scott:tiger@my.example.com/mydatabase/mytable
   postgresql://scott:tiger@pg.example.com/mydatabase/mytable
   sqlite3:///%2Ftmp%2Fmydatabase/mytable
+  csv:////%2Ftmp%2Flog.csv
 
-To refer to B</tmp/mydatabase> with B<sqlite> you need to encode the B</> as B<%2F>.
+To refer to B</tmp/mydatabase> with B<sqlite> or B<csv> you need to
+encode the B</> as B<%2F>.
 
 Run a job using B<sqlite> on B<mytable> in B</tmp/mydatabase>:
 
@@ -1905,7 +1943,8 @@ output and standard error, respectively.
 
 =head2 Using multiple workers
 
-Using an SQL base as storage costs a lot of performance.
+Using an SQL base as storage costs overhead in the order of 1 second
+per job.
 
 One of the situations where it makes sense is if you have multiple
 workers.
@@ -1913,10 +1952,10 @@ workers.
 You can then have a single master machine that submits jobs to the SQL
 base (but does not do any of the work):
 
-  parallel --sql $DBURLTABLE echo ::: foo bar ::: baz quuz
+  parallel --sqlmaster $DBURLTABLE echo ::: foo bar ::: baz quuz
 
 On the worker machines you run exactly the same command except you
-replace B<--sql> with B<--sqlworker>.
+replace B<--sqlmaster> with B<--sqlworker>.
 
   parallel --sqlworker $DBURLTABLE echo ::: foo bar ::: baz quuz
 
@@ -2356,7 +2395,6 @@ This technique can be used for:
   
   var argv = Environment.GetEnvironmentVariable("ARGV");
   print("Arguments "+argv);
-  
 
 =back
 
@@ -2531,7 +2569,7 @@ Output:
   
   When using GNU Parallel for a publication please cite:
   
-  O. Tange (2011): GNU Parallel - The Command-Line Power Tool, 
+  O. Tange (2011): GNU Parallel - The Command-Line Power Tool,
   ;login: The USENIX Magazine, February 2011:42-47.
 
 In scripts B<--minversion> can be used to ensure the user has at least
@@ -2577,7 +2615,7 @@ B<--number-of-cpus> and B<--number-of-cores> run system specific code to
 determine the number of CPUs and CPU cores on the system. On
 unsupported platforms they will return 1:
 
-  parallel --number-of-cpus 
+  parallel --number-of-cpus
   parallel --number-of-cores
 
 Output (may vary on different systems):

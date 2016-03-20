@@ -59,7 +59,7 @@ if($opt::pipepart) {
 	@input_source_fh = (*STDIN);
     }
 }
-if($opt::sql) {
+if($opt::sqlmaster) {
     # Create SQL table to hold joblog + output
     $Global::sql->create_table($#input_source_fh+1);
     if($opt::sqlworker) {
@@ -760,7 +760,8 @@ sub options_hash {
 	 "m" => \$opt::m,
 	 "X" => \$opt::X,
 	 "v" => \@opt::v,
-	 "sql=s" => \$opt::sql,
+	 "sql=s" => \$opt::retired,
+	 "sqlmaster=s" => \$opt::sqlmaster,
 	 "sqlworker=s" => \$opt::sqlworker,
 	 "sqlandworker=s" => \$opt::sqlandworker,
 	 "joblog=s" => \$opt::joblog,
@@ -972,7 +973,7 @@ sub parse_options {
     if(defined $opt::tmpdir) { $ENV{'TMPDIR'} = $opt::tmpdir; }
     $opt::nice ||= 0;
     if(defined $opt::help) { die_usage(); }
-    if(defined $opt::sqlandworker) { $opt::sql = $opt::sqlworker = $opt::sqlandworker; }
+    if(defined $opt::sqlandworker) { $opt::sqlmaster = $opt::sqlworker = $opt::sqlandworker; }
     if(defined $opt::colsep) { $Global::trim = 'lr'; }
     if(defined $opt::header) { $opt::colsep = defined $opt::colsep ? $opt::colsep : "\t"; }
     if(defined $opt::trim) { $Global::trim = $opt::trim; }
@@ -1121,7 +1122,9 @@ sub parse_options {
         $opt::jobs = "100%";
     }
     open_joblog();
-    ($opt::sql or $opt::sqlworker) and $Global::sql = SQL->new($opt::sql || $opt::sqlworker);
+    if($opt::sqlmaster or $opt::sqlworker) {
+	$Global::sql = SQL->new($opt::sqlmaster || $opt::sqlworker);
+    }
 }
 
 sub check_invalid_option_combinations {
@@ -1168,6 +1171,7 @@ sub check_invalid_option_combinations {
 		    "-W has been retired. Use --wd.",
 		    "-Y has been retired. Use --shebang.",
 		    "-H has been retired. Use --halt.",
+		    "--sql has been retired. Use --sqlmaster.",
 		    "--ctrlc has been retired.",
 		    "--noctrlc has been retired.");
             ::wait_and_exit(255);
@@ -2356,7 +2360,7 @@ sub drain_job_queue {
 		::warning("There are no job slots available. Increase --jobs.");
 	    }
         }
-	while($opt::sql and not $Global::sql->finished()) {
+	while($opt::sqlmaster and not $Global::sql->finished()) {
 	    # SQL master
 	    $sleep = ::reap_usleep($sleep);
 	    if($Global::sqlworker) {
@@ -2376,7 +2380,7 @@ sub drain_job_queue {
 	     or
 	     not $Global::start_no_new_jobs and not $Global::JobQueue->empty()
 	     or
-	     $opt::sql and not $Global::sql->finished());
+	     $opt::sqlmaster and not $Global::sql->finished());
     if($opt::progress) {
 	my %progress = progress();
 	::status("\r", $progress{'status'}, "\n");
@@ -3344,8 +3348,8 @@ sub reaper {
     my $stiff;
     my @pids_reaped;
     debug("run", "Reaper ");
-    # For efficiency surround with BEGIN/COMMIT when using $opt::sql
-    $opt::sql and $Global::sql->run("BEGIN;");
+    # For efficiency surround with BEGIN/COMMIT when using $opt::sqlmaster
+    $opt::sqlmaster and $Global::sql->run("BEGIN;");
     while (($stiff = waitpid(-1, &WNOHANG)) > 0) {
 	# $stiff = pid of dead process
 	push(@pids_reaped,$stiff);
@@ -3403,7 +3407,7 @@ sub reaper {
 	    ::status("\r",$progress{'status'});
 	}
     }
-    $opt::sql and $Global::sql->run("COMMIT;");
+    $opt::sqlmaster and $Global::sql->run("COMMIT;");
     debug("run", "done ");
     return @pids_reaped;
 }
@@ -5821,11 +5825,12 @@ sub rsync_transfer_cmd {
 	return "true";
     }
     my $rsync_destdir;
-    if($file =~ m:^/:) {
+    my $relpath = ($file !~ m:^/:) || ($file =~ m:/\./:); # Is the path relative or /./?
+    if($relpath) {
+	$rsync_destdir = ::shell_quote_file($workdir);
+    } else {
 	# rsync /foo/bar /
 	$rsync_destdir = "/";
-    } else {
-	$rsync_destdir = ::shell_quote_file($workdir);
     }
     $file = ::shell_quote_file($file);
     my $sshcmd = $self->sshcommand();
@@ -6897,14 +6902,17 @@ sub base64_eval {
     #   * decodes them
     #   * evals the result
     # Reverse of string_base64 + eval
-    # Will be wrapped in ' so single quote is forbidden
+    # Will be wrapped in ' so single quote is forbidden.
+    # Spaces are stripped so spaces cannot be significant.
+    # The funny 'use IPC::Open3'-syntax is to avoid spaces and
+    # to make it clear that this is a GNU Parallel command
+    # when looking at the process table.
     # Returns:
     #   $script = 1-liner for perl -e
     my $script = ::spacefree(0,q{
         @GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");
         eval "@GNU_Parallel";
-        my $eval;
-	$eval = decode_base64(join"",@ARGV);
+        my $eval = decode_base64(join"",@ARGV);
 	eval $eval;
 			     });
     ::debug("base64",$script,"\n");
@@ -7145,16 +7153,17 @@ sub transfer {
     # Returns:
     #   @transfer - File names of files to transfer
     my $self = shift;
-    $self->{'transfersize'} = 0;
 
+    my $transfersize = 0;
     my @transfer = $self->{'commandline'}->
 	replace_placeholders($self->{'commandline'}{'transfer_files'},0,0);
     for(@transfer) {
 	# filesize
 	if(-e $_) {
-	    $self->{'transfersize'} += (stat($_))[7];
+	    $transfersize += (stat($_))[7];
 	}
     }
+    $self->add_transfersize($transfersize);
     return @transfer;
 }
 
@@ -7228,7 +7237,7 @@ sub sshreturn {
     my $pre = "";
     for my $file ($self->return()) {
 	$file =~ s:^\./::g; # Remove ./ if any
-	my $relpath = ($file !~ m:^/:); # Is the path relative?
+	my $relpath = ($file !~ m:^/:) || ($file =~ m:/\./:); # Is the path relative or /./?
 	my $cd = "";
 	my $wd = "";
 	if($relpath) {
@@ -7454,7 +7463,7 @@ sub start {
     if($opt::ungroup or $opt::sqlworker) {
 	print_dryrun_and_verbose($stdout_fh,$job,$command);
     }
-    if($opt::dryrun or $opt::sql) { $command = "true"; }
+    if($opt::dryrun or $opt::sqlmaster) { $command = "true"; }
     $ENV{'PARALLEL_SEQ'} = $job->seq();
     $ENV{'PARALLEL_PID'} = $$;
     $ENV{'PARALLEL_TMP'} = ::tmpname("par");
@@ -7735,11 +7744,15 @@ sub print {
     if($opt::pipe and $self->virgin()) {
 	# Skip --joblog, --dryrun, --verbose
     } else {
-	if($opt::ungroup and $Global::joblog and defined $self->{'exitstatus'}) {
-	    # Add to joblog when finished
-	    $self->print_joblog();
-	    # Printing is only relevant for grouped/--line-buffer output.
-	    $opt::ungroup and return;
+	if($opt::ungroup) {
+	    # NULL returnsize = 0 returnsize
+	    $self->returnsize() or $self->add_returnsize(0);
+	    if($Global::joblog and defined $self->{'exitstatus'}) {
+		# Add to joblog when finished
+		$self->print_joblog();
+		# Printing is only relevant for grouped/--line-buffer output.
+		$opt::ungroup and return;
+	    }
 	}
 
 	# Check for disk full
@@ -7749,7 +7762,7 @@ sub print {
 	   and
 	   not $self->{'verbose_printed'}
 	   and
-	   not $opt::sql
+	   not $opt::sqlmaster
 	   and
 	   not $opt::sqlworker) {
 	    $self->{'verbose_printed'}++;
@@ -7870,13 +7883,6 @@ sub linebuffer_print {
 	my $i = ::rindex64($partial,"\n");
 	if($i != -1) {
 	    # One or more complete lines were found
-	    if($fdno == 2 and not $self->{'printed_first_line',$fdno}++) {
-		# OpenSSH_3.6.1p2 gives 'tcgetattr: Invalid argument' with -tt
-		# This is a crappy way of ignoring it.
-		$$partial =~ s/^(client_process_control: )?tcgetattr: Invalid argument\n//;
-		# Length of partial line has changed: Find the last \n again
-		$i = ::rindex64($partial,"\n");
-	    }
 	    $outputlength += $i+1;
 	    if($opt::tag or defined $opt::tagstring) {
 		# Replace ^ with $tag within the full line
@@ -7929,20 +7935,6 @@ sub tag_print {
     seek $in_fh, 0, 0;
     # $in_fh is now ready for reading at position 0
     my $tag = $self->tag();
-    if($fdno == 2) {
-	# OpenSSH_3.6.1p2 gives 'tcgetattr: Invalid argument' with -tt
-	# This is a crappy way of ignoring it.
-	while(<$in_fh>) {
-	    if(/^(client_process_control: )?tcgetattr: Invalid argument\n/) {
-		# Skip
-	    } else {
-		$self->add_returnsize(length $_);
-		print $out_fd $tag,$_;
-	    }
-	    # At most run the loop once
-	    last;
-	}
-    }
     my $outputlength = 0;
     while(<$in_fh>) {
 	print $out_fd $tag,$_;
@@ -8299,7 +8291,7 @@ sub populate {
 	    }
 	}
     }
-    if($opt::sql) {
+    if($opt::sqlmaster) {
 	# Insert the V1..Vn for this $seq in SQL table instead of generating one
 	$Global::sql->insert_records($self->seq(),$self->{'arg_list_flat_orig'});
     }
@@ -9924,7 +9916,7 @@ sub run {
     }
     my @retval;
     my $dbh = $self->{'dbh'};
-    ::debug("sql","$opt::sql$opt::sqlworker run $stmt\n");
+    ::debug("sql","$opt::sqlmaster$opt::sqlworker run $stmt\n");
     # Execute with the rest of the args - if any
     my $rv;
     my $sth;
@@ -10034,10 +10026,10 @@ sub insert_records {
     my $record_ref = shift;
     my $table = $self->table();
     my $v_cols = join ",", map { "V$_" } (1..$self->max_number_of_args());
-    # Two extra value due to $seq, Exitval
-    my $v_vals = join ",", map { "?" } (1..$self->max_number_of_args()+2);
-    $self->run("INSERT INTO $table (Seq,Exitval,$v_cols) ".
-	       "VALUES ($v_vals);", $seq, -1000, @$record_ref[1..$#$record_ref]);
+    # Two extra value due to $seq, Exitval, Send
+    my $v_vals = join ",", map { "?" } (1..$self->max_number_of_args()+3);
+    $self->run("INSERT INTO $table (Seq,Exitval,Send,$v_cols) ".
+	       "VALUES ($v_vals);", $seq, -1000, 0, @$record_ref[1..$#$record_ref]);
 }
 
 sub get_record {

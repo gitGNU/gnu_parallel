@@ -83,6 +83,8 @@
   </li>
   <li><a href="#Saving-to-an-SQL-base-advanced">Saving to an SQL base (advanced)</a>
     <ul>
+      <li><a href="#CSV-as-SQL-base">CSV as SQL base</a></li>
+      <li><a href="#DBURL-as-table">DBURL as table</a></li>
       <li><a href="#Using-multiple-workers">Using multiple workers</a></li>
     </ul>
   </li>
@@ -125,10 +127,10 @@
 
 <dl>
 
-<dt id="parallel-version-20140622">parallel &gt;= version 20140622</dt>
+<dt id="parallel-version-20160222">parallel &gt;= version 20160222</dt>
 <dd>
 
-<p>Install the newest version with:</p>
+<p>Install the newest version using your package manager or with:</p>
 
 <pre><code>  (wget -O - pi.dk/3 || curl pi.dk/3/ || fetch -o - http://pi.dk/3) | bash</code></pre>
 
@@ -289,7 +291,7 @@
 
 <p>STDIN (standard input) can be one of the input sources using <b>-</b>:</p>
 
-<pre><code>  cat abc-file | parallel -a - -a def-file echo </code></pre>
+<pre><code>  cat abc-file | parallel -a - -a def-file echo</code></pre>
 
 <p>Output: Same as above.</p>
 
@@ -1254,7 +1256,7 @@
   1:local / 2 / 2
 
   Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
-  ETA: 2s 0left 1.11avg  local:0/9/100%/1.1s </code></pre>
+  ETA: 2s 0left 1.11avg  local:0/9/100%/1.1s</code></pre>
 
 <p>GNU <b>parallel</b> can give progress information with <b>--progress</b>:</p>
 
@@ -1278,7 +1280,7 @@
 
 <p>A logfile of the jobs completed so far can be generated with <b>--joblog</b>:</p>
 
-<pre><code>  parallel --joblog /tmp/log exit  ::: 1 2 3 0 
+<pre><code>  parallel --joblog /tmp/log exit  ::: 1 2 3 0
   cat /tmp/log</code></pre>
 
 <p>Output:</p>
@@ -1293,7 +1295,7 @@
 
 <p>With a joblog GNU <b>parallel</b> can be stopped and later pickup where it left off. It it important that the input of the completed jobs is unchanged.</p>
 
-<pre><code>  parallel --joblog /tmp/log exit  ::: 1 2 3 0 
+<pre><code>  parallel --joblog /tmp/log exit  ::: 1 2 3 0
   cat /tmp/log
   parallel --resume --joblog /tmp/log exit  ::: 1 2 3 0 0 0
   cat /tmp/log</code></pre>
@@ -1443,7 +1445,7 @@
 <p>Using <b>--termseq</b> you can control which signals are sent when killing children. Normally children will be killed by sending them <b>SIGTERM</b>, waiting 200 ms, then another <b>SIGTERM</b>, waiting 100 ms, then another <b>SIGTERM</b>, waiting 50 ms, then a <b>SIGKILL</b>, finally waiting 25 ms before giving up. It looks like this:</p>
 
 <pre><code>  show_signals() {
-    perl -e &#39;for(keys %SIG) { $SIG{$_} = eval &quot;sub { print \&quot;Got $_\\n\&quot;; }&quot;;} while(1){sleep 1}&#39; 
+    perl -e &#39;for(keys %SIG) { $SIG{$_} = eval &quot;sub { print \&quot;Got $_\\n\&quot;; }&quot;;} while(1){sleep 1}&#39;
   }
   export -f show_signals
   echo | parallel --termseq TERM,200,TERM,100,TERM,50,KILL,25 -u --timeout 1 show_signals</code></pre>
@@ -1475,7 +1477,7 @@
 
 <p>To avoid overloading systems GNU <b>parallel</b> can look at the system load before starting another job:</p>
 
-<pre><code>  parallel --load 100% echo load is less than {} job per cpu ::: 1 </code></pre>
+<pre><code>  parallel --load 100% echo load is less than {} job per cpu ::: 1</code></pre>
 
 <p>Output:</p>
 
@@ -1619,7 +1621,7 @@
 <p>GNU <b>parallel</b> can transfer the files to be processed to the remote host. It does that using rsync.</p>
 
 <pre><code>  echo This is input_file &gt; input_file
-  parallel -S $SERVER1 --transferfile {} cat ::: input_file </code></pre>
+  parallel -S $SERVER1 --transferfile {} cat ::: input_file</code></pre>
 
 <p>Output:</p>
 
@@ -1628,7 +1630,7 @@
 <p>If the files are processed into another file, the resulting file can be transferred back:</p>
 
 <pre><code>  echo This is input_file &gt; input_file
-  parallel -S $SERVER1 --transferfile {} --return {}.out cat {} &quot;&gt;&quot;{}.out ::: input_file 
+  parallel -S $SERVER1 --transferfile {} --return {}.out cat {} &quot;&gt;&quot;{}.out ::: input_file
   cat input_file.out</code></pre>
 
 <p>Output: Same as above.</p>
@@ -1636,7 +1638,7 @@
 <p>To remove the input and output file on the remote server use <b>--cleanup</b>:</p>
 
 <pre><code>  echo This is input_file &gt; input_file
-  parallel -S $SERVER1 --transferfile {} --return {}.out --cleanup cat {} &quot;&gt;&quot;{}.out ::: input_file 
+  parallel -S $SERVER1 --transferfile {} --return {}.out --cleanup cat {} &quot;&gt;&quot;{}.out ::: input_file
   cat input_file.out</code></pre>
 
 <p>Output: Same as above.</p>
@@ -1644,7 +1646,7 @@
 <p>There is a shorthand for <b>--transferfile {} --return --cleanup</b> called <b>--trc</b>:</p>
 
 <pre><code>  echo This is input_file &gt; input_file
-  parallel -S $SERVER1 --trc {}.out cat {} &quot;&gt;&quot;{}.out ::: input_file 
+  parallel -S $SERVER1 --trc {}.out cat {} &quot;&gt;&quot;{}.out ::: input_file
   cat input_file.out</code></pre>
 
 <p>Output: Same as above.</p>
@@ -1703,7 +1705,7 @@
 
 <p>In clusters with many hosts a few of them are often down. GNU <b>parallel</b> can ignore those hosts. In this case the host 173.194.32.46 is down:</p>
 
-<pre><code>  parallel --filter-hosts -S 173.194.32.46,$SERVER1 echo ::: bar </code></pre>
+<pre><code>  parallel --filter-hosts -S 173.194.32.46,$SERVER1 echo ::: bar</code></pre>
 
 <p>Output:</p>
 
@@ -1802,7 +1804,7 @@
 <p>Output:</p>
 
 <pre><code>  ssh lo -- exec perl -e \&#39;&#39;@GNU_Parallel=(&quot;use&quot;,&quot;IPC::Open3;&quot;,&quot;use&quot;,&quot;MIME::Base64&quot;);
-  eval&quot;@GNU_Parallel&quot;;my$eval;$eval=decode_base64(join&quot;&quot;,@ARGV);eval$eval;&#39;\&#39; 
+  eval&quot;@GNU_Parallel&quot;;my$eval=decode_base64(join&quot;&quot;,@ARGV);eval$eval;&#39;\&#39;
   JEVOVnsiUEFSQUxMRUxfUElEIn09IjI3MzQiOyRFTlZ7IlBBUkFMTEVMX1NFUSJ9PSIx
   IjskYmFzaGZ1bmMgPSAiIjtAQVJHVj0iZWNobyBiYXIiOyRzaGVsbD0iJEVOVntTSEVM
   TH0iOyR0bXBkaXI9Ii90bXAiOyRuaWNlPTA7ZG97JEVOVntQQVJBTExFTF9UTVB9PSR0
@@ -1829,7 +1831,7 @@
 <pre><code>  ( ssh lo -- mkdir -p ./.parallel/tmp/hk-3492-1;rsync --protocol 30
   -rlDzR -essh ./abc-file lo:./.parallel/tmp/hk-3492-1 );ssh lo --
   exec perl -e \&#39;&#39;@GNU_Parallel=(&quot;use&quot;,&quot;IPC::Open3;&quot;,&quot;use&quot;,&quot;MIME::Base64&quot;);
-  eval&quot;@GNU_Parallel&quot;;my$eval;$eval=decode_base64(join&quot;&quot;,@ARGV);eval$eval;&#39;\&#39;
+  eval&quot;@GNU_Parallel&quot;;my$eval=decode_base64(join&quot;&quot;,@ARGV);eval$eval;&#39;\&#39;
   c3lzdGVtKCJta2RpciIsIi1wIiwiLS0iLCIucGFyYWxsZWwvdG1wL2hrLTM0OTItMSIp
   OyBjaGRpciAiLnBhcmFsbGVsL3RtcC9oay0zNDkyLTEiIHx8cHJpbnQoU1RERVJSICJw
   YXJhbGxlbDogQ2Fubm90IGNoZGlyIHRvIC5wYXJhbGxlbC90bXAvaGstMzQ5Mi0xXG4i
@@ -1867,7 +1869,41 @@
 
 <h1 id="Saving-to-an-SQL-base-advanced">Saving to an SQL base (advanced)</h1>
 
-<p>GNU <b>parallel</b> can save into an SQL base. Point GNU <b>parallel</b> to a table and it will put the joblog there together with the variables and the outout each in their own column.</p>
+<p>GNU <b>parallel</b> can save into an SQL base. Point GNU <b>parallel</b> to a table and it will put the joblog there together with the variables and the output each in their own column.</p>
+
+<h2 id="CSV-as-SQL-base">CSV as SQL base</h2>
+
+<p>The simplest is to use a CSV file as the storage table:</p>
+
+<pre><code>  parallel --sqlandworker csv:////%2Ftmp%2Flog.csv seq ::: 10 ::: 12 13 14
+  cat /tmp/log.csv</code></pre>
+
+<p>Note how &#39;/&#39; in the path must be written as %2F.</p>
+
+<p>Output will be similar to:</p>
+
+<pre><code>  Seq,Host,Starttime,JobRuntime,Send,Receive,Exitval,_Signal,Command,V1,V2,Stdout,Stderr
+  1,:,1458254498.254,0.069,0,9,0,0,&quot;seq 10 12&quot;,10,12,&quot;10
+  11
+  12
+  &quot;,
+  2,:,1458254498.278,0.080,0,12,0,0,&quot;seq 10 13&quot;,10,13,&quot;10
+  11
+  12
+  13
+  &quot;,
+  3,:,1458254498.301,0.083,0,15,0,0,&quot;seq 10 14&quot;,10,14,&quot;10
+  11
+  12
+  13
+  14
+  &quot;,</code></pre>
+
+<p>A proper CSV reader (like LibreOffice or R&#39;s read.csv) will read this format correctly - even with fields containing newlines as above.</p>
+
+<h2 id="DBURL-as-table">DBURL as table</h2>
+
+<p>The CSV file is an example of a DBURL.</p>
 
 <p>GNU <b>parallel</b> uses a DBURL to address the table. A DBURL has this format:</p>
 
@@ -1877,9 +1913,10 @@
 
 <pre><code>  mysql://scott:tiger@my.example.com/mydatabase/mytable
   postgresql://scott:tiger@pg.example.com/mydatabase/mytable
-  sqlite3:///%2Ftmp%2Fmydatabase/mytable</code></pre>
+  sqlite3:///%2Ftmp%2Fmydatabase/mytable
+  csv:////%2Ftmp%2Flog.csv</code></pre>
 
-<p>To refer to <b>/tmp/mydatabase</b> with <b>sqlite</b> you need to encode the <b>/</b> as <b>%2F</b>.</p>
+<p>To refer to <b>/tmp/mydatabase</b> with <b>sqlite</b> or <b>csv</b> you need to encode the <b>/</b> as <b>%2F</b>.</p>
 
 <p>Run a job using <b>sqlite</b> on <b>mytable</b> in <b>/tmp/mydatabase</b>:</p>
 
@@ -1907,15 +1944,15 @@
 
 <h2 id="Using-multiple-workers">Using multiple workers</h2>
 
-<p>Using an SQL base as storage costs a lot of performance.</p>
+<p>Using an SQL base as storage costs overhead in the order of 1 second per job.</p>
 
 <p>One of the situations where it makes sense is if you have multiple workers.</p>
 
 <p>You can then have a single master machine that submits jobs to the SQL base (but does not do any of the work):</p>
 
-<pre><code>  parallel --sql $DBURLTABLE echo ::: foo bar ::: baz quuz</code></pre>
+<pre><code>  parallel --sqlmaster $DBURLTABLE echo ::: foo bar ::: baz quuz</code></pre>
 
-<p>On the worker machines you run exactly the same command except you replace <b>--sql</b> with <b>--sqlworker</b>.</p>
+<p>On the worker machines you run exactly the same command except you replace <b>--sqlmaster</b> with <b>--sqlworker</b>.</p>
 
 <pre><code>  parallel --sqlworker $DBURLTABLE echo ::: foo bar ::: baz quuz</code></pre>
 
@@ -2340,8 +2377,7 @@
 <pre><code>  #!/usr/bin/parallel --shebang-wrap ARGV={} /usr/bin/csharp
   
   var argv = Environment.GetEnvironmentVariable(&quot;ARGV&quot;);
-  print(&quot;Arguments &quot;+argv);
-  </code></pre>
+  print(&quot;Arguments &quot;+argv);</code></pre>
 
 </dd>
 </dl>
@@ -2498,7 +2534,7 @@
   
   When using GNU Parallel for a publication please cite:
   
-  O. Tange (2011): GNU Parallel - The Command-Line Power Tool, 
+  O. Tange (2011): GNU Parallel - The Command-Line Power Tool,
   ;login: The USENIX Magazine, February 2011:42-47.</code></pre>
 
 <p>In scripts <b>--minversion</b> can be used to ensure the user has at least this version:</p>
@@ -2539,7 +2575,7 @@
 
 <p><b>--number-of-cpus</b> and <b>--number-of-cores</b> run system specific code to determine the number of CPUs and CPU cores on the system. On unsupported platforms they will return 1:</p>
 
-<pre><code>  parallel --number-of-cpus 
+<pre><code>  parallel --number-of-cpus
   parallel --number-of-cores</code></pre>
 
 <p>Output (may vary on different systems):</p>

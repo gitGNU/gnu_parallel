@@ -217,7 +217,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-bin_SCRIPTS = parallel sql niceload
+bin_SCRIPTS = parallel sql niceload \
+	env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh
+
 @DOCUMENTATION_TRUE@man_MANS = parallel.1 sem.1 sql.1 niceload.1 parallel_tutorial.7 parallel_design.7
 @DOCUMENTATION_TRUE@doc_DATA = parallel.html sem.html sql.html niceload.html parallel_tutorial.html parallel_design.html \
 @DOCUMENTATION_TRUE@	parallel.texi sem.texi sql.texi niceload.texi parallel_tutorial.texi parallel_design.texi \
@@ -229,6 +231,7 @@ DISTCLEANFILES = parallel.1 sem.1 sql.1 niceload.1 parallel_tutorial.7 parallel_
 	parallel.pdf sem.pdf sql.pdf niceload.pdf parallel_tutorial.pdf parallel_design.pdf
 
 EXTRA_DIST = parallel sem sql niceload \
+	env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh \
 	sem.pod parallel.pod niceload.pod parallel_tutorial.pod parallel_design.pod \
 	$(DISTCLEANFILES)
 

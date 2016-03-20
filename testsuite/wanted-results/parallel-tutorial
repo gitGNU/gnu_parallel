@@ -52,7 +52,7 @@ B F
 C D
 C E
 C F
-  cat abc-file | parallel -a - -a def-file echo 
+  cat abc-file | parallel -a - -a def-file echo
 A D
 A E
 A F
@@ -523,9 +523,9 @@ Computers / CPU cores / Max jobs to run
 Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
 
   seq 1000 | parallel -j10 --bar '(echo -n {};sleep 0.1)' 2> >(zenity --timeout=12 --progress --auto-kill)
-BASE64  parallel --joblog /tmp/log exit  ::: 1 2 3 0 
+BASE64  parallel --joblog /tmp/log exit  ::: 1 2 3 0
   cat /tmp/log;
-  parallel --joblog /tmp/log exit  ::: 1 2 3 0 
+  parallel --joblog /tmp/log exit  ::: 1 2 3 0
   cat /tmp/log;  parallel --resume --joblog /tmp/log exit  ::: 1 2 3 0 0 0
   cat /tmp/log;
   parallel --resume-failed --joblog /tmp/log exit  ::: 1 2 3 0 0 0
@@ -614,13 +614,13 @@ tried 0
 tried 1
 tried 1
   show_signals() {
-    perl -e 'for(keys %SIG) { $SIG{$_} = eval "sub { print \"Got $_\\n\"; }";} while(1){sleep 1}' 
+    perl -e 'for(keys %SIG) { $SIG{$_} = eval "sub { print \"Got $_\\n\"; }";} while(1){sleep 1}'
   }
   export -f show_signals
   echo | parallel --termseq TERM,200,TERM,100,TERM,50,KILL,25 -u --timeout 1 show_signals
   echo | parallel --termseq INT,200,TERM,100,KILL,25 -u --timeout 1 show_signals
 /bin/bash: show_signals: command not found
-  parallel --load 100% echo load is less than {} job per cpu ::: 1 
+  parallel --load 100% echo load is less than {} job per cpu ::: 1
 load is less than 1 job per cpu
   parallel --noswap echo the system is not swapping ::: now
 the system is not swapping now
@@ -661,18 +661,18 @@ force 4 cpus on server
 run_on_grp1
 run_on_grp2
   echo This is input_file > input_file
-  parallel -S $SERVER1 --transferfile {} cat ::: input_file 
+  parallel -S $SERVER1 --transferfile {} cat ::: input_file
 This is input_file
   echo This is input_file > input_file
-  parallel -S $SERVER1 --transferfile {} --return {}.out cat {} ">"{}.out ::: input_file 
+  parallel -S $SERVER1 --transferfile {} --return {}.out cat {} ">"{}.out ::: input_file
   cat input_file.out
 This is input_file
   echo This is input_file > input_file
-  parallel -S $SERVER1 --transferfile {} --return {}.out --cleanup cat {} ">"{}.out ::: input_file 
+  parallel -S $SERVER1 --transferfile {} --return {}.out --cleanup cat {} ">"{}.out ::: input_file
   cat input_file.out
 This is input_file
   echo This is input_file > input_file
-  parallel -S $SERVER1 --trc {}.out cat {} ">"{}.out ::: input_file 
+  parallel -S $SERVER1 --trc {}.out cat {} ">"{}.out ::: input_file
   cat input_file.out
 This is input_file
   echo common data > common_file
@@ -693,7 +693,7 @@ foo
 1
 2
 3
-  parallel --filter-hosts -S 173.194.32.46,$SERVER1 echo ::: bar 
+  parallel --filter-hosts -S 173.194.32.46,$SERVER1 echo ::: bar
 bar
 parallel: Warning: Removed 173.194.32.46.
   parallel --onall -S $SERVER1,$SERVER2 echo ::: foo bar
@@ -816,18 +816,50 @@ _
 
 /bin/bash: my_func2: command not found
   parallel -vv -S $SERVER1 echo ::: bar
-ssh -l parallel lo -- exec perl -e \''@GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");eval"@GNU_Parallel";my$eval;$eval=decode_base64(join"",@ARGV);eval$eval;'\' BASE64;
+ssh -l parallel lo -- exec perl -e \''@GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");eval"@GNU_Parallel";my$eval=decode_base64(join"",@ARGV);eval$eval;'\' BASE64;
 bar
   my_func3() {
     echo in my_func $1 > $1.out
   }
   export -f my_func3
   parallel -vv --workdir ... --nice 17 --env _ --trc {}.out -S $SERVER1 my_func3 {} ::: abc-file
-( ssh -l parallel lo -- mkdir -p ./.TMPWORKDIR;rsync --protocol 30 -rlDzR -essh\ -l\ parallel ./abc-file lo:./.TMPWORKDIR );ssh -l parallel lo -- exec perl -e \''@GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");eval"@GNU_Parallel";my$eval;$eval=decode_base64(join"",@ARGV);eval$eval;'\' BASE64 BASE64;_EXIT_status=$?; mkdir -p ./.; rsync --protocol 30 --rsync-path=cd\ ./.TMPWORKDIR/./.\;\ rsync -rlDzR -essh\ -l\ parallel lo:./abc-file.out ./.;ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file.out\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh -l parallel lo -- rm -rf .TMPWORKDIR; exit $_EXIT_status;
+( ssh -l parallel lo -- mkdir -p ./.TMPWORKDIR;rsync --protocol 30 -rlDzR -essh\ -l\ parallel ./abc-file lo:./.TMPWORKDIR );ssh -l parallel lo -- exec perl -e \''@GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");eval"@GNU_Parallel";my$eval=decode_base64(join"",@ARGV);eval$eval;'\' BASE64 BASE64;_EXIT_status=$?; mkdir -p ./.; rsync --protocol 30 --rsync-path=cd\ ./.TMPWORKDIR/./.\;\ rsync -rlDzR -essh\ -l\ parallel lo:./abc-file.out ./.;ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file.out\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh -l parallel lo -- rm -rf .TMPWORKDIR; exit $_EXIT_status;
+  parallel --sqlandworker csv:////%2Ftmp%2Flog.csv seq ::: 10 ::: 12 13 14
+  cat /tmp/log.csv
+10
+11
+12
+10
+11
+12
+13
+10
+11
+12
+13
+14
+Seq,Host,Starttime,JobRuntime,Send,Receive,Exitval,_Signal,Command,V1,V2,Stdout,Stderr
+1,:,000000000.000,0.000,0,9,0,0,"seq 10 12",10,12,"10
+11
+12
+",
+2,:,000000000.000,0.000,0,12,0,0,"seq 10 13",10,13,"10
+11
+12
+13
+",
+3,:,000000000.000,0.000,0,15,0,0,"seq 10 14",10,14,"10
+11
+12
+13
+14
+",
   vendor://[[user][:password]@][host][:port]/[database[/table]
 /bin/bash: vendor://[[user][:password]@][host][:port]/[database[/table]: No such file or directory
   sqlite3:///%2Ftmp%2Fmydatabase/mytable
+  csv:////%2Ftmp%2Flog.csv
 /bin/bash: sqlite3:///%2Ftmp%2Fmydatabase/mytable: No such file or directory
+/bin/bash: line 1: csv:////%2Ftmp%2Flog.csv: No such file or directory
   DBURL=sqlite3:///%2Ftmp%2Fmydatabase
   DBURLTABLE=$DBURL/mytable
   parallel --sqlandworker $DBURLTABLE echo ::: foo bar ::: baz quuz
@@ -840,7 +872,7 @@ Error:
 SELECT * FROM mytable ORDER BY Seq; is not a valid DBURL
 
 sql [-hnr] [--table-size] [--db-size] [-p pass-through] [-s string] dburl [command]
-  parallel --sql $DBURLTABLE echo ::: foo bar ::: baz quuz
+  parallel --sqlmaster $DBURLTABLE echo ::: foo bar ::: baz quuz
 parallel: Error: echo is not a valid DBURL
   parallel --sqlworker $DBURLTABLE echo ::: foo bar ::: baz quuz
 parallel: Error: echo is not a valid DBURL
@@ -1093,7 +1125,6 @@ Arguments
   
   var argv = Environment.GetEnvironmentVariable("ARGV");
   print("Arguments "+argv);
-  
 /bin/bash: -c: line 2: syntax error near unexpected token `('
 /bin/bash: -c: line 2: `  var argv = Environment.GetEnvironmentVariable("ARGV");'
   sem 'sleep 1; echo The first finished' &&
@@ -1206,7 +1237,7 @@ mentioned in the release notes of next version of GNU Parallel.
 
   parallel --max-line-length-allowed
 131071
-  parallel --number-of-cpus 
+  parallel --number-of-cpus
   parallel --number-of-cores
 1
 8

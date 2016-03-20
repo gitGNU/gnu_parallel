@@ -155,7 +155,7 @@ pod2pdf --output-file ./parallel_design.pdf ./parallel_design.pod --title "GNU P
 Warning: pod2pdf not found. Using old parallel_design.pdf
 make[0]: Entering directory `/tmp/parallel-00000000/src'
  /bin/mkdir -p '/usr/local/bin'
- /usr/bin/install -c parallel sql niceload '/usr/local/bin'
+ /usr/bin/install -c parallel sql niceload env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh '/usr/local/bin'
 make  install-exec-hook
 make[0]: Entering directory `/tmp/parallel-00000000/src'
 rm /usr/local/bin/sem || true

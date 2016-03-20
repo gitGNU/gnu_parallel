@@ -1791,7 +1791,12 @@ Do not use the first line of input (used by GNU B<parallel> itself
 when called with B<--shebang>).
 
 
-=item B<--sql> I<DBURL>
+=item B<--sql> I<DBURL> (obsolete)
+
+Use B<--sqlmaster> instead.
+
+
+=item B<--sqlmaster> I<DBURL>
 
 Submit jobs via SQL server. I<DBURL> must point to a table, which will
 contain the same information as B<--joblog>, the values from the input
@@ -1801,9 +1806,9 @@ columns Stdout and Stderr).
 The table will be dropped and created with the correct amount of
 V-columns.
 
-B<--sql> does not run any jobs, but it creates the values for the jobs
-to be run and wait for them to complete. One or more B<--sqlworker>
-must be run to actually execute the jobs.
+B<--sqlmaster> does not run any jobs, but it creates the values for
+the jobs to be run and wait for them to complete. One or more
+B<--sqlworker> must be run to actually execute the jobs.
 
 The format of a DBURL is:
 
@@ -1825,14 +1830,14 @@ It can also be an alias from ~/.sql/aliases:
 
 =item B<--sqlandworker> I<DBURL>
 
-Shorthand for: B<--sql> I<DBURL> B<--sqlworker> I<DBURL>.
+Shorthand for: B<--sqlmaster> I<DBURL> B<--sqlworker> I<DBURL>.
 
 
 =item B<--sqlworker> I<DBURL>
 
 Execute jobs via SQL server. Read the input sources variables from the
 table pointed to by I<DBURL>. The I<command> on the command line
-should be the same as given by B<--sql>.
+should be the same as given by B<--sqlmaster>.
 
 
 =item B<--ssh> I<sshcommand>
@@ -2079,11 +2084,11 @@ I<server.example.com> to the file I</tmp/foo/bar.txt> before running
 B<wc /tmp/foo/bar.txt> on I<server.example.com>.
 
   echo /tmp/./foo/bar.txt | parallel \
-    --sshlogin server.example.com --transferfile {} wc
+    --sshlogin server.example.com --transferfile {} wc {= s:.*/./:./: =}
 
 This will transfer the file I</tmp/foo/bar.txt> to the computer
 I<server.example.com> to the file I<foo/bar.txt> before running
-B<wc /tmp/./foo/bar.txt> on I<server.example.com>.
+B<wc ./foo/bar.txt> on I<server.example.com>.
 
 B<--transferfile> is often used with B<--return> and B<--cleanup>. A
 shorthand for B<--transferfile {}> is B<--transfer>.
@@ -3857,17 +3862,13 @@ Killed by Ctrl-C, timeout, not enough memory or similar.
 
 $job->skip() was called in {= =}.
 
-=item Z<>-1200 (In SQL table)
+=item Z<>-1000 (In SQL table)
 
-Job is ready to run (used with --sql).
+Job is ready to run (set by --sqlmaster).
 
 =item Z<>-1220 (In SQL table)
 
-Job is taken by worker to be started (used with --sql).
-
-=item Z<>-1250 (In SQL table)
-
-Job is running (used with --sql).
+Job is taken by worker (set by --sqlworker).
 
 =back
 

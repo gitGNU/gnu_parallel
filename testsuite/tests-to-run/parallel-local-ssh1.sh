@@ -116,6 +116,13 @@ echo '### Test --trc "-- " "-- "'
   parallel --nonall -k -S csh@lo,sh@lo 'ls ./?--.a || echo OK'; 
   parallel --nonall -k -S csh@lo,sh@lo 'ls ./--?.a || echo OK'
 
+echo '### Test --trc "/tmp/./--- /A" "/tmp/./ ---/B"'
+  mkdir -p '/tmp/./--- '   '/tmp/ ---'; 
+  touch -- '/tmp/./--- /A' '/tmp/ ---/B'; 
+  rm -f ./---?/A.a ./?---/B.a; 
+  parallel --trc {=s:.*/./::=}.a -S csh@lo,sh@lo touch ./{=s:.*/./::=}.a ::: '/tmp/./--- /A' '/tmp/./ ---/B'; 
+  ls ./---?/A.a ./?---/B.a; 
+  parallel --nonall -k -S csh@lo,sh@lo 'ls ./?--- ./---? || echo OK'; 
 
 echo '### bug #46519: --onall ignores --transfer'
   touch bug46519.{a,b,c}; rm -f bug46519.?? bug46519.???; 

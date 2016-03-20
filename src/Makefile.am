@@ -1,4 +1,5 @@
-bin_SCRIPTS = parallel sql niceload
+bin_SCRIPTS = parallel sql niceload \
+	env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh
 
 install-exec-hook:
 	rm $(DESTDIR)$(bindir)/sem || true
@@ -147,5 +148,6 @@ DISTCLEANFILES = parallel.1 sem.1 sql.1 niceload.1 parallel_tutorial.7 parallel_
 	parallel.pdf sem.pdf sql.pdf niceload.pdf parallel_tutorial.pdf parallel_design.pdf
 
 EXTRA_DIST = parallel sem sql niceload \
+	env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh \
 	sem.pod parallel.pod niceload.pod parallel_tutorial.pod parallel_design.pod \
 	$(DISTCLEANFILES)
