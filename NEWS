@@ -1,7 +1,8 @@
 20160322
 
 * env_parallel is a function that exports the environment (functions,
-  aliases, variables, and arrays) to GNU Parallel.
+  aliases, variables, and arrays) to GNU Parallel. Run 'man
+  env_parallel' for details.
 
 * niceload --prg now searches for substrings if no process with the
   name is found.

@@ -854,6 +854,7 @@ sub options_hash {
 	 "tollef" => \$opt::tollef,
 	 "gnu" => \$opt::gnu,
 	 "xapply" => \$opt::xapply,
+	 "xapplyinputsource=i" => \@opt::xapplyinputsource,
 	 "bibtex|citation" => \$opt::bibtex,
 	 "wc|willcite|will-cite|nn|nonotice|no-notice" => \$opt::willcite,
 	 # Termination and retries
@@ -1180,7 +1181,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160322;
+    $Global::version = 20160323;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1693,9 +1694,12 @@ sub read_args_from_command_line {
     # Arguments given on the command line after:
     #   ::: ($Global::arg_sep)
     #   :::: ($Global::arg_file_sep)
+    #   :::+ ($Global::arg_sep with --xapply)
+    #   ::::+ ($Global::arg_file_sep with --xapply)
     # Removes the arguments from @ARGV and:
     # - puts filenames into -a
     # - puts arguments into files and add the files to -a
+    # - adds --xapplyinputsource with 0/1 for each -a depending on :::+/::::+
     # Input:
     #   @::ARGV = command option ::: arg arg arg :::: argfiles
     # Uses:
@@ -1710,29 +1714,47 @@ sub read_args_from_command_line {
     for(my $arg = shift @ARGV; @ARGV; $arg = shift @ARGV) {
         if($arg eq $Global::arg_sep
 	   or
-	   $arg eq $Global::arg_file_sep) {
+	   $arg eq $Global::arg_sep."+"
+	   or
+	   $arg eq $Global::arg_file_sep
+	   or
+	   $arg eq $Global::arg_file_sep."+") {
 	    my $group = $arg; # This group of arguments is args or argfiles
 	    my @group;
 	    while(defined ($arg = shift @ARGV)) {
 		if($arg eq $Global::arg_sep
 		   or
-		   $arg eq $Global::arg_file_sep) {
+		   $arg eq $Global::arg_sep."+"
+		   or
+		   $arg eq $Global::arg_file_sep
+		   or
+		   $arg eq $Global::arg_file_sep."+") {
 		    # exit while loop if finding new separator
 		    last;
 		} else {
-		    # If not hitting ::: or ::::
+		    # If not hitting ::: :::+ :::: or ::::+
 		    # Append it to the group
 		    push @group, $arg;
 		}
 	    }
+	    if($group=~/\+$/) {
+		# :::+ or ::::+
+		push @opt::xapplyinputsource, 1;
+	    } else {
+		push @opt::xapplyinputsource, 0;
+	    }
 
 	    if($group eq $Global::arg_file_sep
+	       or
+	       $group eq $Global::arg_file_sep."+"
 	       or ($opt::internal_pipe_means_argfiles and $opt::pipe)
 		) {
 		# Group of file names on the command line.
 		# Append args into -a
 		push @opt::a, @group;
-	    } elsif($group eq $Global::arg_sep) {
+	    } elsif($group eq $Global::arg_sep
+		    or
+		    $group eq $Global::arg_sep."+") {
 		# Group of arguments on the command line.
 		# Put them into a file.
 		# Create argfile
@@ -9411,13 +9433,15 @@ sub nest_get {
 	    # make all new combinations
 	    my @combarg = ();
 	    for (my $fhn = 0; $fhn < $no_of_inputsources; $fhn++) {
-		push @combarg, [0, $#{$self->{'arg_matrix'}[$fhn]}];
+		push(@combarg, [0, $#{$self->{'arg_matrix'}[$fhn]}],
+		     # Is input source --xapply linked to the next?
+		     $opt::xapplyinputsource[$fhn+1]);
 	    }
-	    $combarg[$fhno] = [$len,$len]; # Find only combinations with this new entry
+	    $combarg[2*$fhno] = [$len,$len]; # Find only combinations with this new entry
 	    # map combinations
 	    # [ 1, 3, 7 ], [ 2, 4, 1 ]
 	    # =>
-	    # [ m[0][1], m[1][3], m[3][7] ], [ m[0][2], m[1][4], m[2][1] ]
+	    # [ m[0][1], m[1][3], m[2][7] ], [ m[0][2], m[1][4], m[2][1] ]
 	    my @mapped;
 	    for my $c (expand_combinations(@combarg)) {
 		my @a;
@@ -9429,7 +9453,9 @@ sub nest_get {
 	    # append the mapped to the ungotten arguments
 	    push @{$self->{'unget'}}, @mapped;
 	    # get the first
-	    return shift @{$self->{'unget'}};
+	    if(@mapped) {
+		return shift @{$self->{'unget'}};
+	    }
 	}
     }
     # all are eof or at EOF string; return from the unget queue
@@ -9496,14 +9522,22 @@ sub expand_combinations {
     # Returns: ([x,y,...],[x,y,...])
     # where xmin <= x <= xmax and ymin <= y <= ymax
     my $minmax_ref = shift;
+    my $xapply = shift; # This is linked to the next input source
     my $xmin = $$minmax_ref[0];
     my $xmax = $$minmax_ref[1];
     my @p;
     if(@_) {
-	# If there are more columns: Compute those recursively
 	my @rest = expand_combinations(@_);
-	for(my $x = $xmin; $x <= $xmax; $x++) {
-	    push @p, map { [$x, @$_] } @rest;
+	if($xapply) {
+	    # Linked to next col with xapply
+	    # TODO BUG does not wrap values if not same number of vals
+	    push(@p, map { [$$_[0], @$_] }
+		 grep { $xmin <= $$_[0] and $$_[0] <= $xmax } @rest);
+	} else {
+	    # If there are more columns: Compute those recursively
+	    for(my $x = $xmin; $x <= $xmax; $x++) {
+		push @p, map { [$x, @$_] } @rest;
+	    }
 	}
     } else {
 	for(my $x = $xmin; $x <= $xmax; $x++) {
