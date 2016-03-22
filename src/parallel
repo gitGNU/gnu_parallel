@@ -9142,6 +9142,12 @@ sub get {
 	return $ret;
     }
     my $ret = $self->{'arg_sub_queue'}->get();
+    if($ret and
+       grep { index($_->orig(),"\0") != -1 } map { @$_ } $ret) {
+	::warning("a NUL character occurred in the input.",
+		  "It cannot be passed through in the argument list.",
+		  "Did you mean to use the --null option?");
+    }
     if(defined $Global::max_number_of_args
        and $Global::max_number_of_args == 0) {
 	::debug("run", "Read 1 but return 0 args\n");
