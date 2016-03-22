@@ -1,0 +1,49 @@
+#!/bin/sh
+
+# Copyright (C) 2016
+# Ole Tange and Free Software Foundation, Inc.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, see <http://www.gnu.org/licenses/>
+# or write to the Free Software Foundation, Inc., 51 Franklin St,
+# Fifth Floor, Boston, MA 02110-1301 USA
+
+
+cat <<_EOS
+env_parallel only works if it is a function. Do the below and restart your shell.
+
+bash:  Put this in $HOME/.bashrc:  . `which env_parallel.bash`
+       E.g. by doing:  echo '. `which env_parallel.bash`' >> $HOME/.bashrc
+       Supports: aliases, functions, variables, arrays
+
+zsh:   Put this in $HOME/.zshrc:  . `which env_parallel.zsh`
+       E.g. by doing:  echo '. `which env_parallel.zsh`' >> $HOME/.zshrc
+       Supports: functions, variables, arrays
+
+fish:  Put this in $HOME/.config/fish/config.fish:
+         source (which env_parallel.fish)
+       E.g. by doing:
+         echo 'source (which env_parallel.fish)' >> $HOME/.config/fish/config.fish
+       Supports: aliases, functions, variables
+
+ksh:   Put this in $HOME/.kshrc:  source `which env_parallel.ksh`
+       E.g. by doing:  echo 'source `which env_parallel.ksh`' >> $HOME/.kshrc
+       Supports: aliases, functions, variables, arrays
+
+pdksh: Put this in $HOME/.profile:  source `which env_parallel.pdksh`
+       E.g. by doing:  echo 'source `which env_parallel.pdksh`' >> $HOME/.profile
+       Supports: aliases, functions, variables, arrays
+
+For details: see  man env_parallel
+
+_EOS

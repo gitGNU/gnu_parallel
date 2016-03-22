@@ -1,15 +1,15 @@
 bin_SCRIPTS = parallel sql niceload \
-	env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh
+	env_parallel env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh
 
 install-exec-hook:
 	rm $(DESTDIR)$(bindir)/sem || true
 	$(LN_S) parallel $(DESTDIR)$(bindir)/sem
 
 if DOCUMENTATION
-man_MANS = parallel.1 sem.1 sql.1 niceload.1 parallel_tutorial.7 parallel_design.7
-doc_DATA = parallel.html sem.html sql.html niceload.html parallel_tutorial.html parallel_design.html \
-	parallel.texi sem.texi sql.texi niceload.texi parallel_tutorial.texi parallel_design.texi \
-	parallel.pdf sem.pdf sql.pdf niceload.pdf parallel_tutorial.pdf parallel_design.pdf
+man_MANS = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 parallel_tutorial.7 parallel_design.7
+doc_DATA = parallel.html env_parallel.html sem.html sql.html niceload.html parallel_tutorial.html parallel_design.html \
+	parallel.texi env_parallel.texi sem.texi sql.texi niceload.texi parallel_tutorial.texi parallel_design.texi \
+	parallel.pdf env_parallel.pdf sem.pdf sql.pdf niceload.pdf parallel_tutorial.pdf parallel_design.pdf
 endif
 
 # Build documentation file if the tool to build exists.
@@ -19,6 +19,12 @@ parallel.1: parallel.pod
 		--section=1 $(srcdir)/parallel.pod > $(srcdir)/parallel.1n \
 	&& mv $(srcdir)/parallel.1n $(srcdir)/parallel.1 \
 	|| echo "Warning: pod2man not found. Using old parallel.1"
+
+env_parallel.1: env_parallel.pod
+	pod2man --release='$(PACKAGE_VERSION)' --center='$(PACKAGE_NAME)' \
+		--section=1 $(srcdir)/env_parallel.pod > $(srcdir)/env_parallel.1n \
+	&& mv $(srcdir)/env_parallel.1n $(srcdir)/env_parallel.1 \
+	|| echo "Warning: pod2man not found. Using old env_parallel.1"
 
 parallel_tutorial.7: parallel_tutorial.pod
 	pod2man --release='$(PACKAGE_VERSION)' --center='$(PACKAGE_NAME)' \
@@ -57,7 +63,14 @@ parallel.html: parallel.pod
 	rm -f $(srcdir)/pod2htm*
 
 # Depending on parallel.html to avoid stupid pod2html race condition
-parallel_tutorial.html: parallel_tutorial.pod parallel.html
+env_parallel.html: env_parallel.pod parallel.html
+	pod2html --title "GNU Parallel with environment" $(srcdir)/env_parallel.pod > $(srcdir)/env_parallel.htmln \
+	&& mv $(srcdir)/env_parallel.htmln $(srcdir)/env_parallel.html \
+	|| echo "Warning: pod2html not found. Using old env_parallel.html"
+	rm -f $(srcdir)/pod2htm*
+
+# Depending on env_parallel.html to avoid stupid pod2html race condition
+parallel_tutorial.html: parallel_tutorial.pod env_parallel.html
 	pod2html --title "GNU Parallel tutorial" $(srcdir)/parallel_tutorial.pod > $(srcdir)/parallel_tutorial.htmln \
 	&& mv $(srcdir)/parallel_tutorial.htmln $(srcdir)/parallel_tutorial.html \
 	|| echo "Warning: pod2html not found. Using old parallel_tutorial.html"
@@ -95,6 +108,10 @@ parallel.texi: parallel.pod
 	pod2texi --output=$(srcdir)/parallel.texi $(srcdir)/parallel.pod \
 	|| echo "Warning: pod2texi not found. Using old parallel.texi"
 
+env_parallel.texi: env_parallel.pod
+	pod2texi --output=$(srcdir)/env_parallel.texi $(srcdir)/env_parallel.pod \
+	|| echo "Warning: pod2texi not found. Using old env_parallel.texi"
+
 parallel_tutorial.texi: parallel_tutorial.pod
 	pod2texi --output=$(srcdir)/parallel_tutorial.texi $(srcdir)/parallel_tutorial.pod \
 	|| echo "Warning: pod2texi not found. Using old parallel_tutorial.texi"
@@ -119,6 +136,10 @@ parallel.pdf: parallel.pod
 	pod2pdf --output-file $(srcdir)/parallel.pdf $(srcdir)/parallel.pod --title "GNU Parallel" \
 	|| echo "Warning: pod2pdf not found. Using old parallel.pdf"
 
+env_parallel.pdf: env_parallel.pod
+	pod2pdf --output-file $(srcdir)/env_parallel.pdf $(srcdir)/env_parallel.pod --title "GNU Parallel with environment" \
+	|| echo "Warning: pod2pdf not found. Using old env_parallel.pdf"
+
 parallel_tutorial.pdf: parallel_tutorial.pod
 	pod2pdf --output-file $(srcdir)/parallel_tutorial.pdf $(srcdir)/parallel_tutorial.pod --title "GNU Parallel Tutorial" \
 	|| echo "Warning: pod2pdf not found. Using old parallel_tutorial.pdf"
@@ -142,12 +163,16 @@ niceload.pdf: niceload.pod
 sem: parallel
 	ln -fs parallel sem
 
-DISTCLEANFILES = parallel.1 sem.1 sql.1 niceload.1 parallel_tutorial.7 parallel_design.7 \
-	parallel.html sem.html sql.html niceload.html parallel_tutorial.html parallel_design.html \
-	parallel.texi sem.texi sql.texi niceload.texi parallel_tutorial.texi parallel_design.texi \
-	parallel.pdf sem.pdf sql.pdf niceload.pdf parallel_tutorial.pdf parallel_design.pdf
+DISTCLEANFILES = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 \
+	parallel_tutorial.7 parallel_design.7 \
+	parallel.html env_parallel.html sem.html sql.html niceload.html \
+	parallel_tutorial.html parallel_design.html \
+	parallel.texi env_parallel.texi sem.texi sql.texi niceload.texi \
+	parallel_tutorial.texi parallel_design.texi \
+	parallel.pdf env_parallel.pdf sem.pdf sql.pdf niceload.pdf \
+	parallel_tutorial.pdf parallel_design.pdf
 
-EXTRA_DIST = parallel sem sql niceload \
+EXTRA_DIST = parallel sem sql niceload env_parallel \
 	env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh \
 	sem.pod parallel.pod niceload.pod parallel_tutorial.pod parallel_design.pod \
 	$(DISTCLEANFILES)

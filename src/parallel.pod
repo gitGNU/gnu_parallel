@@ -80,80 +80,22 @@ similar to B<cat | sh>.
 The I<command> must be an executable, a script, a composed command, or
 a function.
 
-B<Bash functions>: B<export -f> the function first.
+B<Bash functions>: B<export -f> the function first or use B<env_parallel>.
 
-B<Bash aliases>: Copy the full environment using this and use B<env_parallel> instead of B<parallel>.
+B<Bash aliases>: Use B<env_parallel>.
 
-  env_parallel() {
-    export PARALLEL_ENV="$(echo "shopt -s expand_aliases 2>/dev/null"; alias;typeset -p |
-      grep -vFf <(readonly) |
-      grep -v 'declare .. (GROUPS|FUNCNAME|DIRSTACK|_|PIPESTATUS|USERNAME|BASH_[A-Z_]+) ';
-      typeset -f)";
-    `which parallel` "$@";
-    unset PARALLEL_ENV;
-  }
-  # call as:
-  env_parallel [normal parallel options]
+B<Ksh functions and aliases>: Use B<env_parallel>.
 
-B<Ksh functions>: If it is a Ksh function you can encode the function in a variable:
+B<Zsh functions>: Use B<env_parallel>.
 
-  foo() {
-    echo $*;
-  }
-  export PARALLEL_ENV=`typeset -f foo`
-  parallel foo ::: works
+B<Zsh aliases>: No solution.
 
-To export all functions, aliases, and variables and also make them available when running remote:
+B<Fish functions and aliases>: Use B<env_parallel>.
 
-  env_parallel() {
-    export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p|egrep -v 'typeset( -i)? -r|PIPESTATUS';typeset -f)";
-    `which parallel` "$@";
-    unset PARALLEL_ENV;
-  }
-  # call as:
-  env_parallel [normal parallel options]
+B<Ksh functions and aliases>: Use B<env_parallel>.
 
-B<Zsh functions>: If it is a Zsh function you can encode the function in a variable:
+B<Pdksh functions and aliases>: Use B<env_parallel>.
 
-  foo() {
-    echo $*;
-  }
-  PARALLEL_ENV="$(typeset -f foo)";
-  export PARALLEL_ENV
-  parallel foo ::: works
-
-To export all functions, aliases, and variables and also make them available when running remote:
-
-  env_parallel() {
-    export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p |
-      grep -aFvf <(typeset -pr)|egrep -iav 'ZSH_EVAL_CONTEXT|LINENO=| _=|aliases|^typeset [a-z_]+$'|
-      egrep -av '^(typeset IFS=|..$)|cyan';
-      typeset -f)";
-    parallel "$@";
-    unset PARALLEL_ENV;
-  }
-  # call as:
-  env_parallel [normal parallel options]
-
-B<Fish functions>: If it is a Fish function you can encode the function in a variable:
-
-  function foo
-    echo $argv;
-  end
-
-  setenv PARALLEL_ENV (functions foo|perl -pe 's/\n/\001/')
-  parallel foo ::: works
-
-To export all functions and simple variables (not arrays) and also make them available
-when running remote:
-
-  function env_parallel
-    setenv PARALLEL_ENV (begin; functions -n | perl -pe 's/,/\n/g' | while read d; functions $d; end; perl -e 'print map { "$_///$ENV{$_}\n"} grep !/^(PWD|SHLVL|PATH)$/, keys %ENV'| sh -c 'parallel --shellquote' | perl -pe 's:^([^/]+)///:setenv $1 :'; end |perl -pe 's/\001/\\cb/g;s/\n/\001/')
-    parallel $argv;
-    set -e PARALLEL_ENV
-  end
-  # call as:
-  env_parallel [normal parallel options]
 
 The command cannot contain the character \257 (macron: ¯).
 

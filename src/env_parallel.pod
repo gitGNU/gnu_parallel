@@ -1,0 +1,308 @@
+#!/usr/bin/perl -w
+
+=encoding utf8
+
+=head1 NAME
+
+env_parallel - export environment to GNU parallel
+
+
+=head1 SYNOPSIS
+
+B<env_parallel> [options for GNU Parallel]
+
+
+=head1 DESCRIPTION
+
+B<env_parallel> is a shell function that exports the current
+environment to GNU Parallel.
+
+If the shell function is not loaded, a dummy script will be run
+instead that explains how to install the function.
+
+
+=head1 OPTIONS
+
+Same as GNU B<parallel>.
+
+
+=head1 SUPPORTED SHELLS
+
+=head2 Bash
+
+=over 8
+
+=item aliases
+
+  alias myecho=echo
+  env_parallel myecho ::: test
+
+=item functions
+
+  myfunc() { echo $*; }
+  env_parallel myfunc ::: test
+
+=item variables
+
+  myvar=test
+  env_parallel echo '$myvar' ::: test
+
+=item arrays
+
+  myarray=(foo bar baz)
+  env_parallel echo '${myarray[{}]}' ::: 0 1 2
+
+=back
+
+=head2 Zsh
+
+=over 8
+
+=item aliases
+
+Not supported
+
+=item functions
+
+  myfunc() { echo $*; }
+  env_parallel myfunc ::: test
+
+=item variables
+
+  myvar=test
+  env_parallel echo '$myvar' ::: test
+
+=item arrays
+
+  myarray=(foo bar baz)
+  env_parallel echo '${myarray[{}]}' ::: 1 2 3
+
+=back
+
+=head2 fish
+
+=over 8
+
+=item aliases
+
+  alias myecho=echo
+  env_parallel myecho ::: test
+
+=item functions
+
+  function myfunc
+    echo $argv
+  end
+  env_parallel myfunc ::: test
+
+=item variables
+
+  set myvar test
+  env_parallel echo '$myvar' ::: test
+
+=item arrays
+
+Not supported
+
+=back
+
+=head2 ksh
+
+=over 8
+
+=item aliases
+
+  alias myecho=echo
+  env_parallel myecho ::: test
+
+=item functions
+
+  myfunc() { echo $*; }
+  env_parallel myfunc ::: test
+
+=item variables
+
+  myvar=test
+  env_parallel echo '$myvar' ::: test
+
+=item arrays
+
+  myarray=(foo bar baz)
+  env_parallel echo '${myarray[{}]}' ::: 0 1 2
+
+=back
+
+=head2 pdksh
+
+=over 8
+
+=item aliases
+
+  alias myecho=echo
+  env_parallel myecho ::: test
+
+=item functions
+
+  myfunc() { echo $*; }
+  env_parallel myfunc ::: test
+
+=item variables
+
+  myvar=test
+  env_parallel echo '$myvar' ::: test
+
+=item arrays
+
+  myarray=(foo bar baz)
+  env_parallel echo '${myarray[{}]}' ::: 0 1 2
+
+=back
+
+
+=head1 EXIT STATUS
+
+Same as GNU B<parallel>.
+
+
+=head1 AUTHOR
+
+When using GNU B<parallel> for a publication please cite:
+
+O. Tange (2011): GNU Parallel - The Command-Line Power Tool, ;login:
+The USENIX Magazine, February 2011:42-47.
+
+This helps funding further development; and it won't cost you a cent.
+If you pay 10000 EUR you should feel free to use GNU Parallel without citing.
+
+Copyright (C) 2007-10-18 Ole Tange, http://ole.tange.dk
+
+Copyright (C) 2008,2009,2010 Ole Tange, http://ole.tange.dk
+
+Copyright (C) 2010,2011,2012,2013,2014,2015 Ole Tange,
+http://ole.tange.dk and Free Software Foundation, Inc.
+
+Parts of the manual concerning B<xargs> compatibility is inspired by
+the manual of B<xargs> from GNU findutils 4.4.2.
+
+
+=head1 LICENSE
+
+Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015 Free
+Software Foundation, Inc.
+v
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+at your option any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+=head2 Documentation license I
+
+Permission is granted to copy, distribute and/or modify this documentation
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+Texts.  A copy of the license is included in the file fdl.txt.
+
+=head2 Documentation license II
+
+You are free:
+
+=over 9
+
+=item B<to Share>
+
+to copy, distribute and transmit the work
+
+=item B<to Remix>
+
+to adapt the work
+
+=back
+
+Under the following conditions:
+
+=over 9
+
+=item B<Attribution>
+
+You must attribute the work in the manner specified by the author or
+licensor (but not in any way that suggests that they endorse you or
+your use of the work).
+
+=item B<Share Alike>
+
+If you alter, transform, or build upon this work, you may distribute
+the resulting work only under the same, similar or a compatible
+license.
+
+=back
+
+With the understanding that:
+
+=over 9
+
+=item B<Waiver>
+
+Any of the above conditions can be waived if you get permission from
+the copyright holder.
+
+=item B<Public Domain>
+
+Where the work or any of its elements is in the public domain under
+applicable law, that status is in no way affected by the license.
+
+=item B<Other Rights>
+
+In no way are any of the following rights affected by the license:
+
+=over 2
+
+=item *
+
+Your fair dealing or fair use rights, or other applicable
+copyright exceptions and limitations;
+
+=item *
+
+The author's moral rights;
+
+=item *
+
+Rights other persons may have either in the work itself or in
+how the work is used, such as publicity or privacy rights.
+
+=back
+
+=back
+
+=over 9
+
+=item B<Notice>
+
+For any reuse or distribution, you must make clear to others the
+license terms of this work.
+
+=back
+
+A copy of the full license is included in the file as cc-by-sa.txt.
+
+
+=head1 DEPENDENCIES
+
+B<env_parallel> uses GNU B<parallel>.
+
+
+=head1 SEE ALSO
+
+B<parallel>(1), B<bash>(1), B<ksh>(1), B<zsh>(1), B<ksh>(1),
+B<pdksh>(1)
+
+=cut
