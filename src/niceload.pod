@@ -117,12 +117,14 @@ Process ID of process to suspend. You can specify multiple process IDs
 with multiple B<-p> I<PID>.
 
 
-=item B<--prg> I<program>
+=item B<--prg> I<program> (alpha testing)
 
-=item B<--program> I<program>
+=item B<--program> I<program> (alpha testing)
 
 Name of running program to suspend. You can specify multiple programs
-with multiple B<--prg> I<program>.
+with multiple B<--prg> I<program>. If no processes with the name
+I<program> is found, B<niceload> with search for substrings containing
+I<program>.
 
 
 =item B<--quote>
