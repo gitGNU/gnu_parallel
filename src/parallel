@@ -1180,7 +1180,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160223;
+    $Global::version = 20160322;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -9143,7 +9143,7 @@ sub get {
     }
     my $ret = $self->{'arg_sub_queue'}->get();
     if($ret and
-       grep { index($_->orig(),"\0") != -1 } map { @$_ } $ret) {
+       grep { index($_->orig(),"\0") > 0 } map { @$_ } $ret) {
 	::warning("a NUL character occurred in the input.",
 		  "It cannot be passed through in the argument list.",
 		  "Did you mean to use the --null option?");

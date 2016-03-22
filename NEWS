@@ -1,3 +1,28 @@
+20160322
+
+* env_parallel is a function that exports the environment (functions,
+  aliases, variables, and arrays) to GNU Parallel.
+
+* niceload --prg now searches for substrings if no process with the
+  name is found.
+
+* GNU Parallel was cited in: Random Forest DBSCAN for USPTO Inventor
+  Name Disambiguation http://arxiv.org/pdf/1602.01792.pdf
+
+* GNU Parallel was mentioned (with wrong citation) in: Dual Level
+  Parallel Computations for LargeScale High-Fidelity Database to
+  Design Aerospace Vehicles
+  http://www.nas.nasa.gov/assets/pdf/papers/Guruswamy_2013_DualLevelParallelComputations.pdf
+
+* Using ‘Parallel’ in Unix
+  https://shearnrylan.wordpress.com/2016/02/22/using-parallel-in-unix/
+
+* JPEG Squish uses (and co-distributes) GNU Parallel:
+  http://dantidswell.co.uk/jpeg-squish/
+
+* Bug fixes and man page updates.
+
+
 20160222
 
 * Vote for new community on Superuser, Ask Ubuntu, Unix&Linux
