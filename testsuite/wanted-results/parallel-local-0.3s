@@ -588,5 +588,14 @@ parallel: This job failed:
 echo 3;exit 1
 echo '**'
 **
+echo 'bug #47290: xargs: Warning: a NUL character occurred in the input'
+bug #47290: xargs: Warning: a NUL character occurred in the input
+  perl -e 'print "foo\0not printed"' | parallel echo
+foo
+parallel: Warning: a NUL character occurred in the input.
+parallel: Warning: It cannot be passed through in the argument list.
+parallel: Warning: Did you mean to use the --null option?
+echo '**'
+**
 ### 1 .par file from --files expected
 1

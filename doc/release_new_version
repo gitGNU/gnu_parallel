@@ -248,6 +248,12 @@ for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumb
 
 * <<Citation needed: Introspecting for RSA Key Material to Assist Intrusion Detection http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=7331177&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7331177>>
 
+* GNU Parallel was cited in: Tools and techniques for computational reproducibility http://biorxiv.org/content/biorxiv/early/2016/03/17/022707.full.pdf
+
+* qbatch uses GNU Parallel: https://pypi.python.org/pypi/qbatch/1.0rc2
+
+* FaceCrop uses GNU Parallel: https://github.com/EderSantana/FaceCrop
+
 * Bug fixes and man page updates.
 
 GNU Parallel - For people who live life in the parallel lane.

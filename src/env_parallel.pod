@@ -20,6 +20,11 @@ environment to GNU Parallel.
 If the shell function is not loaded, a dummy script will be run
 instead that explains how to install the function.
 
+B<env_parallel> only works if the size of the current environment is
+smaller than half of the max size and smaller than 25% of the max if
+running remotely. E.g. The max size of Bash's environment is 256 KB,
+so B<env_parallel> will fail if B<set | wc -c> is bigger than 128 KB.
+
 
 =head1 OPTIONS
 
@@ -30,56 +35,94 @@ Same as GNU B<parallel>.
 
 =head2 Bash
 
+Installation
+
+Put this in $HOME/.bashrc:
+
+  . `which env_parallel.bash`
+
+E.g. by doing:
+
+  echo '. `which env_parallel.bash`' >> $HOME/.bashrc
+
 =over 8
 
 =item aliases
 
   alias myecho=echo
   env_parallel myecho ::: test
+  env_parallel -S server myecho ::: test
 
 =item functions
 
   myfunc() { echo $*; }
   env_parallel myfunc ::: test
+  env_parallel -S server myfunc ::: test
 
 =item variables
 
   myvar=test
   env_parallel echo '$myvar' ::: test
+  env_parallel -S server echo '$myvar' ::: test
 
 =item arrays
 
   myarray=(foo bar baz)
   env_parallel echo '${myarray[{}]}' ::: 0 1 2
+  env_parallel -S server echo '${myarray[{}]}' ::: 0 1 2
 
 =back
 
 =head2 Zsh
 
+Installation
+
+Put this in $HOME/.zshrc:
+
+  . `which env_parallel.zsh`
+
+E.g. by doing:
+
+  echo '. `which env_parallel.zsh`' >> $HOME/.zshenv
+
 =over 8
 
 =item aliases
 
-Not supported
+Not supported - Zsh does not support aliases defined in the same
+parsing as they are used.
 
 =item functions
 
   myfunc() { echo $*; }
   env_parallel myfunc ::: test
+  env_parallel -S server myfunc ::: test
 
 =item variables
 
   myvar=test
   env_parallel echo '$myvar' ::: test
+  env_parallel -S server echo '$myvar' ::: test
 
 =item arrays
 
   myarray=(foo bar baz)
   env_parallel echo '${myarray[{}]}' ::: 1 2 3
+  env_parallel -S server echo '${myarray[{}]}' ::: 1 2 3
 
 =back
 
 =head2 fish
+
+Installation
+
+Put this in $HOME/.config/fish/config.fish:
+
+  source (which env_parallel.fish)
+
+E.g. by doing:
+
+  echo 'source (which env_parallel.fish)' >> $HOME/.config/fish/config.fish
 
 =over 8
 
@@ -87,6 +130,7 @@ Not supported
 
   alias myecho=echo
   env_parallel myecho ::: test
+  env_parallel -S server myecho ::: test
 
 =item functions
 
@@ -94,67 +138,133 @@ Not supported
     echo $argv
   end
   env_parallel myfunc ::: test
+  env_parallel -S server myfunc ::: test
 
 =item variables
 
   set myvar test
   env_parallel echo '$myvar' ::: test
+  env_parallel -S server echo '$myvar' ::: test
 
 =item arrays
 
-Not supported
+  set myarray foo bar baz
+  env_parallel echo '$myarray[{}]' ::: 1 2 3
+  env_parallel -S server echo '$myarray[{}]' ::: 1 2 3
 
 =back
 
 =head2 ksh
 
+Installation
+
+Put this in $HOME/.kshrc:
+
+  source `which env_parallel.ksh`
+
+E.g. by doing:
+
+  echo 'source `which env_parallel.ksh`' >> $HOME/.kshrc
+
 =over 8
 
 =item aliases
 
   alias myecho=echo
   env_parallel myecho ::: test
+  env_parallel -S server myecho ::: test
 
 =item functions
 
   myfunc() { echo $*; }
   env_parallel myfunc ::: test
+  env_parallel -S server myfunc ::: test
 
 =item variables
 
   myvar=test
   env_parallel echo '$myvar' ::: test
+  env_parallel -S server echo '$myvar' ::: test
 
 =item arrays
 
   myarray=(foo bar baz)
   env_parallel echo '${myarray[{}]}' ::: 0 1 2
+  env_parallel -S server echo '${myarray[{}]}' ::: 0 1 2
 
 =back
 
 =head2 pdksh
 
+Installation
+
+Put this in $HOME/.profile:
+
+  source `which env_parallel.pdksh`
+
+E.g. by doing:
+
+  echo 'source `which env_parallel.pdksh`' >> $HOME/.profile
+
 =over 8
 
 =item aliases
 
   alias myecho=echo
   env_parallel myecho ::: test
+  env_parallel -S server myecho ::: test
 
 =item functions
 
   myfunc() { echo $*; }
   env_parallel myfunc ::: test
+  env_parallel -S server myfunc ::: test
 
 =item variables
 
   myvar=test
   env_parallel echo '$myvar' ::: test
+  env_parallel -S server echo '$myvar' ::: test
 
 =item arrays
 
   myarray=(foo bar baz)
   env_parallel echo '${myarray[{}]}' ::: 0 1 2
+  env_parallel -S server echo '${myarray[{}]}' ::: 0 1 2
+
+=back
+
+=head2 csh
+
+Installation
+
+Put this in $HOME/.cshrc:
+
+  source `which env_parallel.csh`
+
+E.g. by doing:
+
+  echo 'source `which env_parallel.csh`' >> $HOME/.cshrc
+
+=over 8
+
+=item aliases
+
+  alias myecho echo
+  env_parallel myecho ::: test
+  env_parallel -S server myecho ::: test
+
+=item functions
+
+Not supported by B<csh>.
+
+=item variables
+
+Not supported
+
+=item arrays
+
+Not supported
 
 =back
 
@@ -187,9 +297,9 @@ the manual of B<xargs> from GNU findutils 4.4.2.
 
 =head1 LICENSE
 
-Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015 Free
-Software Foundation, Inc.
-v
+Copyright (C) 2016
+Ole Tange and Free Software Foundation, Inc.
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 3 of the License, or

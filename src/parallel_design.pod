@@ -6,8 +6,8 @@
 
 This document describes design decisions made in the development of
 GNU B<parallel> and the reasoning behind them. It will give an
-overview of why some of the code looks like it does, and help new
-maintainers understand the code better.
+overview of why some of the code looks the way it does, and will help
+new maintainers understand the code better.
 
 
 =head2 One file program
@@ -30,10 +30,10 @@ is CentOS 3.9 and Perl 5.8.0.
 =head2 Exponentially back off
 
 GNU B<parallel> busy waits. This is because the reason why a job is
-not started may be due to load average, and thus it will not make
-sense to wait for a job to finish. Instead the load average must be
-checked again. Load average is not the only reason: B<--timeout> has a
-similar problem.
+not started may be due to load average (when using B<--load>), and
+thus it will not make sense to wait for a job to finish. Instead the
+load average must be checked again. Load average is not the only
+reason: B<--timeout> has a similar problem.
 
 To not burn up too much CPU GNU B<parallel> sleeps exponentially
 longer and longer if nothing happens, maxing out at 1 second.
@@ -168,6 +168,20 @@ background using I<shell>; copying STDIN to {}; waiting for background
 to complete; remove {} and exit with the exit code from I<input>.
 
 It is made this way to be compatible with B<*csh>.
+
+=item --pipepart
+
+  < file perl -e 'while(@ARGV) {
+      sysseek(STDIN,shift,0) || die;
+      $left = shift;
+      while($read = sysread(STDIN,$buf, ($left > 131072 ? 131072 : $left))){
+        $left -= $read;
+        syswrite(STDOUT,$buf);
+      }
+    }' startposition length
+
+This will read I<length> bytes from I<file> starting at
+I<startposition> and send it to STDOUT.
 
 =item --sshlogin I<sln>
 
@@ -446,14 +460,13 @@ The wrapper looks like this:
 
 Transferring of variables and functions given by B<--env> is done by
 running a Perl script remotely that calls the actual command. The Perl
-script sets B<$ENV{>I<variable>B<}> to the correct value before exec'ing the a
-shell that runs the function definition followed by the actual
-command.
+script sets B<$ENV{>I<variable>B<}> to the correct value before
+exec'ing the a shell that runs the function definition followed by the
+actual command.
 
-B<env_parallel> (mentioned in the man page) copies the full current
-environment into the environment variable B<PARALLEL_ENV>. This
-variable is picked up by GNU B<parallel> and used to create the Perl
-script mentioned above.
+The function B<env_parallel> copies the full current environment into
+the environment variable B<PARALLEL_ENV>. This variable is picked up
+by GNU B<parallel> and used to create the Perl script mentioned above.
 
 
 =head2 Base64 encoded bzip2
@@ -747,7 +760,8 @@ What can be done about it?
 
 =back
 
-Unfortunately it is not always possible to predict the root cause of the error.
+Unfortunately it is not always possible to predict the root cause of
+the error.
 
 
 =head2 Computation of load
@@ -766,8 +780,8 @@ B<ps> and put the result in a file, which is then used next time.
 GNU B<parallel> kills jobs. It can be due to B<--memfree>, B<--halt>,
 or when GNU B<parallel> meets a condition from which it cannot
 recover. Every job is started as its own process group. This way any
-(grand)*children will get killed, too. The process group is killed with
-the specification mentioned in B<--termseq>.
+(grand)*children will get killed, too. The process group is killed
+with the specification mentioned in B<--termseq>.
 
 
 =head2 SQL interface
@@ -789,6 +803,10 @@ respectively.
 The Signal column has been renamed to _Signal due to Signal being a
 reserved word in MySQL.
 
+=head2 Logo
+
+The logo is inspired by the Cafe Wall illusion. The font is DejaVu
+Sans.
 
 
 =head1 Ideas for new design
@@ -816,16 +834,13 @@ Will that require 2x record size memory?
 
 Will that require 2x block size memory?
 
-=head2 Logo
-
-The logo is inpired by the Cafe Wall illusion. The font is DejaVu Sans.
-
 
 =head1 Historical decisions
 
 =head2 --tollef
 
-You can read about the history of GNU B<parallel> on https://www.gnu.org/software/parallel/history.html
+You can read about the history of GNU B<parallel> on
+https://www.gnu.org/software/parallel/history.html
 
 B<--tollef> was included to make GNU B<parallel> switch compatible
 with the parallel from moreutils (which is made by Tollef Fog
@@ -833,11 +848,12 @@ Heen). This was done so that users of that parallel easily could port
 their use to GNU B<parallel>: Simply set B<PARALLEL="--tollef"> and
 that would be it.
 
-But several distributions chose to make B<--tollef> global (by putting it
-into /etc/parallel/config), and that caused much confusion when people
-tried out the examples from GNU B<parallel>'s man page and these did
-not work.  The users became frustrated because the distribution did
-not make it clear to them that it has made B<--tollef> global.
+But several distributions chose to make B<--tollef> global (by putting
+it into /etc/parallel/config) without making the users aware of this,
+and that caused much confusion when people tried out the examples from
+GNU B<parallel>'s man page and these did not work.  The users became
+frustrated because the distribution did not make it clear to them that
+it has made B<--tollef> global.
 
 So to lessen the frustration and the resulting support, B<--tollef>
 was obsoleted 20130222 and removed one year later.

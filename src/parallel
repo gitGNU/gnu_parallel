@@ -7491,7 +7491,6 @@ sub start {
     $ENV{'PARALLEL_TMP'} = ::tmpname("par");
     ::debug("run", $Global::total_running, " processes . Starting (",
 	    $job->seq(), "): $command\n");
-
     if($opt::pipe) {
 	my ($stdin_fh) = ::gensym();
 	$pid = open3_setpgrp($stdin_fh,$stdout_fh,$stderr_fh,$command);
@@ -9166,6 +9165,8 @@ sub get {
     my $ret = $self->{'arg_sub_queue'}->get();
     if($ret and
        grep { index($_->orig(),"\0") > 0 } map { @$_ } $ret) {
+	# Allow for \0 in position 0 because GNU Parallel uses "\0"
+	# to mean no-string
 	::warning("a NUL character occurred in the input.",
 		  "It cannot be passed through in the argument list.",
 		  "Did you mean to use the --null option?");

@@ -75,7 +75,7 @@ system is old or Microsoft Windows):
 
 After this you should be able to do:
 
-    parallel -j0 ping -nc 3 ::: foss.org.my gnu.org freenetproject.org
+    parallel -j0 ping -nc 3 ::: qubes-os.org gnu.org freenetproject.org
 
 This will send 3 ping packets to 3 different hosts in parallel and print
 the output when they complete.

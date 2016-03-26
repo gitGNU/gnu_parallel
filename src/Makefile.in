@@ -218,12 +218,18 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 bin_SCRIPTS = parallel sql niceload \
-	env_parallel env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh
+	env_parallel env_parallel.bash env_parallel.zsh env_parallel.fish \
+	env_parallel.ksh env_parallel.pdksh env_parallel.csh
 
-@DOCUMENTATION_TRUE@man_MANS = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 parallel_tutorial.7 parallel_design.7
-@DOCUMENTATION_TRUE@doc_DATA = parallel.html env_parallel.html sem.html sql.html niceload.html parallel_tutorial.html parallel_design.html \
-@DOCUMENTATION_TRUE@	parallel.texi env_parallel.texi sem.texi sql.texi niceload.texi parallel_tutorial.texi parallel_design.texi \
-@DOCUMENTATION_TRUE@	parallel.pdf env_parallel.pdf sem.pdf sql.pdf niceload.pdf parallel_tutorial.pdf parallel_design.pdf
+@DOCUMENTATION_TRUE@man_MANS = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 \
+@DOCUMENTATION_TRUE@	parallel_tutorial.7 parallel_design.7
+
+@DOCUMENTATION_TRUE@doc_DATA = parallel.html env_parallel.html sem.html sql.html niceload.html \
+@DOCUMENTATION_TRUE@	parallel_tutorial.html parallel_design.html \
+@DOCUMENTATION_TRUE@	parallel.texi env_parallel.texi sem.texi sql.texi niceload.texi \
+@DOCUMENTATION_TRUE@	parallel_tutorial.texi parallel_design.texi \
+@DOCUMENTATION_TRUE@	parallel.pdf env_parallel.pdf sem.pdf sql.pdf niceload.pdf \
+@DOCUMENTATION_TRUE@	parallel_tutorial.pdf parallel_design.pdf
 
 DISTCLEANFILES = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 \
 	parallel_tutorial.7 parallel_design.7 \
@@ -236,7 +242,9 @@ DISTCLEANFILES = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 \
 
 EXTRA_DIST = parallel sem sql niceload env_parallel \
 	env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh \
-	sem.pod parallel.pod env_parallel.pod niceload.pod parallel_tutorial.pod parallel_design.pod \
+	env_parallel.pdksh env_parallel.csh \
+	sem.pod parallel.pod env_parallel.pod niceload.pod parallel_tutorial.pod \
+	parallel_design.pod \
 	$(DISTCLEANFILES)
 
 all: all-am

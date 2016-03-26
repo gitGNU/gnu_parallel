@@ -1,3 +1,5 @@
+#!/usr/bin/zsh
+
 # This file must be sourced in zsh:
 #
 #   source =env_parallel.zsh
@@ -5,7 +7,7 @@
 # after which 'env_parallel' works
 #
 #
-# Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015,2016
+# Copyright (C) 2016
 # Ole Tange and Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -24,7 +26,7 @@
 # Fifth Floor, Boston, MA 02110-1301 USA
 
 env_parallel() {
-  export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p |
+  export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /'; typeset -p |
     grep -aFvf <(typeset -pr) |
     egrep -iav 'ZSH_EVAL_CONTEXT|LINENO=| _=|aliases|^typeset [a-z_]+$'|
     egrep -av '^(typeset -A (commands|functions|options)|typeset IFS=|..$)|cyan';

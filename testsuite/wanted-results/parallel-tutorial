@@ -704,6 +704,10 @@ bar
   parallel --nonall --tag -S $SERVER1,$SERVER2 echo foo bar
 csh@lo	foo bar
 parallel@lo	foo bar
+  source `which env_parallel.bash`
+  alias myecho=echo
+  myvar="Joe's var is"
+  env_parallel -S $SERVER1 'myecho $myvar' ::: green
   MYVAR='foo bar'
   export MYVAR
   parallel --env MYVAR -S $SERVER1 echo '$MYVAR' ::: baz
@@ -815,9 +819,9 @@ _
   parallel --env _ -S $SERVER1 'echo $VAR; my_func2' ::: bar
 
 /bin/bash: my_func2: command not found
-  parallel -vv -S $SERVER1 echo ::: bar
-ssh -l parallel lo -- exec perl -e \''@GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");eval"@GNU_Parallel";my$eval=decode_base64(join"",@ARGV);eval$eval;'\' BASE64;
-bar
+  parallel -vv --pipepart wc :::: num30000
+<num30000 perl -e 'while(@ARGV) { sysseek(STDIN,shift,0) || die; $left = shift; while($read = sysread(STDIN,$buf, ($left > 131072 ? 131072 : $left))){ $left -= $read; syswrite(STDOUT,$buf); } }'  0 0 0 168894 | (wc)
+  30000   30000  168894
   my_func3() {
     echo in my_func $1 > $1.out
   }
@@ -854,6 +858,24 @@ Seq,Host,Starttime,JobRuntime,Send,Receive,Exitval,_Signal,Command,V1,V2,Stdout,
 13
 14
 ",
+  parallel --results outdir --sqlandworker csv:////%2Ftmp%2Flog2.csv seq ::: 10 ::: 12 13 14
+  cat /tmp/log2.csv
+10
+11
+12
+10
+11
+12
+13
+10
+11
+12
+13
+14
+Seq,Host,Starttime,JobRuntime,Send,Receive,Exitval,_Signal,Command,V1,V2,Stdout,Stderr
+1,:,000000000.000,0.000,0,9,0,0,"seq 10 12",10,12,outdir/1/10/2/12/stdout,outdir/1/10/2/12/stderr
+2,:,000000000.000,0.000,0,12,0,0,"seq 10 13",10,13,outdir/1/10/2/13/stdout,outdir/1/10/2/13/stderr
+3,:,000000000.000,0.000,0,15,0,0,"seq 10 14",10,14,outdir/1/10/2/14/stdout,outdir/1/10/2/14/stderr
   vendor://[[user][:password]@][host][:port]/[database[/table]
 /bin/bash: vendor://[[user][:password]@][host][:port]/[database[/table]: No such file or directory
   sqlite3:///%2Ftmp%2Fmydatabase/mytable
@@ -1205,6 +1227,18 @@ please cite:
 This helps funding further development; AND IT WON'T COST YOU A CENT.
 If you pay 10000 EUR you should feel free to use GNU Parallel without citing.
 
+  parallel --version
+GNU parallel VERSION
+Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015,2016
+Ole Tange and Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+GNU parallel comes with no warranty.
+
+Web site: http://www.gnu.org/software/parallel
+
+When using programs that use GNU Parallel to process data for publication
+please cite as described in 'parallel --bibtex'.
   parallel --minversion VERSION && echo Your version is at least VERSION.
 VERSION
 Your version is at least VERSION.

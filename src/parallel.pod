@@ -11,8 +11,8 @@ parallel - build and execute shell command lines from standard input in parallel
 
 B<parallel> [options] [I<command> [arguments]] < list_of_arguments
 
-B<parallel> [options] [I<command> [arguments]] ( B<:::> arguments |
-B<::::> argfile(s) ) ...
+B<parallel> [options] [I<command> [arguments]] ( B<:::> arguments | B<:::+> arguments |
+B<::::> argfile(s) | B<::::+> argfile(s) ) ...
 
 B<parallel> --semaphore [options] I<command>
 
@@ -326,6 +326,18 @@ B<:::> and B<::::> can be mixed. So these are equivalent:
     ::: 1 2 3
 
 
+=item B<:::+> I<arguments> (alpha testing)
+
+Like B<:::> but linked like B<--xapply> to the previous input source.
+
+Contrary to B<--xapply> values do not wrap: The shortest input source
+determines the length.
+
+Example:
+
+  parallel echo ::: a b c :::+ 1 2 3 ::: X Y :::+ 11 22
+
+
 =item B<::::> I<argfiles>
 
 Another way to write B<-a> I<argfile1> B<-a> I<argfile2> ...
@@ -333,6 +345,14 @@ Another way to write B<-a> I<argfile1> B<-a> I<argfile2> ...
 B<:::> and B<::::> can be mixed.
 
 See B<-a>, B<:::> and B<--xapply>.
+
+
+=item B<::::+> I<argfiles> (alpha testing)
+
+Like B<::::+> but linked like B<--xapply> to the previous input source.
+
+Contrary to B<--xapply> values do not wrap: The shortest input source
+determines the length.
 
 
 =item B<--null>
@@ -1665,7 +1685,7 @@ Like this:
 
   #!/usr/bin/parallel --shebang -r traceroute
 
-  foss.org.my
+  qubes-os.org
   debian.org
   freenetproject.org
 
@@ -1675,7 +1695,7 @@ On FreeBSD B<env> is needed:
 
   #!/usr/bin/env -S parallel --shebang -r traceroute
 
-  foss.org.my
+  qubes-os.org
   debian.org
   freenetproject.org
 
@@ -2770,9 +2790,9 @@ printed as soon as possible you can use B<-u>.
 
 Compare the output of:
 
-  parallel traceroute ::: foss.org.my debian.org freenetproject.org
-  parallel --line-buffer traceroute ::: foss.org.my debian.org freenetproject.org
-  parallel -u traceroute ::: foss.org.my debian.org freenetproject.org
+  parallel traceroute ::: qubes-os.org debian.org freenetproject.org
+  parallel --line-buffer traceroute ::: qubes-os.org debian.org freenetproject.org
+  parallel -u traceroute ::: qubes-os.org debian.org freenetproject.org
 
 
 =head1 EXAMPLE: Tag output lines
@@ -2781,12 +2801,12 @@ GNU B<parallel> groups the output lines, but it can be hard to see
 where the different jobs begin. B<--tag> prepends the argument to make
 that more visible:
 
-  parallel --tag traceroute ::: foss.org.my debian.org freenetproject.org
+  parallel --tag traceroute ::: qubes-os.org debian.org freenetproject.org
 
 B<--tag> works with B<--line-buffer> but not with B<-u>:
 
   parallel --tag --line-buffer traceroute \
-    ::: foss.org.my debian.org freenetproject.org
+    ::: qubes-os.org debian.org freenetproject.org
 
 Check the uptime of the servers in I<~/.parallel/sshloginfile>:
 
@@ -2810,17 +2830,17 @@ If you remove B<-k> some of the lines may come out in the wrong order.
 
 Another example is B<traceroute>:
 
-  parallel traceroute ::: foss.org.my debian.org freenetproject.org
+  parallel traceroute ::: qubes-os.org debian.org freenetproject.org
 
-will give traceroute of foss.org.my, debian.org and
+will give traceroute of qubes-os.org, debian.org and
 freenetproject.org, but it will be sorted according to which job
 completed first.
 
 To keep the order the same as input run:
 
-  parallel -k traceroute ::: foss.org.my debian.org freenetproject.org
+  parallel -k traceroute ::: qubes-os.org debian.org freenetproject.org
 
-This will make sure the traceroute to foss.org.my will be printed
+This will make sure the traceroute to qubes-os.org will be printed
 first.
 
 A bit more complex example is downloading a huge file in chunks in
@@ -4730,7 +4750,7 @@ Copyright (C) 2007-10-18 Ole Tange, http://ole.tange.dk
 
 Copyright (C) 2008,2009,2010 Ole Tange, http://ole.tange.dk
 
-Copyright (C) 2010,2011,2012,2013,2014,2015 Ole Tange,
+Copyright (C) 2010,2011,2012,2013,2014,2015,2016 Ole Tange,
 http://ole.tange.dk and Free Software Foundation, Inc.
 
 Parts of the manual concerning B<xargs> compatibility is inspired by
@@ -4739,7 +4759,7 @@ the manual of B<xargs> from GNU findutils 4.4.2.
 
 =head1 LICENSE
 
-Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015 Free
+Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015,2016 Free
 Software Foundation, Inc.
 
 This program is free software; you can redistribute it and/or modify

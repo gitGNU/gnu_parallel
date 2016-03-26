@@ -1,15 +1,20 @@
 bin_SCRIPTS = parallel sql niceload \
-	env_parallel env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh
+	env_parallel env_parallel.bash env_parallel.zsh env_parallel.fish \
+	env_parallel.ksh env_parallel.pdksh env_parallel.csh
 
 install-exec-hook:
 	rm $(DESTDIR)$(bindir)/sem || true
 	$(LN_S) parallel $(DESTDIR)$(bindir)/sem
 
 if DOCUMENTATION
-man_MANS = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 parallel_tutorial.7 parallel_design.7
-doc_DATA = parallel.html env_parallel.html sem.html sql.html niceload.html parallel_tutorial.html parallel_design.html \
-	parallel.texi env_parallel.texi sem.texi sql.texi niceload.texi parallel_tutorial.texi parallel_design.texi \
-	parallel.pdf env_parallel.pdf sem.pdf sql.pdf niceload.pdf parallel_tutorial.pdf parallel_design.pdf
+man_MANS = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 \
+	parallel_tutorial.7 parallel_design.7
+doc_DATA = parallel.html env_parallel.html sem.html sql.html niceload.html \
+	parallel_tutorial.html parallel_design.html \
+	parallel.texi env_parallel.texi sem.texi sql.texi niceload.texi \
+	parallel_tutorial.texi parallel_design.texi \
+	parallel.pdf env_parallel.pdf sem.pdf sql.pdf niceload.pdf \
+	parallel_tutorial.pdf parallel_design.pdf
 endif
 
 # Build documentation file if the tool to build exists.
@@ -174,5 +179,7 @@ DISTCLEANFILES = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 \
 
 EXTRA_DIST = parallel sem sql niceload env_parallel \
 	env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh \
-	sem.pod parallel.pod env_parallel.pod niceload.pod parallel_tutorial.pod parallel_design.pod \
+	env_parallel.pdksh env_parallel.csh \
+	sem.pod parallel.pod env_parallel.pod niceload.pod parallel_tutorial.pod \
+	parallel_design.pod \
 	$(DISTCLEANFILES)

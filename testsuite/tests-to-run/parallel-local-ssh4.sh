@@ -128,16 +128,7 @@ func_echo() {
   echo ${assocarr[a]}
   echo Funky-"$funky"-funky
 }
-
-env_parallel() {
-  export PARALLEL_ENV="$(echo "shopt -s expand_aliases 2>/dev/null"; alias;typeset -p |
-    grep -vFf <(readonly) |
-    grep -v 'declare .. (GROUPS|FUNCNAME|DIRSTACK|_|PIPESTATUS|USERNAME|BASH_[A-Z_]+) ';
-    typeset -f)";
-  `which parallel` "$@";
-  unset PARALLEL_ENV;
-}
-
+. `which env_parallel.bash`
 env_parallel alias_echo ::: alias_works
 env_parallel func_echo ::: function_works
 env_parallel -S lo alias_echo ::: alias_works_over_ssh
@@ -165,16 +156,8 @@ func_echo() {
   echo Funky-"$funky"-funky
 }
 
-env_parallel() {
-  export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p |
-    grep -aFvf <(typeset -pr)|egrep -iav 'ZSH_EVAL_CONTEXT|LINENO=| _=|aliases|^typeset [a-z_]+$'|
-    egrep -av '^(typeset IFS=|..$)|cyan';
-    typeset -f)";
-  parallel "$@";
-  unset PARALLEL_ENV;
-}
-
-# alias does not work: http://unix.stackexchange.com/questions/223534/defining-an-alias-and-immediately-use-it
+# alias does not work:
+#   http://unix.stackexchange.com/questions/223534/defining-an-alias-and-immediately-use-it
 env_parallel alias_echo ::: alias_does_not_work
 env_parallel func_echo ::: function_works
 env_parallel -S zsh@lo alias_echo ::: alias_does_not_work_over_ssh
@@ -202,11 +185,6 @@ func_echo() {
   echo Funky-"$funky"-funky
 }
 
-env_parallel() {
-  export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p|egrep -v 'typeset( -i)? -r|PIPESTATUS';typeset -f)";
-  `which parallel` "$@";
-  unset PARALLEL_ENV;
-}
 env_parallel alias_echo ::: alias_works
 env_parallel func_echo ::: function_works
 env_parallel -S ksh@lo alias_echo ::: alias_works_over_ssh
@@ -218,9 +196,6 @@ EOS
 echo
 echo "### Fish environment"
 stdout ssh -q fish@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated|security updates'
-# All variables cannot reliably be exported
-# perl -e 'print map { "setenv///$_///$ENV{$_}\n"} grep !/^(PWD|SHLVL|PATH)$/, keys %ENV'| sh -c 'parallel --shellquote' | perl -pe 's:///: :g' |fish
-
 set myvar "myvar  works"
 setenv myenvvar "myenvvar  works"
 
@@ -238,8 +213,7 @@ function func_echo
   echo $argv;
   echo "$myvar"
   echo "$myenvvar"
-# Arrays are not exported
-#  echo $myarray[2]
+  echo $myarray[2]
 # Assoc arrays do not exist in fish
 #  echo ${assocarr[a]}
   echo
@@ -250,12 +224,6 @@ function func_echo
   echo
   echo
   echo
-end
-
-function env_parallel
-  setenv PARALLEL_ENV (begin; functions -n | perl -pe 's/,/\n/g' | while read d; functions $d; end; perl -e 'print map { "$_///$ENV{$_}\n"} grep !/^(PWD|SHLVL|PATH)$/, keys %ENV'| sh -c 'parallel --shellquote' | perl -pe 's:^([^/]+)///:setenv $1 :'; end |perl -pe 's/\001/\\cb/g;s/\n/\001/')
-  parallel $argv;
-  set -e PARALLEL_ENV
 end
 
 env_parallel alias_echo ::: alias_works
@@ -322,7 +290,7 @@ alias alias_echo_var 'echo $argv; echo $myvar; echo ${myarray[2]}; echo Funky-"$
 #   s/^/\001alias /;
 #   Quoted: s/\^/\\001alias\ /\;
 
-alias env_parallel 'setenv PARALLEL_ENV "`alias | perl -pe s/\\047/\\047\\042\\047\\042\\047/g\;s/\^\(\\S+\)\(\\s+\)\\\(\(.\*\)\\\)/\\1\\2\\3/\;s/\^\(\\S+\)\(\\s+\)\(.\*\)/\\1\\2\\047\\3\\047/\;s/\^/\\001alias\ /\;s/\\\!/\\\\\\\!/g;`";parallel \!*; setenv PARALLEL_ENV'
+#!# alias env_parallel 'setenv PARALLEL_ENV "`alias | perl -pe s/\\047/\\047\\042\\047\\042\\047/g\;s/\^\(\\S+\)\(\\s+\)\\\(\(.\*\)\\\)/\\1\\2\\3/\;s/\^\(\\S+\)\(\\s+\)\(.\*\)/\\1\\2\\047\\3\\047/\;s/\^/\\001alias\ /\;s/\\\!/\\\\\\\!/g;`";parallel \!*; setenv PARALLEL_ENV'
 
 
 ##  set tmpfile=`tempfile`

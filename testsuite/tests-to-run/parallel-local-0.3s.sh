@@ -271,6 +271,11 @@ echo 'bug #47086: [PATCH] Initialize total_completed from joblog'
 
 echo '**'
 
+echo 'bug #47290: xargs: Warning: a NUL character occurred in the input'
+
+  perl -e 'print "foo\0not printed"' | parallel echo
+
+echo '**'
 
 EOF
 echo '### 1 .par file from --files expected'

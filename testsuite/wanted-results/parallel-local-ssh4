@@ -143,7 +143,7 @@ Funky-
  * Documentation:  http://www.linuxmint.com
 
 
-zsh:129: command not found: alias_echo
+zsh:130: command not found: alias_echo
 function_works
 myvar  works
 array_val2
@@ -151,7 +151,7 @@ assoc_val_a
 Funky-
 	
  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-zsh:129: command not found: alias_echo
+zsh:130: command not found: alias_echo
 function_works_over_ssh
 myvar  works
 array_val2
@@ -191,26 +191,36 @@ Funky-
  * Documentation:  http://www.linuxmint.com
 
 
+env_parallel: Warning: ASCII value 1 in variables is not supported
+env_parallel: Warning: ASCII value 1 in variables is not supported
 3 arg alias_works
+env_parallel: Warning: ASCII value 1 in variables is not supported
+env_parallel: Warning: ASCII value 1 in variables is not supported
 function_works
-
+myvar  works
 myenvvar  works
+3
 
 
 
-Funky--funky
+Funky-	   !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
 Funky-	   !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
 
 
 
+env_parallel: Warning: ASCII value 1 in variables is not supported
+env_parallel: Warning: ASCII value 1 in variables is not supported
 3 arg alias_works_over_ssh
+env_parallel: Warning: ASCII value 1 in variables is not supported
+env_parallel: Warning: ASCII value 1 in variables is not supported
 function_works_over_ssh
-
+myvar  works
 myenvvar  works
+3
 
 
 
-Funky--funky
+Funky-	   !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
 Funky-	   !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
 
 
