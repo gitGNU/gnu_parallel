@@ -44,6 +44,12 @@ echo '### Test bug #43284: {%} and {#} with --xapply';
 
 echo '**'
 
+echo '### bug #47501: --xapply for some input sources'
+  # Wrapping does not work yet
+  parallel -k echo ::: a b c aWRAP :::+ aa bb cc ::: A B :::+ AA BB AAwrap
+
+echo '**'
+
 echo '### Test bug #43376: {%} and {#} with --pipe'
   echo foo | parallel -q --pipe -k echo {#}
   echo foo | parallel --pipe -k echo {%}

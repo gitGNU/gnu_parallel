@@ -19,6 +19,18 @@ a 1 1 b
 1
 echo '**'
 **
+echo '### bug #47501: --xapply for some input sources'
+### bug #47501: --xapply for some input sources
+  # Wrapping does not work yet
+  parallel -k echo ::: a b c aWRAP :::+ aa bb cc ::: A B :::+ AA BB AAwrap
+a aa A AA
+a aa B BB
+b bb A AA
+b bb B BB
+c cc A AA
+c cc B BB
+echo '**'
+**
 echo '### Test bug #43376: {%} and {#} with --pipe'
 ### Test bug #43376: {%} and {#} with --pipe
   echo foo | parallel -q --pipe -k echo {#}
