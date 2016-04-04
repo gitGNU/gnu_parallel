@@ -25,6 +25,7 @@
 # or write to the Free Software Foundation, Inc., 51 Franklin St,
 # Fifth Floor, Boston, MA 02110-1301 USA
 
+# Supports env of 127426 bytes
 env_parallel() {
   export PARALLEL_ENV="$(echo "shopt -s expand_aliases 2>/dev/null"; alias;typeset -p |
     grep -vFf <(readonly) |
@@ -33,3 +34,17 @@ env_parallel() {
   `which parallel` "$@";
   unset PARALLEL_ENV;
 }
+
+# Supports env of 127375 bytes
+#
+# env_parallel() {
+#   # Saving to a tempfile
+#   export PARALLEL_ENV=`tempfile`;
+#   (echo "shopt -s expand_aliases 2>/dev/null"; alias;typeset -p |
+#     grep -vFf <(readonly) |
+#     grep -v 'declare .. (GROUPS|FUNCNAME|DIRSTACK|_|PIPESTATUS|USERNAME|BASH_[A-Z_]+) ';
+#     typeset -f) > $PARALLEL_ENV
+#   `which parallel` "$@";
+#   rm "$PARALLEL_ENV"
+#   unset PARALLEL_ENV;
+# }

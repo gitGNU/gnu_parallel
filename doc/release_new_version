@@ -219,9 +219,9 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20160422 ('') released <<[stable]>>
+Subject: GNU Parallel 20160422 ('Gulshan-i-Iqbal') released <<[stable]>>
 
-GNU Parallel 20160422 ('') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20160422 ('Gulshan-i-Iqbal') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
@@ -248,7 +248,17 @@ for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumb
 
 * <<Citation needed: Introspecting for RSA Key Material to Assist Intrusion Detection http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=7331177&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7331177>>
 
+* GNU Parallel was cited in: How Can We Measure the Similarity Between Resumes of Selected Candidates for a Job? https://www.researchgate.net/publication/275954089_How_can_we_measure_the_similarity_between_resumes_of_selected_candidates_for_a_job
+
+* GNU Parallel was cited in: Automatic Methods for Assisted Recruitment https://www.researchgate.net/publication/297738658_Automatic_Methods_for_Assisted_Recruitment
+
 * GNU Parallel was cited in: Tools and techniques for computational reproducibility http://biorxiv.org/content/biorxiv/early/2016/03/17/022707.full.pdf
+
+* GNU Parallel was cited in: Reinterpretation of ATLAS 8 TeV searches for Natural SUSY with a R-Sneutrino LSP http://arxiv.org/pdf/1603.06130.pdf
+
+* GNU Parallel was cited in: An Operational Radiometric Landsat Preprocessing Framework for Large-Area Time Series Applications https://www.uni-trier.de/fileadmin/fb6/prof/FER/Publikationen/frantz_et_al_ieee-tgrs-2016-post-print.pdf
+
+* Downloading a list of URLs http://blog.gypsydave5.com/2016/02/04/xargs-and-curl/
 
 * qbatch uses GNU Parallel: https://pypi.python.org/pypi/qbatch/1.0rc2
 

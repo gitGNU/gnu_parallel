@@ -20,10 +20,17 @@ environment to GNU Parallel.
 If the shell function is not loaded, a dummy script will be run
 instead that explains how to install the function.
 
+=head2 Environment space
+
 B<env_parallel> only works if the size of the current environment is
-smaller than half of the max size and smaller than 25% of the max if
-running remotely. E.g. The max size of Bash's environment is 256 KB,
-so B<env_parallel> will fail if B<set | wc -c> is bigger than 128 KB.
+smaller than the maximal length of a command and smaller than half of
+the max if running remotely. E.g. The max size of Bash's command is
+128 KB, so B<env_parallel> will fail if B<set | wc -c> is bigger than
+128 KB. Technically the limit is in execve(1) which IPC::open3 uses.
+
+Bash completion functions are well-known for taking up well over 128
+KB of environment space and the primary reason for causing
+B<env_parallel> to fail.
 
 
 =head1 OPTIONS
