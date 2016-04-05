@@ -6,8 +6,8 @@ P_ALL="vax freebsd solaris openbsd netbsd debian alpha aix redhat hpux ultrix mi
 P_NOTWORKING="vax alpha openstep"
 P_NOTWORKING_YET="ultrix irix"
 
-P_WORKING="freebsd solaris openbsd netbsd debian aix redhat hpux qnx openindiana suse solaris-x86 mandriva ubuntu scosysv unixware centos miros raspbian macosx hpux-ia64 pidora debian-ppc"
-P_TEMPORARILY_BROKEN="minix syllable tru64 hurd dragonfly"
+P_WORKING="pidora raspbian tru64 solaris openindiana aix hpux qnx debian-ppc suse solaris-x86 mandriva ubuntu scosysv dragonfly unixware centos miros macosx hpux-ia64 redhat netbsd openbsd freebsd debian"
+P_TEMPORARILY_BROKEN="minix syllable hurd dragonfly"
 
 P="$P_WORKING"
 POLAR=`parallel -k echo {}.polarhome.com ::: $P`
@@ -21,10 +21,12 @@ RETRIES=2
 echo '### Tests on polarhome machines'
 echo 'Setup on polarhome machines'
 # Avoid the stupid /etc/issue.net banner at Polarhome: -oLogLevel=quiet
-stdout parallel -kj0 ssh -oLogLevel=quiet {} mkdir -p bin ::: $POLAR &
+#stdout parallel -kj0 ssh -oLogLevel=quiet {} mkdir -p bin ::: $POLAR &
 
 test_empty_cmd() {
+    echo
     echo '### Test if empty command in process list causes problems'
+    echo
     perl -e '$0=" ";sleep 1' &
     bin/perl bin/parallel echo ::: OK_with_empty_cmd
 }
@@ -34,18 +36,34 @@ stdout parallel -j0 -k --retries $RETRIES --timeout $TIMEOUT --delay 0.1 --tag \
 
 copy_and_test() {
     H=$1
-    # scp to each polarhome machine do not work. Use cat
+    # scp to each polarhome machine does not work. Use cat
     # Avoid the stupid /etc/issue.net banner with -oLogLevel=quiet
     echo '### Run the test on '$H
-    cat `which parallel` | 
-      stdout ssh -oLogLevel=quiet $H 'cat > bin/p.tmp && chmod 755 bin/p.tmp && mv bin/p.tmp bin/parallel && bin/perl bin/parallel echo Works on {} ::: '$H'; bin/perl bin/parallel --tmpdir / echo ::: test read-only tmp' |
-      perl -pe 's:/[a-z0-9_]+.arg:/XXXXXXXX.arg:gi; s/\d\d\d\d/0000/gi;'
+    cat `which parallel` |
+      stdout ssh -oLogLevel=quiet $H 'cat > bin/p.tmp && chmod 755 bin/p.tmp && mv bin/p.tmp bin/parallel && bin/perl bin/parallel echo Works on {} ::: '$H &&
+      stdout ssh -oLogLevel=quiet $H 'bin/perl bin/parallel --tmpdir / echo ::: test read-only tmp' |
+      perl -pe '$exit += s:/[a-z0-9_]+.arg:/XXXXXXXX.arg:gi; $exit += s/\d\d\d\d/0000/gi; END { exit not $exit }' &&
+      echo OK
 }
 export -f copy_and_test
-stdout parallel -j0 -k --retries $RETRIES --timeout $TIMEOUT --delay 0.1 --tag  -v copy_and_test {} ::: $POLAR
+stdout parallel -j6 -k -r --retries $RETRIES --timeout $TIMEOUT --delay 0.1 --tag -v copy_and_test {} ::: $POLAR
 
-# Test remote wrapper working on all platforms
+echo
+echo '### Test remote wrapper working on all platforms'
+echo
 parallel -j0 --nonall -k --timeout $TIMEOUT $S_POLAR hostname
 
-cat /tmp/test_empty_cmd
+echo
+echo '### Does exporting a bash function kill parallel'
+echo
+# http://zmwangx.github.io/blog/2015-11-25-bash-function-exporting-fiasco.html
+parallel --onall -j0 -k --tag --timeout $TIMEOUT $S_POLAR 'func() { cat <(echo bash only A); };export -f func; bin/parallel func ::: ' ::: 1 2>&1
+
+echo
+echo '### Does PARALLEL_SHELL help exporting a bash function not kill parallel'
+echo
+PARALLEL_SHELL=/bin/bash parallel --retries $RETRIES --onall -j0 -k --tag --timeout $TIMEOUT $S_POLAR 'func() { cat <(echo bash only B); };export -f func; bin/parallel func ::: ' ::: 1 2>&1
+
+# Started earlier - therefore wait
+wait; cat /tmp/test_empty_cmd
 rm /tmp/test_empty_cmd

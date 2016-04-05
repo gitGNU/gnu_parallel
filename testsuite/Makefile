@@ -16,6 +16,11 @@ mem: ../src/parallel tests-to-run/*mem* wanted-results/*mem* prereqlocal
 	touch ~/.parallel/will-cite
 	make stopvm
 
+polar: ../src/parallel tests-to-run/*polar* wanted-results/*polar* prereqlocal
+	make stopvm
+	time bash Start.sh polar NONE || true
+	touch ~/.parallel/will-cite
+
 testdb: ../src/parallel tests-to-run/*sql* wanted-results/*sql* prereqdb
 	time bash Start.sh sql NONE
 
