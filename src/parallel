@@ -5307,7 +5307,7 @@ sub no_of_cpus {
     } elsif ($^O eq 'darwin') {
 	$no_of_cpus = no_of_cpus_darwin();
     } elsif ($^O eq 'solaris') {
-        $no_of_cpus = no_of_cpus_solaris();
+        $no_of_cpus = no_of_cpus_solaris() || nproc();
     } elsif ($^O eq 'aix') {
         $no_of_cpus = no_of_cpus_aix();
     } elsif ($^O eq 'hpux') {
@@ -5365,7 +5365,7 @@ sub no_of_cores {
     } elsif ($^O eq 'darwin') {
 	$no_of_cores = no_of_cores_darwin();
     } elsif ($^O eq 'solaris') {
-	$no_of_cores = no_of_cores_solaris();
+	$no_of_cores = no_of_cores_solaris() || nproc();
     } elsif ($^O eq 'aix') {
         $no_of_cores = no_of_cores_aix();
     } elsif ($^O eq 'hpux') {
@@ -5586,6 +5586,12 @@ sub no_of_cpus_solaris {
         my @psrinfo = ::qqx("/usr/sbin/psrinfo");
         if($#psrinfo >= 0) {
             return $#psrinfo +1;
+        }
+    }
+    if(-x "/usr/sbin/prtconf") {
+        my @prtconf = ::qqx("/usr/sbin/prtconf | grep cpu..instance");
+        if($#prtconf >= 0) {
+            return $#prtconf +1;
         }
     }
     if(-x "/usr/sbin/prtconf") {
