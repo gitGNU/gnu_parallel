@@ -1031,11 +1031,13 @@ sub parse_options {
 	$opt::compress_program ||= $compress;
 	$opt::decompress_program ||= $decompress;
     }
-    if(defined $opt::nonall
-       and not grep /\Q$Global::arg_sep\E|\Q$Global::arg_sep\E/, @ARGV) {
+    if(defined $opt::nonall) {
 	# Append a dummy empty argument if there are no arguments
 	# on the command line to avoid reading from STDIN.
+	# arg_sep = random 50 char
 	# \0 => nothing (not the empty string)
+	$Global::arg_sep = join "",
+	map { (0..9,"a".."z","A".."Z")[rand(62)] } (1..50);
 	push @ARGV, $Global::arg_sep, "\0";
     }
     if(defined $opt::tty) {

@@ -74,4 +74,7 @@ echo '### bug #45907: --header : + --return {header}'
   ppar --header : -S parallel@lo --return {G} --cleanup echo {G} '>' {G} ::: G returnfile45907; 
   ls returnfile45907
 
+echo "### bug #47608: parallel --nonall -S lo 'echo ::: ' blocks"
+  parallel --nonall -S lo 'echo ::: '
+
 EOF
