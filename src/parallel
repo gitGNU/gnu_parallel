@@ -3760,16 +3760,23 @@ sub tmpfifo {
 }
 
 sub qqx {
-    # Like qx but with clean environment (except for $PATH)
+    # Like qx but with clean environment (except for @keep)
     # and STDERR ignored
     # This is needed if the environment contains functions
     # that /bin/sh does not understand
-    my $devnull = $Global::debug ? "" : "exec 2>/dev/null;";
-    return qx{ $devnull @_ };
     my $PATH = $ENV{'PATH'};
+    my %env;
+    my @keep = qw(PATH SSH_AUTH_SOCK SSH_AGENT_PID);
+    @env{@keep} = @ENV{@keep};
     local(%ENV);
-    $ENV{'PATH'} = $PATH;
-    return qx{ ( @_ ) 2>/dev/null };
+    %ENV = %env;
+    if($Global::debug) {
+	return qx{ @_ && true };
+    } else {
+	local *STDERR;
+	open (STDERR, ">", "/dev/null");
+	return qx{ @_ };
+    }
 }
 
 sub uniq {
@@ -9082,15 +9089,13 @@ sub binary_find_max_length {
 
 sub is_acceptable_command_line_length {
     # Test if a command line of this length can run
+    # in the current environment
     # Returns:
     #   0 if the command line length is too long
     #   1 otherwise
     my $len = shift;
-
-    local *STDERR;
-    open (STDERR, ">", "/dev/null");
-    system "true "."x"x$len;
-    close STDERR;
+    $len += length $ENV{PARALLEL_ENV} + (-s $ENV{PARALLEL_ENV})*2;
+    ::qqx("true "."x"x$len);
     ::debug("init", "$len=$? ");
     return not $?;
 }
