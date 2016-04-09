@@ -855,7 +855,7 @@ sub options_hash {
 	 "gnu" => \$opt::gnu,
 	 "xapply" => \$opt::xapply,
 	 "xapplyinputsource=i" => \@opt::xapplyinputsource,
-	 "bibtex|citation" => \$opt::bibtex,
+	 "bibtex|citation" => \$opt::citation,
 	 "wc|willcite|will-cite|nn|nonotice|no-notice" => \$opt::willcite,
 	 # Termination and retries
 	 "halt-on-error|halt=s" => \$opt::halt,
@@ -988,7 +988,7 @@ sub parse_options {
         print Limits::Command::real_max_length(),"\n"; wait_and_exit(0);
     }
     if(defined $opt::version) { version(); wait_and_exit(0); }
-    if(defined $opt::bibtex) { bibtex(); wait_and_exit(0); }
+    if(defined $opt::citation) { citation(); wait_and_exit(0); }
     if(defined $opt::record_env) { record_env(); wait_and_exit(0); }
     if(defined $opt::show_limits) { show_limits(); }
     if(@opt::sshlogin) { @Global::sshlogin = @opt::sshlogin; }
@@ -2335,7 +2335,7 @@ sub drain_job_queue {
     #   $Global::start_no_new_jobs
     # Returns: N/A
     if($opt::progress) {
-        ::status(init_progress());
+        ::status_no_nl(init_progress());
     }
     my $last_header = "";
     my $sleep = 0.2;
@@ -2352,10 +2352,10 @@ sub drain_job_queue {
             if($opt::progress) {
                 my %progress = progress();
                 if($last_header ne $progress{'header'}) {
-                    ::status("\n", $progress{'header'}, "\n");
+                    ::status("", $progress{'header'});
                     $last_header = $progress{'header'};
                 }
-                ::status("\r",$progress{'status'});
+                ::status_no_nl("\r",$progress{'status'});
             }
 	    if($Global::total_running < $Global::max_jobs_running
 	       and not $Global::JobQueue->empty()) {
@@ -2407,7 +2407,7 @@ sub drain_job_queue {
 	     $opt::sqlmaster and not $Global::sql->finished());
     if($opt::progress) {
 	my %progress = progress();
-	::status("\r", $progress{'status'}, "\n");
+	::status("\r".$progress{'status'});
     }
 }
 
@@ -2418,7 +2418,7 @@ sub toggle_progress {
     # Returns: N/A
     $opt::progress = not $opt::progress;
     if($opt::progress) {
-        ::status(init_progress());
+        ::status_no_nl(init_progress());
     }
 }
 
@@ -3332,7 +3332,7 @@ sub list_running_jobs {
     #   %Global::running
     # Returns: N/A
     for my $job (values %Global::running) {
-        ::status("$Global::progname: ",$job->replaced(),"\n");
+        ::status("$Global::progname: ".$job->replaced());
     }
 }
 
@@ -3346,9 +3346,9 @@ sub start_no_new_jobs {
     $SIG{TERM} = $Global::original_sig{TERM};
     unlink keys %Global::unlink;
     ::status
-        ("$Global::progname: SIGTERM received. No new jobs will be started.\n",
-         "$Global::progname: Waiting for these ", scalar(keys %Global::running),
-         " jobs to finish. Send SIGTERM again to stop now.\n");
+        ("$Global::progname: SIGTERM received. No new jobs will be started.",
+         "$Global::progname: Waiting for these ".(keys %Global::running).
+         " jobs to finish. Send SIGTERM again to stop now.");
     list_running_jobs();
     $Global::start_no_new_jobs ||= 1;
 }
@@ -3428,7 +3428,7 @@ sub reaper {
 	start_more_jobs();
 	if($opt::progress) {
 	    my %progress = progress();
-	    ::status("\r",$progress{'status'});
+	    ::status_no_nl("\r",$progress{'status'});
 	}
     }
     $opt::sqlmaster and $Global::sql->run("COMMIT;");
@@ -3559,7 +3559,7 @@ sub usage {
 	 "  ;login: The USENIX Magazine, February 2011:42-47.",
 	 "",
 	 "This helps funding further development; AND IT WON'T COST YOU A CENT.",
-	 "If you pay 10000 EUR you should feel free to use GNU Parallel without citing.\n",
+	 "If you pay 10000 EUR you should feel free to use GNU Parallel without citing.",
 	 "");
 }
 
@@ -3579,22 +3579,30 @@ sub citation_notice {
 	# skip
     } else {
 	::status
-	    ("Academic tradition requires you to cite works you base your article on.\n",
-	     "When using programs that use GNU Parallel to process data for publication\n",
-	     "please cite:\n",
-	     "\n",
-	     "  O. Tange (2011): GNU Parallel - The Command-Line Power Tool,\n",
-	     "  ;login: The USENIX Magazine, February 2011:42-47.\n",
-	     "\n",
-	     "This helps funding further development; AND IT WON'T COST YOU A CENT.\n",
-	     "If you pay 10000 EUR you should feel free to use GNU Parallel without citing.\n",
-	     "\n",
-	     "To silence the citation notice: run 'parallel --bibtex'.\n\n",
+	    ("Academic tradition requires you to cite works you base your article on.",
+	     "When using programs that use GNU Parallel to process data for publication",
+	     "please cite:",
+	     "",
+	     "  O. Tange (2011): GNU Parallel - The Command-Line Power Tool,",
+	     "  ;login: The USENIX Magazine, February 2011:42-47.",
+	     "",
+	     "This helps funding further development; AND IT WON'T COST YOU A CENT.",
+	     "If you pay 10000 EUR you should feel free to use GNU Parallel without citing.",
+	     "",
+	     "To silence the citation notice: run 'parallel --citation'.",
+	     ""
 	    );
     }
 }
 
 sub status {
+    my @w = @_;
+    my $fh = $Global::status_fd || *STDERR;
+    print $fh map { ($_, "\n") } @w;
+    flush $fh;
+}
+
+sub status_no_nl {
     my @w = @_;
     my $fh = $Global::status_fd || *STDERR;
     print $fh @w;
@@ -3639,55 +3647,69 @@ sub version {
                "",
                "Web site: http://www.gnu.org/software/${Global::progname}\n",
 	       "When using programs that use GNU Parallel to process data for publication",
-	       "please cite as described in 'parallel --bibtex'.\n",
+	       "please cite as described in 'parallel --citation'.\n",
         );
 }
 
-sub bibtex {
+sub citation {
     # Returns: N/A
-    print join("\n",
-	       "Academic tradition requires you to cite works you base your article on.",
-	       "When using programs that use GNU Parallel to process data for publication",
-	       "please cite:",
-	       "",
-               "\@article{Tange2011a,",
-	       "  title = {GNU Parallel - The Command-Line Power Tool},",
-	       "  author = {O. Tange},",
-	       "  address = {Frederiksberg, Denmark},",
-	       "  journal = {;login: The USENIX Magazine},",
-	       "  month = {Feb},",
-	       "  number = {1},",
-	       "  volume = {36},",
-	       "  url = {http://www.gnu.org/s/parallel},",
-	       "  year = {2011},",
-	       "  pages = {42-47},",
-	       "  doi = {10.5281/zenodo.16303}",
-	       "}",
-	       "",
-	       "(Feel free to use \\nocite{Tange2011a})",
-	       "",
-	       "This helps funding further development; AND IT WON'T COST YOU A CENT.",
-	       "If you pay 10000 EUR you should feel free to use GNU Parallel without citing.",
-	       "",
-	       "If you send a copy of your published article to tange\@gnu.org, it will be",
-	       "mentioned in the release notes of next version of GNU Parallel.\n\n",
+    ::status(
+	  "Academic tradition requires you to cite works you base your article on.",
+	  "When using programs that use GNU Parallel to process data for publication",
+	  "please cite:",
+	  "",
+	  "\@article{Tange2011a,",
+	  "  title = {GNU Parallel - The Command-Line Power Tool},",
+	  "  author = {O. Tange},",
+	  "  address = {Frederiksberg, Denmark},",
+	  "  journal = {;login: The USENIX Magazine},",
+	  "  month = {Feb},",
+	  "  number = {1},",
+	  "  volume = {36},",
+	  "  url = {http://www.gnu.org/s/parallel},",
+	  "  year = {2011},",
+	  "  pages = {42-47},",
+	  "  doi = {10.5281/zenodo.16303}",
+	  "}",
+	  "",
+	  "(Feel free to use \\nocite{Tange2011a})",
+	  "",
+	  "This helps funding further development; AND IT WON'T COST YOU A CENT.",
+	  "If you pay 10000 EUR you should feel free to use GNU Parallel without citing.",
+	  "",
+	  "If you send a copy of your published article to tange\@gnu.org, it will be",
+	  "mentioned in the release notes of next version of GNU Parallel.",
+	  "",
+	  ""
         );
     while(not -e $ENV{'HOME'}."/.parallel/will-cite") {
 	print "\nType: 'will cite' and press enter.\n> ";
 	my $input = <STDIN>;
+	if(not defined $input) {
+	    exit(255);
+	}
 	if($input =~ /will cite/i) {
 	    mkdir $ENV{'HOME'}."/.parallel";
 	    if(open (my $fh, ">", $ENV{'HOME'}."/.parallel/will-cite")) {
 		close $fh;
-		print "\nThank you for your support. It is much appreciated. The citation\n",
-		"notice is now silenced. For other ways to silence the citation notice\n",
-		"see 'man parallel' under '--bibtex'.\n\n";
+		::status(
+		    "",
+		    "Thank you for your support. It is much appreciated. The citation",
+		    "notice is now silenced.",
+		    "");
 	    } else {
-		print "\nThank you for your support. It is much appreciated. The citation\n",
-		"cannot permanently be silenced. Use '--will-cite' instead.\n",
-		"If you use '--will-cite' in scripts you are making it harder to see the\n",
-		"citation notice.  However, if you pay 10000 EUR, you should feel free\n",
-		"to use '--will-cite'.\n\n";
+		::status(
+		      "",
+		      "Thank you for your support. It is much appreciated. The citation",
+		      "cannot permanently be silenced. Use '--will-cite' instead.",
+		      "",
+		      "If you use '--will-cite' in scripts to be run by others you are making",
+		      "it harder for others to see the citation notice.  The development of",
+		      "GNU parallel is indirectly financed through citations, so if users",
+		      "do not know they should cite then you are making it harder to finance",
+		      "development. However, if you pay 10000 EUR, you should feel free to",
+		      "use --will-cite.",
+		      "");
 		last;
 	    }
 	}
@@ -7575,7 +7597,7 @@ sub interactive_start {
     my $self = shift;
     my $command = $self->wrapped();
     if($Global::interactive) {
-	::status("$command ?...");
+	::status_no_nl("$command ?...");
 	open(my $tty_fh, "<", "/dev/tty") || ::die_bug("interactive-tty");
 	my $answer = <$tty_fh>;
 	close $tty_fh;
@@ -7663,7 +7685,7 @@ sub print_dryrun_and_verbose {
 	$ENV{'TMUX'} ||= "tmux";
 	if(not $tmuxsocket) {
 	    $tmuxsocket = ::tmpname("tms");
-	    ::status("See output with: $ENV{'TMUX'} -S $tmuxsocket attach\n");
+	    ::status("See output with: $ENV{'TMUX'} -S $tmuxsocket attach");
 	}
 	$tmux = "sh -c '".
 	    $ENV{'TMUX'}." -S $tmuxsocket new-session -s p$$ -d \"sleep .2\" >/dev/null 2>&1';" .
@@ -8125,8 +8147,8 @@ sub set_exitsignal {
 	    $Global::exitstatus++;
 	    $Global::total_failed++;
 	    if($Global::halt_fail) {
-		::status("$Global::progname: This job failed:\n",
-			 $job->replaced(),"\n");
+		::status("$Global::progname: This job failed:",
+			 $job->replaced());
 		if($Global::halt_count <= $Global::total_failed) {
 		    # At least N jobs had failed
 		    if(not defined $Global::halt_exitstatus) {
@@ -8159,8 +8181,8 @@ sub set_exitsignal {
 	    if($Global::halt_success) {
 		::debug("halt","Pct: ",$Global::halt_pct,"<=",
 			" count: ",$Global::halt_count,"\n");
-		::status("$Global::progname: This job succeeded:\n",
-			 $job->replaced(),"\n");
+		::status("$Global::progname: This job succeeded:",
+			 $job->replaced());
 		if($Global::halt_count <=
 		   $Global::total_completed-$Global::total_failed) {
 		    # At least N jobs had success

@@ -464,9 +464,9 @@ B<--will-cite>.
 If you use B<--will-cite> in scripts to be run by others you are
 making it harder for others to see the citation notice.  The
 development of GNU B<parallel> is indirectly financed through
-citations, so if users do not know they should cite then that makes it
-harder to finance development. However, if you pay 10000 EUR, you
-should feel free to use B<--will-cite>.
+citations, so if users do not know they should cite then you are
+making it harder to finance development. However, if you pay 10000
+EUR, you should feel free to use B<--will-cite>.
 
 
 =item B<--block> I<size>
