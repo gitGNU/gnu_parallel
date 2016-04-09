@@ -2252,6 +2252,9 @@ sub init_run_jobs {
 			      $sshlogin->string(), "\n");
 			return 0;
 		    }
+		    if($job->is_already_in_joblog()) {
+			$job->free_slot();
+		    }
 		} while ($job->is_already_in_joblog()
 			 or
 			 ($opt::results and $opt::resume and $job->is_already_in_results()));
@@ -2719,7 +2722,8 @@ sub get_job_with_sshlogin {
         # This command with these args failed for this sshlogin
         my ($no_of_failed_sshlogins,$min_failures) = $job->min_failed();
 	# Only look at the Global::host that have > 0 jobslots
-        if($no_of_failed_sshlogins == grep { $_->max_jobs_running() > 0 } values %Global::host
+        if($no_of_failed_sshlogins ==
+	   grep { $_->max_jobs_running() > 0 } values %Global::host
 	   and $job->failed_here() == $min_failures) {
             # It failed the same or more times on another host:
             # run it on this host
@@ -3361,7 +3365,6 @@ sub reaper {
     #   %Global::sshmaster
     #   %Global::running
     #   $Global::tty_taken
-    #   @Global::slots
     #   $opt::timeout
     #   $Global::timeoutq
     #   $opt::halt
@@ -3408,7 +3411,7 @@ sub reaper {
         if(not $job->should_be_retried()) {
 	    # The job is done
 	    # Free the jobslot
-	    push @Global::slots, $job->slot();
+	    $job->free_slot();
 	    if($opt::timeout) {
 		# Update average runtime for timeout
 		$Global::timeoutq->update_median_runtime($job->runtime());
@@ -6118,6 +6121,11 @@ sub slot {
     return $self->{'commandline'}->slot();
 }
 
+sub free_slot {
+    my $self = shift;
+    return $self->{'commandline'}->free_slot();
+}
+
 {
     my($cattail);
 
@@ -8253,22 +8261,27 @@ sub set_seq {
 
 {
     my $max_slot_number;
+    my @slots;
 
     sub slot {
 	# Find the number of a free job slot and return it
-	# Uses:
-	#   @Global::slots - list with free jobslots
 	# Returns:
 	#   $jobslot = number of jobslot
 	my $self = shift;
 	if(not $self->{'slot'}) {
-	    if(not @Global::slots) {
-		# $Global::max_slot_number will typically be $Global::max_jobs_running
-		push @Global::slots, ++$max_slot_number;
+	    if(not @slots) {
+		# $max_slot_number will typically be $Global::max_jobs_running
+		push @slots, ++$max_slot_number;
 	    }
-	    $self->{'slot'} = shift @Global::slots;
+	    $self->{'slot'} = shift @slots;
 	}
 	return $self->{'slot'};
+    }
+
+    sub free_slot {
+	# Make this slot available again
+	my $self = shift;
+	push @slots, $self->{'slot'};
     }
 }
 
