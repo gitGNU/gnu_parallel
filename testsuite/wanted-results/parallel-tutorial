@@ -407,13 +407,13 @@ C
   outdir/1/C/seq
   outdir/1/C/stderr
   outdir/1/C/stdout
-/bin/bash: outdir/1/A/seq: No such file or directory
+/bin/bash: outdir/1/A/seq: Permission denied
 /bin/bash: line 1: outdir/1/A/stderr: No such file or directory
 /bin/bash: line 2: outdir/1/A/stdout: No such file or directory
-/bin/bash: line 3: outdir/1/B/seq: No such file or directory
+/bin/bash: line 3: outdir/1/B/seq: Permission denied
 /bin/bash: line 4: outdir/1/B/stderr: No such file or directory
 /bin/bash: line 5: outdir/1/B/stdout: No such file or directory
-/bin/bash: line 6: outdir/1/C/seq: No such file or directory
+/bin/bash: line 6: outdir/1/C/seq: Permission denied
 /bin/bash: line 7: outdir/1/C/stderr: No such file or directory
 /bin/bash: line 8: outdir/1/C/stdout: No such file or directory
   parallel --header : --results outdir echo ::: f1 A B ::: f2 C D
@@ -522,7 +522,7 @@ Computers / CPU cores / Max jobs to run
 
 Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
 
-  seq 1000 | parallel -j10 --bar '(echo -n {};sleep 0.1)' 2> >(zenity --timeout=12 --progress --auto-kill)
+  seq 1000 | parallel -j10 --bar '(echo -n {};sleep 0.1)' 2> >(zenity --timeout=15 --progress --auto-kill --auto-close)
 BASE64  parallel --joblog /tmp/log exit  ::: 1 2 3 0
   cat /tmp/log;
   parallel --joblog /tmp/log exit  ::: 1 2 3 0
@@ -708,6 +708,36 @@ parallel@lo	foo bar
   alias myecho=echo
   myvar="Joe's var is"
   env_parallel -S $SERVER1 'myecho $myvar' ::: green
+env_parallel only works if it is a function. Do the below and restart your shell.
+
+bash:  Put this in /home/tange/.bashrc:  . /usr/local/bin/env_parallel.bash
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.bash' >> /home/tange/.bashrc
+       Supports: aliases, functions, variables, arrays
+
+zsh:   Put this in /home/tange/.zshrc:  . /usr/local/bin/env_parallel.zsh
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.zsh' >> /home/tange/.zshenv
+       Supports: functions, variables, arrays
+
+fish:  Put this in /home/tange/.config/fish/config.fish:
+         source (which env_parallel.fish)
+       E.g. by doing:
+         echo 'source (which env_parallel.fish)' >> /home/tange/.config/fish/config.fish
+       Supports: aliases, functions, variables, arrays
+
+ksh:   Put this in /home/tange/.kshrc:  source /usr/local/bin/env_parallel.ksh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.ksh' >> /home/tange/.kshrc
+       Supports: aliases, functions, variables, arrays
+
+pdksh: Put this in /home/tange/.profile:  source /usr/local/bin/env_parallel.pdksh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.pdksh' >> /home/tange/.profile
+       Supports: aliases, functions, variables, arrays
+
+csh:   Put this in /home/tange/.cshrc:  source /usr/local/bin/env_parallel.csh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.csh' >> /home/tange/.cshrc
+       Supports: aliases
+
+For details: see  man env_parallel
+
   MYVAR='foo bar'
   export MYVAR
   parallel --env MYVAR -S $SERVER1 echo '$MYVAR' ::: baz
@@ -827,7 +857,7 @@ _
   }
   export -f my_func3
   parallel -vv --workdir ... --nice 17 --env _ --trc {}.out -S $SERVER1 my_func3 {} ::: abc-file
-( ssh -l parallel lo -- mkdir -p ./.TMPWORKDIR;rsync --protocol 30 -rlDzR -essh\ -l\ parallel ./abc-file lo:./.TMPWORKDIR );ssh -l parallel lo -- exec perl -e \''@GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");eval"@GNU_Parallel";my$eval=decode_base64(join"",@ARGV);eval$eval;'\' BASE64 BASE64;_EXIT_status=$?; mkdir -p ./.; rsync --protocol 30 --rsync-path=cd\ ./.TMPWORKDIR/./.\;\ rsync -rlDzR -essh\ -l\ parallel lo:./abc-file.out ./.;ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file.out\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh -l parallel lo -- rm -rf .TMPWORKDIR; exit $_EXIT_status;
+( ssh -l parallel lo -- mkdir -p ./.TMPWORKDIR;rsync --protocol 30 -rlDzR -essh\ -l\ parallel ./abc-file lo:./.TMPWORKDIR );ssh -l parallel lo -- exec perl -e @GNU_Parallel\\\=\\\(\\\"use\\\",\\\"IPC::Open3\\\;\\\",\\\"use\\\",\\\"MIME::Base64\\\"\\\)\\\;eval\\\"@GNU_Parallel\\\"\\\;my\\\$eval\\\=decode_base64\\\(join\\\"\\\",@ARGV\\\)\\\;eval\\\$eval\\\; BASE64 BASE64\=;_EXIT_status=$?; mkdir -p ./.; rsync --protocol 30 --rsync-path=cd\ ./.TMPWORKDIR/./.\;\ rsync -rlDzR -essh\ -l\ parallel lo:./abc-file.out ./.;ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file.out\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh -l parallel lo -- rm -rf .TMPWORKDIR; exit $_EXIT_status;
   parallel --sqlandworker csv:////%2Ftmp%2Flog.csv seq ::: 10 ::: 12 13 14
   cat /tmp/log.csv
 10
@@ -1238,7 +1268,7 @@ GNU parallel comes with no warranty.
 Web site: http://www.gnu.org/software/parallel
 
 When using programs that use GNU Parallel to process data for publication
-please cite as described in 'parallel --bibtex'.
+please cite as described in 'parallel --citation'.
   parallel --minversion VERSION && echo Your version is at least VERSION.
 VERSION
 Your version is at least VERSION.
@@ -1269,8 +1299,7 @@ If you pay 10000 EUR you should feel free to use GNU Parallel without citing.
 If you send a copy of your published article to tange@gnu.org, it will be
 mentioned in the release notes of next version of GNU Parallel.
 
-  parallel --max-line-length-allowed
-131071
+
   parallel --number-of-cpus
   parallel --number-of-cores
 1

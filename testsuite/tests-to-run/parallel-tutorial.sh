@@ -14,7 +14,7 @@ export PARALLEL=-k
 perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/parallel_tutorial.pod |
   egrep -v 'curl|tty|parallel_tutorial|interactive|example.(com|net)|shellquote|works' |
   perl -pe 's/username@//;s/user@//;
-            s/zenity/zenity --timeout=12/;
+            s/zenity/zenity --timeout=15/;
             s:/usr/bin/time:/usr/bin/time -f %e:;
             s:ignored_vars:ignored_vars|sort:;
             # Remove \n to join all joblogs into the previous block

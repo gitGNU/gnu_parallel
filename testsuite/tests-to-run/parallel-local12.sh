@@ -36,4 +36,6 @@ echo ZZZZ | script -q -f -c /tmp/parallel-script-for-script3 /dev/null
 sleep 2
 rm /tmp/parallel-script-for-script3
 
+stdout parallel --citation < /dev/null
+
 touch ~/.parallel/will-cite

@@ -3563,7 +3563,8 @@ sub usage {
 	 "",
 	 "This helps funding further development; AND IT WON'T COST YOU A CENT.",
 	 "If you pay 10000 EUR you should feel free to use GNU Parallel without citing.",
-	 "");
+	 "",
+	 "",);
 }
 
 
@@ -3615,13 +3616,13 @@ sub status_no_nl {
 sub warning {
     my @w = @_;
     my $prog = $Global::progname || "parallel";
-    status(map { ($prog, ": Warning: ", $_, "\n"); } @w);
+    status_no_nl(map { ($prog, ": Warning: ", $_, "\n"); } @w);
 }
 
 sub error {
     my @w = @_;
     my $prog = $Global::progname || "parallel";
-    status(map { ($prog, ": Error: ", $_, "\n"); } @w);
+    status(map { ($prog.": Error: ". $_); } @w);
 }
 
 sub die_bug {
@@ -3711,7 +3712,7 @@ sub citation {
 		      "GNU parallel is indirectly financed through citations, so if users",
 		      "do not know they should cite then you are making it harder to finance",
 		      "development. However, if you pay 10000 EUR, you should feel free to",
-		      "use --will-cite.",
+		      "use '--will-cite' in scripts.",
 		      "");
 		last;
 	    }
@@ -3798,9 +3799,7 @@ sub qqx {
     if($Global::debug) {
 	return qx{ @_ && true };
     } else {
-	local *STDERR;
-	open (STDERR, ">", "/dev/null");
-	return qx{ @_ };
+	return qx{ ( @_ ) 2>/dev/null };
     }
 }
 
@@ -4580,7 +4579,7 @@ sub swap_activity {
         my $file = $self->{'swap_activity_file'};
         my ($dummy_fh, $tmpfile) = ::tmpfile(SUFFIX => ".swp");
 	::debug("swap", "\n", $swap_activity, "\n");
-        ::qqx("($swap_activity > $tmpfile && mv $tmpfile $file || rm $tmpfile) &");
+        ::qqx("($swap_activity > $tmpfile && mv $tmpfile $file || rm $tmpfile &)");
     }
     return $self->{'swap_activity'};
 }
@@ -4868,10 +4867,10 @@ sub loadavg {
 	}
         # As the command can take long to run if run remote
         # save it to a tmp file before moving it to the correct file
-        ::debug("load", "Cmd: ", $cmd);
+        ::debug("load", "Cmd: ", $cmd,"\n");
         my $file = $self->{'loadavg_file'};
         my ($dummy_fh, $tmpfile) = ::tmpfile(SUFFIX => ".loa");
-        ::qqx(" ($cmd > $tmpfile && mv $tmpfile $file || rm $tmpfile) & ");
+        ::qqx("($cmd > $tmpfile && mv $tmpfile $file || rm $tmpfile & )");
     }
     return $self->{'loadavg'};
 }
@@ -6860,11 +6859,14 @@ sub wrapped {
 	   and
 	   length $command > 499) {
 	    # csh does not like words longer than 1000 (499 quoted)
-	    # bzip2 breaks --sql mysql://...
 	    # $command = "perl -e '".base64_zip_eval()."' ".
-	    # join" ",string_zip_base64('exec "'.::perl_quote_scalar($command).'"');
-	    $command = "perl -e '".base64_eval()."' ".
-		join" ",string_base64('exec "'.::perl_quote_scalar($command).'"');
+	    # join" ",string_zip_base64(
+	    #         'exec "'.::perl_quote_scalar($command).'"');
+	    $command = "perl -e ".
+		    ::shell_quote_scalar(base64_eval())." ".
+		    join(" ", ::shell_quote(
+			     string_base64('exec "'.
+					   ::perl_quote_scalar($command).'"')));
 	}
 	$self->{'wrapped'} = $command;
     }
@@ -6888,7 +6890,7 @@ sub sshlogin {
 }
 
 sub string_base64 {
-    # Base64 encode it into 1000 byte blocks.
+    # Base64 encode strings into 1000 byte blocks.
     # 1000 bytes is the largest word size csh supports
     # Input:
     #   @strings = to be encoded
@@ -7153,8 +7155,9 @@ sub sshlogin_wrap {
 		    # bzip2 breaks --sql mysql://...
 		    # $env_command = "perl -e '".base64_zip_eval()."' ".
 		    # join" ",string_zip_base64($env_command);
-		    $env_command = "perl -e '".base64_eval()."' ".
-			join" ",string_base64($env_command);
+		    $env_command = "perl -e ".
+			::shell_quote_scalar(base64_eval())." ".
+			join" ",::shell_quote(string_base64($env_command));
 		    $self->{'sshlogin_wrap'} = $env_command;
 		} else {
 		    $self->{'sshlogin_wrap'} = "perl -e ".::shell_quote_scalar($env_command);
@@ -7172,9 +7175,12 @@ sub sshlogin_wrap {
 	    }
 	    my ($csh_friendly,$envset,$bashfuncset) = env_as_eval();
 	    my $remote_command = $pwd.$envset.$bashfuncset.
-		'@ARGV="'.::perl_quote_scalar($command).'";'. monitor_parent_sshd_script();
-	    $quoted_remote_command = "perl -e ".::shell_quote_scalar($remote_command);
-	    my $dq_remote_command = ::shell_quote_scalar($quoted_remote_command);
+		'@ARGV="'.::perl_quote_scalar($command).'";'.
+		monitor_parent_sshd_script();
+	    $quoted_remote_command = "perl -e ".
+		::shell_quote_scalar($remote_command);
+	    my $dq_remote_command =
+		::shell_quote_scalar($quoted_remote_command);
 	    if(length $dq_remote_command > 999
 	       or
 	       not $csh_friendly
@@ -7182,11 +7188,9 @@ sub sshlogin_wrap {
 	       $command =~ /\n/) {
 		# csh does not deal well with > 1000 chars in one word
 		# csh does not deal well with $ENV with \n
-		# bzip2 breaks --sql mysql://...
-		# $quoted_remote_command = "perl -e \\''".base64_zip_eval()."'\\' "."".
-		# join" ",string_zip_base64($remote_command);
-		$quoted_remote_command = "perl -e \\''".base64_eval()."'\\' ".
-		    join" ",string_base64($remote_command);
+		$quoted_remote_command = "perl -e ".
+		    ::shell_quote_scalar(::shell_quote_scalar(base64_eval()))." ".
+		    join" ",::shell_quote(string_base64($remote_command));
 	    } else {
 		$quoted_remote_command = $dq_remote_command;
 	    }
@@ -8173,13 +8177,14 @@ sub set_exitsignal {
 			    $Global::halt_exitstatus = $job->exitstatus();
 			}
 		    }
-		    ::debug("halt","Pct: ",$Global::halt_pct," count: ",$Global::halt_count,"\n");
+		    ::debug("halt","Pct: ",$Global::halt_pct,
+			    " count: ",$Global::halt_count,"\n");
 		    if($Global::halt_when eq "soon"
 		       and scalar(keys %Global::running) > 0) {
 			::status
-			    ("$Global::progname: Starting no more jobs. ",
-			     "Waiting for ", scalar(keys %Global::running),
-			     " jobs to finish.\n");
+			    ("$Global::progname: Starting no more jobs. ".
+			     "Waiting for ". (keys %Global::running).
+			     " jobs to finish.");
 			$Global::start_no_new_jobs ||= 1;
 		    }
 		    return($Global::halt_when);
@@ -8199,9 +8204,9 @@ sub set_exitsignal {
 		    if($Global::halt_when eq "soon"
 		       and scalar(keys %Global::running) > 0) {
 			::status
-			    ("$Global::progname: Starting no more jobs. ",
-			     "Waiting for ", scalar(keys %Global::running),
-			     " jobs to finish.\n");
+			    ("$Global::progname: Starting no more jobs. ".
+			     "Waiting for ". (keys %Global::running).
+			     " jobs to finish.");
 			$Global::start_no_new_jobs ||= 1;
 		    }
 		    return($Global::halt_when);
@@ -9158,7 +9163,7 @@ sub tmux_length {
 	    push @out, ::qqx($tmuxcmd);
 	    unlink $tmpfile;
 	}
-	::debug("tmux","tmux-length ",@out);
+	::debug("tmux","tmux-out ",@out);
 	chomp @out;
 	# The arguments is given 3 times on the command line
 	# and the wrapping is around 30 chars

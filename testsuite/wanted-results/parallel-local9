@@ -407,8 +407,8 @@ seq 1 4000 | nice parallel -k -X echo {.} aa {}{.} {}{}d{} {}dd{}d{.} |head -n 1
 echo "### BUG: empty lines with --show-limit"
 ### BUG: empty lines with --show-limit
 echo | $NICEPAR --show-limits
-Maximal size of command: 131071
-Maximal used size of command: 65535
+Maximal size of command: 131048
+Maximal used size of command: 65528
 
 Execution of  will continue now, and it will try to read its input
 and run commands; if this is not what you wanted to happen, please

@@ -82,13 +82,13 @@ GNU parallel comes with no warranty.
 Web site: http://www.gnu.org/software/parallel
 
 When using programs that use GNU Parallel to process data for publication
-please cite as described in 'parallel --bibtex'.
+please cite as described in 'parallel --citation'.
 echo '### bug #39787: --xargs broken'
 ### bug #39787: --xargs broken
   nice perl -e 'for(1..30000){print "$_\n"}' | $NICEPAR --xargs -k echo  | perl -ne 'print length $_,"\n"'
-65526
-65526
-37842
+65520
+65520
+37854
 echo '### --delay should grow by 3 sec per arg'
 ### --delay should grow by 3 sec per arg
   stdout /usr/bin/time -f %e parallel --delay 3 true ::: 1 2 | perl -ne '$_ >= 3 and $_ <= 8 and print "OK\n"'

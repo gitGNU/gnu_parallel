@@ -1208,7 +1208,7 @@ A progress bar can be shown with B<--bar>:
 
 And a graphic bar can be shown with B<--bar> and B<zenity>:
 
-  seq 1000 | parallel -j10 --bar '(echo -n {};sleep 0.1)' 2> >(zenity --progress --auto-kill)
+  seq 1000 | parallel -j10 --bar '(echo -n {};sleep 0.1)' 2> >(zenity --progress --auto-kill --auto-close)
 
 A logfile of the jobs completed so far can be generated with B<--joblog>:
 

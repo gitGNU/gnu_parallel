@@ -456,7 +456,7 @@ echo '###  true < 32767-ys.xi'
 ###  true < 32767-ys.xi
 stdout xargs true < 32767-ys.xi
 stdout parallel -k true < 32767-ys.xi
-parallel: Error: Command line too long (98306 >= 65535) at input 0: y y y y y y y y y y y y y y y y y y y y y y y y y ...
+parallel: Error: Command line too long (98306 >= 65528) at input 0: y y y y y y y y y y y y y y y y y y y y y y y y y ...
 echo '###  true < 16383-ys.xi'
 ###  true < 16383-ys.xi
 stdout xargs true < 16383-ys.xi

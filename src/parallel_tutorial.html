@@ -1276,7 +1276,7 @@
 
 <p>And a graphic bar can be shown with <b>--bar</b> and <b>zenity</b>:</p>
 
-<pre><code>  seq 1000 | parallel -j10 --bar &#39;(echo -n {};sleep 0.1)&#39; 2&gt; &gt;(zenity --progress --auto-kill)</code></pre>
+<pre><code>  seq 1000 | parallel -j10 --bar &#39;(echo -n {};sleep 0.1)&#39; 2&gt; &gt;(zenity --progress --auto-kill --auto-close)</code></pre>
 
 <p>A logfile of the jobs completed so far can be generated with <b>--joblog</b>:</p>
 

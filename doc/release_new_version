@@ -258,6 +258,8 @@ for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumb
 
 * GNU Parallel was cited in: An Operational Radiometric Landsat Preprocessing Framework for Large-Area Time Series Applications https://www.uni-trier.de/fileadmin/fb6/prof/FER/Publikationen/frantz_et_al_ieee-tgrs-2016-post-print.pdf
 
+* A basic demo of how GNU Parallel can speed up execution of commands https://www.youtube.com/watch?v=kl8LO2jcvMc
+
 * Downloading a list of URLs http://blog.gypsydave5.com/2016/02/04/xargs-and-curl/
 
 * qbatch uses GNU Parallel: https://pypi.python.org/pypi/qbatch/1.0rc2

@@ -64,6 +64,21 @@ echo '### csh2'
                      setenv C `seq 300 -2 1|xargs`; 
                      parallel --env A,B,C -k echo \$\{\}\|wc ::: A B C'
 
+
+echo '### rc'
+  echo "3 big vars run remotely - length(base64) > 1000"
+  stdout ssh rc@lo 'A=`{seq 200}; 
+                    B=`{seq 200 -1 1}; 
+                    C=`{seq 300 -2 1}; 
+                    parallel -Src@lo --env A,B,C -k echo '"'"'${}|wc'"'"' ::: A B C'
+
+echo '### rc2'
+  echo "3 big vars run locally"
+  stdout ssh rc@lo 'A=`{seq 200}; 
+                    B=`{seq 200 -1 1}; 
+                    C=`{seq 300 -2 1}; 
+                    parallel --env A,B,C -k echo '"'"'${}|wc'"'"' ::: A B C'
+
 echo '### Test tmux works on different shells'
   (stdout parallel -Scsh@lo,tcsh@lo,parallel@lo,zsh@lo --tmux echo ::: 1 2 3 4; echo $?) | grep -v 'See output';
   (stdout parallel -Scsh@lo,tcsh@lo,parallel@lo,zsh@lo --tmux false ::: 1 2 3 4; echo $?) | grep -v 'See output';
