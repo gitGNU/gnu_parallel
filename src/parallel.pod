@@ -1950,6 +1950,8 @@ one job at a time (i.e. B<-j1>), not buffer the output (i.e. B<-u>),
 and it will open a tty for the job. When the job is done, the next job
 will get the tty.
 
+You can of course override B<-j1> and B<-u>.
+
 
 =item B<--tag>
 

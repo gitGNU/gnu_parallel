@@ -3735,16 +3735,9 @@ sub __GENERIC_COMMON_FUNCTION__ {}
 sub mkdir_or_die {
     # If dir is not executable: die
     my $dir = shift;
-    my @dir_parts = split(m:/:,$dir);
-    my ($ddir,$part);
-    while(defined ($part = shift @dir_parts)) {
-	$part eq "" and next;
-	$ddir .= "/".$part;
-	-d $ddir and next;
-	mkdir $ddir;
-    }
+    File::Path::mkpath($dir);
     if(not -x $dir) {
-	::error("Cannot write to $dir: $!");
+	::error("Cannot change into non-executable $dir: $!");
 	::wait_and_exit(255);
     }
 }
