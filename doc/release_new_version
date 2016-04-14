@@ -266,6 +266,8 @@ for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumb
 
 * FaceCrop uses GNU Parallel: https://github.com/EderSantana/FaceCrop
 
+* GNU parallel 應用範例 http://staypython.blogspot.dk/2016/04/gnu-parallel.html
+
 * Bug fixes and man page updates.
 
 GNU Parallel - For people who live life in the parallel lane.

@@ -6865,7 +6865,7 @@ sub wrapped {
 	    $command = "perl -e ".
 		    ::shell_quote_scalar(base64_eval())." ".
 		    join(" ", ::shell_quote(
-			     string_base64('exec "'.
+			     string_base64("exec \"$Global::shell\",'-c',\"".
 					   ::perl_quote_scalar($command).'"')));
 	}
 	$self->{'wrapped'} = $command;

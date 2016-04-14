@@ -90,6 +90,7 @@ echo '### Test tmux works on different shells'
   stdout ssh parallel@lo "$PARTMUX" 'false ::: 1 2 3 4; echo $?'      | grep -v 'See output'; 
   stdout ssh tcsh@lo     "$PARTMUX" 'true  ::: 1 2 3 4; echo $status' | grep -v 'See output'; 
   stdout ssh tcsh@lo     "$PARTMUX" 'false ::: 1 2 3 4; echo $status' | grep -v 'See output'; 
+  echo "# command is currently too long for csh. Maybe it can be fixed?"; 
   stdout ssh csh@lo      "$PARTMUX" 'true  ::: 1 2 3 4; echo $status' | grep -v 'See output'; 
   stdout ssh csh@lo      "$PARTMUX" 'false ::: 1 2 3 4; echo $status' | grep -v 'See output'
 
@@ -131,7 +132,7 @@ echo "### Bash environment"
 #stdout ssh -t lo <<'EOS'
 myvar="myvar  works"
 funky=$(perl -e 'print pack "c*", 1..255')
-myarray=('' array_val2 3 '' 5)
+myarray=('' array_val2 3 '' 5 '  space  6  ')
 declare -A assocarr
 assocarr[a]=assoc_val_a
 assocarr[b]=assoc_val_b
@@ -139,7 +140,7 @@ alias alias_echo="echo 3 arg";
 func_echo() {
   echo $*;
   echo "$myvar"
-  echo ${myarray[1]}
+  echo "${myarray[5]}"
   echo ${assocarr[a]}
   echo Funky-"$funky"-funky
 }
@@ -158,7 +159,7 @@ echo "### Zsh environment"
 stdout ssh -q zsh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated|security updates'
 myvar="myvar  works"
 funky=$(perl -e 'print pack "c*", 1..255')
-myarray=('' array_val2 3 '' 5)
+myarray=('' array_val2 3 '' 5 '  space  6  ')
 declare -A assocarr
 assocarr[a]=assoc_val_a
 assocarr[b]=assoc_val_b
@@ -166,7 +167,7 @@ alias alias_echo="echo 3 arg";
 func_echo() {
   echo $*;
   echo "$myvar"
-  echo $myarray[2]
+  echo "$myarray[6]"
   echo ${assocarr[a]}
   echo Funky-"$funky"-funky
 }
@@ -186,7 +187,7 @@ echo "### Ksh environment"
 stdout ssh -q ksh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated|security updates'
 myvar="myvar  works"
 funky=$(perl -e 'print pack "c*", 1..255')
-myarray=('' array_val2 3 '' 5)
+myarray=('' array_val2 3 '' 5 '  space  6  ')
 typeset -A assocarr
 assocarr[a]=assoc_val_a
 assocarr[b]=assoc_val_b
@@ -195,7 +196,7 @@ alias alias_echo="echo 3 arg";
 func_echo() {
   echo $*;
   echo "$myvar"
-  echo ${myarray[1]}
+  echo "${myarray[5]}"
   echo ${assocarr[a]}
   echo Funky-"$funky"-funky
 }
@@ -217,7 +218,8 @@ setenv myenvvar "myenvvar  works"
 set funky (perl -e 'print pack "c*", 1..255')
 setenv funkyenv (perl -e 'print pack "c*", 1..255')
 
-set myarray '' array_val2 3 '' 5
+set myarray '' array_val2 3 '' 5 '  space  6  '
+
 # Assoc arrays do not exist
 #typeset -A assocarr
 #assocarr[a]=assoc_val_a
@@ -228,14 +230,14 @@ function func_echo
   echo $argv;
   echo "$myvar"
   echo "$myenvvar"
-  echo $myarray[2]
+  echo "$myarray[6]"
 # Assoc arrays do not exist in fish
 #  echo ${assocarr[a]}
   echo
   echo
   echo
   echo Funky-"$funky"-funky
-  echo Funky-"$funkyenv"-funky
+  echo Funkyenv-"$funkyenv"-funkyenv
   echo
   echo
   echo
@@ -251,23 +253,15 @@ EOS
 
 echo 
 echo "### csh environment"
-# http://hyperpolyglot.org/unix-shells
-# makealias:
-#   alias quote     "/bin/sed -e 's/\\!/\\\\\!/g' -e 's/'\\\''/'\\\'\\\\\\\'\\\''/g' -e 's/^/'\''/' -e 's/"\$"/'\''/'"
-#   alias makealias "quote | /bin/sed 's/^/alias \!:1 /' \!:2*"
-#
-#   makealias_with_newline
-#   perl -e '$/=undef;$_=<>;s/\n/\\\n/g;s/\047/\047\042\047\042\047/g;print'
-
 stdout ssh -q csh@lo <<'EOS' | egrep -v 'Welcome to |packages can be updated|security updates'
 set myvar = "myvar  works"
-set funky = "`perl -e 'print pack q(c*), 1..255'`"
-set myarray = ('' 'array_val2' '3' '' '5')
+set funky = "`perl -e 'print pack q(c*), 2..255'`"
+set myarray = ('' 'array_val2' '3' '' '5' '  space  6  ')
 #declare -A assocarr
 #assocarr[a]=assoc_val_a
 #assocarr[b]=assoc_val_b
 alias alias_echo echo 3 arg;
-alias alias_echo_var 'echo $argv; echo $myvar; echo ${myarray[2]}; echo Funky-"$funky"-funky'
+alias alias_echo_var 'echo $argv; echo "$myvar"; echo "${myarray[4]} special chars problem"; echo Funky-"$funky"-funky'
 
 #function func_echo
 #  echo $argv;
@@ -277,80 +271,11 @@ alias alias_echo_var 'echo $argv; echo $myvar; echo ${myarray[2]}; echo Funky-"$
 #  echo Funky-"$funky"-funky
 #end
 
-# ALIAS TO EXPORT ALIASES:
-
-#   Quote ' by putting it inside "
-#   s/'/'"'"'/g;
-#   ' => \047 " => \042
-#   s/\047/\047\042\047\042\047/g;
-#   Quoted: s/\\047/\\047\\042\\047\\042\\047/g\;
-
-#   Remove () from second column
-#   s/^(\S+)(\s+)\((.*)\)/\1\2\3/
-#   \047 => '
-#   s/^(\S+)(\s+)\((.*)\)/\1\2\3/;
-#   Quoted: s/\^\(\\S+\)\(\\s+\)\\\(\(.\*\)\\\)/\\1\\2\\3/\;
-
-#   Add ' around second column
-#   s/^(\S+)(\s+)(.*)/\1\2'\3'/
-#   \047 => '
-#   s/^(\S+)(\s+)(.*)/\1\2\047\3\047/;
-#   Quoted: s/\^\(\\S+\)\(\\s+\)\(.\*\)/\\1\\2\\047\\3\\047/\;
-
-#   Quote ! as \!
-#   s/\!/\\\!/g;
-#   Quoted: s/\\\!/\\\\\\\!/g;
-
-#   Prepend with "\nalias "
-#   s/^/\001alias /;
-#   Quoted: s/\^/\\001alias\ /\;
-
-#!# alias env_parallel 'setenv PARALLEL_ENV "`alias | perl -pe s/\\047/\\047\\042\\047\\042\\047/g\;s/\^\(\\S+\)\(\\s+\)\\\(\(.\*\)\\\)/\\1\\2\\3/\;s/\^\(\\S+\)\(\\s+\)\(.\*\)/\\1\\2\\047\\3\\047/\;s/\^/\\001alias\ /\;s/\\\!/\\\\\\\!/g;`";parallel \!*; setenv PARALLEL_ENV'
-
-
-##  set tmpfile=`tempfile`
-##  foreach v (`set | awk -e '{print $1}' |grep -v prompt2`);
-##  eval if'($?'$v' && ${#'$v'} <= 1) echo scalar'$v'="$'$v'"' >> $tmpfile;
-##  eval if'($?'$v' && ${#'$v'} > 1) echo array'$v'="$'$v'"' >> $tmpfile;
-##  end
-##  cat $tmpfile | parallel --shellquote | perl -pe 's/^scalar(\S+).=/set $1=/ or s/^array(\S+).=(.*)/set $1=($2)/ && s/\\ / /g;'; rm $tmpfile
-##  
-##  set tmpfile=`tempfile`
-##  foreach _vARnAmE (`set | awk -e '{print $1}' |grep -v prompt2`);
-##  eval if'($?'$_vARnAmE' && ${#'$_vARnAmE'} <= 1) echo scalar'$_vARnAmE'="$'$_vARnAmE'"' >> $tmpfile; eval if'($?'$_vARnAmE' && ${#'$_vARnAmE'} > 1) echo array'$_vARnAmE'="$'$_vARnAmE'"' >> $tmpfile;
-##  end
-##  cat $tmpfile | parallel --shellquote | perl -pe 's/^scalar(\S+).=/set $1=/ or s/^array(\S+).=(.*)/set $1=($2)/ && s/\\ / /g;'; rm $tmpfile; unset tmpfile
-##  
-##  #!/bin/csh
-##  
-##  set _tmpfile=`tempfile`;
-##  foreach _vARnAmE (`set | awk -e '{print $1}' |grep -Ev 'prompt2|_tmpfile'`);
-##  eval if'($?'$_vARnAmE' && ${#'$_vARnAmE'} <= 1) echo scalar'$_vARnAmE'="$'$_vARnAmE'"' >> $_tmpfile;
-##  eval if'($?'$_vARnAmE' && ${#'$_vARnAmE'} > 1) echo array'$_vARnAmE'="$'$_vARnAmE'"' >> $_tmpfile;
-##  end 
-##  setenv PARALLEL_ENV `cat $_tmpfile | parallel --shellquote | perl -pe 's/^scalar(\S+).=/set $1=/ or s/^array(\S+).=(.*)/set $1=($2)/ && s/\\ / /g; s/$/\001/';`
-##  rm $_tmpfile;
-##  unset _tmpfile
-##  
-##  setenv PARALLEL_ENV "$PARALLEL_ENV`alias | perl -pe s/\\047/\\047\\042\\047\\042\\047/g\;s/\^\(\\S+\)\(\\s+\)\\\(\(.\*\)\\\)/\\1\\2\\3/\;s/\^\(\\S+\)\(\\s+\)\(.\*\)/\\1\\2\\047\\3\\047/\;s/\^/\\001alias\ /\;s/\\\!/\\\\\\\!/g;`"
-##  parallel \!*
-##  setenv PARALLEL_ENV
-##  
-##  
-##  perl -e '$/=undef;$_=<>;s/\n/\\\\\n/g;s/\047/\047\042\047\042\047/g;print "eval \047$_\047"'
-##  
-##  foreach g (h i j)
-##  echo $g
-##  end
-##  
-##  
-
-
 env_parallel alias_echo ::: alias_works
-env_parallel alias_echo_var ::: alias_var_does_not_work
+env_parallel alias_echo_var ::: alias_var_works
 env_parallel func_echo ::: function_does_not_work
 env_parallel -S csh@lo alias_echo ::: alias_works_over_ssh
-env_parallel -S csh@lo alias_echo_var ::: alias_var_does_not_work
+env_parallel -S csh@lo alias_echo_var ::: alias_var_works_over_ssh
 env_parallel -S csh@lo func_echo ::: function_does_not_work_over_ssh
 echo
 echo "$funky" | parallel --shellquote

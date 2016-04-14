@@ -66,7 +66,7 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
             # Due to order is often mixed up
             s/echo \d; exit \d\n/echo X; exit X\n/;
             # Race condition causes outdir to sometime exist
-            s/(std(out|err):) Permission denied/$1 No such file or directory/;
+            s/(std(out|err)|seq): Permission denied/$1: No such file or directory/;
 '
 # 3+3 .par files (from --files), 1 .tms-file from tmux attach
 find {$TMPDIR,/var/tmp,/tmp}/{fif,tms,par[^a]}* -mmin -10 2>/dev/null | wc -l

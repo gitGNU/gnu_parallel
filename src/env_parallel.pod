@@ -243,6 +243,9 @@ E.g. by doing:
 
 =head2 csh
 
+B<env_parallel> for B<csh> breaks B<$PARALLEL>, so do not use
+B<$PARALLEL>.
+
 Installation
 
 Put this in $HOME/.cshrc:
@@ -267,13 +270,19 @@ Not supported by B<csh>.
 
 =item variables
 
-Not supported
+  set myvar=test
+  env_parallel echo "\$myvar" ::: test
+  env_parallel -S csh@server echo "\$myvar" ::: test
 
-=item arrays
 
-Not supported
+=item arrays with no special chars
+
+  set myarray=(foo bar baz)
+  env_parallel echo "\${myarray\[\{\}\]}" ::: 1 2 3
+  env_parallel -S csh@server echo "\${myarray\[\{\}\]}" ::: 1 2 3
 
 =back
+
 
 
 =head1 EXIT STATUS

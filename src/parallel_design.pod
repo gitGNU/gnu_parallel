@@ -50,6 +50,82 @@ Fixing the problem in B<csh> often breaks it in B<bash>. In these
 cases the fix is often to use a small Perl script and call that.
 
 
+=head2 env_parallel
+
+B<env_parallel> is a dummy shell script that will run if
+B<env_parallel> is not an alias or a function and tell the user how to
+activate the alias/function for the supported shells.
+
+The alias or function will copy the current environment and run the
+command with GNU B<parallel> in the copy of the environment.
+
+The problem is that you cannot access all of the current environment
+inside Perl. E.g. aliases, functions and unexported shell variables.
+
+The idea is therefore to take the environment and put it in
+B<$PARALLEL_ENV> which GNU B<parallel> prepends to every command.
+
+The only way to have access to the environment is directly from the
+shell, so the program must be written in a shell script that will be
+sourced and there has to deal with the dialect of the relevant shell.
+
+Dumping the environment into a format that can be activated again is
+easy in Bash: B<typeset> and B<alias> basically give you the commands
+you must run to re-create the environment. It is much harder in B<csh>
+where there is no easy way to convert an environment into commands
+that generate the environment.
+
+
+=head3 env_parallel.bash / env_parallel.zsh / env_parallel.ksh / env_parallel.pdksh
+
+B<env_parallel.(bash|ksh|pdksh|zsh)> sets the function B<env_parallel>. It uses
+B<alias> and B<typeset> to dump the configuration (with a few
+exceptions) into B<$PARALLEL_ENV> before running GNU B<parallel>.
+
+After GNU B<parallel> is finished, B<$PARALLEL_ENV> is deleted.
+
+
+=head3 env_parallel.csh
+
+B<env_parallel.csh> has two purposes: If B<env_parallel> is not an
+alias: make it into an alias that sets B<$PARALLEL> with arguments
+and calls B<env_parallel.csh>.
+
+If B<env_parallel> is an alias, then B<env_parallel.csh> uses
+B<$PARALLEL> as the arguments for GNU B<parallel>.
+
+It exports the environment by writing a variable definition to a file
+for each variable.  The definitions of aliases are appended to this
+file. Finally the file is put into B<$PARALLEL_ENV>.
+
+GNU B<parallel> is then run and B<$PARALLEL_ENV> is deleted.
+
+
+=head3 env_parallel.fish
+
+First all functions definitions are generated using a loop and
+B<functions>.
+
+Dumping the scalar variable definitions is harder.
+
+B<fish> can represent non-printable characters in (at least) 2
+ways. To avoid problems all scalars are converted to \XX quoting.
+
+Then commands to generate the definitions are made and separated by
+NUL.
+
+This is then piped into a Perl script that quotes all values. List
+elements will be appended using two spaces.
+
+Finally \n is converted into \1 because B<fish> variables cannot
+contain \n. GNU B<parallel> will later convert all \1 from
+B<$PARALLEL_ENV> into \n.
+
+This is then all saved in B<$PARALLEL_ENV>.
+
+GNU B<parallel> is called, and B<$PARALLEL_ENV> is deleted.
+
+
 =head2 Job slots
 
 The easiest way to explain what GNU B<parallel> does is to assume that
@@ -64,10 +140,11 @@ been implemented as a stack with lazy evaluation: Draw one from an
 empty stack and the stack is extended by one. When a job is done, push
 the available job slot back on the stack.
 
-This implementation also means that if you use remote executions, you
-cannot assume that a given job slot will remain on the same remote
-server. This goes double since number of job slots can be adjusted on
-the fly (by giving B<--jobs> a file name).
+This implementation also means that if you re-run the same jobs, you
+cannot assume jobs will get the same slots. And if you use remote
+executions, you cannot assume that a given job slot will remain on the
+same remote server. This goes double since number of job slots can be
+adjusted on the fly (by giving B<--jobs> a file name).
 
 
 =head2 Rsync protocol version
@@ -84,12 +161,13 @@ B<rsync>s to talk to version 2.5.7.
 
 =head2 Compression
 
-B<--compress> compresses the data in the temporary files. This is a
-bit tricky because there should be no files to clean up if GNU
-B<parallel> is killed by a power outage.
+GNU B<parallel> buffers output in temporary files. B<--compress>
+compresses the buffered data.  This is a bit tricky because there
+should be no files to clean up if GNU B<parallel> is killed by a power
+outage.
 
 GNU B<parallel> first selects a compression program. If the user has not
-selected one, the first of these that are in $PATH is used: B<lz4 pigz
+selected one, the first of these that is in $PATH is used: B<lz4 pigz
 lzop plzip pbzip2 pxz gzip lzma xz bzip2 lzip>. They are sorted by
 speed on a 16 core machine.
 
@@ -133,16 +211,17 @@ Local: B<setpriority(0,0,$nice)>
 
 =item --cat
 
-  cat > {}; I<input> {};
+  cat > {}; <<command>> {};
   perl -e '$bash = shift;
     $csh = shift;
     for(@ARGV) { unlink;rmdir; }
     if($bash =~ s/h//) { exit $bash;  }
     exit $csh;' "$?h" "$status" {};
 
-{} is set to $PARALLEL_TMP which is a tmpfile. The Perl script saves
-the exit value, unlinks the tmpfile, and returns the exit value - no
-matter if the shell is B<bash> (using $?) or B<*csh> (using $status).
+{} is set to B<$PARALLEL_TMP> which is a tmpfile. The Perl script
+saves the exit value, unlinks the tmpfile, and returns the exit value
+- no matter if the shell is B<bash>/B<ksh>/B<zsh> (using $?) or
+B<*csh>/B<fish> (using $status).
 
 =item --fifo
 
@@ -161,35 +240,38 @@ matter if the shell is B<bash> (using $?) or B<*csh> (using $status).
     waitpid $pid,0;
     # Cleanup
     unlink $f;
-    exit $?/256;' I<shell> I<input> $PARALLEL_TMP
+    exit $?/256;' <<shell>> -c <<command>> $PARALLEL_TMP
 
-This is an elaborate way of: mkfifo {}; run I<input> in the
-background using I<shell>; copying STDIN to {}; waiting for background
-to complete; remove {} and exit with the exit code from I<input>.
+This is an elaborate way of: mkfifo {}; run I<<<command>>> in the
+background using I<<<shell>>>; copying STDIN to {}; waiting for background
+to complete; remove {} and exit with the exit code from I<<<command>>>.
 
-It is made this way to be compatible with B<*csh>.
+It is made this way to be compatible with B<*csh>/B<fish>.
 
 =item --pipepart
 
-  < file perl -e 'while(@ARGV) {
+  < <<file>> perl -e 'while(@ARGV) {
       sysseek(STDIN,shift,0) || die;
       $left = shift;
       while($read = sysread(STDIN,$buf, ($left > 131072 ? 131072 : $left))){
         $left -= $read;
         syswrite(STDOUT,$buf);
       }
-    }' startposition length
+    }' <<startposition>> <<length>>
 
-This will read I<length> bytes from I<file> starting at
-I<startposition> and send it to STDOUT.
+This will read I<<<length>>> bytes from I<<<file>>> starting at
+I<<<startposition>>> and send it to STDOUT.
 
 =item --sshlogin I<sln>
 
-ssh I<sln> I<shell quoted input>
+ssh I<sln> I<shell quoted command>
+
+Where I<sln> is the sshlogin and I<shell quoted command> is the
+command quoted so it will be passed to the server.
 
 =item --transfer
 
-( ssh I<sln> mkdir -p ./I<workdir>;rsync --protocol 30 -rlDzR -essh ./{} I<sln>:./I<workdir> ); I<input>
+( ssh I<sln> mkdir -p ./I<workdir>;rsync --protocol 30 -rlDzR -essh ./{} I<sln>:./I<workdir> ); I<<<command>>>
 
 Read about B<--protocol 30> in the section B<Rsync protocol version>.
 
@@ -203,7 +285,7 @@ Read about B<--protocol 30> in the section B<Rsync protocol version>.
 
 =item --return I<file>
 
-I<input>; _EXIT_status=$?; mkdir -p I<workdir>; rsync --protocol 30 --rsync-path=cd\ ./I<workdir>\;\ rsync -rlDzR -essh I<sln>:./I<file> ./I<workdir>; exit $_EXIT_status;
+I<<<command>>>; _EXIT_status=$?; mkdir -p I<<<workdir>>>; rsync --protocol 30 --rsync-path=cd\ ./I<<<workdir>>>\;\ rsync -rlDzR -essh I<<<sln>>>:./I<<<file>>> ./I<<<workdir>>>; exit $_EXIT_status;
 
 The B<--rsync-path=cd ...> is needed because old versions of B<rsync>
 do not support B<--no-implied-dirs>.
@@ -214,7 +296,7 @@ wrapping 'sh -c' is enough?
 
 =item --cleanup
 
-I<input> _EXIT_status=$?; <<return>>
+I<<<command>>> _EXIT_status=$?; <<return>>; 
 
 ssh I<sln> \(rm\ -f\ ./I<workdir>/{}\;\ rmdir\ ./I<workdir>\ \>\&/dev/null\;\); exit $_EXIT_status;
 

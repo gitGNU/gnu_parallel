@@ -46,7 +46,11 @@ pdksh: Put this in $HOME/.profile:  source `which env_parallel.pdksh`
 
 csh:   Put this in $HOME/.cshrc:  source `which env_parallel.csh`
        E.g. by doing:  echo 'source `which env_parallel.csh`' >> $HOME/.cshrc
-       Supports: aliases
+       Supports: aliases, variables, arrays with no special chars
+
+tcsh:  Put this in $HOME/.tcshrc:  source `which env_parallel.tcsh`
+       E.g. by doing:  echo 'source `which env_parallel.tcsh`' >> $HOME/.tcshrc
+       Supports: aliases, variables, arrays with no special chars
 
 For details: see  man env_parallel
 

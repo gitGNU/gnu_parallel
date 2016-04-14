@@ -75,6 +75,8 @@ function env_parallel
           $val=~s/'"'"'/\\\$&/go;
           # Quote newline as '\n'
           $val =~ s/[\n]/\\\n/go;
+ 	  # Empty => 2 single quotes = \047\047
+	  $val=~s/^$/\047\047/o;
           if($name ne $last and $last) {
             # The $name is different, so this is a new variable.
             # Print the last one.
