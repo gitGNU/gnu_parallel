@@ -31,44 +31,44 @@ echo '### --sqlandworker mysql'
   (sleep 2; parallel --sqlworker $MYSQLTBL sleep .3\;echo >$T1) &
   parallel --sqlandworker $MYSQLTBL sleep .3\;echo ::: {1..5} ::: {a..e} >$T2; 
   true sort -u $T1 $T2; 
-  sql $MYSQL 'select * from parsql order by seq;'
+  sleep 1; sql $MYSQL 'select * from parsql order by seq;'
 
 echo '### --sqlandworker postgresql'
   (sleep 2; parallel --sqlworker $PGTBL sleep .3\;echo >$T3) &
   parallel --sqlandworker $PGTBL sleep .3\;echo ::: {1..5} ::: {a..e} >$T4; 
   true sort -u $T3 $T4; 
-  sql $PG 'select * from parsql order by seq;'
+  sleep 1; sql $PG 'select * from parsql order by seq;'
 
 echo '### --sqlandworker sqlite'
   (sleep 2; parallel --sqlworker $SQLITETBL sleep .3\;echo >$T5) &
   parallel --sqlandworker $SQLITETBL sleep .3\;echo ::: {1..5} ::: {a..e} >$T6; 
   true sort -u $T5 $T6; 
-  sql $SQLITE 'select * from parsql order by seq;'
+  sleep 1; sql $SQLITE 'select * from parsql order by seq;'
 
 echo '### --sqlandworker postgresql -S lo'
   (sleep 2; parallel -S lo --sqlworker $PGTBL2 sleep .3\;echo >$T7) &
   parallel -S lo --sqlandworker $PGTBL2 sleep .3\;echo ::: {1..5} ::: {a..e} >$T8; 
   true sort -u $T7 $T8; 
-  sql $PG 'select * from parsql2 order by seq;'
+  sleep 1; sql $PG 'select * from parsql2 order by seq;'
 
 echo '### --sqlandworker postgresql --results'
   mkdir -p /tmp/out--sql
   (sleep 2; parallel --results /tmp/out--sql --sqlworker $PGTBL3 sleep .3\;echo >$T9) &
   parallel --results /tmp/out--sql --sqlandworker $PGTBL3 sleep .3\;echo ::: {1..5} ::: {a..e} >$T10; 
   true sort -u $T9 $T10; 
-  sql $PG 'select * from parsql3 order by seq;'
+  sleep 1; sql $PG 'select * from parsql3 order by seq;'
 
 echo '### --sqlandworker postgresql --linebuffer'
   (sleep 2; parallel --linebuffer --sqlworker $PGTBL4 sleep .3\;echo >$T11) &
   parallel --linebuffer --sqlandworker $PGTBL4 sleep .3\;echo ::: {1..5} ::: {a..e} >$T12; 
   true sort -u $T11 $T12; 
-  sql $PG 'select * from parsql4 order by seq;'
+  sleep 1; sql $PG 'select * from parsql4 order by seq;'
 
 echo '### --sqlandworker postgresql -u'
   (sleep 2; parallel -u --sqlworker $PGTBL5 sleep .3\;echo >$T13) &
   parallel -u --sqlandworker $PGTBL5 sleep .3\;echo ::: {1..5} ::: {a..e} >$T14; 
   true sort -u $T13 $T14; 
-  sql $PG 'select * from parsql5 order by seq;'
+  sleep 1; sql $PG 'select * from parsql5 order by seq;'
 
 EOF
 

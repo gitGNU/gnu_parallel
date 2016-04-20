@@ -671,7 +671,7 @@ special chars and ' is used for newline. Whether a char is special
 depends on the shell and the context. Luckily quoting a bit too many
 chars does not break things.
 
-It is fast, but had the distinct disadvantage that if a string needs
+It is fast, but has the distinct disadvantage that if a string needs
 to be quoted multiple times, the \'s double every time - increasing
 the string length exponentially.
 
@@ -748,11 +748,10 @@ are no visible files on it.
 
 GNU B<parallel> buffers on disk. If the disk is full data may be
 lost. To check if the disk is full GNU B<parallel> writes a 8193 byte
-file when a job finishes. If this file is written successfully, it is
-removed immediately. If it is not written successfully, the disk is
-full. The size 8193 was chosen because 8192 gave wrong result on some
-file systems, whereas 8193 did the correct thing on all tested
-filesystems.
+file every second. If this file is written successfully, it is removed
+immediately. If it is not written successfully, the disk is full. The
+size 8193 was chosen because 8192 gave wrong result on some file
+systems, whereas 8193 did the correct thing on all tested filesystems.
 
 
 =head2 Perl replacement strings, {= =}, and --rpl
@@ -897,12 +896,6 @@ Sans.
 
 Open3 is slow. Printing is slow. It would be good if they did not tie
 up ressources, but were run in separate threads.
-
-
-=head2 Transferring of variables and functions from zsh
-
-Transferring Bash functions to remote zsh works.
-Can parallel_bash_environment be used to import zsh functions?
 
 
 =head2 --rrs on remote using a perl wrapper

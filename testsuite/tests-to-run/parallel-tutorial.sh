@@ -47,7 +47,7 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
             # /usr/bin/time -f %e
             s/^(\d+)\.\d+$/$1/;
             # Base 64 string
-            s:[+/a-z0-9=]{50,}:BASE64:ig;
+            s:[\\+/a-z0-9=]{50,}:BASE64:ig;
             # --workdir ...
             s:parallel/tmp/aspire-\d+-1:TMPWORKDIR:g;
             # + cat ... | (Bash outputs these in random order)

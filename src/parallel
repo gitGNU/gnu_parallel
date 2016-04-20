@@ -1183,7 +1183,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160323;
+    $Global::version = 20160414;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -3735,9 +3735,10 @@ sub __GENERIC_COMMON_FUNCTION__ {}
 sub mkdir_or_die {
     # If dir is not executable: die
     my $dir = shift;
-    File::Path::mkpath($dir);
+    # The eval is needed to catch exception from mkdir
+    eval { File::Path::mkpath($dir); };
     if(not -x $dir) {
-	::error("Cannot change into non-executable $dir: $!");
+	::error("Cannot change into non-executable dir $dir: $!");
 	::wait_and_exit(255);
     }
 }
@@ -6855,11 +6856,8 @@ sub wrapped {
 	    # $command = "perl -e '".base64_zip_eval()."' ".
 	    # join" ",string_zip_base64(
 	    #         'exec "'.::perl_quote_scalar($command).'"');
-	    $command = "perl -e ".
-		    ::shell_quote_scalar(base64_eval())." ".
-		    join(" ", ::shell_quote(
-			     string_base64("exec \"$Global::shell\",'-c',\"".
-					   ::perl_quote_scalar($command).'"')));
+	    $command = base64_wrap("exec \"$Global::shell\",'-c',\"".
+				   ::perl_quote_scalar($command).'"');
 	}
 	$self->{'wrapped'} = $command;
     }
@@ -6956,6 +6954,21 @@ sub base64_zip_eval {
 			     });
     ::debug("base64",$script,"\n");
     return $script;
+}
+
+sub base64_wrap {
+    # base64 encode Perl code
+    # Split it into chunks of < 1000 bytes
+    # Prepend it with a decoder that eval's it
+    # Input:
+    #   $eval_string = Perl code to run
+    # Returns:
+    #   $shell_command = shell command that runs $eval_string
+    my $eval_string = shift;
+    return
+	"perl -e ".
+	::shell_quote_scalar(base64_eval())." ".
+	join" ",::shell_quote(string_base64($eval_string));
 }
 
 sub base64_eval {
@@ -7081,11 +7094,14 @@ sub sshlogin_wrap {
 	my @non_functions = grep { substr($ENV{$_},0,4) ne "() {" } @vars;
 	# eval of @envset will set %ENV
 	my $envset = join"", map {
-	    '$ENV{"'.::perl_quote_scalar($_).'"}="'. ::perl_quote_scalar($ENV{$_}).'";'; } @non_functions;
+	    '$ENV{"'.::perl_quote_scalar($_).'"}="'.
+		::perl_quote_scalar($ENV{$_}).'";'; } @non_functions;
 
 	# running @bashfunc on the command line, will set the functions
 	my @bashfunc = map {
-	    my $v=$_; s/BASH_FUNC_(.*)(\(\)|%%)/$1/; "$_$ENV{$v};export -f $_ >/dev/null;" } @bash_functions;
+	    my $v=$_;
+	    s/BASH_FUNC_(.*)(\(\)|%%)/$1/;
+	    "$_$ENV{$v};export -f $_ >/dev/null;" } @bash_functions;
 	# eval $bashfuncset will set $bashfunc
 	my $bashfuncset;
 	if(@bashfunc) {
@@ -7135,25 +7151,19 @@ sub sshlogin_wrap {
 	    if(@opt::env) {
 		# Prepend with environment setter, which sets functions in zsh
 		my ($csh_friendly,$envset,$bashfuncset) = env_as_eval();
-		my $env_command = $envset.$bashfuncset.
+		my $perl_code = $envset.$bashfuncset.
 		    '@ARGV="'.::perl_quote_scalar($command).'";'.
 		    "exec\"$Global::shell\",\"-c\",\(\$bashfunc.\"\@ARGV\"\)\;die\"exec:\$\!\\n\"\;";
-		if(length $env_command > 999
+		if(length $perl_code > 999
 		   or
 		   not $csh_friendly
 		   or
 		   $command =~ /\n/) {
 		    # csh does not deal well with > 1000 chars in one word
 		    # csh does not deal well with $ENV with \n
-		    # bzip2 breaks --sql mysql://...
-		    # $env_command = "perl -e '".base64_zip_eval()."' ".
-		    # join" ",string_zip_base64($env_command);
-		    $env_command = "perl -e ".
-			::shell_quote_scalar(base64_eval())." ".
-			join" ",::shell_quote(string_base64($env_command));
-		    $self->{'sshlogin_wrap'} = $env_command;
+		    $self->{'sshlogin_wrap'} = base64_wrap($perl_code);
 		} else {
-		    $self->{'sshlogin_wrap'} = "perl -e ".::shell_quote_scalar($env_command);
+		    $self->{'sshlogin_wrap'} = "perl -e ".::shell_quote_scalar($perl_code);
 		}
 	    } else {
 		$self->{'sshlogin_wrap'} = $command;
@@ -7181,9 +7191,10 @@ sub sshlogin_wrap {
 	       $command =~ /\n/) {
 		# csh does not deal well with > 1000 chars in one word
 		# csh does not deal well with $ENV with \n
-		$quoted_remote_command = "perl -e ".
+		$quoted_remote_command =
+		    "perl -e ".
 		    ::shell_quote_scalar(::shell_quote_scalar(base64_eval()))." ".
-		    join" ",::shell_quote(string_base64($remote_command));
+		    join" ",::shell_quote(::shell_quote(string_base64($remote_command)));
 	    } else {
 		$quoted_remote_command = $dq_remote_command;
 	    }
@@ -7668,6 +7679,7 @@ sub print_dryrun_and_verbose {
 	# The line to run contains a 118 chars extra code + the title 2x
 	my $l_tot = 2 * $l_tit + $l_act + $l_fifo;
 
+	my $quoted_space75 = ::shell_quote_scalar(" ")x75;
 	while($l_tit < 1000 and
 	      (
 	       (890 < $l_tot and $l_tot < 1350)
@@ -7681,7 +7693,7 @@ sub print_dryrun_and_verbose {
 	    # The measured lengths are:
 	    # 996 < (title + whole command) < 1127
 	    # 9331 < (title + whole command) < 9636
-	    $title = $title.('\ 'x75);
+	    $title .= $quoted_space75;
 	    $l_tit = length($title);
 	    $l_tot = 2 * $l_tit + $l_act + $l_fifo;
 	}
