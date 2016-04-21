@@ -1183,7 +1183,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160414;
+    $Global::version = 20160420;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -4170,8 +4170,14 @@ sub reap_usleep {
 	delete $SIG{CHLD};
 	exit_if_disk_full();
 	if($opt::linebuffer) {
-	    for my $job (values %Global::running) {
-		$job->print();
+	    if($opt::keeporder) {
+		for my $job (values %Global::running) {
+		    $job->print_earlier_jobs();
+		}
+	    } else {
+		for my $job (values %Global::running) {
+		    $job->print();
+		}
 	    }
 	}
 	# Sleep exponentially longer (1.1^n) if a job did not finish,
@@ -7782,24 +7788,28 @@ sub should_be_retried {
 }
 
 {
-    my (%print_later,$job_end_sequence);
+    my (%print_later,$job_seq_to_print);
 
     sub print_earlier_jobs {
 	# Print jobs whose output is postponed due to --keep-order
 	# Returns: N/A
 	my $job = shift;
 	$print_later{$job->seq()} = $job;
-	$job_end_sequence ||= 1;
-	::debug("run", "Looking for: $job_end_sequence ",
-		"Current: ", $job->seq(), "\n");
-	for(my $j = $print_later{$job_end_sequence};
-	    $j or vec($Global::job_already_run,$job_end_sequence,1);
-	    $job_end_sequence++,
-	    $j = $print_later{$job_end_sequence}) {
-	    ::debug("run", "Found job end $job_end_sequence");
-	    if($j) {
-		$j->print();
-		delete $print_later{$job_end_sequence};
+	$job_seq_to_print ||= 1;
+	::debug("run", "Looking for: $job_seq_to_print ",
+		"This: ", $job->seq(), "\n");
+	for(;vec($Global::job_already_run,$job_seq_to_print,1);
+	    $job_seq_to_print++) {}
+	while(my $j = $print_later{$job_seq_to_print}) {
+	    $j->print();
+	    if($j->endtime()) {
+		# Job finished - look at the next
+		delete $print_later{$job_seq_to_print};
+		$job_seq_to_print++;
+		next;
+	    } else {
+		# Job not finished yet - look at it again next round
+		last;
 	    }
 	}
     }

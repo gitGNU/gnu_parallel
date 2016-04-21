@@ -92,5 +92,9 @@ echo '### test memfree'
 
 echo '**'
 
+echo '### bug #47750: -k --line-buffer should give current job up to now'
+
+  parallel --line-buffer --tag -k 'seq {} | pv -qL 10' ::: {10..20}
+  parallel --line-buffer -k 'echo stdout top;sleep 1;echo stderr in the middle >&2; sleep 1;echo stdout' ::: end 2>&1
 
 EOF
