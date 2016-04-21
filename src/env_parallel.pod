@@ -20,6 +20,8 @@ environment to GNU Parallel.
 If the shell function is not loaded, a dummy script will be run
 instead that explains how to install the function.
 
+B<env_parallel> is alpha quality and not production ready.
+
 =head2 Environment space
 
 B<env_parallel> only works if the size of the current environment is
@@ -280,6 +282,48 @@ Not supported by B<csh>.
   set myarray=(foo bar baz)
   env_parallel echo "\${myarray\[\{\}\]}" ::: 1 2 3
   env_parallel -S csh@server echo "\${myarray\[\{\}\]}" ::: 1 2 3
+
+=back
+
+=head2 tcsh
+
+B<env_parallel> for B<tcsh> breaks B<$PARALLEL>, so do not use
+B<$PARALLEL>.
+
+Installation
+
+Put this in $HOME/.tcshrc:
+
+  source `which env_parallel.tcsh`
+
+E.g. by doing:
+
+  echo 'source `which env_parallel.tcsh`' >> $HOME/.tcshrc
+
+=over 8
+
+=item aliases
+
+  alias myecho echo
+  env_parallel myecho ::: test
+  env_parallel -S server myecho ::: test
+
+=item functions
+
+Not supported by B<tcsh>.
+
+=item variables
+
+  set myvar=test
+  env_parallel echo "\$myvar" ::: test
+  env_parallel -S tcsh@server echo "\$myvar" ::: test
+
+
+=item arrays with no special chars
+
+  set myarray=(foo bar baz)
+  env_parallel echo "\${myarray\[\{\}\]}" ::: 1 2 3
+  env_parallel -S tcsh@server echo "\${myarray\[\{\}\]}" ::: 1 2 3
 
 =back
 

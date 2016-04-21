@@ -285,7 +285,7 @@ positional replacement strings see B<{>I<n>B<}>.
 See also: B<{=perl expression=}> B<{>I<n>B<}>.
 
 
-=item B<:::> I<arguments>
+=item B<:::> I<arguments> (alpha testing)
 
 Use arguments from the command line as input source instead of stdin
 (standard input). Unlike other options for GNU B<parallel> B<:::> is
@@ -338,7 +338,7 @@ Example:
   parallel echo ::: a b c :::+ 1 2 3 ::: X Y :::+ 11 22
 
 
-=item B<::::> I<argfiles>
+=item B<::::> I<argfiles> (alpha testing)
 
 Another way to write B<-a> I<argfile1> B<-a> I<argfile2> ...
 
@@ -611,7 +611,7 @@ If I<eof-str> is omitted, there is no end of file string.  If neither
 B<-E> nor B<-e> is used, no end of file string is used.
 
 
-=item B<--env> I<var>
+=item B<--env> I<var> (alpha testing)
 
 Copy environment variable I<var>. This will copy I<var> to the
 environment that the command is run in. This is especially useful for
@@ -623,28 +623,9 @@ In Bash I<var> can also be a Bash function - just remember to B<export
 The variable '_' is special. It will copy all exported environment
 variables except for the ones mentioned in ~/.parallel/ignored_vars.
 
-To copy Bash arrays you need an importer function, as Bash arrays
-cannot be exported:
-
-    import_array () {
-      local func=$1; shift;
-      export $func='() {
-        '"$(for arr in $@; do
-              declare -p $arr|sed '1s/declare -./&g/'
-            done)"'
-      }'
-    }
-
-    declare -A assoc='([one]="1" [two]="2")'
-    declare -a indexed='([0]="one" [1]="two")'
-
-    import_array my_importer assoc indexed
-
-    parallel --env my_importer \
-      'my_importer; echo "{}" "${indexed[{}]}" "${assoc[${indexed[{}]}]}"' ::: "${!indexed[@]}"
-
-To copy the full environment (both exported and not exported variables
-and functions) use env_parallel as described under the option I<command>.
+To copy the full environment (both exported and not exported
+variables, arrays, and functions) use B<env_parallel> as described
+under the option I<command>.
 
 
 See also: B<--record-env>.

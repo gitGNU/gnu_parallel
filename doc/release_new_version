@@ -248,6 +248,16 @@ for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumb
 
 * <<Citation needed: Introspecting for RSA Key Material to Assist Intrusion Detection http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=7331177&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D7331177>>
 
+* :::+ and ::::+ work like ::: and :::: but links this input source to the previous input source in a --xapply fashion. Contrary to --xapply values do not wrap: The shortest input source determines the length.
+
+* --line-buffer --keep-order now outputs continously from the oldest job still running. This is more what you would expect than the earlier behaviour where --keep-order had no effect with --line-buffer.
+
+* env_parallel supports tcsh, csh, pdksh. In fish it now supports arrays. In csh/tcsh it now supports variables, aliases, and arrays with no special chars. In pdksh it supports aliases, functions, variables, and arrays.
+
+* Function exporting on Mac OS X works around old Bash version.
+
+* Better CPU detection on OpenIndiana.
+
 * GNU Parallel was cited in: How Can We Measure the Similarity Between Resumes of Selected Candidates for a Job? https://www.researchgate.net/publication/275954089_How_can_we_measure_the_similarity_between_resumes_of_selected_candidates_for_a_job
 
 * GNU Parallel was cited in: Automatic Methods for Assisted Recruitment https://www.researchgate.net/publication/297738658_Automatic_Methods_for_Assisted_Recruitment

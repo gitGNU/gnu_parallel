@@ -1,3 +1,63 @@
+20160422
+
+* :::+ and ::::+ work like ::: and :::: but links this input source to
+  the previous input source in a --xapply fashion. Contrary to
+  --xapply values do not wrap: The shortest input source determines
+  the length.
+
+* --line-buffer --keep-order now outputs continously from the oldest
+  job still running. This is more what you would expect than the
+  earlier behaviour where --keep-order had no effect with
+  --line-buffer.
+
+* env_parallel supports tcsh, csh, pdksh. In fish it now supports
+  arrays. In csh/tcsh it now supports variables, aliases, and arrays
+  with no special chars. In pdksh it supports aliases, functions,
+  variables, and arrays.
+
+* Function exporting on Mac OS X works around old Bash version.
+
+* Better CPU detection on OpenIndiana.
+
+* GNU Parallel was cited in: How Can We Measure the Similarity Between
+  Resumes of Selected Candidates for a Job?
+  https://www.researchgate.net/publication/275954089_How_can_we_measure_the_similarity_between_resumes_of_selected_candidates_for_a_job
+
+* GNU Parallel was cited in: Automatic Methods for Assisted
+  Recruitment
+  https://www.researchgate.net/publication/297738658_Automatic_Methods_for_Assisted_Recruitment
+
+* GNU Parallel was cited in: Tools and techniques for computational
+  reproducibility
+  http://biorxiv.org/content/biorxiv/early/2016/03/17/022707.full.pdf
+
+* GNU Parallel was cited in: Reinterpretation of ATLAS 8 TeV searches
+  for Natural SUSY with a R-Sneutrino LSP
+  http://arxiv.org/pdf/1603.06130.pdf
+
+* GNU Parallel was cited in: An Operational Radiometric Landsat
+  Preprocessing Framework for Large-Area Time Series Applications
+  https://www.uni-trier.de/fileadmin/fb6/prof/FER/Publikationen/frantz_et_al_ieee-tgrs-2016-post-print.pdf
+
+* A basic demo of how GNU Parallel can speed up execution of commands
+  https://www.youtube.com/watch?v=kl8LO2jcvMc
+
+* Downloading a list of URLs
+  http://blog.gypsydave5.com/2016/02/04/xargs-and-curl/
+
+* qbatch uses GNU Parallel: https://pypi.python.org/pypi/qbatch/1.0rc2
+
+* FaceCrop uses GNU Parallel: https://github.com/EderSantana/FaceCrop
+
+* Parallel Processing with Catmandu
+  https://librecatproject.wordpress.com/2016/04/20/parallel-processing-with-catmandu/
+
+* GNU parallel 應用範例
+  http://staypython.blogspot.dk/2016/04/gnu-parallel.html
+
+* Bug fixes and man page updates.
+
+
 20160322
 
 * env_parallel is a function that exports the environment (functions,

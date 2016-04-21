@@ -27,8 +27,7 @@
 
 if ("`alias env_parallel`" == '') then
   # Activate alias
-##  alias env_parallel 'setenv PARALLEL "\!*"; source `which env_parallel.csh`'
-  alias env_parallel 'setenv PARALLEL "\!*"; source /tmp/env_parallel.csh'
+  alias env_parallel 'setenv PARALLEL "\!*"; source `which env_parallel.tcsh`'
 else
   # Get the scalar and array variable names
   set _vARnAmES=(`set | awk -e '{print $1}' |grep -vE '^(_|killring|prompt2)$'`)
@@ -40,7 +39,7 @@ else
   set _tMpaLLfILe=`tempfile`
   foreach _vARnAmE ($_vARnAmES);
     # if $?myvar && $#myvar <= 1 echo scalar_myvar=$var
-    eval if'($?'$_vARnAmE' && ${#'$_vARnAmE'} <= 1) echo scalar_'$_vARnAmE'=\"'\"\$$_vARnAmE\"'\"' >> $_tMpvARfILe;
+    eval if'($?'$_vARnAmE' && ${#'$_vARnAmE'} <= 1) echo scalar_'$_vARnAmE'='\"\$$_vARnAmE\" >> $_tMpvARfILe;
     # if $?myvar && $#myvar > 1 echo array_myvar=$var
     eval if'($?'$_vARnAmE' && ${#'$_vARnAmE'} > 1) echo array_'$_vARnAmE'="$'$_vARnAmE'"' >> $_tMpvARfILe;
   end
