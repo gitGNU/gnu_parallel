@@ -77,4 +77,10 @@ echo '### bug #45907: --header : + --return {header}'
 echo "### bug #47608: parallel --nonall -S lo 'echo ::: ' blocks"
   parallel --nonall -S lo 'echo ::: '
 
+echo '### exported function to csh but with PARALLEL_SHELL=bash'
+  doit() { echo "$1"; }; 
+  export -f doit; 
+  stdout parallel --env doit -S csh@lo doit ::: not_OK; 
+  PARALLEL_SHELL=bash parallel --env doit -S csh@lo doit ::: OK
+
 EOF

@@ -764,7 +764,7 @@ sub options_hash {
 	 "sqlmaster=s" => \$opt::sqlmaster,
 	 "sqlworker=s" => \$opt::sqlworker,
 	 "sqlandworker=s" => \$opt::sqlandworker,
-	 "joblog=s" => \$opt::joblog,
+	 "joblog|jl=s" => \$opt::joblog,
 	 "results|result|res=s" => \$opt::results,
 	 "resume" => \$opt::resume,
 	 "resume-failed|resumefailed" => \$opt::resume_failed,
@@ -1183,7 +1183,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160422;
+    $Global::version = 20160423;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -7112,13 +7112,13 @@ sub sshlogin_wrap {
 	my $bashfuncset;
 	if(@bashfunc) {
 	    # Functions are not supported for all shells
-	    if($Global::shell !~ m:/(bash|rbash|zsh|rzsh|dash|ksh):) {
+	    if($Global::shell !~ m:(bash|rbash|zsh|rzsh|dash|ksh):) {
 		::warning("Shell functions may not be supported in $Global::shell.");
 	    }
 	    $bashfuncset =
 		'@bash_functions=qw('."@bash_functions".");".
-		::spacefree(1,q{
-		    if($ENV{"SHELL"}=~/csh/) {
+		::spacefree(1,'$shell="'.($ENV{'PARALLEL_SHELL'} || '$ENV{SHELL}').'";'.q{
+		    if($shell=~/csh/) {
 			print STDERR "CSH/TCSH DO NOT SUPPORT newlines IN VARIABLES/FUNCTIONS. Unset @bash_functions\n";
 			exec "false";
 		    }

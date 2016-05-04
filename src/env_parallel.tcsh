@@ -1,8 +1,8 @@
 #!/bin/csh
 
-# This file must be sourced in csh:
+# This file must be sourced in tcsh:
 #
-#   source `which env_parallel.csh`
+#   source `which env_parallel.tcsh`
 #
 # after which 'env_parallel' works
 #
@@ -60,8 +60,6 @@ else
 #   Quoted: s/\\047/\\047\\042\\047\\042\\047/g\;
 
 #   Remove () from second column
-#   s/^(\S+)(\s+)\((.*)\)/\1\2\3/
-#   \047 => '
 #   s/^(\S+)(\s+)\((.*)\)/\1\2\3/;
 #   Quoted: s/\^\(\\S+\)\(\\s+\)\\\(\(.\*\)\\\)/\\1\\2\\3/\;
 

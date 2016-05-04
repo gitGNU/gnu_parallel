@@ -285,7 +285,7 @@ positional replacement strings see B<{>I<n>B<}>.
 See also: B<{=perl expression=}> B<{>I<n>B<}>.
 
 
-=item B<:::> I<arguments> (alpha testing)
+=item B<:::> I<arguments> (beta testing)
 
 Use arguments from the command line as input source instead of stdin
 (standard input). Unlike other options for GNU B<parallel> B<:::> is
@@ -326,7 +326,7 @@ B<:::> and B<::::> can be mixed. So these are equivalent:
     ::: 1 2 3
 
 
-=item B<:::+> I<arguments> (alpha testing)
+=item B<:::+> I<arguments> (beta testing)
 
 Like B<:::> but linked like B<--xapply> to the previous input source.
 
@@ -338,7 +338,7 @@ Example:
   parallel echo ::: a b c :::+ 1 2 3 ::: X Y :::+ 11 22
 
 
-=item B<::::> I<argfiles> (alpha testing)
+=item B<::::> I<argfiles> (beta testing)
 
 Another way to write B<-a> I<argfile1> B<-a> I<argfile2> ...
 
@@ -347,7 +347,7 @@ B<:::> and B<::::> can be mixed.
 See B<-a>, B<:::> and B<--xapply>.
 
 
-=item B<::::+> I<argfiles> (alpha testing)
+=item B<::::+> I<argfiles> (beta testing)
 
 Like B<::::+> but linked like B<--xapply> to the previous input source.
 
@@ -611,7 +611,7 @@ If I<eof-str> is omitted, there is no end of file string.  If neither
 B<-E> nor B<-e> is used, no end of file string is used.
 
 
-=item B<--env> I<var> (alpha testing)
+=item B<--env> I<var> (beta testing)
 
 Copy environment variable I<var>. This will copy I<var> to the
 environment that the command is run in. This is especially useful for
