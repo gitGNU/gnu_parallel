@@ -2928,7 +2928,11 @@ sub setup_basefile {
 	  ::error("Work dir '...' will not work with relative basefiles.");
 	  ::wait_and_exit(255);
 	}
-	$workdir ||= Job->new("")->workdir();
+	if(not $workdir) {
+	    my $dummycmdline = CommandLine->new(1,"true",0,0,0,0,0,{},{},{});
+	    my $dummyjob = Job->new($dummycmdline);
+	    $workdir = $dummyjob->workdir();
+	}
 	$cmd .= $sshlogin->rsync_transfer_cmd($file,$workdir) . "&";
       }
     }
@@ -2944,7 +2948,12 @@ sub cleanup_basefile {
     #   @opt::basefile
     # Returns: N/A
     my $cmd = "";
-    my $workdir = Job->new("")->workdir();
+    my $workdir;
+    if(not $workdir) {
+	my $dummycmdline = CommandLine->new(1,"true",0,0,0,0,0,{},{},{});
+	my $dummyjob = Job->new($dummycmdline);
+	$workdir = $dummyjob->workdir();
+    }
     for my $sshlogin (values %Global::host) {
         if($sshlogin->string() eq ":") { next }
         for my $file (@opt::basefile) {
@@ -7532,12 +7541,14 @@ sub start {
     my $command = $job->wrapped();
     my $pid;
 
+    if($Global::interactive or $Global::stderr_verbose) {
+	$job->interactive_start();
+    }
+    # Must be run after $job->interactive_start():
+    # $job->interactive_start() may call $job->skip()
     if($job->{'commandline'}{'skip'}) {
 	# $job->skip() was called
 	$command = "true";
-    }
-    if($Global::interactive or $Global::stderr_verbose) {
-	$job->interactive_start();
     }
     $job->openoutputfiles();
     my($stdout_fh,$stderr_fh) = ($job->fh(1,"w"),$job->fh(2,"w"));
