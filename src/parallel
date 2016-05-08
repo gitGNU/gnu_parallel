@@ -7566,7 +7566,7 @@ sub start {
 	    open ERR, '>&', $stderr_fh or ::die_bug("Can't dup STDERR: $!");
 	    $pid = ::open3("<&IN", ">&OUT", ">&ERR",
 			   "exec $Global::shell -c ".
-			   ::shell_quote_scalar_default($command)) ||
+			   ::shell_quote_scalar($command)) ||
 			       ::die_bug("open3-/dev/tty");
 	    $Global::tty_taken = $pid;
 	    close $devtty_fh;

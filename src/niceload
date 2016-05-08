@@ -85,12 +85,16 @@ if(@opt::prg) {
     } elsif(@substr_name_pids) {
 	warning("@opt::prg no exact matches. Using substrings.");
 	my %name_pids;
-	for(@substr_name_pids) {
+	for(sort @substr_name_pids) {
+	    # If the process has run for long, then time column will
+	    # enter the name, so remove leading digits
+	    $name_of->{$_} =~ s/^\d+ //;
+	    # Remove arguments
 	    $name_of->{$_} =~ s/ .*//;
 	    push @{$name_pids{$name_of->{$_}}},$_;
 	}
 	warning("Niceloading",
-		map { "$_ (".(join",",@{$name_pids{$_}}).")" } keys %name_pids
+		map { "$_ (".(join" ",sort @{$name_pids{$_}}).")" } keys %name_pids
 		);
 	@pids = @substr_name_pids;
     } else {
@@ -292,8 +296,9 @@ sub get_options_from_array {
 	 "rn|runnoswap|run-noswap|run-no-swap" => \$opt::run_noswap,
 	 "noswap|N" => \$opt::noswap,
 
-	 # niceload -l -1 --sensor 'cat /sys/class/power_supply/BAT0/status /proc/acpi/battery/BAT0/state 2>/dev/null |grep -i -q discharging; echo $?'
 	 "battery|B" => \$opt::battery,
+	 "net" => \$opt::net,
+	 "nethops=i" => \$opt::nethops,
 
 	 "nice|n=i" => \$opt::nice,
 	 "program|prg=s" => \@opt::prg,
@@ -305,6 +310,24 @@ sub get_options_from_array {
 	 "verbose|v" => \$opt::verbose,
 	 "version|V" => \$opt::version,
 	);
+    if($opt::battery) {
+	# niceload -l -1 --sensor \
+	#   'cat /sys/class/power_supply/BAT0/status \
+	#    /proc/acpi/battery/BAT0/state 2>/dev/null |
+	#    grep -i -q discharging; echo $?'
+	$opt::sensor = ('cat /sys/class/power_supply/BAT0/status '.
+			'/proc/acpi/battery/BAT0/state 2>/dev/null | '.
+			'grep -i -q discharging; echo $?');
+	$opt::load = -1;
+    }
+    if($opt::net) {
+	$opt::nethops ||= 2;
+    }
+    if($opt::nethops) {
+	# niceload -l 0.01 --sensor 'netsensor_script'
+	$opt::sensor = netsensor_script($opt::nethops);
+	$opt::load ||= 0.01;
+    }
     if(not $this_is_ARGV) {
 	@{$array_ref} = @::ARGV;
 	@::ARGV = @save_argv;
@@ -312,6 +335,28 @@ sub get_options_from_array {
     return @retval;
 }
 
+sub shell_quote_scalar {
+    # Quote for other shells
+    my $a = $_[0];
+    if(defined $a) {
+	# zsh wants '=' quoted
+	# Solaris sh wants ^ quoted.
+	# $a =~ s/([\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\>\<\~\|\; \"\!\$\&\'\202-\377])/\\$1/g;
+	# This is 1% faster than the above
+	if(($a =~ s/[\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\<\=\>\~\|\; \"\!\$\&\'\202-\377]/\\$&/go)
+	   +
+	   # quote newline as '\n'
+	   ($a =~ s/[\n]/'\n'/go)) {
+	    # A string was replaced
+	    # No need to test for "" or \0
+	} elsif($a eq "") {
+	    $a = "''";
+	} elsif($a eq "\0") {
+	    $a = "";
+	}
+    }
+    return $a;
+}
 
 sub die_usage {
     help();
@@ -343,14 +388,37 @@ sub die_bug {
     exit(255);
 }
 
+sub now {
+    # Returns time since epoch as in seconds with 3 decimals
+    # Uses:
+    #   @Global::use
+    # Returns:
+    #   $time = time now with millisecond accuracy
+    if(not $Global::use{"Time::HiRes"}) {
+	if(eval "use Time::HiRes qw ( time );") {
+	    eval "sub TimeHiRestime { return Time::HiRes::time };";
+	} else {
+	    eval "sub TimeHiRestime { return time() };";
+	}
+	$Global::use{"Time::HiRes"} = 1;
+    }
+
+    return (int(TimeHiRestime()*1000))/1000;
+}
 
 sub usleep {
     # Sleep this many milliseconds.
     my $ms = shift;
     ::debug("Sleeping ",$ms," millisecs\n");
-    select(undef, undef, undef, $ms/1000);
+    my $start = now();
+    my $now;
+    do {
+	# Something makes 'select' wake up too early
+	# when using --sensor
+	select(undef, undef, undef, $ms/1000);
+	$now = now();
+    } while($now < $start + $ms/1000);
 }
-
 
 sub debug {
     if($opt::debug) {
@@ -422,6 +490,97 @@ sub min {
         $min = ($min < $_) ? $min : $_;
     }
     return $min;
+}
+
+sub netsensor_script {
+    # Script for --sensor when using --net
+    my $hops = shift;
+    my $perlscript = q{
+	use Net::Traceroute;
+	use Net::Ping;
+
+	my $medtrc = MedianTraceroute->new(shift);
+	$medtrc->ping();
+	$medtrc->ping();
+	while(1) {
+	    my $ms = $medtrc->ping();
+	    my $m = $medtrc->remedian();
+	    # printf("%.2f %.2f med*1.5 %f\n",$m*1000,$ms*1000,$m*1.5 < $ms);
+	    # 1 = median*1.5 < current latency
+	    # 0 = median*1.5 > current latency
+	    printf("%d\n",$m*1.5 < $ms);
+	    sleep(1);
+	}
+
+	package MedianTraceroute;
+
+	sub new {
+	    my $class = shift;
+	    my $hop = shift;
+	    # Find router
+	    my $tr = Net::Traceroute->new(host => "8.8.8.8",
+					  max_ttl => $hop);
+	    if($tr->found) {
+		$host = $tr->hop_query_host($hop, 0);
+	    } else {
+		# ns1.censurfridns.dk
+		$tr = Net::Traceroute->new(host => "89.233.43.71",
+					   max_ttl => $hop);
+		if($tr->found) {
+		    $host = $tr->hop_query_host($hop, 0);
+		} else {
+		    die("Cannot traceroute to 8.8.8.8 and 89.233.43.71");
+		}
+	    }
+	    my $p = Net::Ping->new("external");
+	    $p->hires();
+
+	    return bless {
+		'hop' => $hop,
+		'host' => $host,
+		'pinger' => $p,
+		'remedian_idx' => 0,
+		'remedian_arr' => [],
+		'remedian' => undef,
+	    }, ref($class) || $class;
+	}
+
+	sub ping {
+	    my $self = shift;
+	    for(1..3) {
+		# Ping should never take longer than 5.5 sec
+		my ($ret, $duration, $ip) =
+		    $self->{'pinger'}->ping($self->{'host'}, 5.5);
+		if($ret) {
+		    $self->set_remedian($duration);
+		    return $duration;
+		}
+	    }
+	    warn("Ping failed 3 times.");
+	}
+
+	sub remedian {
+	    my $self = shift;
+	    return $self->{'remedian'};
+	}
+
+	sub set_remedian {
+	    # Set median of the last 999^3 (=997002999) values using Remedian
+	    #
+	    # Rousseeuw, Peter J., and Gilbert W. Bassett Jr. "The remedian: A
+	    # robust averaging method for large data sets." Journal of the
+	    # American Statistical Association 85.409 (1990): 97-104.
+	    my $self = shift;
+	    my $val = shift;
+	    my $i = $self->{'remedian_idx'}++;
+	    my $rref = $self->{'remedian_arr'};
+	    $rref->[0][$i%999] = $val;
+	    $rref->[1][$i/999%999] = (sort @{$rref->[0]})[$#{$rref->[0]}/2];
+	    $rref->[2][$i/999/999%999] = (sort @{$rref->[1]})[$#{$rref->[1]}/2];
+	    $self->{'remedian'} = (sort @{$rref->[2]})[$#{$rref->[2]}/2];
+	}
+    };
+    return "perl -e ".shell_quote_scalar($perlscript)." $hops";
 }
 
 
@@ -768,11 +927,13 @@ sub nonblockGetLines {
 
 sub read_sensor {
     my $self = shift;
-    ::debug("read_sensor");
+    ::debug("read_sensor: ");
     my $fh = $self->{'sensor_fh'};
     if(not $fh) {
 	# Start the sensor
-	open($fh, "-|", $opt::sensor) || ::die_bug("Cannot open: $opt::sensor");
+	$self->{'sensor_pid'} =
+	    open($fh, "-|", $opt::sensor) ||
+	    ::die_bug("Cannot open: $opt::sensor");
 	$self->{'sensor_fh'} = $fh;
     }
     # Read as much as we can (non_block)
@@ -781,14 +942,17 @@ sub read_sensor {
     # new load = last full line
     foreach my $line (@lines) {
 	if(defined $line) {
-	    ::debug("Pipe saw: $eof [$line]\n");
+	    ::debug("Pipe saw: [$line] eof=$eof\n");
 	    $Global::last_sensor_reading = $line;
 	}
     }
     if($eof) {
 	# End of file => Restart the sensor
 	close $fh;
-	open($fh, "-|", $opt::sensor) || ::die_bug("Cannot open: $opt::sensor");
+#	waitpid($self->{'sensor_pid'},0);
+	$self->{'sensor_pid'} =
+	    open($fh, "-|", $opt::sensor) ||
+	    ::die_bug("Cannot open: $opt::sensor");
 	$self->{'sensor_fh'} = $fh;
     }
 
@@ -991,4 +1155,4 @@ sub io_status_darwin {
     return ::min($io, 10);
 }
 
-$::exitsignal = $::exitstatus = $opt::battery = 0; # Dummy
+$::exitsignal = $::exitstatus = 0; # Dummy

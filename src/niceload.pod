@@ -32,11 +32,11 @@ run 1 second, suspend (3.00-1.00) seconds, run 1 second, suspend
 
 =over 9
 
-=item B<-B>
+=item B<-B> (alpha testing)
 
-=item B<--battery>
+=item B<--battery> (alpha testing)
 
-Suspend if the system is running on battery. Short hand for: -l -1 --sensor 'cat /sys/class/power_supply/BAT0/status /proc/acpi/battery/BAT0/state 2>/dev/null |grep -i -q discharging; echo $?'
+Suspend if the system is running on battery. Shorthand for: -l -1 --sensor 'cat /sys/class/power_supply/BAT0/status /proc/acpi/battery/BAT0/state 2>/dev/null |grep -i -q discharging; echo $?'
 
 
 =item B<-f> I<FACTOR>
@@ -100,6 +100,29 @@ indication that the system is memory stressed.
 B<--noswap> is over limit if the system is swapping both in and out.
 
 B<--noswap> will set both B<--start-noswap> and B<run-noswap>.
+
+
+=item B<--net> (alpha testing)
+
+Shorthand for B<--nethops 2>.
+
+
+=item B<--nethops> I<h> (alpha testing)
+
+Network nice. Pause if the internet connection is overloaded.
+
+B<niceload> finds a router I<h> hops closer to the internet. It
+B<ping>s this every second. If the latency is more than 50% bigger
+than the median, it is regarded as being over the limit.
+
+B<--nethops> can be combined with B<--hard>. Without B<--hard> the
+program may be able to queue up so much traffic that it will take
+longer than the B<--suspend> time to clear it. B<--hard> is useful for
+traffic that does not break by being suspended for a longer time.
+
+B<--nethops> can be combined with a high B<--suspend>. This way a
+program can be allowed to do a bit of traffic now and then. This is
+useful to keep the connection alive.
 
 
 =item B<-n> I<niceness>
