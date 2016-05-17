@@ -1,11 +1,0 @@
-echo "### Test memory consumption stays (almost) the same for 30 and 300 jobs"
-### Test memory consumption stays (almost) the same for 30 and 300 jobs
-  mem30=$( stdout time -f %M parallel -j2 true :::: <(perl -e '$a="x"x100000;for(1..30){print $a,"\n"}') );   mem300=$( stdout time -f %M parallel -j2 true :::: <(perl -e '$a="x"x100000;for(1..300){print $a,"\n"}') );   echo "Memory use should not depend very much on the total number of jobs run\n";   echo "Test if memory consumption(300 jobs) < memory consumption(30 jobs) * 110% ";   echo $(($mem300*100 < $mem30 * 110))
-Memory use should not depend very much on the total number of jobs run\n
-Test if memory consumption(300 jobs) < memory consumption(30 jobs) * 110% 
-1
-echo '### Test --shellquote'
-### Test --shellquote
-  perl -e 'print pack("c*",1..255)' | parallel -0 --shellquote
-\\\\\\\\	'
-'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ

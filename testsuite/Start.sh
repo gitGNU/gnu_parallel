@@ -10,7 +10,7 @@ export TIMEOUT=$MAX_SEC_PER_TEST
 run_test() {
   script="$1"
   base=`basename "$script" .sh`
-  export TMPDIR=/tmp/"$base"
+  export TMPDIR=/tmp/"$base"-tmpdir
   mkdir -p "$TMPDIR"
   if [ "$TRIES" = "3" ] ; then
     # Try 3 times

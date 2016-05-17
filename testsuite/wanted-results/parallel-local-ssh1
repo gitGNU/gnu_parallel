@@ -1,3 +1,9 @@
+echo '### Test --load remote'
+### Test --load remote
+  ssh parallel@lo 'seq 10 | parallel --nice 19 --timeout 15 -j0 -N0 burnP6' &   sleep 1;   stdout /usr/bin/time -f %e parallel -S parallel@lo --load 10 sleep ::: 1 | perl -ne '$_ > 10 and print "OK\n"'
+OK
+echo '**'
+**
 echo '### Stop if all hosts are filtered and there are no hosts left to run on'
 ### Stop if all hosts are filtered and there are no hosts left to run on
   stdout parallel --filter-hosts -S no-such.host echo ::: 1
@@ -183,6 +189,13 @@ ls: cannot access bug46519.bb: No such file or directory
 ls: cannot access bug46519.bbb: No such file or directory
 ls: cannot access bug46519.cc: No such file or directory
 ls: cannot access bug46519.ccc: No such file or directory
+echo '### Test --nice remote'
+### Test --nice remote
+stdout parallel --nice 1 -S lo -vv 'PAR=a bash -c "echo  \$PAR {}"' ::: b |   perl -pe 's/\S*parallel-server\S*/one-server/;s:[a-z/\\+=0-9]{500,}:base64:i;'
+ssh lo -- exec perl -e @GNU_Parallel\\\=\\\(\\\"use\\\",\\\"IPC::Open3\\\;\\\",\\\"use\\\",\\\"MIME::Base64\\\"\\\)\\\;eval\\\"@GNU_Parallel\\\"\\\;my\\\$eval\\\=decode_base64\\\(join\\\"\\\",@ARGV\\\)\\\;eval\\\$eval\\\; base64;
+a b
+echo '**'
+**
 echo TODO
 TODO
 ## echo '### Test --trc --basefile --/./--foo7 :/./:foo8 " "/./" "foo9 ./foo11/./foo11'

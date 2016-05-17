@@ -1824,7 +1824,8 @@ An I<sshlogin> is of the form:
 
   [sshcommand [options]] [username@]hostname
 
-The sshlogin must not require a password.
+The sshlogin must not require a password (B<ssh-agent>,
+B<ssh-copy-id>, and B<sshpass> may help with that).
 
 The sshlogin ':' is special, it means 'no ssh' and will therefore run
 on the local computer.
@@ -2903,7 +2904,7 @@ If a line matches multiple regexps, the line may be duplicated.
 
 To run commands on a remote computer SSH needs to be set up and you
 must be able to login without entering a password (The commands
-B<ssh-copy-id> and B<ssh-agent> may help you do that).
+B<ssh-copy-id>, B<ssh-agent>, and B<sshpass> may help you do that).
 
 If you need to login to a whole cluster, you typically do not want to
 accept the host key for every host. You want to accept them the first

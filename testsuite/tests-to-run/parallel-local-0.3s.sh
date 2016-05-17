@@ -17,9 +17,10 @@ export SMALLDISK
 ) >/dev/null 2>/dev/null
 
 
+# Test amount of parallelization
+# parallel --shuf --jl /tmp/myjl -j1 'export JOBS={1};'bash tests-to-run/parallel-local-0.3s.sh ::: {1..16} ::: {1..5}
 
-
-cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj8 -k --joblog /tmp/jl-`basename $0` -L1
+cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj13 -k --joblog /tmp/jl-`basename $0` -L1
 echo '### Test bug #45619: "--halt" erroneous error exit code (should give 0)'; 
   seq 10 | parallel --halt now,fail=1 true; 
   echo $?
@@ -104,64 +105,6 @@ cat /dev/zero >$SMALLDISK/out;
 
 echo '**'
 
-echo '### bug #44546: If --compress-program fails: fail'
-  parallel --line-buffer --compress-program false echo \;ls ::: /no-existing; echo $?
-  parallel --tag --line-buffer --compress-program false echo \;ls ::: /no-existing; echo $?
-  (parallel --files --tag --line-buffer --compress-program false echo \;sleep 1\;ls ::: /no-existing; echo $?) | tail -n1
-  parallel --tag --compress-program false echo \;ls ::: /no-existing; echo $?
-  parallel --line-buffer --compress-program false echo \;ls ::: /no-existing; echo $?
-  parallel --compress-program false echo \;ls ::: /no-existing; echo $?
-
-echo 'bug #41613: --compress --line-buffer - no newline';
-  echo 'pipe compress tagstring'
-  perl -e 'print "O"'| parallel --compress --tagstring {#} --pipe --line-buffer cat;  echo "K"
-  echo 'pipe compress notagstring'
-  perl -e 'print "O"'| parallel --compress --pipe --line-buffer cat;  echo "K"
-  echo 'pipe nocompress tagstring'
-  perl -e 'print "O"'| parallel --tagstring {#} --pipe --line-buffer cat;  echo "K"
-  echo 'pipe nocompress notagstring'
-  perl -e 'print "O"'| parallel --pipe --line-buffer cat;  echo "K"
-  echo 'nopipe compress tagstring'
-  parallel --compress --tagstring {#} --line-buffer echo {} O ::: -n;  echo "K"
-  echo 'nopipe compress notagstring'
-  parallel --compress --line-buffer echo {} O ::: -n;  echo "K"
-  echo 'nopipe nocompress tagstring'
-  parallel --tagstring {#} --line-buffer echo {} O ::: -n;  echo "K"
-  echo 'nopipe nocompress notagstring'
-  parallel --line-buffer echo {} O ::: -n;  echo "K"
-
-echo 'Compress with failing (de)compressor'
-  parallel -k --tag               --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: tag true true
-  parallel -k --tag               --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: tag false true
-  parallel -k --tag               --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: tag false false
-  parallel -k --tag               --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: tag true false
-  parallel -k                     --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: true true
-  parallel -k                     --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: false true
-  parallel -k                     --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: false false
-  parallel -k                     --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: true false
-  parallel -k       --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: line-buffer true true
-  parallel -k       --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: line-buffer false true
-  parallel -k       --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: line-buffer false false
-  parallel -k --tag --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: tag line-buffer true false
-  parallel -k --tag --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: tag line-buffer true true
-  parallel -k --tag --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: tag line-buffer false true
-  parallel -k --tag --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: tag line-buffer false false
-  parallel -k --tag --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: tag line-buffer true false
-  parallel -k --files             --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: files true true   | parallel rm
-  parallel -k --files             --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: files false true  | parallel rm
-  parallel -k --files             --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: files false false | parallel rm
-  parallel -k --files             --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: files true false  | parallel rm
-
-echo 'bug #44250: pxz complains File format not recognized but decompresses anyway'
-  # The first line dumps core if run from make file. Why?!
-  stdout parallel --compress --compress-program pxz ls /{} ::: OK-if-missing-file
-  stdout parallel --compress --compress-program pixz --decompress-program 'pixz -d' ls /{}  ::: OK-if-missing-file
-  stdout parallel --compress --compress-program pixz --decompress-program 'pixz -d' true ::: OK-if-no-output
-  stdout parallel --compress --compress-program pxz true ::: OK-if-no-output
-
-echo 'bug #41613: --compress --line-buffer no newline';
-  perl -e 'print "It worked"'| parallel --pipe --compress --line-buffer cat; echo
-
 echo '### bug #44614: --pipepart --header off by one'
   seq 10 >/tmp/parallel_44616; 
     parallel --pipepart -a /tmp/parallel_44616 -k --block 5 'echo foo; cat'; 
@@ -204,41 +147,47 @@ echo '**'
 
 echo '### bug #45842: Do not evaluate {= =} twice'
 
-parallel -k echo '{=  $_=++$::G =}' ::: {1001..1004}
-parallel -k echo '{=1 $_=++$::G =}' ::: {1001..1004}
-parallel -k echo '{=  $_=++$::G =}' ::: {1001..1004} ::: {a..c}
-parallel -k echo '{=1 $_=++$::G =}' ::: {1001..1004} ::: {a..c}
+  parallel -k echo '{=  $_=++$::G =}' ::: {1001..1004}
+  parallel -k echo '{=1 $_=++$::G =}' ::: {1001..1004}
+  parallel -k echo '{=  $_=++$::G =}' ::: {1001..1004} ::: {a..c}
+  parallel -k echo '{=1 $_=++$::G =}' ::: {1001..1004} ::: {a..c}
 
 echo '**'
 
 echo '### bug #45939: {2} in {= =} fails'
-parallel echo '{= s/O{2}//=}' ::: OOOK
-parallel echo '{2}-{=1 s/O{2}//=}' ::: OOOK ::: OK
+
+  parallel echo '{= s/O{2}//=}' ::: OOOK
+  parallel echo '{2}-{=1 s/O{2}//=}' ::: OOOK ::: OK
 
 echo '**'
 
 echo '### bug #45998: --pipe to function broken'
-myfunc() { echo $1; cat; }; export -f myfunc; echo OK | parallel --pipe myfunc {#}
+
+  myfunc() { echo $1; cat; }; 
+    export -f myfunc; 
+    echo OK | parallel --pipe myfunc {#}
 
 echo '**'
 
 echo 'bug #46016: --joblog should not log when --dryrun'
-parallel --dryrun --joblog - echo ::: Only_this
+
+  parallel --dryrun --joblog - echo ::: Only_this
 
 echo '**'
 
 echo 'bug #45993: --wd ... should also work when run locally'
-parallel --wd /bi 'pwd; echo $OLDPWD; echo' ::: fail
-parallel --wd /bin 'pwd; echo $OLDPWD; echo' ::: OK
-parallel --wd / 'pwd; echo $OLDPWD; echo' ::: OK
-parallel --wd /tmp 'pwd; echo $OLDPWD; echo' ::: OK
-parallel --wd ... 'pwd; echo $OLDPWD; echo' ::: OK | perl -pe 's/\d+/0/g'
 
-parallel --wd . 'pwd; echo $OLDPWD; echo' ::: OK
+  parallel --wd /bi 'pwd; echo $OLDPWD; echo' ::: fail
+  parallel --wd /bin 'pwd; echo $OLDPWD; echo' ::: OK
+  parallel --wd / 'pwd; echo $OLDPWD; echo' ::: OK
+  parallel --wd /tmp 'pwd; echo $OLDPWD; echo' ::: OK
+  parallel --wd ... 'pwd; echo $OLDPWD; echo' ::: OK | perl -pe 's/\d+/0/g'
+  parallel --wd . 'pwd; echo $OLDPWD; echo' ::: OK
 
 echo '**'
 
 echo 'bug #46232: {%} with --bar/--eta/--shuf or --halt xx% broken'
+
   parallel --bar -kj2 --delay 0.1 echo {%} ::: a b  ::: c d e 2>/dev/null
   parallel --halt now,fail=10% -kj2 --delay 0.1 echo {%} ::: a b  ::: c d e
   parallel --eta -kj2 --delay 0.1 echo {%} ::: a b  ::: c d e 2>/dev/null
@@ -247,8 +196,9 @@ echo 'bug #46232: {%} with --bar/--eta/--shuf or --halt xx% broken'
 echo '**'
 
 echo 'bug #46231: {%} with --pipepart broken. Should give 1+2'
+
   seq 10000 > /tmp/num10000; 
-  parallel --pipepart -ka /tmp/num10000 --block 10k -j2 echo {%}; 
+  parallel -k --pipepart -ka /tmp/num10000 --block 10k -j2 --delay 0.05 echo {%}; 
   rm /tmp/num10000
 
 echo '**'
@@ -282,6 +232,370 @@ echo 'bug #47290: xargs: Warning: a NUL character occurred in the input'
   perl -e 'print "foo\0not printed"' | parallel echo
 
 echo '**'
+
+echo '### Test --shellquote'
+  parallel --tag -q -k {} -c perl\ -e\ \'print\ pack\(\"c\*\",1..255\)\'\ \|\ parallel\ -0\ --shellquote ::: ash bash csh dash fish fizsh ksh ksh93 lksh mksh pdksh posh rzsh sash sh static-sh tcsh yash zsh csh tcsh
+
+echo '**'
+
+echo xargs compatibility
+
+echo '### Test -L -l and --max-lines'
+
+  (echo a_b;echo c) | parallel -km -L2 echo
+  (echo a_b;echo c) | parallel -k -L2 echo
+  (echo a_b;echo c) | xargs -L2 echo
+
+echo '### xargs -L1 echo'
+
+  (echo a_b;echo c) | parallel -km -L1 echo
+  (echo a_b;echo c) | parallel -k -L1 echo
+  (echo a_b;echo c) | xargs -L1 echo
+  echo 'Lines ending in space should continue on next line'
+
+echo '### xargs -L1 echo'
+
+  (echo a_b' ';echo c;echo d) | parallel -km -L1 echo
+  (echo a_b' ';echo c;echo d) | parallel -k -L1 echo
+  (echo a_b' ';echo c;echo d) | xargs -L1 echo
+  
+echo '### xargs -L2 echo'
+
+  (echo a_b' ';echo c;echo d;echo e) | parallel -km -L2 echo
+  (echo a_b' ';echo c;echo d;echo e) | parallel -k -L2 echo
+  (echo a_b' ';echo c;echo d;echo e) | xargs -L2 echo
+  
+echo '### xargs -l echo'
+
+  (echo a_b' ';echo c;echo d;echo e) | parallel -l -km echo # This behaves wrong
+  (echo a_b' ';echo c;echo d;echo e) | parallel -l -k echo # This behaves wrong
+  (echo a_b' ';echo c;echo d;echo e) | xargs -l echo
+  
+echo '### xargs -l2 echo'
+
+  (echo a_b' ';echo c;echo d;echo e) | parallel -km -l2 echo
+  (echo a_b' ';echo c;echo d;echo e) | parallel -k -l2 echo
+  (echo a_b' ';echo c;echo d;echo e) | xargs -l2 echo
+  
+echo '### xargs -l1 echo'
+
+  (echo a_b' ';echo c;echo d;echo e) | parallel -km -l1 echo
+  (echo a_b' ';echo c;echo d;echo e) | parallel -k -l1 echo
+  (echo a_b' ';echo c;echo d;echo e) | xargs -l1 echo
+  
+echo '### xargs --max-lines=2 echo'
+
+  (echo a_b' ';echo c;echo d;echo e) | parallel -km --max-lines 2 echo
+  (echo a_b' ';echo c;echo d;echo e) | parallel -k --max-lines 2 echo
+  (echo a_b' ';echo c;echo d;echo e) | xargs --max-lines=2 echo
+  
+echo '### xargs --max-lines echo'
+
+  (echo a_b' ';echo c;echo d;echo e) | parallel --max-lines -km echo # This behaves wrong
+  (echo a_b' ';echo c;echo d;echo e) | parallel --max-lines -k echo # This behaves wrong
+  (echo a_b' ';echo c;echo d;echo e) | xargs --max-lines echo
+  
+echo '### test too long args'
+
+  perl -e 'print "z"x1000000' | parallel echo 2>&1
+  perl -e 'print "z"x1000000' | xargs echo 2>&1
+  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdout parallel -j1 -km -s 10 echo
+  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdout xargs -s 10 echo
+  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdout parallel -j1 -kX -s 10 echo
+  
+echo '### Test -x'
+
+  (seq 1 10; echo 12345; seq 12 15) | stdout parallel -j1 -km -s 10 -x echo
+  (seq 1 10; echo 12345; seq 12 15) | stdout parallel -j1 -kX -s 10 -x echo
+  (seq 1 10; echo 12345; seq 12 15) | stdout xargs -s 10 -x echo
+  (seq 1 10; echo 1234; seq 12 15) | stdout parallel -j1 -km -s 10 -x echo
+  (seq 1 10; echo 1234; seq 12 15) | stdout parallel -j1 -kX -s 10 -x echo
+  (seq 1 10; echo 1234; seq 12 15) | stdout xargs -s 10 -x echo
+  
+echo '### Test -a and --arg-file: Read input from file instead of stdin'
+
+  seq 1 10 >/tmp/parallel_$$-1; parallel -k -a /tmp/parallel_$$-1 echo; rm /tmp/parallel_$$-1
+  seq 1 10 >/tmp/parallel_$$-2; parallel -k --arg-file /tmp/parallel_$$-2 echo; rm /tmp/parallel_$$-2
+  
+echo '### Test -i and --replace: Replace with argument'
+
+  (echo a; echo END; echo b) | parallel -k -i -eEND echo repl{}ce
+  (echo a; echo END; echo b) | parallel -k --replace -eEND echo repl{}ce
+  (echo a; echo END; echo b) | parallel -k -i+ -eEND echo repl+ce
+  (echo e; echo END; echo b) | parallel -k -i'*' -eEND echo r'*'plac'*'
+  (echo a; echo END; echo b) | parallel -k --replace + -eEND echo repl+ce
+  (echo a; echo END; echo b) | parallel -k --replace== -eEND echo repl=ce
+  (echo a; echo END; echo b) | parallel -k --replace = -eEND echo repl=ce
+  (echo a; echo END; echo b) | parallel -k --replace=^ -eEND echo repl^ce
+  (echo a; echo END; echo b) | parallel -k -I^ -eEND echo repl^ce
+  
+echo '### Test -E: Artificial end-of-file'
+
+  (echo include this; echo END; echo not this) | parallel -k -E END echo
+  (echo include this; echo END; echo not this) | parallel -k -EEND echo
+  
+echo '### Test -e and --eof: Artificial end-of-file'
+
+  (echo include this; echo END; echo not this) | parallel -k -e END echo
+  (echo include this; echo END; echo not this) | parallel -k -eEND echo
+  (echo include this; echo END; echo not this) | parallel -k --eof=END echo
+  (echo include this; echo END; echo not this) | parallel -k --eof END echo
+  
+echo '### Test -n and --max-args: Max number of args per line (only with -X and -m)'
+
+  (echo line 1;echo line 2;echo line 3) | parallel -k -n1 -m echo
+  (echo line 1;echo line 1;echo line 2) | parallel -k -n2 -m echo
+  (echo line 1;echo line 2;echo line 3) | parallel -k -n1 -X echo
+  (echo line 1;echo line 1;echo line 2) | parallel -k -n2 -X echo
+  (echo line 1;echo line 2;echo line 3) | parallel -k -n1 echo
+  (echo line 1;echo line 1;echo line 2) | parallel -k -n2 echo
+  (echo line 1;echo line 2;echo line 3) | parallel -k --max-args=1 -X echo
+  (echo line 1;echo line 2;echo line 3) | parallel -k --max-args 1 -X echo
+  (echo line 1;echo line 1;echo line 2) | parallel -k --max-args=2 -X echo
+  (echo line 1;echo line 1;echo line 2) | parallel -k --max-args 2 -X echo
+  (echo line 1;echo line 2;echo line 3) | parallel -k --max-args 1 echo
+  (echo line 1;echo line 1;echo line 2) | parallel -k --max-args 2 echo
+  
+echo '### Test --max-procs and -P: Number of processes'
+
+  seq 1 10 | parallel -k --max-procs +0 echo max proc
+  seq 1 10 | parallel -k -P 200% echo 200% proc
+  
+echo '### Test --delimiter and -d: Delimiter instead of newline'
+
+  echo '# Yes there is supposed to be an extra newline for -d N'
+  echo line 1Nline 2Nline 3 | parallel -k -d N echo This is
+  echo line 1Nline 2Nline 3 | parallel -k --delimiter N echo This is
+  printf "delimiter NUL line 1\0line 2\0line 3" | parallel -k -d '\0' echo
+  printf "delimiter TAB line 1\tline 2\tline 3" | parallel -k --delimiter '\t' echo
+  
+echo '### Test --max-chars and -s: Max number of chars in a line'
+
+  (echo line 1;echo line 1;echo line 2) | parallel -k --max-chars 25 -X echo
+  (echo line 1;echo line 1;echo line 2) | parallel -k -s 25 -X echo
+  
+echo '### Test --no-run-if-empty and -r: This should give no output'
+
+  echo "  " | parallel -r echo
+  echo "  " | parallel --no-run-if-empty echo
+  
+echo '### Test --help and -h: Help output (just check we get the same amount of lines)'
+
+  echo Output from -h and --help
+  parallel -h | wc -l
+  parallel --help | wc -l
+  
+echo '### Test --version: Version output (just check we get the same amount of lines)'
+
+  parallel --version | wc -l
+  
+echo '### Test --verbose and -t'
+
+  (echo b; echo c; echo f) | parallel -k -t echo {}ar 2>&1 >/dev/null
+  (echo b; echo c; echo f) | parallel -k --verbose echo {}ar 2>&1 >/dev/null
+  
+echo '### Test --show-limits'
+
+  (echo b; echo c; echo f) | parallel -k --show-limits echo {}ar
+  (echo b; echo c; echo f) | parallel -j1 -kX --show-limits -s 100 echo {}ar
+  
+echo '### Test empty line as input'
+
+  echo | parallel echo empty input line
+  
+echo '### Tests if (cat | sh) works'
+
+  perl -e 'for(1..25) {print "echo a $_; echo b $_\n"}' | parallel 2>&1 | sort
+  
+echo '### Test if xargs-mode works'
+
+  perl -e 'for(1..25) {print "a $_\nb $_\n"}' | parallel echo 2>&1 | sort
+  
+echo '### Test -q'
+
+  parallel -kq perl -e '$ARGV[0]=~/^\S+\s+\S+$/ and print $ARGV[0],"\n"' ::: "a b" c "d e f" g "h i"
+  
+echo '### Test -q {#}'
+
+  parallel -kq echo {#} ::: a b
+  parallel -kq echo {\#} ::: a b
+  parallel -kq echo {\\#} ::: a b
+  
+echo '### Test long commands do not take up all memory'
+
+  seq 1 100 | parallel -j0 -qv perl -e '$r=rand(shift);for($f=0;$f<$r;$f++){$a="a"x100};print shift,"\n"' 10000 2>/dev/null | sort
+  
+echo '### Test 0-arguments'
+
+  seq 1 2 | parallel -k -n0 echo n0
+  seq 1 2 | parallel -k -L0 echo L0
+  seq 1 2 | parallel -k -N0 echo N0
+  
+echo '### Because of --tollef -l, then -l0 == -l1, sorry'
+
+  seq 1 2 | parallel -k -l0 echo l0
+  
+echo '### Test replace {}'
+
+  seq 1 2 | parallel -k -N0 echo replace {} curlies
+  
+echo '### Test arguments on commandline'
+
+  parallel -k -N0 echo args on cmdline ::: 1 2
+  
+echo '### Test --nice locally'
+
+  parallel --nice 1 -vv 'PAR=a bash -c "echo  \$PAR {}"' ::: b
+  
+echo '### Test distribute arguments at EOF to 2 jobslots'
+
+  seq 1 92 | parallel -j+0 -kX -s 100 echo
+  
+echo '### Test distribute arguments at EOF to 5 jobslots'
+
+  seq 1 92 | parallel -j+3 -kX -s 100 echo
+  
+echo '### Test distribute arguments at EOF to infinity jobslots'
+
+  seq 1 92 | parallel -j0 -kX -s 100 echo 2>/dev/null
+  
+echo '### Test -N is not broken by distribution - single line'
+
+  seq 9 | parallel  -N 10  echo
+  
+echo '### Test -N is not broken by distribution - two lines'
+
+  seq 19 | parallel -k -N 10  echo
+  
+echo '### Test -N context replace'
+
+  seq 19 | parallel -k -N 10  echo a{}b
+  
+echo '### Test -L context replace'
+
+  seq 19 | parallel -k -L 10  echo a{}b
+  
+echo '**'
+
+echo '### Test {} multiple times in different commands'
+
+  seq 10 | parallel -v -Xj1 echo {} \; echo {}
+
+echo '### Test of -X {1}-{2} with multiple input sources'
+
+  parallel -j1 -kX  echo {1}-{2} ::: a ::: b
+  parallel -j2 -kX  echo {1}-{2} ::: a b ::: c d
+  parallel -j2 -kX  echo {1}-{2} ::: a b c ::: d e f
+  parallel -j0 -kX  echo {1}-{2} ::: a b c ::: d e f
+
+echo '### Test of -X {}-{.} with multiple input sources'
+
+  parallel -j1 -kX  echo {}-{.} ::: a ::: b
+  parallel -j2 -kX  echo {}-{.} ::: a b ::: c d
+  parallel -j2 -kX  echo {}-{.} ::: a b c ::: d e f
+  parallel -j0 -kX  echo {}-{.} ::: a b c ::: d e f
+
+echo '### Test of -r with --pipe - the first should give an empty line. The second should not.'
+
+  echo | parallel  -j2 -N1 --pipe cat | wc -l
+  echo | parallel -r -j2 -N1 --pipe cat | wc -l
+
+echo '### Test --tty'
+
+  seq 0.1 0.1 0.5 | parallel -j1 --tty tty\;sleep
+
+echo '**'
+
+echo '### Test bugfix if no command given'
+  (echo echo; seq 1 5; perl -e 'print "z"x1000000'; seq 12 15) | stdout parallel -j1 -km -s 10
+
+echo '**'
+
+echo "### Test --results"
+  mkdir -p /tmp/parallel_results_test; 
+  parallel -k --results /tmp/parallel_results_test/testA echo {1} {2} ::: I II ::: III IIII; 
+  ls /tmp/parallel_results_test/testA/*/*/*/*/*; rm -rf /tmp/parallel_results_test/testA*
+
+echo "### Test --res"
+  mkdir -p /tmp/parallel_results_test; 
+  parallel -k --res /tmp/parallel_results_test/testD echo {1} {2} ::: I II ::: III IIII; 
+  ls /tmp/parallel_results_test/testD/*/*/*/*/*; rm -rf /tmp/parallel_results_test/testD*
+
+echo "### Test --result"
+  mkdir -p /tmp/parallel_results_test; 
+  parallel -k --result /tmp/parallel_results_test/testE echo {1} {2} ::: I II ::: III IIII; 
+  ls /tmp/parallel_results_test/testE/*/*/*/*/*; rm -rf /tmp/parallel_results_test/testE*
+
+echo "### Test --results --header :"
+  mkdir -p /tmp/parallel_results_test; 
+  parallel -k --header : --results /tmp/parallel_results_test/testB echo {1} {2} ::: a I II ::: b III IIII; 
+  ls /tmp/parallel_results_test/testB/*/*/*/*/*; rm -rf /tmp/parallel_results_test/testB*
+
+echo "### Test --results --header : named - a/b swapped"
+  mkdir -p /tmp/parallel_results_test; 
+  parallel -k --header : --results /tmp/parallel_results_test/testC echo {a} {b} ::: b III IIII ::: a I II;
+  ls /tmp/parallel_results_test/testC/*/*/*/*/*; rm -rf /tmp/parallel_results_test/testC*
+
+echo "### Test --results --header : piped"
+  mkdir -p /tmp/parallel_results_test; 
+  (echo Col; perl -e 'print "backslash\\tab\tslash/null\0eof\n"') | parallel  --header : --result /tmp/parallel_results_test/testF true; 
+  find /tmp/parallel_results_test/testF/*/*/* | sort; rm -rf /tmp/parallel_results_test/testF*
+
+echo "### Test --results --header : piped - non-existing column header"
+  mkdir -p /tmp/parallel_results_test; 
+  (printf "Col1\t\n"; printf "v1\tv2\tv3\n"; perl -e 'print "backslash\\tab\tslash/null\0eof\n"') | parallel --header : --result /tmp/parallel_results_test/testG true; find /tmp/parallel_results_test/testG/ | sort; rm -rf /tmp/parallel_results_test/testG*
+
+echo '**'
+
+echo "bug #34958: --pipe with record size measured in lines"
+  seq 10 | parallel -k --pipe -l 4 cat\;echo bug 34958-2
+
+echo '**'
+
+echo "bug #37325: Inefficiency of --pipe -L"
+  seq 2000 | parallel -k --pipe --block 1k -L 4 wc\;echo FOO | uniq
+
+echo '**'
+
+echo "bug #34958: --pipe with record size measured in lines"
+  seq 10 | parallel -k --pipe -L 4 cat\;echo bug 34958-1
+
+echo '**'
+
+echo "### bug #41482: --pipe --compress blocks at different -j/seq combinations"
+  seq 1 | parallel -k -j2 --compress -N1 -L1 --pipe cat;
+  echo echo 1-4 + 1-4
+    seq 4 | parallel -k -j3 --compress -N1 -L1 -vv echo;
+  echo 4 times wc to stderr to stdout
+    (seq 4 | parallel -k -j3 --compress -N1 -L1 --pipe wc '>&2') 2>&1 >/dev/null
+  echo 1 2 3 4
+    seq 4 | parallel -k -j3 --compress echo;
+  echo 1 2 3 4
+    seq 4 | parallel -k -j1 --compress echo;
+  echo 1 2
+    seq 2 | parallel -k -j1 --compress echo;
+  echo 1 2 3
+    seq 3 | parallel -k -j2 --compress -N1 -L1 --pipe cat;
+
+echo '**'
+
+echo '### --pipe without command'
+
+  seq -w 10 | stdout parallel --pipe
+
+echo '**'
+
+echo '### bug #36260: {n} expansion in --colsep files fails for empty fields if all following fields are also empty'
+
+  echo A,B,, | parallel --colsep , echo {1}{3}{2}
+
+echo '**'
+
+echo '### bug #34422: parallel -X --eta crashes with div by zero'
+
+  # We do not care how long it took
+  seq 2 | stdout parallel -X --eta echo | grep -E -v 'ETA:.*AVG'
+
 
 EOF
 echo '### 1 .par file from --files expected'

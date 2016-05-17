@@ -123,7 +123,7 @@ stdout ssh $SSHLOGIN1 ls 'tmp/parallel.file*' || echo OK
 stdout ssh $SSHLOGIN2 ls 'tmp/parallel.file*' || echo OK
 echo 'Input for ssh'
 cat /tmp/myssh1-run /tmp/myssh2-run | perl -pe 's/(PID.)\d+/${1}00000/g;s/(SEQ[ =]|line)\d/$1X/g;' | 
-  perl -pe 's/\S*parallel-server\S*/one-server/;s:[a-zA-Z0-9/+=]{500,}:base64:;'
+  perl -pe 's/\S*parallel-server\S*/one-server/;s:[a-zA-Z0-9/\\+=]{500,}:base64:;'
 rm /tmp/myssh1-run /tmp/myssh2-run
 
 rm -rf /tmp/parallel.file*

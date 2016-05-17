@@ -192,7 +192,7 @@ stdout ssh $SSHLOGIN1 ls '/tmp/parallel.file*' || echo OK
 stdout ssh $SSHLOGIN2 ls '/tmp/parallel.file*' || echo OK
 
 echo '### --transfer --cleanup - multiple argument files'
-parallel --xapply -kv --transfer --cleanup -S$SSHLOGIN2 cat {2} {1} :::: /tmp/test17rel <(sort -r /tmp/test17abs)
+parallel --xapply -kv --transferfile {1} --transferfile {2} --cleanup -S$SSHLOGIN2 cat {2} {1} :::: /tmp/test17rel <(sort -r /tmp/test17abs)
 # Should give: No such file or directory
 stdout ssh $SSHLOGIN2 ls '/tmp/parallel.file*' || echo OK
 

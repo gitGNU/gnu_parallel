@@ -7,6 +7,13 @@ cd tmp
 unset run_test
 
 cat <<'EOF' | sed -e s/\$SERVER1/$SERVER1/\;s/\$SERVER2/$SERVER2/ | stdout parallel -vj300% -k --joblog /tmp/jl-`basename $0` -L1
+echo '### Test --load remote'
+  ssh parallel@lo 'seq 10 | parallel --nice 19 --timeout 15 -j0 -N0 burnP6' & 
+  sleep 1; 
+  stdout /usr/bin/time -f %e parallel -S parallel@lo --load 10 sleep ::: 1 | perl -ne '$_ > 10 and print "OK\n"'
+
+echo '**'
+
 echo '### Stop if all hosts are filtered and there are no hosts left to run on'
   stdout parallel --filter-hosts -S no-such.host echo ::: 1
 
@@ -131,6 +138,11 @@ echo '### bug #46519: --onall ignores --transfer'
   ls bug46519.?? bug46519.???; 
   parallel --onall -S csh@lo,sh@lo ls bug46519.{}{} bug46519.{}{}{} ::: a b c && echo Cleanup failed
 
+echo '### Test --nice remote'
+stdout parallel --nice 1 -S lo -vv 'PAR=a bash -c "echo  \$PAR {}"' ::: b | 
+  perl -pe 's/\S*parallel-server\S*/one-server/;s:[a-z/\\+=0-9]{500,}:base64:i;'
+
+echo '**'
 
 echo TODO
 

@@ -97,4 +97,42 @@ echo '### bug #47750: -k --line-buffer should give current job up to now'
   parallel --line-buffer --tag -k 'seq {} | pv -qL 10' ::: {10..20}
   parallel --line-buffer -k 'echo stdout top;sleep 1;echo stderr in the middle >&2; sleep 1;echo stdout' ::: end 2>&1
 
+echo '**'
+
+echo "### Test memory consumption stays (almost) the same for 30 and 300 jobs"
+echo "should give 1 == true"
+
+  mem30=$( stdout time -f %M parallel -j2 true :::: <(perl -e '$a="x"x60000;for(1..30){print $a,"\n"}') ); 
+  mem300=$( stdout time -f %M parallel -j2 true :::: <(perl -e '$a="x"x60000;for(1..300){print $a,"\n"}') ); 
+  echo "Memory use should not depend very much on the total number of jobs run\n"; 
+  echo "Test if memory consumption(300 jobs) < memory consumption(30 jobs) * 110% "; 
+  echo $(($mem300*100 < $mem30 * 110))
+
+echo '**'
+
+echo "### Test max line length -m -I"
+
+  seq 1 60000 | parallel -I :: -m -j1 echo a::b::c | sort >/tmp/114-a$$; 
+  md5sum </tmp/114-a$$; 
+  export CHAR=$(cat /tmp/114-a$$ | wc -c); 
+  export LINES=$(cat /tmp/114-a$$ | wc -l); 
+  echo "Chars per line ($CHAR/$LINES): "$(echo "$CHAR/$LINES" | bc); 
+  rm /tmp/114-a$$
+
+echo "### Test max line length -X -I"
+
+  seq 1 60000 | parallel -I :: -X -j1 echo a::b::c | sort >/tmp/114-b$$; 
+  md5sum </tmp/114-b$$; 
+  export CHAR=$(cat /tmp/114-b$$ | wc -c); 
+  export LINES=$(cat /tmp/114-b$$ | wc -l); 
+  echo "Chars per line ($CHAR/$LINES): "$(echo "$CHAR/$LINES" | bc); 
+  rm /tmp/114-b$$
+
+echo '**'
+
+echo "### bug #41609: --compress fails"
+  seq 12 | parallel --compress --compress-program bzip2 -k seq {} 1000000 | md5sum
+  seq 12 | parallel --compress -k seq {} 1000000 | md5sum
+
+
 EOF

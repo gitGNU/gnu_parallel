@@ -117,180 +117,6 @@ parallel: Error: Output is incomplete. Cannot append to buffer file in /mnt/ram.
 parallel: Error: Change $TMPDIR with --tmpdir or use --compress.
 echo '**'
 **
-echo '### bug #44546: If --compress-program fails: fail'
-### bug #44546: If --compress-program fails: fail
-  parallel --line-buffer --compress-program false echo \;ls ::: /no-existing; echo $?
-1
-parallel: Error: false failed.
-parallel: Error: false failed.
-  parallel --tag --line-buffer --compress-program false echo \;ls ::: /no-existing; echo $?
-1
-parallel: Error: false failed.
-parallel: Error: false failed.
-  (parallel --files --tag --line-buffer --compress-program false echo \;sleep 1\;ls ::: /no-existing; echo $?) | tail -n1
-1
-parallel: Error: false failed.
-parallel: Error: false failed.
-parallel: Error: false failed.
-parallel: Error: false failed.
-  parallel --tag --compress-program false echo \;ls ::: /no-existing; echo $?
-1
-parallel: Error: false failed.
-parallel: Error: false failed.
-  parallel --line-buffer --compress-program false echo \;ls ::: /no-existing; echo $?
-1
-parallel: Error: false failed.
-parallel: Error: false failed.
-  parallel --compress-program false echo \;ls ::: /no-existing; echo $?
-1
-parallel: Error: false failed.
-parallel: Error: false failed.
-echo 'bug #41613: --compress --line-buffer - no newline';   echo 'pipe compress tagstring'
-bug #41613: --compress --line-buffer - no newline
-pipe compress tagstring
-  perl -e 'print "O"'| parallel --compress --tagstring {#} --pipe --line-buffer cat;  echo "K"
-1	OK
-  echo 'pipe compress notagstring'
-pipe compress notagstring
-  perl -e 'print "O"'| parallel --compress --pipe --line-buffer cat;  echo "K"
-OK
-  echo 'pipe nocompress tagstring'
-pipe nocompress tagstring
-  perl -e 'print "O"'| parallel --tagstring {#} --pipe --line-buffer cat;  echo "K"
-1	OK
-  echo 'pipe nocompress notagstring'
-pipe nocompress notagstring
-  perl -e 'print "O"'| parallel --pipe --line-buffer cat;  echo "K"
-OK
-  echo 'nopipe compress tagstring'
-nopipe compress tagstring
-  parallel --compress --tagstring {#} --line-buffer echo {} O ::: -n;  echo "K"
-1	OK
-  echo 'nopipe compress notagstring'
-nopipe compress notagstring
-  parallel --compress --line-buffer echo {} O ::: -n;  echo "K"
-OK
-  echo 'nopipe nocompress tagstring'
-nopipe nocompress tagstring
-  parallel --tagstring {#} --line-buffer echo {} O ::: -n;  echo "K"
-1	OK
-  echo 'nopipe nocompress notagstring'
-nopipe nocompress notagstring
-  parallel --line-buffer echo {} O ::: -n;  echo "K"
-OK
-echo 'Compress with failing (de)compressor'
-Compress with failing (de)compressor
-  parallel -k --tag               --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: tag true true
-tag	tag
-true	true
-true	true
-  parallel -k --tag               --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: tag false true
-tag	tag
-false	false
-true	true
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-  parallel -k --tag               --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: tag false false
-tag	tag
-false	false
-false	false
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-  parallel -k --tag               --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: tag true false
-tag	tag
-true	true
-false	false
-  parallel -k                     --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: true true
-true
-true
-  parallel -k                     --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: false true
-false
-true
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-  parallel -k                     --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: false false
-false
-false
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-  parallel -k                     --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: true false
-true
-false
-  parallel -k       --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: line-buffer true true
-line-buffer
-true
-true
-  parallel -k       --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: line-buffer false true
-line-buffer
-false
-true
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-  parallel -k       --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: line-buffer false false
-line-buffer
-false
-false
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-  parallel -k --tag --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: tag line-buffer true false
-tag	tag
-line-buffer	line-buffer
-true	true
-false	false
-  parallel -k --tag --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: tag line-buffer true true
-tag	tag
-line-buffer	line-buffer
-true	true
-true	true
-  parallel -k --tag --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: tag line-buffer false true
-tag	tag
-line-buffer	line-buffer
-false	false
-true	true
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-  parallel -k --tag --line-buffer --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: tag line-buffer false false
-tag	tag
-line-buffer	line-buffer
-false	false
-false	false
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-  parallel -k --tag --line-buffer --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: tag line-buffer true false
-tag	tag
-line-buffer	line-buffer
-true	true
-false	false
-  parallel -k --files             --compress --compress-program 'cat;true'  --decompress-program 'cat;true'  echo ::: files true true   | parallel rm
-  parallel -k --files             --compress --compress-program 'cat;false' --decompress-program 'cat;true'  echo ::: files false true  | parallel rm
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-  parallel -k --files             --compress --compress-program 'cat;false' --decompress-program 'cat;false' echo ::: files false false | parallel rm
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-parallel: Error: cat;false failed.
-  parallel -k --files             --compress --compress-program 'cat;true'  --decompress-program 'cat;false' echo ::: files true false  | parallel rm
-echo 'bug #44250: pxz complains File format not recognized but decompresses anyway'
-bug #44250: pxz complains File format not recognized but decompresses anyway
-  # The first line dumps core if run from make file. Why?!
-  stdout parallel --compress --compress-program pxz ls /{} ::: OK-if-missing-file
-parallel: Error: pxz failed.
-  stdout parallel --compress --compress-program pixz --decompress-program 'pixz -d' ls /{}  ::: OK-if-missing-file
-ls: cannot access /OK-if-missing-file: No such file or directory
-  stdout parallel --compress --compress-program pixz --decompress-program 'pixz -d' true ::: OK-if-no-output
-  stdout parallel --compress --compress-program pxz true ::: OK-if-no-output
-echo 'bug #41613: --compress --line-buffer no newline';   perl -e 'print "It worked"'| parallel --pipe --compress --line-buffer cat; echo
-bug #41613: --compress --line-buffer no newline
-It worked
 echo '### bug #44614: --pipepart --header off by one'
 ### bug #44614: --pipepart --header off by one
   seq 10 >/tmp/parallel_44616;     parallel --pipepart -a /tmp/parallel_44616 -k --block 5 'echo foo; cat';     parallel --pipepart -a /tmp/parallel_44616 -k --block 2 --regexp --recend 3'\n' 'echo foo; cat';     rm /tmp/parallel_44616
@@ -404,17 +230,17 @@ echo '**'
 **
 echo '### bug #45842: Do not evaluate {= =} twice'
 ### bug #45842: Do not evaluate {= =} twice
-parallel -k echo '{=  $_=++$::G =}' ::: {1001..1004}
+  parallel -k echo '{=  $_=++$::G =}' ::: {1001..1004}
 1
 2
 3
 4
-parallel -k echo '{=1 $_=++$::G =}' ::: {1001..1004}
+  parallel -k echo '{=1 $_=++$::G =}' ::: {1001..1004}
 1
 2
 3
 4
-parallel -k echo '{=  $_=++$::G =}' ::: {1001..1004} ::: {a..c}
+  parallel -k echo '{=  $_=++$::G =}' ::: {1001..1004} ::: {a..c}
 1 2
 3 4
 5 6
@@ -427,7 +253,7 @@ parallel -k echo '{=  $_=++$::G =}' ::: {1001..1004} ::: {a..c}
 19 20
 21 22
 23 24
-parallel -k echo '{=1 $_=++$::G =}' ::: {1001..1004} ::: {a..c}
+  parallel -k echo '{=1 $_=++$::G =}' ::: {1001..1004} ::: {a..c}
 1
 2
 3
@@ -444,46 +270,46 @@ echo '**'
 **
 echo '### bug #45939: {2} in {= =} fails'
 ### bug #45939: {2} in {= =} fails
-parallel echo '{= s/O{2}//=}' ::: OOOK
+  parallel echo '{= s/O{2}//=}' ::: OOOK
 OK
-parallel echo '{2}-{=1 s/O{2}//=}' ::: OOOK ::: OK
+  parallel echo '{2}-{=1 s/O{2}//=}' ::: OOOK ::: OK
 OK-OK
 echo '**'
 **
 echo '### bug #45998: --pipe to function broken'
 ### bug #45998: --pipe to function broken
-myfunc() { echo $1; cat; }; export -f myfunc; echo OK | parallel --pipe myfunc {#}
+  myfunc() { echo $1; cat; };     export -f myfunc;     echo OK | parallel --pipe myfunc {#}
 1
 OK
 echo '**'
 **
 echo 'bug #46016: --joblog should not log when --dryrun'
 bug #46016: --joblog should not log when --dryrun
-parallel --dryrun --joblog - echo ::: Only_this
+  parallel --dryrun --joblog - echo ::: Only_this
 echo Only_this
 echo '**'
 **
 echo 'bug #45993: --wd ... should also work when run locally'
 bug #45993: --wd ... should also work when run locally
-parallel --wd /bi 'pwd; echo $OLDPWD; echo' ::: fail
+  parallel --wd /bi 'pwd; echo $OLDPWD; echo' ::: fail
 parallel: Error: Cannot change into non-executable dir /bi: No such file or directory
-parallel --wd /bin 'pwd; echo $OLDPWD; echo' ::: OK
+  parallel --wd /bin 'pwd; echo $OLDPWD; echo' ::: OK
 /bin
 /home/tange/privat/parallel/testsuite
 OK
-parallel --wd / 'pwd; echo $OLDPWD; echo' ::: OK
+  parallel --wd / 'pwd; echo $OLDPWD; echo' ::: OK
 /
 /home/tange/privat/parallel/testsuite
 OK
-parallel --wd /tmp 'pwd; echo $OLDPWD; echo' ::: OK
+  parallel --wd /tmp 'pwd; echo $OLDPWD; echo' ::: OK
 /tmp
 /home/tange/privat/parallel/testsuite
 OK
-parallel --wd ... 'pwd; echo $OLDPWD; echo' ::: OK | perl -pe 's/\d+/0/g'
+  parallel --wd ... 'pwd; echo $OLDPWD; echo' ::: OK | perl -pe 's/\d+/0/g'
 /home/tange/.parallel/tmp/aspire-0-0
 /home/tange/privat/parallel/testsuite
 OK
-parallel --wd . 'pwd; echo $OLDPWD; echo' ::: OK
+  parallel --wd . 'pwd; echo $OLDPWD; echo' ::: OK
 /home/tange/privat/parallel/testsuite
 /home/tange/privat/parallel/testsuite
 OK
@@ -523,7 +349,7 @@ echo '**'
 **
 echo 'bug #46231: {%} with --pipepart broken. Should give 1+2'
 bug #46231: {%} with --pipepart broken. Should give 1+2
-  seq 10000 > /tmp/num10000;   parallel --pipepart -ka /tmp/num10000 --block 10k -j2 echo {%};   rm /tmp/num10000
+  seq 10000 > /tmp/num10000;   parallel -k --pipepart -ka /tmp/num10000 --block 10k -j2 --delay 0.05 echo {%};   rm /tmp/num10000
 1
 2
 1
@@ -609,5 +435,1208 @@ parallel: Warning: It cannot be passed through in the argument list.
 parallel: Warning: Did you mean to use the --null option?
 echo '**'
 **
-### 1 .par file from --files expected
+echo '### Test --shellquote'
+### Test --shellquote
+  parallel --tag -q -k {} -c perl\ -e\ \'print\ pack\(\"c\*\",1..255\)\'\ \|\ parallel\ -0\ --shellquote ::: ash bash csh dash fish fizsh ksh ksh93 lksh mksh pdksh posh rzsh sash sh static-sh tcsh yash zsh csh tcsh
+ash	\\\\\\\\	'
+ash	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+bash	\\\\\\\\	'
+bash	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+csh	\\\\\\\\	"\
+csh	"\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+dash	\\\\\\\\	'
+dash	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+fish	\\\\\\\\	'
+fish	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+fizsh	\\\\\\\\	'
+fizsh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+ksh	\\\\\\\\	'
+ksh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+ksh93	\\\\\\\\	'
+ksh93	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+lksh	\\\\\\\\	'
+lksh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+mksh	\\\\\\\\	'
+mksh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+pdksh	\\\\\\\\	'
+pdksh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+posh	\\\\\\\\	'
+posh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+rzsh	\\\\\\\\	'
+rzsh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+sash	\\\\\\\\	'
+sash	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+sh	\\\\\\\\	'
+sh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+static-sh	\\\\\\\\	'
+static-sh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+tcsh	\\\\\\\\	"\
+tcsh	"\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+yash	\\\\\\\\	'
+yash	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+zsh	\\\\\\\\	'
+zsh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+csh	\\\\\\\\	"\
+csh	"\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+tcsh	\\\\\\\\	"\
+tcsh	"\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+echo '**'
+**
+echo xargs compatibility
+xargs compatibility
+echo '### Test -L -l and --max-lines'
+### Test -L -l and --max-lines
+  (echo a_b;echo c) | parallel -km -L2 echo
+a_b
+c
+  (echo a_b;echo c) | parallel -k -L2 echo
+a_b c
+  (echo a_b;echo c) | xargs -L2 echo
+a_b c
+echo '### xargs -L1 echo'
+### xargs -L1 echo
+  (echo a_b;echo c) | parallel -km -L1 echo
+a_b
+c
+  (echo a_b;echo c) | parallel -k -L1 echo
+a_b
+c
+  (echo a_b;echo c) | xargs -L1 echo
+a_b
+c
+  echo 'Lines ending in space should continue on next line'
+Lines ending in space should continue on next line
+echo '### xargs -L1 echo'
+### xargs -L1 echo
+  (echo a_b' ';echo c;echo d) | parallel -km -L1 echo
+a_b c
+d
+  (echo a_b' ';echo c;echo d) | parallel -k -L1 echo
+a_b c
+d
+  (echo a_b' ';echo c;echo d) | xargs -L1 echo
+a_b c
+d
+  echo '### xargs -L2 echo'
+### xargs -L2 echo
+  (echo a_b' ';echo c;echo d;echo e) | parallel -km -L2 echo
+a_b c d
+e
+  (echo a_b' ';echo c;echo d;echo e) | parallel -k -L2 echo
+a_b c d
+e
+  (echo a_b' ';echo c;echo d;echo e) | xargs -L2 echo
+a_b c d
+e
+  echo '### xargs -l echo'
+### xargs -l echo
+  (echo a_b' ';echo c;echo d;echo e) | parallel -l -km echo # This behaves wrong
+a_b c
+d
+e
+  (echo a_b' ';echo c;echo d;echo e) | parallel -l -k echo # This behaves wrong
+a_b c
+d
+e
+  (echo a_b' ';echo c;echo d;echo e) | xargs -l echo
+a_b c
+d
+e
+  echo '### xargs -l2 echo'
+### xargs -l2 echo
+  (echo a_b' ';echo c;echo d;echo e) | parallel -km -l2 echo
+a_b c d
+e
+  (echo a_b' ';echo c;echo d;echo e) | parallel -k -l2 echo
+a_b c d
+e
+  (echo a_b' ';echo c;echo d;echo e) | xargs -l2 echo
+a_b c d
+e
+  echo '### xargs -l1 echo'
+### xargs -l1 echo
+  (echo a_b' ';echo c;echo d;echo e) | parallel -km -l1 echo
+a_b c
+d
+e
+  (echo a_b' ';echo c;echo d;echo e) | parallel -k -l1 echo
+a_b c
+d
+e
+  (echo a_b' ';echo c;echo d;echo e) | xargs -l1 echo
+a_b c
+d
+e
+  echo '### xargs --max-lines=2 echo'
+### xargs --max-lines=2 echo
+  (echo a_b' ';echo c;echo d;echo e) | parallel -km --max-lines 2 echo
+a_b c d
+e
+  (echo a_b' ';echo c;echo d;echo e) | parallel -k --max-lines 2 echo
+a_b c d
+e
+  (echo a_b' ';echo c;echo d;echo e) | xargs --max-lines=2 echo
+a_b c d
+e
+  echo '### xargs --max-lines echo'
+### xargs --max-lines echo
+  (echo a_b' ';echo c;echo d;echo e) | parallel --max-lines -km echo # This behaves wrong
+a_b c
+d
+e
+  (echo a_b' ';echo c;echo d;echo e) | parallel --max-lines -k echo # This behaves wrong
+a_b c
+d
+e
+  (echo a_b' ';echo c;echo d;echo e) | xargs --max-lines echo
+a_b c
+d
+e
+  echo '### test too long args'
+### test too long args
+  perl -e 'print "z"x1000000' | parallel echo 2>&1
+parallel: Error: Command line too long (1000005 >= 65528) at input 0: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz...
+  perl -e 'print "z"x1000000' | xargs echo 2>&1
+xargs: argument line too long
+  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdout parallel -j1 -km -s 10 echo
+1 2
+3 4
+5 6
+7 8
+9 10
+parallel: Error: Command line too long (1000007 >= 10) at input 0: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz...
+  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdout xargs -s 10 echo
+1 2
+3 4
+5 6
+7 8
+xargs: argument line too long
+9 10
+  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdout parallel -j1 -kX -s 10 echo
+1 2
+3 4
+5 6
+7 8
+9 10
+parallel: Error: Command line too long (1000007 >= 10) at input 0: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz...
+  echo '### Test -x'
+### Test -x
+  (seq 1 10; echo 12345; seq 12 15) | stdout parallel -j1 -km -s 10 -x echo
+1 2
+3 4
+5 6
+7 8
+9 10
+parallel: Error: Command line too long (10 >= 10) at input 0: 12345
+  (seq 1 10; echo 12345; seq 12 15) | stdout parallel -j1 -kX -s 10 -x echo
+1 2
+3 4
+5 6
+7 8
+9 10
+parallel: Error: Command line too long (10 >= 10) at input 0: 12345
+  (seq 1 10; echo 12345; seq 12 15) | stdout xargs -s 10 -x echo
+1 2
+3 4
+5 6
+xargs: argument line too long
+7 8
+  (seq 1 10; echo 1234; seq 12 15) | stdout parallel -j1 -km -s 10 -x echo
+1 2
+3 4
+5 6
+7 8
+9 10
+1234
+12
+13
+14
+15
+  (seq 1 10; echo 1234; seq 12 15) | stdout parallel -j1 -kX -s 10 -x echo
+1 2
+3 4
+5 6
+7 8
+9 10
+1234
+12
+13
+14
+15
+  (seq 1 10; echo 1234; seq 12 15) | stdout xargs -s 10 -x echo
+1 2
+3 4
+5 6
+7 8
+9 10
+1234
+12
+13
+14
+15
+  echo '### Test -a and --arg-file: Read input from file instead of stdin'
+### Test -a and --arg-file: Read input from file instead of stdin
+  seq 1 10 >/tmp/parallel_$$-1; parallel -k -a /tmp/parallel_$$-1 echo; rm /tmp/parallel_$$-1
 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+  seq 1 10 >/tmp/parallel_$$-2; parallel -k --arg-file /tmp/parallel_$$-2 echo; rm /tmp/parallel_$$-2
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+  echo '### Test -i and --replace: Replace with argument'
+### Test -i and --replace: Replace with argument
+  (echo a; echo END; echo b) | parallel -k -i -eEND echo repl{}ce
+replace
+  (echo a; echo END; echo b) | parallel -k --replace -eEND echo repl{}ce
+replace
+  (echo a; echo END; echo b) | parallel -k -i+ -eEND echo repl+ce
+replace
+  (echo e; echo END; echo b) | parallel -k -i'*' -eEND echo r'*'plac'*'
+replace
+  (echo a; echo END; echo b) | parallel -k --replace + -eEND echo repl+ce
+replace
+  (echo a; echo END; echo b) | parallel -k --replace== -eEND echo repl=ce
+replace
+  (echo a; echo END; echo b) | parallel -k --replace = -eEND echo repl=ce
+replace
+  (echo a; echo END; echo b) | parallel -k --replace=^ -eEND echo repl^ce
+replace
+  (echo a; echo END; echo b) | parallel -k -I^ -eEND echo repl^ce
+replace
+  echo '### Test -E: Artificial end-of-file'
+### Test -E: Artificial end-of-file
+  (echo include this; echo END; echo not this) | parallel -k -E END echo
+include this
+  (echo include this; echo END; echo not this) | parallel -k -EEND echo
+include this
+  echo '### Test -e and --eof: Artificial end-of-file'
+### Test -e and --eof: Artificial end-of-file
+  (echo include this; echo END; echo not this) | parallel -k -e END echo
+include this
+  (echo include this; echo END; echo not this) | parallel -k -eEND echo
+include this
+  (echo include this; echo END; echo not this) | parallel -k --eof=END echo
+include this
+  (echo include this; echo END; echo not this) | parallel -k --eof END echo
+include this
+  echo '### Test -n and --max-args: Max number of args per line (only with -X and -m)'
+### Test -n and --max-args: Max number of args per line (only with -X and -m)
+  (echo line 1;echo line 2;echo line 3) | parallel -k -n1 -m echo
+line 1
+line 2
+line 3
+  (echo line 1;echo line 1;echo line 2) | parallel -k -n2 -m echo
+line 1 line 1
+line 2
+  (echo line 1;echo line 2;echo line 3) | parallel -k -n1 -X echo
+line 1
+line 2
+line 3
+  (echo line 1;echo line 1;echo line 2) | parallel -k -n2 -X echo
+line 1 line 1
+line 2
+  (echo line 1;echo line 2;echo line 3) | parallel -k -n1 echo
+line 1
+line 2
+line 3
+  (echo line 1;echo line 1;echo line 2) | parallel -k -n2 echo
+line 1 line 1
+line 2
+  (echo line 1;echo line 2;echo line 3) | parallel -k --max-args=1 -X echo
+line 1
+line 2
+line 3
+  (echo line 1;echo line 2;echo line 3) | parallel -k --max-args 1 -X echo
+line 1
+line 2
+line 3
+  (echo line 1;echo line 1;echo line 2) | parallel -k --max-args=2 -X echo
+line 1 line 1
+line 2
+  (echo line 1;echo line 1;echo line 2) | parallel -k --max-args 2 -X echo
+line 1 line 1
+line 2
+  (echo line 1;echo line 2;echo line 3) | parallel -k --max-args 1 echo
+line 1
+line 2
+line 3
+  (echo line 1;echo line 1;echo line 2) | parallel -k --max-args 2 echo
+line 1 line 1
+line 2
+  echo '### Test --max-procs and -P: Number of processes'
+### Test --max-procs and -P: Number of processes
+  seq 1 10 | parallel -k --max-procs +0 echo max proc
+max proc 1
+max proc 2
+max proc 3
+max proc 4
+max proc 5
+max proc 6
+max proc 7
+max proc 8
+max proc 9
+max proc 10
+  seq 1 10 | parallel -k -P 200% echo 200% proc
+200% proc 1
+200% proc 2
+200% proc 3
+200% proc 4
+200% proc 5
+200% proc 6
+200% proc 7
+200% proc 8
+200% proc 9
+200% proc 10
+  echo '### Test --delimiter and -d: Delimiter instead of newline'
+### Test --delimiter and -d: Delimiter instead of newline
+  echo '# Yes there is supposed to be an extra newline for -d N'
+# Yes there is supposed to be an extra newline for -d N
+  echo line 1Nline 2Nline 3 | parallel -k -d N echo This is
+This is line 1
+This is line 2
+This is line 3
+
+  echo line 1Nline 2Nline 3 | parallel -k --delimiter N echo This is
+This is line 1
+This is line 2
+This is line 3
+
+  printf "delimiter NUL line 1\0line 2\0line 3" | parallel -k -d '\0' echo
+delimiter NUL line 1
+line 2
+line 3
+  printf "delimiter TAB line 1\tline 2\tline 3" | parallel -k --delimiter '\t' echo
+delimiter TAB line 1
+line 2
+line 3
+  echo '### Test --max-chars and -s: Max number of chars in a line'
+### Test --max-chars and -s: Max number of chars in a line
+  (echo line 1;echo line 1;echo line 2) | parallel -k --max-chars 25 -X echo
+line 1 line 1
+line 2
+  (echo line 1;echo line 1;echo line 2) | parallel -k -s 25 -X echo
+line 1 line 1
+line 2
+  echo '### Test --no-run-if-empty and -r: This should give no output'
+### Test --no-run-if-empty and -r: This should give no output
+  echo "  " | parallel -r echo
+  echo "  " | parallel --no-run-if-empty echo
+  echo '### Test --help and -h: Help output (just check we get the same amount of lines)'
+### Test --help and -h: Help output (just check we get the same amount of lines)
+  echo Output from -h and --help
+Output from -h and --help
+  parallel -h | wc -l
+37
+  parallel --help | wc -l
+37
+  echo '### Test --version: Version output (just check we get the same amount of lines)'
+### Test --version: Version output (just check we get the same amount of lines)
+  parallel --version | wc -l
+11
+  echo '### Test --verbose and -t'
+### Test --verbose and -t
+  (echo b; echo c; echo f) | parallel -k -t echo {}ar 2>&1 >/dev/null
+echo bar
+echo car
+echo far
+  (echo b; echo c; echo f) | parallel -k --verbose echo {}ar 2>&1 >/dev/null
+echo bar
+echo car
+echo far
+  echo '### Test --show-limits'
+### Test --show-limits
+  (echo b; echo c; echo f) | parallel -k --show-limits echo {}ar
+Maximal size of command: 131049
+Maximal used size of command: 65528
+
+Execution of  will continue now, and it will try to read its input
+and run commands; if this is not what you wanted to happen, please
+press CTRL-D or CTRL-C
+bar
+car
+far
+  (echo b; echo c; echo f) | parallel -j1 -kX --show-limits -s 100 echo {}ar
+Maximal size of command: 131049
+Maximal used size of command: 100
+
+Execution of  will continue now, and it will try to read its input
+and run commands; if this is not what you wanted to happen, please
+press CTRL-D or CTRL-C
+bar car far
+  echo '### Test empty line as input'
+### Test empty line as input
+  echo | parallel echo empty input line
+empty input line 
+  echo '### Tests if (cat | sh) works'
+### Tests if (cat | sh) works
+  perl -e 'for(1..25) {print "echo a $_; echo b $_\n"}' | parallel 2>&1 | sort
+a 1
+a 10
+a 11
+a 12
+a 13
+a 14
+a 15
+a 16
+a 17
+a 18
+a 19
+a 2
+a 20
+a 21
+a 22
+a 23
+a 24
+a 25
+a 3
+a 4
+a 5
+a 6
+a 7
+a 8
+a 9
+b 1
+b 10
+b 11
+b 12
+b 13
+b 14
+b 15
+b 16
+b 17
+b 18
+b 19
+b 2
+b 20
+b 21
+b 22
+b 23
+b 24
+b 25
+b 3
+b 4
+b 5
+b 6
+b 7
+b 8
+b 9
+  echo '### Test if xargs-mode works'
+### Test if xargs-mode works
+  perl -e 'for(1..25) {print "a $_\nb $_\n"}' | parallel echo 2>&1 | sort
+a 1
+a 10
+a 11
+a 12
+a 13
+a 14
+a 15
+a 16
+a 17
+a 18
+a 19
+a 2
+a 20
+a 21
+a 22
+a 23
+a 24
+a 25
+a 3
+a 4
+a 5
+a 6
+a 7
+a 8
+a 9
+b 1
+b 10
+b 11
+b 12
+b 13
+b 14
+b 15
+b 16
+b 17
+b 18
+b 19
+b 2
+b 20
+b 21
+b 22
+b 23
+b 24
+b 25
+b 3
+b 4
+b 5
+b 6
+b 7
+b 8
+b 9
+  echo '### Test -q'
+### Test -q
+  parallel -kq perl -e '$ARGV[0]=~/^\S+\s+\S+$/ and print $ARGV[0],"\n"' ::: "a b" c "d e f" g "h i"
+a b
+h i
+  echo '### Test -q {#}'
+### Test -q {#}
+  parallel -kq echo {#} ::: a b
+1
+2
+  parallel -kq echo {\#} ::: a b
+1
+2
+  parallel -kq echo {\\#} ::: a b
+{\#} a
+{\#} b
+  echo '### Test long commands do not take up all memory'
+### Test long commands do not take up all memory
+  seq 1 100 | parallel -j0 -qv perl -e '$r=rand(shift);for($f=0;$f<$r;$f++){$a="a"x100};print shift,"\n"' 10000 2>/dev/null | sort
+1
+10
+100
+11
+12
+13
+14
+15
+16
+17
+18
+19
+2
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+3
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+4
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+5
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+6
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+7
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+8
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+9
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 1
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 10
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 100
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 11
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 12
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 13
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 14
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 15
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 16
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 17
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 18
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 19
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 2
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 20
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 21
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 22
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 23
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 24
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 25
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 26
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 27
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 28
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 29
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 3
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 30
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 31
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 32
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 33
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 34
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 35
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 36
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 37
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 38
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 39
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 4
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 40
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 41
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 42
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 43
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 44
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 45
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 46
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 47
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 48
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 49
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 5
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 50
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 51
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 52
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 53
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 54
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 55
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 56
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 57
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 58
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 59
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 6
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 60
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 61
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 62
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 63
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 64
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 65
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 66
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 67
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 68
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 69
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 7
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 70
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 71
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 72
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 73
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 74
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 75
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 76
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 77
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 78
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 79
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 8
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 80
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 81
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 82
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 83
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 84
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 85
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 86
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 87
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 88
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 89
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 9
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 90
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 91
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 92
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 93
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 94
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 95
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 96
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 97
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 98
+perl -e \$r\=rand\(shift\)\;for\(\$f\=0\;\$f\<\$r\;\$f++\)\{\$a\=\"a\"x100\}\;print\ shift,\"\\n\" 10000 99
+  echo '### Test 0-arguments'
+### Test 0-arguments
+  seq 1 2 | parallel -k -n0 echo n0
+n0
+n0
+  seq 1 2 | parallel -k -L0 echo L0
+L0
+L0
+  seq 1 2 | parallel -k -N0 echo N0
+N0
+N0
+  echo '### Because of --tollef -l, then -l0 == -l1, sorry'
+### Because of --tollef -l, then -l0 == -l1, sorry
+  seq 1 2 | parallel -k -l0 echo l0
+l0 1
+l0 2
+  echo '### Test replace {}'
+### Test replace {}
+  seq 1 2 | parallel -k -N0 echo replace {} curlies
+replace curlies
+replace curlies
+  echo '### Test arguments on commandline'
+### Test arguments on commandline
+  parallel -k -N0 echo args on cmdline ::: 1 2
+args on cmdline
+args on cmdline
+  echo '### Test --nice locally'
+### Test --nice locally
+  parallel --nice 1 -vv 'PAR=a bash -c "echo  \$PAR {}"' ::: b
+PAR=a bash -c "echo  \$PAR b"
+a b
+  echo '### Test distribute arguments at EOF to 2 jobslots'
+### Test distribute arguments at EOF to 2 jobslots
+  seq 1 92 | parallel -j+0 -kX -s 100 echo
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34
+35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65
+66 67 68 69
+70 71 72 73
+74 75 76 77
+78 79 80 81
+82 83 84 85
+86 87 88 89
+90 91 92
+  echo '### Test distribute arguments at EOF to 5 jobslots'
+### Test distribute arguments at EOF to 5 jobslots
+  seq 1 92 | parallel -j+3 -kX -s 100 echo
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34
+35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65
+66 67 68
+69 70 71
+72 73 74
+75 76 77
+78 79 80
+81 82 83
+84 85 86
+87 88 89
+90 91 92
+  echo '### Test distribute arguments at EOF to infinity jobslots'
+### Test distribute arguments at EOF to infinity jobslots
+  seq 1 92 | parallel -j0 -kX -s 100 echo 2>/dev/null
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34
+35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+  echo '### Test -N is not broken by distribution - single line'
+### Test -N is not broken by distribution - single line
+  seq 9 | parallel  -N 10  echo
+1 2 3 4 5 6 7 8 9
+  echo '### Test -N is not broken by distribution - two lines'
+### Test -N is not broken by distribution - two lines
+  seq 19 | parallel -k -N 10  echo
+1 2 3 4 5 6 7 8 9 10
+11 12 13 14 15 16 17 18 19
+  echo '### Test -N context replace'
+### Test -N context replace
+  seq 19 | parallel -k -N 10  echo a{}b
+a1b a2b a3b a4b a5b a6b a7b a8b a9b a10b
+a11b a12b a13b a14b a15b a16b a17b a18b a19b
+  echo '### Test -L context replace'
+### Test -L context replace
+  seq 19 | parallel -k -L 10  echo a{}b
+a1b a2b a3b a4b a5b a6b a7b a8b a9b a10b
+a11b a12b a13b a14b a15b a16b a17b a18b a19b
+  echo '**'
+**
+echo '### Test {} multiple times in different commands'
+### Test {} multiple times in different commands
+  seq 10 | parallel -v -Xj1 echo {} \; echo {}
+echo 1 2 3 4 5 6 7 8 9 10 ; echo 1 2 3 4 5 6 7 8 9 10
+1 2 3 4 5 6 7 8 9 10
+1 2 3 4 5 6 7 8 9 10
+echo '### Test of -X {1}-{2} with multiple input sources'
+### Test of -X {1}-{2} with multiple input sources
+  parallel -j1 -kX  echo {1}-{2} ::: a ::: b
+a-b
+  parallel -j2 -kX  echo {1}-{2} ::: a b ::: c d
+a-c
+b-c
+  parallel -j2 -kX  echo {1}-{2} ::: a b c ::: d e f
+a-d
+b-f
+  parallel -j0 -kX  echo {1}-{2} ::: a b c ::: d e f
+a-d
+a-e
+a-f
+b-d
+b-e
+b-f
+c-d
+c-e
+c-f
+echo '### Test of -X {}-{.} with multiple input sources'
+### Test of -X {}-{.} with multiple input sources
+  parallel -j1 -kX  echo {}-{.} ::: a ::: b
+a-a b-b
+  parallel -j2 -kX  echo {}-{.} ::: a b ::: c d
+a-a c-c a-a d-d
+b-b c-c b-b d-d
+  parallel -j2 -kX  echo {}-{.} ::: a b c ::: d e f
+a-a d-d a-a e-e a-a f-f b-b d-d b-b e-e
+b-b f-f c-c d-d c-c e-e c-c f-f
+  parallel -j0 -kX  echo {}-{.} ::: a b c ::: d e f
+a-a d-d
+a-a e-e
+a-a f-f
+b-b d-d
+b-b e-e
+b-b f-f
+c-c d-d
+c-c e-e
+c-c f-f
+echo '### Test of -r with --pipe - the first should give an empty line. The second should not.'
+### Test of -r with --pipe - the first should give an empty line. The second should not.
+  echo | parallel  -j2 -N1 --pipe cat | wc -l
+1
+  echo | parallel -r -j2 -N1 --pipe cat | wc -l
+0
+echo '### Test --tty'
+### Test --tty
+  seq 0.1 0.1 0.5 | parallel -j1 --tty tty\;sleep
+/dev/tty
+/dev/tty
+/dev/tty
+/dev/tty
+/dev/tty
+echo '**'
+**
+echo '### Test bugfix if no command given'
+### Test bugfix if no command given
+  (echo echo; seq 1 5; perl -e 'print "z"x1000000'; seq 12 15) | stdout parallel -j1 -km -s 10
+1 2
+/bin/bash: 3: command not found
+parallel: Error: Command line too long (1000002 >= 10) at input 0: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz...
+echo '**'
+**
+echo "### Test --results"
+### Test --results
+  mkdir -p /tmp/parallel_results_test;   parallel -k --results /tmp/parallel_results_test/testA echo {1} {2} ::: I II ::: III IIII;   ls /tmp/parallel_results_test/testA/*/*/*/*/*; rm -rf /tmp/parallel_results_test/testA*
+I III
+I IIII
+II III
+II IIII
+/tmp/parallel_results_test/testA/1/I/2/III/seq
+/tmp/parallel_results_test/testA/1/I/2/III/stderr
+/tmp/parallel_results_test/testA/1/I/2/III/stdout
+/tmp/parallel_results_test/testA/1/I/2/IIII/seq
+/tmp/parallel_results_test/testA/1/I/2/IIII/stderr
+/tmp/parallel_results_test/testA/1/I/2/IIII/stdout
+/tmp/parallel_results_test/testA/1/II/2/III/seq
+/tmp/parallel_results_test/testA/1/II/2/III/stderr
+/tmp/parallel_results_test/testA/1/II/2/III/stdout
+/tmp/parallel_results_test/testA/1/II/2/IIII/seq
+/tmp/parallel_results_test/testA/1/II/2/IIII/stderr
+/tmp/parallel_results_test/testA/1/II/2/IIII/stdout
+echo "### Test --res"
+### Test --res
+  mkdir -p /tmp/parallel_results_test;   parallel -k --res /tmp/parallel_results_test/testD echo {1} {2} ::: I II ::: III IIII;   ls /tmp/parallel_results_test/testD/*/*/*/*/*; rm -rf /tmp/parallel_results_test/testD*
+I III
+I IIII
+II III
+II IIII
+/tmp/parallel_results_test/testD/1/I/2/III/seq
+/tmp/parallel_results_test/testD/1/I/2/III/stderr
+/tmp/parallel_results_test/testD/1/I/2/III/stdout
+/tmp/parallel_results_test/testD/1/I/2/IIII/seq
+/tmp/parallel_results_test/testD/1/I/2/IIII/stderr
+/tmp/parallel_results_test/testD/1/I/2/IIII/stdout
+/tmp/parallel_results_test/testD/1/II/2/III/seq
+/tmp/parallel_results_test/testD/1/II/2/III/stderr
+/tmp/parallel_results_test/testD/1/II/2/III/stdout
+/tmp/parallel_results_test/testD/1/II/2/IIII/seq
+/tmp/parallel_results_test/testD/1/II/2/IIII/stderr
+/tmp/parallel_results_test/testD/1/II/2/IIII/stdout
+echo "### Test --result"
+### Test --result
+  mkdir -p /tmp/parallel_results_test;   parallel -k --result /tmp/parallel_results_test/testE echo {1} {2} ::: I II ::: III IIII;   ls /tmp/parallel_results_test/testE/*/*/*/*/*; rm -rf /tmp/parallel_results_test/testE*
+I III
+I IIII
+II III
+II IIII
+/tmp/parallel_results_test/testE/1/I/2/III/seq
+/tmp/parallel_results_test/testE/1/I/2/III/stderr
+/tmp/parallel_results_test/testE/1/I/2/III/stdout
+/tmp/parallel_results_test/testE/1/I/2/IIII/seq
+/tmp/parallel_results_test/testE/1/I/2/IIII/stderr
+/tmp/parallel_results_test/testE/1/I/2/IIII/stdout
+/tmp/parallel_results_test/testE/1/II/2/III/seq
+/tmp/parallel_results_test/testE/1/II/2/III/stderr
+/tmp/parallel_results_test/testE/1/II/2/III/stdout
+/tmp/parallel_results_test/testE/1/II/2/IIII/seq
+/tmp/parallel_results_test/testE/1/II/2/IIII/stderr
+/tmp/parallel_results_test/testE/1/II/2/IIII/stdout
+echo "### Test --results --header :"
+### Test --results --header :
+  mkdir -p /tmp/parallel_results_test;   parallel -k --header : --results /tmp/parallel_results_test/testB echo {1} {2} ::: a I II ::: b III IIII;   ls /tmp/parallel_results_test/testB/*/*/*/*/*; rm -rf /tmp/parallel_results_test/testB*
+I III
+I IIII
+II III
+II IIII
+/tmp/parallel_results_test/testB/a/I/b/III/seq
+/tmp/parallel_results_test/testB/a/I/b/III/stderr
+/tmp/parallel_results_test/testB/a/I/b/III/stdout
+/tmp/parallel_results_test/testB/a/I/b/IIII/seq
+/tmp/parallel_results_test/testB/a/I/b/IIII/stderr
+/tmp/parallel_results_test/testB/a/I/b/IIII/stdout
+/tmp/parallel_results_test/testB/a/II/b/III/seq
+/tmp/parallel_results_test/testB/a/II/b/III/stderr
+/tmp/parallel_results_test/testB/a/II/b/III/stdout
+/tmp/parallel_results_test/testB/a/II/b/IIII/seq
+/tmp/parallel_results_test/testB/a/II/b/IIII/stderr
+/tmp/parallel_results_test/testB/a/II/b/IIII/stdout
+echo "### Test --results --header : named - a/b swapped"
+### Test --results --header : named - a/b swapped
+  mkdir -p /tmp/parallel_results_test;   parallel -k --header : --results /tmp/parallel_results_test/testC echo {a} {b} ::: b III IIII ::: a I II;   ls /tmp/parallel_results_test/testC/*/*/*/*/*; rm -rf /tmp/parallel_results_test/testC*
+I III
+II III
+I IIII
+II IIII
+/tmp/parallel_results_test/testC/a/I/b/III/seq
+/tmp/parallel_results_test/testC/a/I/b/III/stderr
+/tmp/parallel_results_test/testC/a/I/b/III/stdout
+/tmp/parallel_results_test/testC/a/I/b/IIII/seq
+/tmp/parallel_results_test/testC/a/I/b/IIII/stderr
+/tmp/parallel_results_test/testC/a/I/b/IIII/stdout
+/tmp/parallel_results_test/testC/a/II/b/III/seq
+/tmp/parallel_results_test/testC/a/II/b/III/stderr
+/tmp/parallel_results_test/testC/a/II/b/III/stdout
+/tmp/parallel_results_test/testC/a/II/b/IIII/seq
+/tmp/parallel_results_test/testC/a/II/b/IIII/stderr
+/tmp/parallel_results_test/testC/a/II/b/IIII/stdout
+echo "### Test --results --header : piped"
+### Test --results --header : piped
+  mkdir -p /tmp/parallel_results_test;   (echo Col; perl -e 'print "backslash\\tab\tslash/null\0eof\n"') | parallel  --header : --result /tmp/parallel_results_test/testF true;   find /tmp/parallel_results_test/testF/*/*/* | sort; rm -rf /tmp/parallel_results_test/testF*
+/tmp/parallel_results_test/testF/Col/backslash\\tab/2
+/tmp/parallel_results_test/testF/Col/backslash\\tab/2/slash\_null\0eof
+/tmp/parallel_results_test/testF/Col/backslash\\tab/2/slash\_null\0eof/seq
+/tmp/parallel_results_test/testF/Col/backslash\\tab/2/slash\_null\0eof/stderr
+/tmp/parallel_results_test/testF/Col/backslash\\tab/2/slash\_null\0eof/stdout
+parallel: Warning: a NUL character occurred in the input.
+parallel: Warning: It cannot be passed through in the argument list.
+parallel: Warning: Did you mean to use the --null option?
+echo "### Test --results --header : piped - non-existing column header"
+### Test --results --header : piped - non-existing column header
+  mkdir -p /tmp/parallel_results_test;   (printf "Col1\t\n"; printf "v1\tv2\tv3\n"; perl -e 'print "backslash\\tab\tslash/null\0eof\n"') | parallel --header : --result /tmp/parallel_results_test/testG true; find /tmp/parallel_results_test/testG/ | sort; rm -rf /tmp/parallel_results_test/testG*
+/tmp/parallel_results_test/testG/
+/tmp/parallel_results_test/testG/Col1
+/tmp/parallel_results_test/testG/Col1/backslash\\tab
+/tmp/parallel_results_test/testG/Col1/backslash\\tab/2
+/tmp/parallel_results_test/testG/Col1/backslash\\tab/2/slash\_null\0eof
+/tmp/parallel_results_test/testG/Col1/backslash\\tab/2/slash\_null\0eof/seq
+/tmp/parallel_results_test/testG/Col1/backslash\\tab/2/slash\_null\0eof/stderr
+/tmp/parallel_results_test/testG/Col1/backslash\\tab/2/slash\_null\0eof/stdout
+/tmp/parallel_results_test/testG/Col1/v1
+/tmp/parallel_results_test/testG/Col1/v1/2
+/tmp/parallel_results_test/testG/Col1/v1/2/v2
+/tmp/parallel_results_test/testG/Col1/v1/2/v2/3
+/tmp/parallel_results_test/testG/Col1/v1/2/v2/3/v3
+/tmp/parallel_results_test/testG/Col1/v1/2/v2/3/v3/seq
+/tmp/parallel_results_test/testG/Col1/v1/2/v2/3/v3/stderr
+/tmp/parallel_results_test/testG/Col1/v1/2/v2/3/v3/stdout
+parallel: Warning: a NUL character occurred in the input.
+parallel: Warning: It cannot be passed through in the argument list.
+parallel: Warning: Did you mean to use the --null option?
+echo '**'
+**
+echo "bug #34958: --pipe with record size measured in lines"
+bug #34958: --pipe with record size measured in lines
+  seq 10 | parallel -k --pipe -l 4 cat\;echo bug 34958-2
+1
+2
+3
+4
+5
+6
+7
+8
+bug 34958-2
+9
+10
+bug 34958-2
+echo '**'
+**
+echo "bug #37325: Inefficiency of --pipe -L"
+bug #37325: Inefficiency of --pipe -L
+  seq 2000 | parallel -k --pipe --block 1k -L 4 wc\;echo FOO | uniq
+    276     276     996
+FOO
+    248     248     992
+FOO
+    248     248     992
+FOO
+    244     244     993
+FOO
+    200     200    1000
+FOO
+    200     200    1000
+FOO
+    200     200    1000
+FOO
+    200     200    1000
+FOO
+    184     184     920
+FOO
+echo '**'
+**
+echo "bug #34958: --pipe with record size measured in lines"
+bug #34958: --pipe with record size measured in lines
+  seq 10 | parallel -k --pipe -L 4 cat\;echo bug 34958-1
+1
+2
+3
+4
+5
+6
+7
+8
+bug 34958-1
+9
+10
+bug 34958-1
+echo '**'
+**
+echo "### bug #41482: --pipe --compress blocks at different -j/seq combinations"
+### bug #41482: --pipe --compress blocks at different -j/seq combinations
+  seq 1 | parallel -k -j2 --compress -N1 -L1 --pipe cat;   echo echo 1-4 + 1-4
+1
+echo 1-4 + 1-4
+    seq 4 | parallel -k -j3 --compress -N1 -L1 -vv echo;   echo 4 times wc to stderr to stdout
+echo 1
+1
+echo 2
+2
+echo 3
+3
+echo 4
+4
+4 times wc to stderr to stdout
+    (seq 4 | parallel -k -j3 --compress -N1 -L1 --pipe wc '>&2') 2>&1 >/dev/null
+      1       1       2
+      1       1       2
+      1       1       2
+      1       1       2
+  echo 1 2 3 4
+1 2 3 4
+    seq 4 | parallel -k -j3 --compress echo;   echo 1 2 3 4
+1
+2
+3
+4
+1 2 3 4
+    seq 4 | parallel -k -j1 --compress echo;   echo 1 2
+1
+2
+3
+4
+1 2
+    seq 2 | parallel -k -j1 --compress echo;   echo 1 2 3
+1
+2
+1 2 3
+    seq 3 | parallel -k -j2 --compress -N1 -L1 --pipe cat; echo '**'
+1
+2
+3
+**
+echo '### --pipe without command'
+### --pipe without command
+  seq -w 10 | stdout parallel --pipe
+parallel: Error: --pipe/--pipepart must have a command to pipe into (e.g. 'cat').
+echo '**'
+**
+echo '### bug #36260: {n} expansion in --colsep files fails for empty fields if all following fields are also empty'
+### bug #36260: {n} expansion in --colsep files fails for empty fields if all following fields are also empty
+  echo A,B,, | parallel --colsep , echo {1}{3}{2}
+AB
+echo '**'
+**
+echo '### bug #34422: parallel -X --eta crashes with div by zero'
+### bug #34422: parallel -X --eta crashes with div by zero
+  # We do not care how long it took
+  seq 2 | stdout parallel -X --eta echo | grep -E -v 'ETA:.*AVG'
+
+Computers / CPU cores / Max jobs to run
+1:local / 8 / 2
+
+Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
+### 1 .par file from --files expected
+0

@@ -46,24 +46,24 @@ echo '### bug #42041: Implement $PARALLEL_JOBSLOT'
 echo '### bug #42363: --pipepart and --fifo/--cat does not work'
 ### bug #42363: --pipepart and --fifo/--cat does not work
   seq 100 > /tmp/bug42363;   parallel --pipepart --block 31 -a /tmp/bug42363 -k --fifo wc | perl -pe 's:(/tmp\S+par).....:${1}XXXXX:';   parallel --pipepart --block 31 -a /tmp/bug42363 -k --cat  wc | perl -pe 's:(/tmp\S+par).....:${1}XXXXX:';   rm /tmp/bug42363
-     14      14      33 /tmp/parallel-local22/parXXXXX
-     11      11      33 /tmp/parallel-local22/parXXXXX
-     11      11      33 /tmp/parallel-local22/parXXXXX
-     11      11      33 /tmp/parallel-local22/parXXXXX
-     11      11      33 /tmp/parallel-local22/parXXXXX
-     11      11      33 /tmp/parallel-local22/parXXXXX
-     11      11      33 /tmp/parallel-local22/parXXXXX
-     11      11      33 /tmp/parallel-local22/parXXXXX
-      9       9      28 /tmp/parallel-local22/parXXXXX
-14 14 33 /tmp/parallel-local22/parXXXXX
-11 11 33 /tmp/parallel-local22/parXXXXX
-11 11 33 /tmp/parallel-local22/parXXXXX
-11 11 33 /tmp/parallel-local22/parXXXXX
-11 11 33 /tmp/parallel-local22/parXXXXX
-11 11 33 /tmp/parallel-local22/parXXXXX
-11 11 33 /tmp/parallel-local22/parXXXXX
-11 11 33 /tmp/parallel-local22/parXXXXX
- 9  9 28 /tmp/parallel-local22/parXXXXX
+     14      14      33 /tmp/parallel-local22-tmpdir/parXXXXX
+     11      11      33 /tmp/parallel-local22-tmpdir/parXXXXX
+     11      11      33 /tmp/parallel-local22-tmpdir/parXXXXX
+     11      11      33 /tmp/parallel-local22-tmpdir/parXXXXX
+     11      11      33 /tmp/parallel-local22-tmpdir/parXXXXX
+     11      11      33 /tmp/parallel-local22-tmpdir/parXXXXX
+     11      11      33 /tmp/parallel-local22-tmpdir/parXXXXX
+     11      11      33 /tmp/parallel-local22-tmpdir/parXXXXX
+      9       9      28 /tmp/parallel-local22-tmpdir/parXXXXX
+14 14 33 /tmp/parallel-local22-tmpdir/parXXXXX
+11 11 33 /tmp/parallel-local22-tmpdir/parXXXXX
+11 11 33 /tmp/parallel-local22-tmpdir/parXXXXX
+11 11 33 /tmp/parallel-local22-tmpdir/parXXXXX
+11 11 33 /tmp/parallel-local22-tmpdir/parXXXXX
+11 11 33 /tmp/parallel-local22-tmpdir/parXXXXX
+11 11 33 /tmp/parallel-local22-tmpdir/parXXXXX
+11 11 33 /tmp/parallel-local22-tmpdir/parXXXXX
+ 9  9 28 /tmp/parallel-local22-tmpdir/parXXXXX
 echo '### bug #42055: --pipepart -a bigfile should not require sequential reading of bigfile'
 ### bug #42055: --pipepart -a bigfile should not require sequential reading of bigfile
   parallel --pipepart -a /etc/passwd -L 1 should not be run
@@ -355,4 +355,4 @@ Send	Receive	Exitval
 echo '### --tmux test - check termination'
 ### --tmux test - check termination
   perl -e 'map {printf "$_%o%c\n",$_,$_}1..255' |     stdout parallel --tmux echo {} :::: - ::: a b |     perl -pe 's:(/tmp\S+/tms).....:$1XXXXX:;'
-See output with: tmux -S /tmp/parallel-local22/tmsXXXXX attach
+See output with: tmux -S /tmp/parallel-local22-tmpdir/tmsXXXXX attach

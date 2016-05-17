@@ -15,9 +15,9 @@ export PID3=$!
 echo '### multiple -p'
   stdout /usr/bin/time -f %e niceload -l 9 -H -p $PID1 -p $PID2 -p $PID3 | perl -ne '$_ > 5 and print "Multiple -p OK\n"' &
 
-/tmp/mysleep 2 &
-/tmp/mysleep 2 &
-/tmp/mysleep 2 &
+/tmp/mysleep 4 &
+/tmp/mysleep 4 &
+/tmp/mysleep 4 &
 echo '### --prg'
-  stdout /usr/bin/time -f %e niceload -l 8 -H --prg /tmp/mysleep | perl -ne '$_ > 5 and print "--prg OK\n"'
+  stdout /usr/bin/time -f %e niceload -l 8 -H --prg /tmp/mysleep | perl -ne '$_ > 8 and print "--prg OK\n"'
 rm /tmp/mysleep

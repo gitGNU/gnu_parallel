@@ -5937,9 +5937,9 @@ sub cleanup_cmd {
 	$dir .= $_."/";
 	unshift @rmdir, ::shell_quote_file($dir);
     }
-    my $rmdir = @rmdir ? "sh -c 'rmdir @rmdir 2>/dev/null';" : "";
+    my $rmdir = @rmdir ? "sh -c ".::shell_quote_scalar("rmdir @rmdir 2>/dev/null;") : "";
     if(defined $opt::workdir and $opt::workdir eq "...") {
-	$rmdir .= "rm -rf " . ::shell_quote_file($workdir).';';
+	$rmdir .= ::shell_quote_scalar("rm -rf " . ::shell_quote_file($workdir).';');
     }
 
     $f = ::shell_quote_file($f);
@@ -7565,24 +7565,6 @@ sub start {
 	my ($stdin_fh) = ::gensym();
 	$pid = open3_setpgrp($stdin_fh,$stdout_fh,$stderr_fh,$command);
 	$job->set_fh(0,"w",$stdin_fh);
-    } elsif ($opt::tty and not $Global::tty_taken and -c "/dev/tty" and
-	     open(my $devtty_fh, "<", "/dev/tty")) {
-	# Give /dev/tty to the command if no one else is using it
-	# The eval is needed to catch exception from open3
-	eval {
-	    no warnings;
-	    local (*IN) = $devtty_fh;
-	    local (*OUT,*ERR);
-	    open OUT, '>&', $stdout_fh or ::die_bug("Can't dup STDOUT: $!");
-	    open ERR, '>&', $stderr_fh or ::die_bug("Can't dup STDERR: $!");
-	    $pid = ::open3("<&IN", ">&OUT", ">&ERR",
-			   "exec $Global::shell -c ".
-			   ::shell_quote_scalar($command)) ||
-			       ::die_bug("open3-/dev/tty");
-	    $Global::tty_taken = $pid;
-	    close $devtty_fh;
-	    1;
-	};
     } elsif(@opt::a and not $Global::stdin_in_opt_a and $job->seq() == 1
 	    and $job->sshlogin()->string() eq ":") {
 	# Give STDIN to the first job if using -a (but only if running
@@ -7603,6 +7585,25 @@ sub start {
 	# Re-open to avoid complaining
 	open(STDIN, "<&", $Global::original_stdin)
 	    or ::die_bug("dup-\$Global::original_stdin: $!");
+
+    } elsif ($opt::tty and not $Global::tty_taken and -c "/dev/tty" and
+	     open(my $devtty_fh, "<", "/dev/tty")) {
+	# Give /dev/tty to the command if no one else is using it
+	# The eval is needed to catch exception from open3
+	eval {
+	    no warnings;
+	    local (*IN) = $devtty_fh;
+	    local (*OUT,*ERR);
+	    open OUT, '>&', $stdout_fh or ::die_bug("Can't dup STDOUT: $!");
+	    open ERR, '>&', $stderr_fh or ::die_bug("Can't dup STDERR: $!");
+	    $pid = ::open3("<&IN", ">&OUT", ">&ERR",
+			   "exec $Global::shell -c ".
+			   ::shell_quote_scalar($command)) ||
+			       ::die_bug("open3-/dev/tty");
+	    $Global::tty_taken = $pid;
+	    close $devtty_fh;
+	    1;
+	};
     } else {
 	$pid = open3_setpgrp(::gensym(),$stdout_fh,$stderr_fh,$command);
     }
@@ -9160,7 +9161,9 @@ sub is_acceptable_command_line_length {
     #   0 if the command line length is too long
     #   1 otherwise
     my $len = shift;
-    $len += length $ENV{PARALLEL_ENV} + (-s $ENV{PARALLEL_ENV})*2;
+    if($ENV{PARALLEL_ENV}) {
+	$len += length $ENV{PARALLEL_ENV} + (-s $ENV{PARALLEL_ENV})*2;
+    }
     ::qqx("true "."x"x$len);
     ::debug("init", "$len=$? ");
     return not $?;

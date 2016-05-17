@@ -1,8 +1,11 @@
-echo '### Test if we can deal with output > 4 GB'
-### Test if we can deal with output > 4 GB
-##  echo | niceload --io 10 parallel -q perl -e '"\$a=\"x\"x1000000;for(0..4300){print \$a}"' | md5sum
-  echo | parallel --tmpdir $TMP5G -q perl -e '$a="x"x1000000;for(0..4300){print $a}' | nice md5sum
-46a318993dfc8e2afd71ff2bc6f605f1  -
+echo '### Test of --retries on unreachable host'
+### Test of --retries on unreachable host
+  seq 2 | stdout parallel -k --retries 2 -v -S 4.3.2.1,: echo
+parallel: Warning: Could not figure out number of cpus on 4.3.2.1 (). Using 1.
+echo 1
+1
+echo 2
+2
 echo '**'
 **
 echo "### Test Force outside the file handle limit, 2009-02-17 Gave fork error"
@@ -15,13 +18,17 @@ Start
 end
 echo '**'
 **
-echo '### Test of --retries on unreachable host'
-### Test of --retries on unreachable host
-  seq 2 | stdout parallel -k --retries 2 -v -S 4.3.2.1,: echo
-parallel: Warning: Could not figure out number of cpus on 4.3.2.1 (). Using 1.
-echo 1
-1
-echo 2
-2
+echo '### Test if we can deal with output > 4 GB'
+### Test if we can deal with output > 4 GB
+  echo | nice parallel --tmpdir $TMP5G -q perl -e '$a="x"x1000000;for(0..4300){print $a}' | nice md5sum
+46a318993dfc8e2afd71ff2bc6f605f1  -
+echo '**'
+**
+echo 'bug #41613: --compress --line-buffer no --tagstring';   diff     <(nice perl -e 'for("x011".."x110"){print "$_\t", ("\n", map { rand } (1..100000)) }'|       nice parallel -N10 -L1 --pipe -j6 --block 20M --compress       pv -qL 1000000 | perl -pe 's/(....).*/$1/')     <(nice perl -e 'for("x011".."x110"){print "$_\t", ("\n", map { rand } (1..100000)) }'|       nice parallel -N10 -L1 --pipe -j6 --block 20M --compress --line-buffer       pv -qL 1000000 | perl -pe 's/(....).*/$1/')     >/dev/null   || (echo 'Good: --line-buffer matters'; false) && echo 'Bad: --line-buffer not working'
+bug #41613: --compress --line-buffer no --tagstring
+Good: --line-buffer matters
+echo 'bug #41613: --compress --line-buffer with --tagstring';   diff     <(nice perl -e 'for("x011".."x110"){print "$_\t", ("\n", map { rand } (1..100000)) }'|       nice parallel -N10 -L1 --pipe -j6 --block 20M --compress --tagstring {#}       pv -qL 1000000 | perl -pe 's/(....).*/$1/')     <(nice perl -e 'for("x011".."x110"){print "$_\t", ("\n", map { rand } (1..100000)) }'|       nice parallel -N10 -L1 --pipe -j6 --block 20M --compress --tagstring {#} --line-buffer       pv -qL 1000000 | perl -pe 's/(....).*/$1/')     >/dev/null   || (echo 'Good: --line-buffer matters'; false) && echo 'Bad: --line-buffer not working'
+bug #41613: --compress --line-buffer with --tagstring
+Good: --line-buffer matters
 echo '**'
 **

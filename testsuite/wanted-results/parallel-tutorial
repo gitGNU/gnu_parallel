@@ -124,8 +124,8 @@ C
 A
 B
   (echo 1; echo; echo 2) | parallel --no-run-if-empty echo
-1
-2
+9
+9
   parallel ::: ls 'echo foo' pwd
 abc-file
 abc0-file
@@ -160,13 +160,13 @@ A
   parallel echo {/.} ::: A/B.C
 B
   parallel echo {#} ::: A B C
-1
-2
-3
+9
+9
+9
   parallel -j 2 echo {%} ::: A B C
-1
-2
-1
+9
+9
+9
   parallel -I ,, echo ,, ::: A/B.C
 A/B.C
   parallel --extensionreplace ,, echo ,, ::: A/B.C
@@ -178,13 +178,13 @@ A
   parallel --basenameextensionreplace ,, echo ,, ::: A/B.C
 B
   parallel --seqreplace ,, echo ,, ::: A B C
-1
-2
-3
+9
+9
+9
   parallel -j2 --slotreplace ,, echo ,, ::: A B C
-1
-2
-1
+9
+9
+9
   parallel echo '{= s:\.[^.]+$::;s:\.[^.]+$::; =}' ::: foo.tar.gz
 foo
   parallel echo Job {#} of {= '$_=total_jobs()' =} ::: {1..5}
@@ -196,10 +196,10 @@ Job 5 of 5
   parallel echo {} shell quoted is {= '$_=Q($_)' =} ::: '*/!#$'
 */!#$ shell quoted is \*/\!\#\$
   parallel echo {= 'if($_==3) { $job->skip() }' =} ::: {1..5}
-1
-2
-4
-5
+9
+9
+9
+9
   parallel echo {= 'if($arg[1]==$arg[2]) { $job->skip() }' =} ::: {1..3} ::: {1..3}
 1 2
 1 3
@@ -283,16 +283,16 @@ Job 3 of 5
 Job 4 of 5
 Job 5 of 5
   cat num30000 | parallel --xargs echo | wc -l
-3
+9
   cat num30000 | parallel --xargs -s 10000 echo | wc -l
-17
+99
   cat num30000 | parallel --jobs 4 -m echo | wc -l
-6
+9
   parallel --jobs 4 -m echo ::: 1 2 3 4 5 6 7 8 9 10
 1 2 3
 4 5 6
 7 8 9
-10
+99
   parallel --jobs 4 -X echo pre-{}-post ::: A B C D E F G
 pre-A-post pre-B-post
 pre-C-post pre-D-post
@@ -348,8 +348,6 @@ echo B
 echo C
   parallel -j2 'printf "%s-start\n%s" {} {};sleep {};printf "%s\n" -middle;echo {}-end' ::: 4 2 1
 4-start
-4-middle
-4-end
 2-start
 2-middle
 2-end
@@ -365,7 +363,6 @@ echo C
 1-middle
 1-end
 -middle
-4-end
   parallel -j2 --linebuffer 'printf "%s-start\n%s" {} {};sleep {};printf "%s\n" -middle;echo {}-end' ::: 4 2 1
 4-start
 2-start
@@ -374,12 +371,8 @@ echo C
 1-start
 1-middle
 1-end
-4-middle
-4-end
   parallel -j2 -k 'printf "%s-start\n%s" {} {};sleep {};printf "%s\n" -middle;echo {}-end' ::: 4 2 1
 4-start
-4-middle
-4-end
 2-start
 2-middle
 2-end
@@ -387,9 +380,9 @@ echo C
 1-middle
 1-end
   parallel --files echo ::: A B C
-/tmp/parallel-tutorial/parXXXXX.par
-/tmp/parallel-tutorial/parXXXXX.par
-/tmp/parallel-tutorial/parXXXXX.par
+/tmp/parallel-tutorial-tmpdir/parXXXXX.par
+/tmp/parallel-tutorial-tmpdir/parXXXXX.par
+/tmp/parallel-tutorial-tmpdir/parXXXXX.par
   parallel --tmpdir /var/tmp --files echo ::: A B C
 /var/tmp/parXXXXX.par
 /var/tmp/parXXXXX.par
@@ -446,19 +439,19 @@ B D
 /bin/bash: line 10: outdir/f1/B/f2/D/stderr: No such file or directory
 /bin/bash: line 11: outdir/f1/B/f2/D/stdout: No such file or directory
   /usr/bin/time -f %e parallel -N0 -j64 sleep 1 :::: num128
-2
+9
   /usr/bin/time -f %e parallel -N0 sleep 1 :::: num128
-16
+99
   /usr/bin/time -f %e parallel -N0 --jobs 200% sleep 1 :::: num128
-8
+9
   /usr/bin/time -f %e parallel -N0 --jobs 0 sleep 1 :::: num128
-1
+9
   echo 50% > my_jobs
   /usr/bin/time -f %e parallel -N0 --jobs my_jobs sleep 1 :::: num128 &
   sleep 1
   echo 0 > my_jobs
   wait
-3
+9
   parallel --use-cpus-instead-of-cores -N0 sleep 1 :::: num8
   parallel --shuf echo ::: 1 2 3 ::: a b c ::: A B C
 123 abc ABC
@@ -490,7 +483,7 @@ B D
 123 abc ABC
 
   seq 10 20 | parallel --tmux 'echo start {}; sleep {}; echo done {}'
-See output with: tmux -S /tmp/parallel-tutorial/tmsXXXXX attach
+See output with: tmux -S /tmp/parallel-tutorial-tmpdir/tmsXXXXX attach
   tmux -S /tmp/tmsXXXXX attach
 no sessions
   parallel --delay 2.5 echo Starting {}\;date ::: 1 2 3
@@ -501,13 +494,13 @@ DATE OUTPUT
 Starting 3
 DATE OUTPUT
   parallel --timeout 4.1 sleep {}\; echo {} ::: 2 4 6 8
-2
-4
+9
+9
   parallel --timeout 200% sleep {}\; echo {} ::: 2.1 2.2 3 7 2.3
-2
-2
-3
-2
+9
+9
+9
+9
   parallel --eta sleep ::: 1 3 2 2 1 3 3 2 1
 
 Computers / CPU cores / Max jobs to run
@@ -570,26 +563,26 @@ Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
 1	:	TIMESTAMP	9.999	0	0	1	0	exit 1
 2	:	TIMESTAMP	9.999	0	0	2	0	exit 2
 3	:	TIMESTAMP	9.999	0	0	3	0	exit 3
-0
-0
-1
-2
+9
+9
+9
+9
 parallel: This job failed:
 echo X; exit X
 parallel: Starting no more jobs. Waiting for 1 jobs to finish.
 parallel: This job failed:
 echo X; exit X
   parallel -j2 --halt now,fail=1 echo {}\; exit {} ::: 0 0 1 2 3
-0
-0
-1
+9
+9
+9
 parallel: This job failed:
 echo X; exit X
   parallel -j2 --halt soon,fail=20% echo {}\; exit {} ::: 0 1 2 3 4 5 6 7 8 9
-0
-1
-2
-3
+9
+9
+9
+9
 parallel: This job failed:
 echo X; exit X
 parallel: This job failed:
@@ -598,10 +591,10 @@ parallel: Starting no more jobs. Waiting for 1 jobs to finish.
 parallel: This job failed:
 echo X; exit X
   parallel -j2 --halt now,success=1 echo {}\; exit {} ::: 1 2 3 0 4 5 6
-1
-2
-3
-0
+9
+9
+9
+9
 parallel: This job succeeded:
 echo X; exit X
   parallel -k --retries 3 'echo tried {} >>/tmp/runs; echo completed {}; exit {}' ::: 1 2 0
@@ -686,13 +679,13 @@ foo
 /home/parallel/privat/parallel/testsuite/tmp
 /home/parallel/.TMPWORKDIR
   parallel -S $SERVER1 --sshdelay 0.2 echo ::: 1 2 3
-1
-2
-3
+9
+9
+9
   parallel --controlmaster -S $SERVER1 echo ::: 1 2 3
-1
-2
-3
+9
+9
+9
   parallel --filter-hosts -S 173.194.32.46,$SERVER1 echo ::: bar
 bar
 parallel: Warning: Removed 173.194.32.46.
@@ -861,51 +854,51 @@ _
   }
   export -f my_func3
   parallel -vv --workdir ... --nice 17 --env _ --trc {}.out -S $SERVER1 my_func3 {} ::: abc-file
-( ssh -l parallel lo -- mkdir -p ./.TMPWORKDIR;rsync --protocol 30 -rlDzR -essh\ -l\ parallel ./abc-file lo:./.TMPWORKDIR );ssh -l parallel lo -- exec perl -e @GNU_Parallel\\\=\\\(\\\"use\\\",\\\"IPC::Open3\\\;\\\",\\\"use\\\",\\\"MIME::Base64\\\"\\\)\\\;eval\\\"@GNU_Parallel\\\"\\\;my\\\$eval\\\=decode_base64\\\(join\\\"\\\",@ARGV\\\)\\\;eval\\\$eval\\\; BASE64 BASE64;_EXIT_status=$?; mkdir -p ./.; rsync --protocol 30 --rsync-path=cd\ ./.TMPWORKDIR/./.\;\ rsync -rlDzR -essh\ -l\ parallel lo:./abc-file.out ./.;ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file.out\;\ sh\ -c\ \'rmdir\ ./.TMPWORKDIR/\ ./.parallel/tmp/\ ./.parallel/\ 2\>/dev/null\'\;rm\ -rf\ ./.TMPWORKDIR\;\);ssh -l parallel lo -- rm -rf .TMPWORKDIR; exit $_EXIT_status;
+( ssh -l parallel lo -- mkdir -p ./.TMPWORKDIR;rsync --protocol 30 -rlDzR -essh\ -l\ parallel ./abc-file lo:./.TMPWORKDIR );ssh -l parallel lo -- exec perl -e @GNU_Parallel\\\=\\\(\\\"use\\\",\\\"IPC::Open3\\\;\\\",\\\"use\\\",\\\"MIME::Base64\\\"\\\)\\\;eval\\\"@GNU_Parallel\\\"\\\;my\\\$eval\\\=decode_base64\\\(join\\\"\\\",@ARGV\\\)\\\;eval\\\$eval\\\; BASE64 BASE64;_EXIT_status=$?; mkdir -p ./.; rsync --protocol 30 --rsync-path=cd\ ./.TMPWORKDIR/./.\;\ rsync -rlDzR -essh\ -l\ parallel lo:./abc-file.out ./.;ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file\;\ sh\ -c\ rmdir\\\ ./.TMPWORKDIR/\\\ ./.parallel/tmp/\\\ ./.parallel/\\\ 2\\\>/dev/null\\\;rm\\\ -rf\\\ ./.TMPWORKDIR\\\;\);ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file.out\;\ sh\ -c\ rmdir\\\ ./.TMPWORKDIR/\\\ ./.parallel/tmp/\\\ ./.parallel/\\\ 2\\\>/dev/null\\\;rm\\\ -rf\\\ ./.TMPWORKDIR\\\;\);ssh -l parallel lo -- rm -rf .TMPWORKDIR; exit $_EXIT_status;
   parallel --sqlandworker csv:////%2Ftmp%2Flog.csv seq ::: 10 ::: 12 13 14
   cat /tmp/log.csv
-10
-11
-12
-10
-11
-12
-13
-10
-11
-12
-13
-14
+99
+99
+99
+99
+99
+99
+99
+99
+99
+99
+99
+99
 Seq,Host,Starttime,JobRuntime,Send,Receive,Exitval,_Signal,Command,V1,V2,Stdout,Stderr
 1,:,000000000.000,0.000,0,9,0,0,"seq 10 12",10,12,"10
-11
-12
+99
+99
 ",
 2,:,000000000.000,0.000,0,12,0,0,"seq 10 13",10,13,"10
-11
-12
-13
+99
+99
+99
 ",
 3,:,000000000.000,0.000,0,15,0,0,"seq 10 14",10,14,"10
-11
-12
-13
-14
+99
+99
+99
+99
 ",
   parallel --results outdir --sqlandworker csv:////%2Ftmp%2Flog2.csv seq ::: 10 ::: 12 13 14
   cat /tmp/log2.csv
-10
-11
-12
-10
-11
-12
-13
-10
-11
-12
-13
-14
+99
+99
+99
+99
+99
+99
+99
+99
+99
+99
+99
+99
 Seq,Host,Starttime,JobRuntime,Send,Receive,Exitval,_Signal,Command,V1,V2,Stdout,Stderr
 1,:,000000000.000,0.000,0,9,0,0,"seq 10 12",10,12,outdir/1/10/2/12/stdout,outdir/1/10/2/12/stderr
 2,:,000000000.000,0.000,0,12,0,0,"seq 10 13",10,13,outdir/1/10/2/13/stdout,outdir/1/10/2/13/stderr
@@ -1014,48 +1007,48 @@ END
 JOB1
 %head1
 %head2
-1
-2
-3
+9
+9
+9
 JOB2
 %head1
 %head2
-4
-5
-6
+9
+9
+9
 JOB3
 %head1
 %head2
-7
-8
+9
+9
 9
 JOB4
 %head1
 %head2
-10
+99
   cat num_%header | parallel --header 2 --pipe -N3 echo JOB{#}\;cat
 JOB1
 %head1
 %head2
-1
-2
-3
+9
+9
+9
 JOB2
 %head1
 %head2
-4
-5
-6
+9
+9
+9
 JOB3
 %head1
 %head2
-7
-8
+9
+9
 9
 JOB4
 %head1
 %head2
-10
+99
   parallel --pipepart -a num1000000 --block 3m wc
  444444  444444 3000003
  428572  428572 3000004
@@ -1306,8 +1299,8 @@ mentioned in the release notes of next version of GNU Parallel.
 
   parallel --number-of-cpus
   parallel --number-of-cores
-1
-8
+9
+9
   echo '--nice 17' > ~/.parallel/nicetimeout
   echo '--timeout 300%' >> ~/.parallel/nicetimeout
   parallel --profile nicetimeout echo ::: A B C
