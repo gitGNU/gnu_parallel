@@ -104,7 +104,7 @@ B<--noswap> will set both B<--start-noswap> and B<run-noswap>.
 
 =item B<--net> (alpha testing)
 
-Shorthand for B<--nethops 2>.
+Shorthand for B<--nethops 3>.
 
 
 =item B<--nethops> I<h> (alpha testing)

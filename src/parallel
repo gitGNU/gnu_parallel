@@ -7482,7 +7482,7 @@ sub start {
 	eval {
 	    if(not $pid = ::open3($stdin_fh, ">&OUT", ">&ERR", "-")) {
 		# Each child gets its own process group to make it safe to killall
-		setpgrp(0,0);
+		setpgrp(0,0) || ::die_bug("setpgrp failed");
 		exec("exec $Global::shell -c ".::shell_quote_scalar_default($command))
 		    || ::die_bug("open3-$stdin_fh $command");
 	    }
@@ -7520,16 +7520,23 @@ sub start {
     }
 
     sub open3_setpgrp {
-	# If the OS supports open3(x,x,x,"-") use that
-	# eval { if(not $pid=::open3($i,$o,$e,"-")) { exit } }
-	# if $!: external
-	# TODO build a selector that works with out side effects
+	# Select and run open3_setpgrp_internal/open3_setpgrp_external
+	# parallel -j0 --timeout 5 '( (sleep {}) & )& sleep 7' ::: {1..55} &
+	# ps -opid,ppid,pgrp,cmd
+	# parallel --timeout 6 -q perl -e 'sleep(1);if(fork()){sleep(30)}while(not fork and $t++<30000){ }' ::: 1
+	# perl -e 'sleep(1);if(fork()){sleep(3)}while(not fork and time-$^T<8){ }'
 	no warnings 'redefine';
-	if(1) {
+	my ($outfh,$name) = ::tmpfile(SUFFIX => ".tst");
+	# Test to see if open3(,,,"-") is supported
+	my $script = 'if(not $pid=::open3($i,$o,$e,"-")) { unlink shift }';
+	qx{ perl -MIPC::Open3 -e '$script' $name };
+	if(-e $name) {
 	    # Does not support open3(x,x,x,"-")
+	    unlink($name);
 	    *open3_setpgrp = \&open3_setpgrp_external;
 	} else {
 	    # Supports open3(x,x,x,"-")
+	    # This is 0.5 ms faster to run
 	    *open3_setpgrp = \&open3_setpgrp_internal;
 	}
 	# The sub is now redefined. Call it

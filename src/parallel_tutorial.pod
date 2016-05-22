@@ -2603,7 +2603,7 @@ Output:
   Web site: http://www.gnu.org/software/parallel
   
   When using programs that use GNU Parallel to process data for publication
-  please cite as described in 'parallel --bibtex'.
+  please cite as described in 'parallel --citation'.
 
 In scripts B<--minversion> can be used to ensure the user has at least
 this version:
@@ -2615,10 +2615,10 @@ Output:
   20160322
   Your version is at least 20130722.
 
-If using GNU B<parallel> for research the BibTeX citation can be
-generated using B<--bibtex>:
+If you are using GNU B<parallel> for research the BibTeX citation can be
+generated using B<--citation>:
 
-  parallel --bibtex
+  parallel --citation
 
 Output:
 
@@ -2714,13 +2714,13 @@ If you like GNU B<parallel>:
 
 =item *
 
-Give a demo at your local user group/team/colleagues
+Give a demo at your local user group/your team/your colleagues
 
 =item *
 
 Post the intro videos and the tutorial on Reddit, Diaspora*,
 forums, blogs, Identi.ca, Google+, Twitter, Facebook, Linkedin,
-mailing lists
+and mailing lists
 
 =item *
 
@@ -2739,7 +2739,7 @@ If you use GNU B<parallel> for research:
 
 =item *
 
-Please cite GNU B<parallel> in you publications (use B<--bibtex>)
+Please cite GNU B<parallel> in you publications (use B<--citation>)
 
 =back
 

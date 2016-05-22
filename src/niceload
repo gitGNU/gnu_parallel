@@ -321,7 +321,7 @@ sub get_options_from_array {
 	$opt::load = -1;
     }
     if($opt::net) {
-	$opt::nethops ||= 2;
+	$opt::nethops ||= 3;
     }
     if($opt::nethops) {
 	# niceload -l 0.01 --sensor 'netsensor_script'

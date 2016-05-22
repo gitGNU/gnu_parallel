@@ -16,7 +16,7 @@ S_POLAR=`parallel -k echo -S 1/{}.polarhome.com ::: $P`
 # 20150414 --timeout 80 -> 40
 # 20151219 --retries 5 -> 2
 TIMEOUT=10
-RETRIES=2
+RETRIES=4
 
 echo '### Tests on polarhome machines'
 echo 'Setup on polarhome machines'

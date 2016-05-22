@@ -32,11 +32,10 @@ measure() {
     INNER=$2
     CORES=$3
     VERSION=$4
-    GHZ=3.0
+    MHZ=1700
 
     # Force cpuspeed at 1.7GHz - seems to give tighter results
-#    forever 'sleep 10;parallel sudo cpufreq-set -f ${GHZ}GHz -c{} ::: {0..7}' &
-#    forever 'sleep 10;parallel sudo cpufreq-set -f 1700MHz -c{} ::: {0..7}' &
+    forever 'parallel sudo cpufreq-set -g performance -u '$MHZ'MHz -d '$MHZ'MHz -c{} ::: {0..3};sleep 10' &
 
     PATH=/tmp/bin:$PATH
     cd /tmp/bin
@@ -52,8 +51,11 @@ measure() {
       boxplot(JobRuntime/$INNER*1000~Command,data=jl,las=2,outline=F,
               ylab="milliseconds/job",main="GNU Parallel performance\n$OUTER trials each running $INNER");
 _
-    cp /tmp/boxplot.pdf $HOME/tmp/boxplot-j$CORES-${GHZ}ghz-$OUTER-${INNER}v$VERSION.pdf
+    cp /tmp/boxplot.pdf $HOME/tmp/boxplot-j$CORES-${MHZ}MHz-$OUTER-${INNER}v$VERSION.pdf
     evince /tmp/boxplot.pdf
 }
 
+#measure 3000 1000 2 1
+measure 30 10 2 1
+measure 300 100 2 1
 measure 3000 1000 2 1

@@ -1272,10 +1272,10 @@ with 'y' or 'Y'.  Implies B<-t>.
 
 =item B<--parens> I<parensstring>
 
-Use to define start and end parenthesis for B<{= perl expression =}>. The
+Define start and end parenthesis for B<{= perl expression =}>. The
 left and the right parenthesis can be multiple characters and are
-assumed to be the same length. The default is B<{==}> giving
-B<{=> as the start parenthesis and B<=}> as the end parenthesis.
+assumed to be the same length. The default is B<{==}> giving B<{=> as
+the start parenthesis and B<=}> as the end parenthesis.
 
 Another useful setting is B<,,,,> which would make both parenthesis
 B<,,>:
@@ -1546,7 +1546,7 @@ it possible to define your own replacement strings. GNU B<parallel>'s
   --rpl '{/.} s:.*/::; s:\.[^/.]+$::;'
   --rpl '{.} s:\.[^/.]+$::'
 
-The <--plus> replacement strings are implemented as:
+The B<--plus> replacement strings are implemented as:
 
   --rpl '{+/} s:/[^/]*$::'
   --rpl '{+.} s:.*\.::'
@@ -1567,12 +1567,12 @@ of GNU B<parallel>'s internal functions and data structures.
 
 Here are a few examples:
 
-  Remove 2 extensions (e.g. .tar.gz)
-  --rpl '{..} s:\.[^/.]+$::;s:\.[^/.]+$::;'
-  Keep only the extension
-  --rpl '{ext} s:.*\.::'
   Is the job sequence even or odd?
-  --rpl '{odd} $_=$job->seq()%2?"odd":"even"'
+  --rpl '{odd} $_ = $job->seq() % 2 ? "odd" : "even"'
+  Pad job sequence with leading zeros to get equal width
+  --rpl '{0#} $f = "%0".int(1+log(total_jobs())/log(10))."d"; $_=sprintf($f,$job->seq())'
+  Job sequence counting from 0
+  --rpl '{#0} $_ = $job->seq() - 1'
 
 See also: B<{= perl expression =}> B<--parens>
 
@@ -1981,13 +1981,13 @@ Use B<tmux> for output. Start a B<tmux> session and run each job in a
 window in that session. No other output will be produced.
 
 
-=item B<--timeout> I<val>
+=item B<--timeout> I<secs>
 
-Time out for command. If the command runs for longer than I<val>
+Time out for command. If the command runs for longer than I<secs>
 seconds it will get killed with SIGTERM, followed by SIGTERM 200 ms
 later, followed by SIGKILL 200 ms later.
 
-If I<val> is followed by a % then the timeout will dynamically be
+If I<secs> is followed by a % then the timeout will dynamically be
 computed as a percentage of the median average runtime. Only values
 > 100% will make sense.
 

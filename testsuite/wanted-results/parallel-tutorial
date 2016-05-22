@@ -1269,7 +1269,7 @@ please cite as described in 'parallel --citation'.
   parallel --minversion VERSION && echo Your version is at least VERSION.
 VERSION
 Your version is at least VERSION.
-  parallel --bibtex
+  parallel --citation
 Academic tradition requires you to cite works you base your article on.
 When using programs that use GNU Parallel to process data for publication
 please cite:
