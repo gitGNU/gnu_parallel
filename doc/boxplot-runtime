@@ -49,7 +49,7 @@ measure() {
       pdf("/tmp/boxplot.pdf");
       par(cex.axis=0.5);
       boxplot(JobRuntime/$INNER*1000~Command,data=jl,las=2,outline=F,
-              ylab="milliseconds/job",main="GNU Parallel performance\n$OUTER trials each running $INNER");
+              ylab="milliseconds/job",main="GNU Parallel performance of different versions\n$OUTER trials each running $INNER jobs");
 _
     cp /tmp/boxplot.pdf $HOME/tmp/boxplot-j$CORES-${MHZ}MHz-$OUTER-${INNER}v$VERSION.pdf
     evince /tmp/boxplot.pdf

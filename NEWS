@@ -1,90 +1,173 @@
 20160522
 
-* niceload --net pauses the program if the internet connection is overloaded.
+* niceload --net pauses the program if the internet connection is
+  overloaded.
 
-* Vote for GNU Parallel's community ad on https://meta.askubuntu.com/questions/14925/community-promotion-ads-2016/15046#15046
+* Vote for GNU Parallel's community ad on
+  https://meta.askubuntu.com/questions/14925/community-promotion-ads-2016/15046#15046
 
-* Updated speed comparison between versions https://www.gnu.org/software/parallel/process-time-j2-1700MHz-3000-1000.pdf
+* Updated speed comparison between versions
+  https://www.gnu.org/software/parallel/process-time-j2-1700MHz-3000-1000.pdf
 
-* GNU Parallel was cited in: Improving computation efficiency by parallel programming http://www.irbis-nbuv.gov.ua/cgi-bin/irbis_nbuv/cgiirbis_64.exe?C21COM=2&I21DBN=UJRN&P21DBN=UJRN&IMAGE_FILE_DOWNLOAD=1&Image_file_name=PDF/ape_2013_3_44.pdf
+* GNU Parallel was cited in: Improving computation efficiency by
+  parallel programming
+  http://www.irbis-nbuv.gov.ua/cgi-bin/irbis_nbuv/cgiirbis_64.exe?C21COM=2&I21DBN=UJRN&P21DBN=UJRN&IMAGE_FILE_DOWNLOAD=1&Image_file_name=PDF/ape_2013_3_44.pdf
 
-* GNU Parallel was cited in: A supernova feedback implementation for the astrophysical simulation software Arepo https://arxiv.org/abs/1604.06071
+* GNU Parallel was cited in: A supernova feedback implementation for
+  the astrophysical simulation software Arepo
+  https://arxiv.org/abs/1604.06071
 
-* GNU Parallel was cited in: Lorenz-Mie theory for 2D scattering and resonance calculations https://arxiv.org/pdf/1505.07691v2.pdf
+* GNU Parallel was cited in: Lorenz-Mie theory for 2D scattering and
+  resonance calculations https://arxiv.org/pdf/1505.07691v2.pdf
 
-* GNU Parallel was cited in: Host-pathogen co-evolution and the emergence of broadly neutralizing antibodies in chronic infections https://arxiv.org/abs/1512.06296
+* GNU Parallel was cited in: Host-pathogen co-evolution and the
+  emergence of broadly neutralizing antibodies in chronic infections
+  https://arxiv.org/abs/1512.06296
 
-* GNU Parallel was cited in: Pacific People, Metabolic Disease and Evolutionary Processes: a mitochondrial DNA study https://otago.ourarchive.ac.nz/handle/10523/6340
+* GNU Parallel was cited in: Pacific People, Metabolic Disease and
+  Evolutionary Processes: a mitochondrial DNA study
+  https://otago.ourarchive.ac.nz/handle/10523/6340
 
-* GNU Parallel was cited in: The effect of domain modeling on efficiency of planning: Lessons from the Nomystery domain http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=7407131
+* GNU Parallel was cited in: The effect of domain modeling on
+  efficiency of planning: Lessons from the Nomystery domain
+  http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=7407131
 
-* GNU Parallel was cited in: Oops, my tests broke the build: An analysis of Travis CI buildswith GitHub https://peerj.com/preprints/1984/
+* GNU Parallel was cited in: Oops, my tests broke the build: An
+  analysis of Travis CI buildswith GitHub
+  https://peerj.com/preprints/1984/
 
-* GNU Parallel was cited in: Drosophila Muller F Elements Maintain a Distinct Set of Genomic Properties Over 40 Million Years of Evolution http://www.g3journal.org/content/5/5/719.full.pdf+html
+* GNU Parallel was cited in: Drosophila Muller F Elements Maintain a
+  Distinct Set of Genomic Properties Over 40 Million Years of
+  Evolution http://www.g3journal.org/content/5/5/719.full.pdf+html
 
-* GNU Parallel was cited in: An Empirical Comparison of Neural Architectures for Reinforcement Learning in Partially Observable Environments http://biorxiv.org/content/biorxiv/early/2016/03/24/022707.full.pdf
+* GNU Parallel was cited in: An Empirical Comparison of Neural
+  Architectures for Reinforcement Learning in Partially Observable
+  Environments
+  http://biorxiv.org/content/biorxiv/early/2016/03/24/022707.full.pdf
 
-* GNU Parallel was cited in: Functional enrichments of disease variants across thousands of independent loci in eight diseases http://biorxiv.org/content/early/2016/04/11/048066.abstract
+* GNU Parallel was cited in: Functional enrichments of disease
+  variants across thousands of independent loci in eight diseases
+  http://biorxiv.org/content/early/2016/04/11/048066.abstract
 
-* GNU Parallel was cited in: PleaseTM: Enabling Transaction Conflict Management in Requester-wins Hardware Transactional Memory http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7446072
+* GNU Parallel was cited in: PleaseTM: Enabling Transaction Conflict
+  Management in Requester-wins Hardware Transactional Memory
+  http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7446072
 
-* GNU Parallel was cited in: EASE-MM: Sequence-Based Prediction of Mutation-Induced Stability Changes with Feature-Based Multiple Models http://www.sciencedirect.com/science/article/pii/S0022283616000310
+* GNU Parallel was cited in: EASE-MM: Sequence-Based Prediction of
+  Mutation-Induced Stability Changes with Feature-Based Multiple
+  Models
+  http://www.sciencedirect.com/science/article/pii/S0022283616000310
 
-* GNU Parallel was cited in: A new orthology assessment method for phylogenomic data: Unrooted Phylogenetic Orthology http://mbe.oxfordjournals.org/content/early/2016/04/06/molbev.msw069.short https://github.com/ballesterus/UPhO
+* GNU Parallel was cited in: A new orthology assessment method for
+  phylogenomic data: Unrooted Phylogenetic Orthology
+  http://mbe.oxfordjournals.org/content/early/2016/04/06/molbev.msw069.short
+  https://github.com/ballesterus/UPhO
 
-* GNU Parallel was cited in: Distinctive Interest Point Selection for Efficient Near-duplicate Image Retrieval http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7459172
+* GNU Parallel was cited in: Distinctive Interest Point Selection for
+  Efficient Near-duplicate Image Retrieval
+  http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7459172
 
-* GNU Parallel was cited in: The Evolution of C Programming Practices: A Study of the Unix Operating System 1973–2015 https://dl.acm.org/citation.cfm?id=2884799 (It has the cutest thumbnail graphs I have ever seen scattered all over the text)
+* GNU Parallel was cited in: The Evolution of C Programming Practices:
+  A Study of the Unix Operating System 1973–2015
+  https://dl.acm.org/citation.cfm?id=2884799 (It has the cutest
+  thumbnail graphs I have ever seen scattered all over the text)
 
-* GNU Parallel was cited in: StrAuto: Automation and Parallelization of STRUCTURE Analysis http://vchhatre.w3.uvm.edu/download/strauto/strauto_doc.pdf
+* GNU Parallel was cited in: StrAuto: Automation and Parallelization
+  of STRUCTURE Analysis
+  http://vchhatre.w3.uvm.edu/download/strauto/strauto_doc.pdf
 
-* GNU Parallel was cited in: Data processing pipeline for serial femtosecond crystallography at SACLA http://journals.iucr.org/j/issues/2016/03/00/zw5001/index.html
+* GNU Parallel was cited in: Data processing pipeline for serial
+  femtosecond crystallography at SACLA
+  http://journals.iucr.org/j/issues/2016/03/00/zw5001/index.html
 
-* GNU Parallel was cited in: Reconstruction of Fine-Scale Auroral Dynamics http://arxiv.org/pdf/1512.01460.pdf
+* GNU Parallel was cited in: Reconstruction of Fine-Scale Auroral
+  Dynamics http://arxiv.org/pdf/1512.01460.pdf
 
-* GNU Parallel was cited in: The Outer Solar System Origins Survey: I. Design and First-Quarter Discoveries http://arxiv.org/pdf/1511.02895.pdf
+* GNU Parallel was cited in: The Outer Solar System Origins Survey:
+  I. Design and First-Quarter Discoveries
+  http://arxiv.org/pdf/1511.02895.pdf
 
-* GNU Parallel was cited in: Multiscale Estimation of Binding Kinetics Using Brownian Dynamics, Molecular Dynamics and Milestoning http://journals.plos.org/ploscompbiol/article/asset?id=10.1371%2Fjournal.pcbi.1004381.PDF
+* GNU Parallel was cited in: Multiscale Estimation of Binding Kinetics
+  Using Brownian Dynamics, Molecular Dynamics and Milestoning
+  http://journals.plos.org/ploscompbiol/article/asset?id=10.1371%2Fjournal.pcbi.1004381.PDF
 
-* GNU Parallel was cited in: Genomic legacy of the African cheetah, Acinonyx jubatus https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4676127/pdf/13059_2015_Article_837.pdf
+* GNU Parallel was cited in: Genomic legacy of the African cheetah,
+  Acinonyx jubatus
+  https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4676127/pdf/13059_2015_Article_837.pdf
 
-* GNU Parallel was cited in: Don’t Forget to Lock the Back Door! A Characterization of IPv6 Network Security Policy http://benign-research-probe2.eecs.umich.edu/ndss16_ipv6_final.pdf
+* GNU Parallel was cited in: Don’t Forget to Lock the Back Door! A
+  Characterization of IPv6 Network Security Policy
+  http://benign-research-probe2.eecs.umich.edu/ndss16_ipv6_final.pdf
 
-* GNU Parallel was cited in: Comprehensive Annotation of the Parastagonospora nodorum Reference Genome Using Next-Generation Genomics, Transcriptomics and Proteogenomics http://journals.plos.org/plosone/article/asset?id=10.1371%2Fjournal.pone.0147221.PDF
+* GNU Parallel was cited in: Comprehensive Annotation of the
+  Parastagonospora nodorum Reference Genome Using Next-Generation
+  Genomics, Transcriptomics and Proteogenomics
+  http://journals.plos.org/plosone/article/asset?id=10.1371%2Fjournal.pone.0147221.PDF
 
-* GNU Parallel was cited in: Stride Search: a general algorithm for storm detection in high-resolution climate data http://www.geosci-model-dev-discuss.net/8/7727/2015/gmdd-8-7727-2015.pdf
+* GNU Parallel was cited in: Stride Search: a general algorithm for
+  storm detection in high-resolution climate data
+  http://www.geosci-model-dev-discuss.net/8/7727/2015/gmdd-8-7727-2015.pdf
 
-* GNU Parallel was cited in: How attention influences perceptual decision making: Single-trial EEG correlates of drift-diffusion model parameters http://www.cidlab.com/prints/nunez2016attention.pdf
+* GNU Parallel was cited in: How attention influences perceptual
+  decision making: Single-trial EEG correlates of drift-diffusion
+  model parameters http://www.cidlab.com/prints/nunez2016attention.pdf
 
-* GNU Parallel was cited in: Telomere And Proximal Sequence Analysis Using High-Throughput Sequencing Reads http://repository.upenn.edu/edissertations/1460/
+* GNU Parallel was cited in: Telomere And Proximal Sequence Analysis
+  Using High-Throughput Sequencing Reads
+  http://repository.upenn.edu/edissertations/1460/
 
-* GNU Parallel was cited in: AT-GIS: Highly Parallel Spatial Query Processing with Associative Transducers http://lsds.doc.ic.ac.uk/sites/default/files/ATGIS-SIGMOD16.pdf
+* GNU Parallel was cited in: AT-GIS: Highly Parallel Spatial Query
+  Processing with Associative Transducers
+  http://lsds.doc.ic.ac.uk/sites/default/files/ATGIS-SIGMOD16.pdf
 
-* GNU Parallel was cited in: PVAIR: Partial Variable Assignment InterpolatoR http://verify.inf.usi.ch/sites/default/files/main-2.pdf
+* GNU Parallel was cited in: PVAIR: Partial Variable Assignment
+  InterpolatoR http://verify.inf.usi.ch/sites/default/files/main-2.pdf
 
-* GNU Parallel was cited in: Comparative Cladistics: Fossils, Morphological Data Partitions and Lost Branches in the Fossil Tree of Life http://opus.bath.ac.uk/43955/ 
+* GNU Parallel was cited in: Comparative Cladistics: Fossils,
+  Morphological Data Partitions and Lost Branches in the Fossil Tree
+  of Life http://opus.bath.ac.uk/43955/
 
-* GNU Parallel was cited in: Shannon: An Information-Optimal de NovoRNA-Seq Assembler http://biorxiv.org/content/biorxiv/early/2016/02/09/039230.full.pdf
+* GNU Parallel was cited in: Shannon: An Information-Optimal de
+  NovoRNA-Seq Assembler
+  http://biorxiv.org/content/biorxiv/early/2016/02/09/039230.full.pdf
 
-* GNU Parallel was cited in: Adaptive Measure-Theoretic Parameter Estimation for Coastal Ocean Modeling https://repositories.lib.utexas.edu/handle/2152/32435
+* GNU Parallel was cited in: Adaptive Measure-Theoretic Parameter
+  Estimation for Coastal Ocean Modeling
+  https://repositories.lib.utexas.edu/handle/2152/32435
 
-* GNU Parallel was cited in: Computational Design of DNA-Binding Proteins http://link.springer.com/protocol/10.1007/978-1-4939-3569-7_16
+* GNU Parallel was cited in: Computational Design of DNA-Binding
+  Proteins
+  http://link.springer.com/protocol/10.1007/978-1-4939-3569-7_16
 
-* GNU Parallel was cited in: Reference genotype and exome data from an Australian Aboriginal population for health-based research http://www.nature.com/articles/sdata201623
+* GNU Parallel was cited in: Reference genotype and exome data from an
+  Australian Aboriginal population for health-based research
+  http://www.nature.com/articles/sdata201623
 
-* GNU Parallel was cited in: Computational Design of DNA-Binding Proteins http://link.springer.com/protocol/10.1007/978-1-4939-3569-7_16
+* GNU Parallel was cited in: Computational Design of DNA-Binding
+  Proteins
+  http://link.springer.com/protocol/10.1007/978-1-4939-3569-7_16
 
-* GNU Parallel was cited in: Do aye-ayes echolocate? http://biorxiv.org/content/biorxiv/early/2016/04/11/048165.full.pdf
+* GNU Parallel was cited in: Do aye-ayes echolocate?
+  http://biorxiv.org/content/biorxiv/early/2016/04/11/048165.full.pdf
 
-* GNU Parallel was cited in: Functional enrichments of disease variants across thousands of independent loci in eight diseases http://biorxiv.org/content/biorxiv/early/2016/04/11/048066.full.pdf
+* GNU Parallel was cited in: Functional enrichments of disease
+  variants across thousands of independent loci in eight diseases
+  http://biorxiv.org/content/biorxiv/early/2016/04/11/048066.full.pdf
 
-* GNU Parallel was cited in: From genomes to phenotypes: Traitar, the microbial trait analyzer http://biorxiv.org/content/biorxiv/early/2016/03/12/043315.full.pdf
+* GNU Parallel was cited in: From genomes to phenotypes: Traitar, the
+  microbial trait analyzer
+  http://biorxiv.org/content/biorxiv/early/2016/03/12/043315.full.pdf
 
-* GNU Parallel was mentioned in: Fast Playback Framework for Analysis of Ground-Based Doppler Radar Observations Using MapReduce Technology http://journals.ametsoc.org/doi/pdf/10.1175/JTECH-D-15-0118.1
+* GNU Parallel was mentioned in: Fast Playback Framework for Analysis
+  of Ground-Based Doppler Radar Observations Using MapReduce
+  Technology
+  http://journals.ametsoc.org/doi/pdf/10.1175/JTECH-D-15-0118.1
 
-* NCBI blast tutorial https://github.com/enormandeau/ncbi_blast_tutorial
+* NCBI blast tutorial
+  https://github.com/enormandeau/ncbi_blast_tutorial
 
-* Distributed Preservation Made Simple https://blog.archive.org/2016/02/26/distributed-preservation-made-simple/
+* Distributed Preservation Made Simple
+  https://blog.archive.org/2016/02/26/distributed-preservation-made-simple/
 
 * Parallel Jobs in Luigi http://rjbaxley.com/posts/2016/03/13/parallel_jobs_in_luigi.html
 
@@ -232,7 +315,7 @@
 * --workdir now accepts replacementstrings.
 
 * GNU Parallel was cited in: Possum - A Framework for
-  Three-Dimensional Reconstruction of Brain Images rfom Serial
+  Three-Dimensional Reconstruction of Brain Images from Serial
   Sections http://link.springer.com/article/10.1007/s12021-015-9286-1
 
 * GNU Parallel was cited in: A Genetic Algorithm for the selection of

@@ -32,9 +32,9 @@ run 1 second, suspend (3.00-1.00) seconds, run 1 second, suspend
 
 =over 9
 
-=item B<-B> (alpha testing)
+=item B<-B> (beta testing)
 
-=item B<--battery> (alpha testing)
+=item B<--battery> (beta testing)
 
 Suspend if the system is running on battery. Shorthand for: -l -1 --sensor 'cat /sys/class/power_supply/BAT0/status /proc/acpi/battery/BAT0/state 2>/dev/null |grep -i -q discharging; echo $?'
 
@@ -102,12 +102,12 @@ B<--noswap> is over limit if the system is swapping both in and out.
 B<--noswap> will set both B<--start-noswap> and B<run-noswap>.
 
 
-=item B<--net> (alpha testing)
+=item B<--net> (beta testing)
 
 Shorthand for B<--nethops 3>.
 
 
-=item B<--nethops> I<h> (alpha testing)
+=item B<--nethops> I<h> (beta testing)
 
 Network nice. Pause if the internet connection is overloaded.
 
@@ -140,9 +140,9 @@ Process ID of process to suspend. You can specify multiple process IDs
 with multiple B<-p> I<PID>.
 
 
-=item B<--prg> I<program> (alpha testing)
+=item B<--prg> I<program> (beta testing)
 
-=item B<--program> I<program> (alpha testing)
+=item B<--program> I<program> (beta testing)
 
 Name of running program to suspend. You can specify multiple programs
 with multiple B<--prg> I<program>. If no processes with the name

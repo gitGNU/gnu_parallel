@@ -1183,7 +1183,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160522;
+    $Global::version = 20160523;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1952,16 +1952,19 @@ sub save_stdin_stdout_stderr {
     #   $Global::original_stderr
     #   $Global::original_stdin
     # Returns: N/A
-
-    # Find file descriptors that are already opened (by the shell)
-    for my $fdno (1..61) {
-	# /dev/fd/62 and above are used by bash for <(cmd)
-	my $fh;
-	# 2-argument-open is used to be compatible with old perl 5.8.0
-	# bug #43570: Perl 5.8.0 creates 61 files
-	if(open($fh,">&=$fdno")) {
-	    $Global::fd{$fdno}=$fh;
-	}
+    
+    # TODO Disabled until we have an open3 that will take n filehandles
+    # for my $fdno (1..61) {
+    # # /dev/fd/62 and above are used by bash for <(cmd)
+    # # Find file descriptors that are already opened (by the shell)
+    # Only focus on stdout+stderr for now
+    for my $fdno (1..2) {
+     	my $fh;
+     	# 2-argument-open is used to be compatible with old perl 5.8.0
+     	# bug #43570: Perl 5.8.0 creates 61 files
+     	if(open($fh,">&=$fdno")) {
+     	    $Global::fd{$fdno}=$fh;
+     	}
     }
     open $Global::original_stderr, ">&", "STDERR" or
 	::die_bug("Can't dup STDERR: $!");
