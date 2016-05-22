@@ -4114,10 +4114,11 @@ sub which {
 	for (@pidtable) {
 	    # must match: 24436 21224 busybox ash
 	    # must match: 24436 21224 <<empty on MacOSX running cubase>>
+	    # must match: 24436 21224 <<empty on system running Viber>>
 	    #   or: perl -e 'while($0=" "){}'
 	    if(/^\s*(\S+)\s+(\S+)\s+(\S+.*)/
 	       or
-	       $^O eq "darwin" and /^\s*(\S+)\s+(\S+)\s+()$/) {
+	       /^\s*(\S+)\s+(\S+)\s+()$/) {
 		$parent_of{$1} = $2;
 		push @{$children_of{$2}}, $1;
 		$name_of{$1} = $3;
