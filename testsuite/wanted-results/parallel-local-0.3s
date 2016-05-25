@@ -1638,5 +1638,32 @@ Computers / CPU cores / Max jobs to run
 1:local / 8 / 2
 
 Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
+echo '**'
+**
+echo '### --pipepart autoset --block => 10*joblots'
+### --pipepart autoset --block => 10*joblots
+  seq 1000 > /run/shm/parallel$$;     parallel -j2 -k --pipepart echo {#} :::: /run/shm/parallel$$;     rm /run/shm/parallel$$
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+echo '**'
+**
 ### 1 .par file from --files expected
 0

@@ -846,7 +846,7 @@ _
   parallel --env _ -S $SERVER1 'echo $VAR; my_func2' ::: bar
 
 /bin/bash: my_func2: command not found
-  parallel -vv --pipepart wc :::: num30000
+  parallel -vv --pipepart --block 1M wc :::: num30000
 <num30000 perl -e 'while(@ARGV) { sysseek(STDIN,shift,0) || die; $left = shift; while($read = sysread(STDIN,$buf, ($left > 131072 ? 131072 : $left))){ $left -= $read; syswrite(STDOUT,$buf); } }'  0 0 0 168894 | (wc)
   30000   30000  168894
   my_func3() {

@@ -120,17 +120,30 @@ $Global::JobQueue = JobQueue->new(
     $number_of_args,\@Global::transfer_files,\@Global::ret_files);
 
 if($opt::pipepart) {
-    if($opt::roundrobin) {
-	# Compute size of -a
+    if(not $opt::blocksize or $opt::roundrobin) {
+	# --block not set =>
+	#   compute reasonable value giving 10 jobs per jobslot
+	# --roundrobin => divide equally between jobslots
 	my $size = 0;
+	# Compute size of -a
 	$size += -s $_ for @opt::a;
 	# Compute $Global::max_jobs_running
+	$Global::dummy_jobs = 1;
 	for my $sshlogin (values %Global::host) {
 	    $sshlogin->max_jobs_running();
 	}
-	$Global::max_jobs_running or ::die_bug("Global::max_jobs_running not set");
-	# Set --blocksize = size / no of proc
-	$opt::blocksize = 1 + $size / $Global::max_jobs_running;
+	$Global::max_jobs_running or
+	    ::die_bug("Global::max_jobs_running not set");
+	if($opt::roundrobin) {
+	    # Run in total $job_slots jobs
+	    # Set --blocksize = size / no of proc
+	    $Global::blocksize = 1 + int($size / $Global::max_jobs_running);
+	} else {
+	    # Run in total $job_slots*10 jobs
+	    # Set --blocksize = size / no of proc / 10
+	    $Global::blocksize = 1 +
+		int($size / $Global::max_jobs_running / 10);
+	}
     }
     @Global::cat_partials = map { pipe_part_files($_) } @opt::a;
     # Unget the empty arg as many times as there are parts
@@ -215,7 +228,7 @@ sub pipe_part_files {
     }
     my $header = find_header(\$buf,open_or_exit($file));
     # find positions
-    my @pos = find_split_positions($file,$opt::blocksize,length $header);
+    my @pos = find_split_positions($file,$Global::blocksize,length $header);
     # Make @cat_partials
     my @cat_partials = ();
     for(my $i=0; $i<$#pos; $i++) {
@@ -230,7 +243,7 @@ sub find_header {
     #   $fh = filehandle to read from
     # Uses:
     #   $opt::header
-    #   $opt::blocksize
+    #   $Global::blocksize
     # Returns:
     #   $header string
     my ($buf_ref, $fh) = @_;
@@ -239,7 +252,7 @@ sub find_header {
 	if($opt::header eq ":") { $opt::header = "(.*\n)"; }
 	# Number = number of lines
 	$opt::header =~ s/^(\d+)$/"(.*\n)"x$1/e;
-	while(read($fh,substr($$buf_ref,length $$buf_ref,0),$opt::blocksize)) {
+	while(read($fh,substr($$buf_ref,length $$buf_ref,0),$Global::blocksize)) {
 	    if($$buf_ref=~s/^($opt::header)//) {
 		$header = $1;
 		last;
@@ -318,7 +331,7 @@ sub spreadstdin {
     # read a record
     # Spawn a job and print the record to it.
     # Uses:
-    #   $opt::blocksize
+    #   $Global::blocksize
     #   STDIN
     #   $opt::r
     #   $Global::max_lines
@@ -335,7 +348,7 @@ sub spreadstdin {
     my $chunk_number = 1;
     my $one_time_through;
     my $two_gb = 2**31-1;
-    my $blocksize = $opt::blocksize;
+    my $blocksize = $Global::blocksize;
     my $in = *STDIN;
     my $header = find_header(\$buf,$in);
     while(1) {
@@ -998,11 +1011,10 @@ sub parse_options {
     if(@opt::transfer_files) { push @Global::transfer_files, @opt::transfer_files; }
     if(not defined $opt::recstart and
        not defined $opt::recend) { $opt::recend = "\n"; }
-    if(not defined $opt::blocksize) { $opt::blocksize = "1M"; }
-    $opt::blocksize = multiply_binary_prefix($opt::blocksize);
-    if($opt::blocksize > 2**31-1) {
+    $Global::blocksize = multiply_binary_prefix($opt::blocksize || "1M");
+    if($Global::blocksize > 2**31-1) {
 	warning("--blocksize >= 2G causes problems. Using 2G-1.");
-	$opt::blocksize = 2**31-1;
+	$Global::blocksize = 2**31-1;
     }
     $opt::memfree = multiply_binary_prefix($opt::memfree);
     check_invalid_option_combinations();
@@ -5130,7 +5142,7 @@ sub compute_number_of_processes {
 	    $max_system_proc_reached and last;
 
 	    my $before_getting_arg = time;
-	    if(!$opt::roundrobin) {
+	    if(!$Global::dummy_jobs) {
 		get_args_or_jobs() or last;
 	    }
 	    $wait_time_for_getting_args += time - $before_getting_arg;

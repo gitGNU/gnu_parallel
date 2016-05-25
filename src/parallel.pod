@@ -1133,13 +1133,19 @@ B<--files> is often used with B<--pipe>.
 B<--pipe> maxes out at around 1 GB/s input, and 100 MB/s output. If
 performance is important use B<--pipepart>.
 
-See also: B<--recstart>, B<--recend>, B<--fifo>, B<--cat>, B<--pipepart>.
+See also: B<--recstart>, B<--recend>, B<--fifo>, B<--cat>,
+B<--pipepart>, B<--files>.
 
 
 =item B<--pipepart>
 
 Pipe parts of a physical file. B<--pipepart> works similar to
-B<--pipe>, but is much faster. It has a few limitations:
+B<--pipe>, but is much faster.
+
+If B<--block> is left out, B<--pipepart> will use a block size that
+will result in 10 jobs per jobslot.
+
+B<--pipepart> has a few limitations:
 
 =over 3
 
@@ -2866,7 +2872,7 @@ Or if the regexps are fixed strings:
   grep -F -f regexps.txt bigfile
 
 There are 2 limiting factors: CPU and disk I/O. CPU is easy to
-measure: If the grep takes >90% CPU (e.g. when running top), then the
+measure: If the B<grep> takes >90% CPU (e.g. when running top), then the
 CPU is a limiting factor, and parallelization will speed this up. If
 not, then disk I/O is the limiting factor, and depending on the disk
 system it may be faster or slower to parallelize. The only way to know
@@ -2876,23 +2882,23 @@ If the CPU is the limiting factor parallelization should be done on the regexps:
 
   cat regexp.txt | parallel --pipe -L1000 --round-robin grep -f - bigfile
 
-If a line matches multiple regexps, the line may be duplicated. The command
-will start one grep per CPU and read bigfile one time per CPU,
-but as that is done in parallel, all reads except the first will be
-cached in RAM. Depending on the size of regexp.txt it may be faster to
-use --block 10m instead of -L1000. If regexp.txt is too big to fit in
-RAM, remove --round-robin and adjust -L1000. This will cause bigfile
-to be read more times.
+If a line matches multiple regexps, the line may be duplicated. The
+command will start one B<grep> per CPU and read I<bigfile> one time
+per CPU, but as that is done in parallel, all reads except the first
+will be cached in RAM. Depending on the size of I<regexp.txt> it may
+be faster to use B<--block 10m> instead of B<-L1000>. If I<regexp.txt>
+is too big to fit in RAM, remove B<--round-robin> and adjust
+B<-L1000>. This will cause I<bigfile> to be read more times.
 
 Some storage systems perform better when reading multiple chunks in
 parallel. This is true for some RAID systems and for some network file
-systems. To parallelize the reading of bigfile:
+systems. To parallelize the reading of I<bigfile>:
 
   parallel --pipepart --block 100M -a bigfile -k grep -f regexp.txt
 
-This will split bigfile into 100MB chunks and run grep on each of
-these chunks. To parallelize both reading of bigfile and regexp.txt
-combine the two using --fifo:
+This will split I<bigfile> into 100MB chunks and run B<grep> on each of
+these chunks. To parallelize both reading of I<bigfile> and I<regexp.txt>
+combine the two using B<--fifo>:
 
   parallel --pipepart --block 100M -a bigfile --fifo cat regexp.txt \
     \| parallel --pipe -L1000 --round-robin grep -f - {}
@@ -4860,8 +4866,9 @@ it also uses rsync with ssh.
 
 =head1 SEE ALSO
 
-B<ssh>(1), B<rsync>(1), B<find>(1), B<xargs>(1), B<dirname>(1),
-B<make>(1), B<pexec>(1), B<ppss>(1), B<xjobs>(1), B<prll>(1),
-B<dxargs>(1), B<mdm>(1)
+B<ssh>(1), B<ssh-agent>(1), B<sshpass>(1), B<ssh-copy-id>(1),
+B<rsync>(1), B<find>(1), B<xargs>(1), B<dirname>(1), B<make>(1),
+B<pexec>(1), B<ppss>(1), B<xjobs>(1), B<prll>(1), B<dxargs>(1),
+B<mdm>(1)
 
 =cut

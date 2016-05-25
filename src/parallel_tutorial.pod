@@ -1816,7 +1816,7 @@ When using B<--cat>, B<--pipepart>, or when a job is run on a remote
 machine, the command is wrapped with helper scripts. B<-vv> shows all
 of this.
 
-  parallel -vv --pipepart wc :::: num30000
+  parallel -vv --pipepart --block 1M wc :::: num30000
 
 Output:
 

@@ -596,6 +596,16 @@ echo '### bug #34422: parallel -X --eta crashes with div by zero'
   # We do not care how long it took
   seq 2 | stdout parallel -X --eta echo | grep -E -v 'ETA:.*AVG'
 
+echo '**'
+
+echo '### --pipepart autoset --block => 10*joblots'
+
+  seq 1000 > /run/shm/parallel$$; 
+    parallel -j2 -k --pipepart echo {#} :::: /run/shm/parallel$$; 
+    rm /run/shm/parallel$$
+
+echo '**'
+
 
 EOF
 echo '### 1 .par file from --files expected'

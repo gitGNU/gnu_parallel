@@ -1819,7 +1819,7 @@
 
 <p>When using <b>--cat</b>, <b>--pipepart</b>, or when a job is run on a remote machine, the command is wrapped with helper scripts. <b>-vv</b> shows all of this.</p>
 
-<pre><code>  parallel -vv --pipepart wc :::: num30000</code></pre>
+<pre><code>  parallel -vv --pipepart --block 1M wc :::: num30000</code></pre>
 
 <p>Output:</p>
 
