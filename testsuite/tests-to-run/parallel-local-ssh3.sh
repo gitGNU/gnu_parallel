@@ -84,3 +84,35 @@ echo '### exported function to csh but with PARALLEL_SHELL=bash'
   PARALLEL_SHELL=bash parallel --env doit -S csh@lo doit ::: OK
 
 EOF
+
+
+echo 'bug #47695: How to set $PATH on remote?'
+  rm -rf /tmp/parallel
+  cp /usr/local/bin/parallel /tmp
+  
+  cat <<'_EOS' | stdout ssh nopathbash@lo -T
+  echo BASH Path before: $PATH with no parallel
+  parallel echo ::: 1
+  echo '^^^^^^^^ Not found is OK'
+  # Exporting a big variable should not fail
+  export A="`seq 1000`"
+  PATH=$PATH:/tmp
+  . /usr/local/bin/env_parallel.bash
+  # --filter to see if $PATH with parallel is transferred
+  env_parallel --filter --env A,PATH -Slo echo '$PATH' ::: OK
+_EOS
+  echo
+  
+  cat <<'_EOS' | stdout ssh nopathcsh@lo -T
+  echo CSH Path before: $PATH with no parallel
+  which parallel >& /dev/stdout
+  echo '^^^^^^^^ Not found is OK'
+  alias parallel=/tmp/parallel
+  # Exporting a big variable should not fail
+  setenv A "`seq 1000`"
+  setenv PATH ${PATH}:/tmp
+  cp /usr/local/bin/env_parallel.csh /tmp
+  # --filter to see if $PATH with parallel is transferred
+  env_parallel --filter --env A,PATH -Slo echo '$PATH' ::: OK
+_EOS
+  

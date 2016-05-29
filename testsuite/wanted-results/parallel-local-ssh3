@@ -122,3 +122,31 @@ echo '### exported function to csh but with PARALLEL_SHELL=bash'
   doit() { echo "$1"; };   export -f doit;   stdout parallel --env doit -S csh@lo doit ::: not_OK;   PARALLEL_SHELL=bash parallel --env doit -S csh@lo doit ::: OK
 CSH/TCSH DO NOT SUPPORT newlines IN VARIABLES/FUNCTIONS. Unset doit
 OK
+bug #47695: How to set $PATH on remote?
+Welcome to Linux Mint 17 Qiana (GNU/Linux 3.16.0-31-lowlatency x86_64)
+
+Welcome to Linux Mint
+ * Documentation:  http://www.linuxmint.com
+
+195 packages can be updated.
+0 updates are security updates.
+
+BASH Path before: /bin:/usr/bin with no parallel
+-bash: line 2: parallel: command not found
+^^^^^^^^ Not found is OK
+/bin:/usr/bin:/tmp OK
+
+Welcome to Linux Mint 17 Qiana (GNU/Linux 3.16.0-31-lowlatency x86_64)
+
+Welcome to Linux Mint
+ * Documentation:  http://www.linuxmint.com
+
+195 packages can be updated.
+0 updates are security updates.
+
+Warning: no access to tty (Bad file descriptor).
+Thus no job control in this shell.
+CSH Path before: /bin:/usr/bin with no parallel
+parallel: Command not found.
+^^^^^^^^ Not found is OK
+/bin:/usr/bin:/tmp OK
