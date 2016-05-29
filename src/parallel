@@ -1124,7 +1124,6 @@ sub parse_options {
 
     parse_halt();
     parse_sshlogin();
-    parse_env_var();
 
     if(remote_hosts() and ($opt::X or $opt::m or $opt::xargs)) {
         # As we do not know the max line length on the remote machine
@@ -1195,7 +1194,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160523;
+    $Global::version = 20160529;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1423,30 +1422,6 @@ sub record_env {
 	::error("Cannot write to $ignore_filename.");
 	::wait_and_exit(255);
     }
-}
-
-sub parse_env_var {
-    # Parse --env and set $Global::envvar, $Global::envwarn and $Global::envvarlen
-    #
-    # Bash functions must be parsed to export them remotely
-    #   Pre-shellshock style bash function:
-    #     myfunc=() {...
-    #   Post-shellshock style bash function (v1):
-    #     BASH_FUNC_myfunc()=() {...
-    #   Post-shellshock style bash function (v2):
-    #     BASH_FUNC_myfunc%%=() {...
-    #
-    # Uses:
-    #   $Global::envvar = eval string that will set variables in both bash and csh
-    #   $Global::envwarn = If functions are used: Give warning in csh
-    #   $Global::envvarlen = length of $Global::envvar
-    #   @opt::env
-    #   $Global::shell
-    #   %ENV
-    # Returns: N/A
-    $Global::envvar = "";
-
-    $Global::envvarlen = length $Global::envvar;
 }
 
 sub open_joblog {
@@ -2060,7 +2035,6 @@ sub __RUNNING_THE_JOBS_AND_PRINTING_PROGRESS__ {}
 #    $Global::start_no_new_jobs = should more jobs be started?
 #    $Global::original_stderr = file handle for STDERR when the program started
 #    $Global::total_started = total number of jobs started
-#    $Global::envvar = string to set the shell environment variables
 #    $Global::joblog = filehandle of joblog
 #    $Global::debug = Is debugging on?
 #    $Global::exitstatus = status code of GNU Parallel
@@ -3113,7 +3087,6 @@ sub parse_host_filtering {
 
 sub parallelized_host_filtering {
     # Uses:
-    #   $Global::envvar
     #   %Global::host
     # Returns:
     #   text entries with:
@@ -3135,7 +3108,6 @@ sub parallelized_host_filtering {
     }
 
     my(@cores, @cpus, @maxline, @echo);
-    my $envvar = ::shell_quote_scalar($Global::envvar);
     while (my ($host, $sshlogin) = each %Global::host) {
 	if($host eq ":") { next }
 	# The 'true' is used to get the $host out later
@@ -3150,28 +3122,34 @@ sub parallelized_host_filtering {
 	    $sshlogin->serverlogin();
 	push(@echo, $host."\t".$sshcmd." -- echo\n\0");
     }
-    my ($fh, $tmpfile) = ::tmpfile(SUFFIX => ".ssh");
-    print $fh @cores, @cpus, @maxline, @echo;
-    close $fh;
+
     # --timeout 10: Setting up an SSH connection and running a simple
     #               command should never take > 10 sec.
     # --delay 0.1:  If multiple sshlogins use the same proxy the delay
     #               will make it less likely to overload the ssh daemon.
     # --retries 3:  If the ssh daemon it overloaded, try 3 times
-    # -s 16000:     Half of the max line on UnixWare
-    my $unlinkcmd = $Global::debug ? "true" : "rm $tmpfile";
-    my $cmd = "($unlinkcmd; cat -) < $tmpfile | ".
+    my $cmd =
 	"$0 -j0 --timeout 10 --joblog - --plain --delay 0.1 --retries 3 ".
-	"--tag --tagstring '{1}' -0 --colsep '\t' -k eval '{2}' ";
+	"--tag --tagstring '{1}' -0 --colsep '\t' -k eval '{2}' && true ";
     $cmd = $Global::shell." -c ".::shell_quote_scalar($cmd);
     ::debug("init", $cmd, "\n");
     my @out;
     my $prepend = "";
-    open(my $host_fh, "-|", $cmd) || ::die_bug("parallel host check: $cmd");
+    
+    my ($host_fh,$in,$err);
+    open3($in, $host_fh, $err, $cmd) || ::die_bug("parallel host check: $cmd");
+    if(not fork()) {
+	# Give the commands to run to the $cmd
+	close $host_fh;
+	print $in @cores, @cpus, @maxline, @echo;
+	close $in;
+	exit();
+    }
+    close $in;
     for(<$host_fh>) {
 	if(/\'$/) {
 	    # if last char = ' then append next line
-	    # This may be due to quoting of $Global::envvar
+	    # This may be due to quoting of \n in environment var
 	    $prepend .= $_;
 	    next;
 	}
@@ -4559,8 +4537,7 @@ sub memfree_recompute {
 		$perlscript .= 'if($^O eq "'.$os.'") { '.$script_of{$os}.'}';
 	    }
 	    $perlscript =~ s/[\t\n ]+/ /g;
-	    $perlscript = "perl -e " . ::shell_quote_scalar($perlscript);
-	    $script = $Global::envvar. " " .$perlscript;
+	    $script = "perl -e " . ::shell_quote_scalar($perlscript);
 	}
 	return $script
     }
@@ -4745,8 +4722,7 @@ sub swap_activity {
 		$perlscript .= 'if($^O eq "'.$os.'") { print `'.$vmstat{$os}[0].' | awk "{print ' .
 		    $vmstat{$os}[1] . '}"` }';
 	    }
-	    $perlscript = "perl -e " . ::shell_quote_scalar($perlscript);
-	    $script = $Global::envvar. " " .$perlscript;
+	    $script = "perl -e " . ::shell_quote_scalar($perlscript);
 	}
 	return $script;
     }
@@ -5337,12 +5313,11 @@ sub ncpus {
             }
         } else {
             my $ncpu;
-	    my $sqe = ::shell_quote_scalar($Global::envvar);
             if($opt::use_cpus_instead_of_cores) {
-                $ncpu = ::qqx("echo|$sshcmd $serverlogin -- $sqe parallel --number-of-cpus");
+                $ncpu = ::qqx("echo|$sshcmd $serverlogin -- parallel --number-of-cpus");
             } else {
-		::debug("init",qq(echo|$sshcmd $serverlogin -- $sqe parallel --number-of-cores\n));
-                $ncpu = ::qqx("echo|$sshcmd $serverlogin -- $sqe parallel --number-of-cores");
+		::debug("init",qq(echo|$sshcmd $serverlogin -- parallel --number-of-cores\n));
+                $ncpu = ::qqx("echo|$sshcmd $serverlogin -- parallel --number-of-cores");
             }
 	    chomp $ncpu;
             if($ncpu =~ /^\s*[0-9]+\s*$/s) {
@@ -6815,7 +6790,6 @@ sub wrapped {
     # * --nice/--cat/--fifo should be done on the remote machine
     # * --pipepart/--pipe should be done on the local machine inside --tmux
     # Uses:
-    #   $Global::envvar
     #   $opt::shellquote
     #   $opt::nice
     #   $Global::shell
@@ -8642,7 +8616,7 @@ sub len {
 	$len *= 4;
     }
     # If we are using --env, add the prefix for that, too.
-    $len += $Global::envvarlen;
+    $len += 0;
     return $len;
 }
 

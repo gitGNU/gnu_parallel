@@ -1,4 +1,4 @@
-#!/usr/bin/parallel --shebang-wrap -k /usr/bin/octave -qf
+#!/usr/local/bin/parallel --shebang-wrap -k /usr/bin/octave -qf
 
 arg_list = argv ();
 filename = arg_list{1};

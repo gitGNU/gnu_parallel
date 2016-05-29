@@ -3,7 +3,7 @@
 # SSH only allowed to localhost/lo
 cat <<'EOF' | sed -e s/\$SERVER1/$SERVER1/\;s/\$SERVER2/$SERVER2/ | parallel -vj100% --retries 3 -k --joblog /tmp/jl-`basename $0` -L1
 echo '### --hostgroup force ncpu'
-  parallel --delay 0.1 --hgrp -S @g1/1/parallel@lo -S @g2/3/lo whoami\;sleep 0.3{} ::: {1..8} | sort
+  parallel --delay 0.1 --hgrp -S @g1/1/parallel@lo -S @g2/3/lo whoami\;sleep 0.4{} ::: {1..8} | sort
 
 echo '### --hostgroup two group arg'
   parallel -k --sshdelay 0.1 --hgrp -S @g1/1/parallel@lo -S @g2/3/lo whoami\;sleep 0.3{} ::: {1..8}@g1+g2 | sort
@@ -90,7 +90,7 @@ echo 'bug #47695: How to set $PATH on remote?'
   rm -rf /tmp/parallel
   cp /usr/local/bin/parallel /tmp
   
-  cat <<'_EOS' | stdout ssh nopathbash@lo -T
+  cat <<'_EOS' | stdout ssh nopathbash@lo -T | grep -v 'packages can be updated'
   echo BASH Path before: $PATH with no parallel
   parallel echo ::: 1
   echo '^^^^^^^^ Not found is OK'
@@ -103,7 +103,7 @@ echo 'bug #47695: How to set $PATH on remote?'
 _EOS
   echo
   
-  cat <<'_EOS' | stdout ssh nopathcsh@lo -T
+  cat <<'_EOS' | stdout ssh nopathcsh@lo -T | grep -v 'packages can be updated'
   echo CSH Path before: $PATH with no parallel
   which parallel >& /dev/stdout
   echo '^^^^^^^^ Not found is OK'

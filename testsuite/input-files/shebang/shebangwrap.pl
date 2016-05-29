@@ -1,3 +1,3 @@
-#!/usr/bin/parallel --shebang-wrap -k /usr/bin/perl
+#!/usr/local/bin/parallel --shebang-wrap -k /usr/bin/perl
 
 print @ARGV,"\n";

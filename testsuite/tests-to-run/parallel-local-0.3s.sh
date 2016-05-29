@@ -215,7 +215,7 @@ echo '**'
 
 echo 'bug #47002: --tagstring with -d \n\n'
 
-  (seq 3;echo;seq 4) | parallel -d '\n\n' --tagstring {%} echo ABC';'echo
+  (seq 3;echo;seq 4) | parallel -k -d '\n\n' --tagstring {%} echo ABC';'echo
 
 echo '**'
 

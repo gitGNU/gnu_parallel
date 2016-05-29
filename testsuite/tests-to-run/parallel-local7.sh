@@ -7,7 +7,7 @@ par_tmux_filter() {
 export -f par_tmux_filter
 
 par_tmux() {
-    (stdout parallel --timeout 3 --tmux --delay .4 echo '{}{=$_="\\"x$_=}'; echo $?) | par_tmux_filter
+    (stdout parallel --timeout 3 --tmux --delay .03 echo '{}{=$_="\\"x$_=}'; echo $?) | par_tmux_filter
 }
 export -f par_tmux
 cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj3 --timeout 60 --retries 2 -k --joblog /tmp/jl-`basename $0` -L1

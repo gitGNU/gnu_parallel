@@ -1,6 +1,6 @@
 echo '### --hostgroup force ncpu'
 ### --hostgroup force ncpu
-  parallel --delay 0.1 --hgrp -S @g1/1/parallel@lo -S @g2/3/lo whoami\;sleep 0.3{} ::: {1..8} | sort
+  parallel --delay 0.1 --hgrp -S @g1/1/parallel@lo -S @g2/3/lo whoami\;sleep 0.4{} ::: {1..8} | sort
 parallel
 parallel
 tange
@@ -128,7 +128,6 @@ Welcome to Linux Mint 17 Qiana (GNU/Linux 3.16.0-31-lowlatency x86_64)
 Welcome to Linux Mint
  * Documentation:  http://www.linuxmint.com
 
-195 packages can be updated.
 0 updates are security updates.
 
 BASH Path before: /bin:/usr/bin with no parallel
@@ -141,7 +140,6 @@ Welcome to Linux Mint 17 Qiana (GNU/Linux 3.16.0-31-lowlatency x86_64)
 Welcome to Linux Mint
  * Documentation:  http://www.linuxmint.com
 
-195 packages can be updated.
 0 updates are security updates.
 
 Warning: no access to tty (Bad file descriptor).
