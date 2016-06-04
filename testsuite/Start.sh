@@ -12,6 +12,8 @@ run_test() {
   base=`basename "$script" .sh`
   export TMPDIR=/tmp/"$base"-tmpdir
   mkdir -p "$TMPDIR"
+  # Clean before. May be owned by other users
+  sudo rm -f /tmp/*.{tmx,pac,arg,all,log,swp,loa,ssh,df,pip,tmb,chr,tms,par}
   if [ "$TRIES" = "3" ] ; then
     # Try 3 times
     bash "$script" > actual-results/"$base"

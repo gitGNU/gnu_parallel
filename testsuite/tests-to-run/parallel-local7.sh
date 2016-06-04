@@ -22,38 +22,23 @@ echo '### tmux1.9'
   seq 700   800 | TMUX=tmux1.9 par_tmux
   seq 800   900 | TMUX=tmux1.9 par_tmux
   seq 900  1000 | TMUX=tmux1.9 par_tmux
-  seq 1000 1100 | TMUX=tmux1.9 par_tmux
-  seq 1100 1200 | TMUX=tmux1.9 par_tmux
-  seq 1200 1300 | TMUX=tmux1.9 par_tmux
-  seq 1300 1400 | TMUX=tmux1.9 par_tmux
-  seq 1400 1500 | TMUX=tmux1.9 par_tmux
-  seq 1500 1600 | TMUX=tmux1.9 par_tmux
-  seq 1600 1700 | TMUX=tmux1.9 par_tmux
-  seq 1700 1800 | TMUX=tmux1.9 par_tmux
-  seq 1800 1900 | TMUX=tmux1.9 par_tmux
-  seq 1900 2000 | TMUX=tmux1.9 par_tmux
-  seq 2000 2018 | TMUX=tmux1.9 par_tmux
+  seq 1000 1006 | TMUX=tmux1.9 par_tmux
 echo '### tmux1.9 fails'
-  echo 2019 | TMUX=tmux1.9 par_tmux
-  echo 2020 | TMUX=tmux1.9 par_tmux
-  echo 2021 | TMUX=tmux1.9 par_tmux
-  echo 2022 | TMUX=tmux1.9 par_tmux
+  echo 1007 | TMUX=tmux1.9 par_tmux
+  echo 1008 | TMUX=tmux1.9 par_tmux
+  echo 1009 | TMUX=tmux1.9 par_tmux
 
 echo '### tmux1.8'
   seq   1  50 | TMUX=tmux1.8 par_tmux
   seq  51 100 | TMUX=tmux1.8 par_tmux
-  seq 101 150 | TMUX=tmux1.8 par_tmux
-  seq 151 200 | TMUX=tmux1.8 par_tmux
-  seq 201 231 | TMUX=tmux1.8 par_tmux
+  seq 101 113 | TMUX=tmux1.8 par_tmux
 echo '### tmux1.8 fails'
-  echo 232 | TMUX=tmux1.8 par_tmux
-  echo 233 | TMUX=tmux1.8 par_tmux
-  echo 234 | TMUX=tmux1.8 par_tmux
-  echo 235 | TMUX=tmux1.8 par_tmux
-  echo 236 | TMUX=tmux1.8 par_tmux
+  echo 114 | TMUX=tmux1.8 par_tmux
+  echo 115 | TMUX=tmux1.8 par_tmux
+  echo 116 | TMUX=tmux1.8 par_tmux
 
 echo '### tmux1.8 0..255 ascii'
-perl -e 'print map { ($_, map { pack("c*",$_) } grep { $_>=1 && $_!=10 } 0..$_),"\n" } 0..255' | 
+perl -e 'print map { ($_, map { pack("c*",$_) } grep { $_>=1 && $_!=10 } $_-110..$_),"\n" } 0..255' | 
    TMUX=tmux1.8 stdout parallel --tmux --timeout 3 echo | par_tmux_filter; echo $?
 
 echo '### tmux1.9 0..255 ascii'

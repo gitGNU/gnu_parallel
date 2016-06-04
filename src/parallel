@@ -466,19 +466,15 @@ sub spreadstdin {
     }
     $Global::start_no_new_jobs ||= 1;
     if($opt::roundrobin) {
-	for my $job (values %Global::running) {
-	    close $job->fh(0,"w");
-	}
-	my %incomplete_jobs = %Global::running;
+	# Flush blocks to roundrobin procs
 	my $sleep = 1;
-	while(keys %incomplete_jobs) {
+	while(%Global::running) {
 	    my $something_written = 0;
-	    for my $pid (keys %incomplete_jobs) {
-		my $job = $incomplete_jobs{$pid};
+	    for my $job (values %Global::running) {
 		if($job->block_length()) {
 		    $something_written += $job->non_blocking_write();
 		} else {
-		    delete $incomplete_jobs{$pid}
+		    close $job->fh(0,"w");
 		}
 	    }
 	    if($something_written) {
@@ -6457,11 +6453,16 @@ sub write {
     my $len = length $$remaining_ref;
     # syswrite may not write all in one go,
     # so make sure everything is written.
-    while($len) {
-        my $written = syswrite($stdin_fh,$$remaining_ref);
+    my $written;
+    while($written = syswrite($stdin_fh,$$remaining_ref)){
 	substr($$remaining_ref,0,$written) = "";
-	$len -= $written;
+	# Crazy cygwin - Without this, some data will silently be dropped
+	# seq 100000 | parallel --block 83k --pipe -kj3 cat | wc
+	$^O eq "cygwin" and ::usleep(200);
     }
+    # Crazy cygwin - Without this, some data will silently be dropped
+    syswrite($stdin_fh,"");
+    print $stdin_fh "";
 }
 
 sub set_block {
@@ -6511,25 +6512,28 @@ sub non_blocking_write {
     my $self = shift;
     my $something_written = 0;
     use POSIX qw(:errno_h);
-    # for loop used to avoid copying substr: $buf will be an alias for the substr
-    for my $buf (substr($self->{'block'},$self->{'block_pos'})) {
-	my $in = $self->fh(0,"w");
-	my $rv = syswrite($in, $buf);
-	if (!defined($rv) && $! == EAGAIN) {
-	    # would block
-	    $something_written = 0;
-	} elsif ($self->{'block_pos'}+$rv != $self->{'block_length'}) {
-	    # incomplete write
-	    # Remove the written part
-	    $self->{'block_pos'} += $rv;
-	    $something_written = $rv;
-	} else {
-	    # successfully wrote everything
-	    my $a = "";
-	    $self->set_block(\$a,\$a,0,"","");
-	    $something_written = $rv;
-	}
+
+    my $in = $self->fh(0,"w");
+    my $rv = syswrite($in,
+		      substr($self->{'block'},$self->{'block_pos'}));
+    if (!defined($rv) && $! == EAGAIN) {
+	# would block
+	$something_written = 0;
+    } elsif ($self->{'block_pos'}+$rv != $self->{'block_length'}) {
+	# incomplete write
+	# Remove the written part
+	$self->{'block_pos'} += $rv;
+	$something_written = $rv;
+    } else {
+	# successfully wrote everything
+	# Empty block to free memory
+	my $a = "";
+	$self->set_block(\$a,\$a,0,"","");
+	$something_written = $rv;
     }
+    # Crazy cygwin - Without this, some data will silently be dropped
+    # seq 100000 | parallel --block 83k --pipe -kj3 --round-robin cat | wc
+    $^O eq "cygwin" and ::usleep(200);
 
     ::debug("pipe", "Non-block: ", $something_written);
     return $something_written;
@@ -7529,11 +7533,12 @@ sub start {
 	# perl -e 'sleep(1);if(fork()){sleep(3)}while(not fork and time-$^T<8){ }'
 	no warnings 'redefine';
 	my ($outfh,$name) = ::tmpfile(SUFFIX => ".tst");
-	# Test to see if open3(,,,"-") is supported
+	# Test to see if open3(x,x,x,"-") is supported
 	my $script = 'if(not $pid=::open3($i,$o,$e,"-")) { unlink shift }';
-	qx{ perl -MIPC::Open3 -e '$script' $name };
+	qx{ perl -MIPC::Open3 -e '$script' $name 2>/dev/null };
 	if(-e $name) {
 	    # Does not support open3(x,x,x,"-")
+	    # Use (slow) external version
 	    unlink($name);
 	    *open3_setpgrp = \&open3_setpgrp_external;
 	} else {

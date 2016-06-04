@@ -8,7 +8,7 @@ echo '### bug #44358: 2 GB records cause problems for -N'
 ### bug #44358: 2 GB records cause problems for -N
 echo '5 GB version: Eats 12.5 GB'
 5 GB version: Eats 12.5 GB
-  (yes "`seq 3000`" | head -c 5000000000; echo FOO;    yes "`seq 3000`" | head -c 3000000000; echo FOO;    yes "`seq 3000`" | head -c 1000000000;) |    PERL5LIB=input-files/perl-v5.14.2/lib input-files/perl-v5.14.2/perl    `which parallel` --pipe --recend FOO -N2 --block 1g -k LANG=c wc -c
+  PATH=input-files/perl-v5.14.2:$PATH;   (yes "`seq 3000`" | head -c 5000000000; echo FOO;    yes "`seq 3000`" | head -c 3000000000; echo FOO;    yes "`seq 3000`" | head -c 1000000000;) |    PERL5LIB=input-files/perl-v5.14.2/lib input-files/perl-v5.14.2/perl    `which parallel` --pipe --recend FOO -N2 --block 1g -k LANG=c wc -c
 8000000007
 1000000001
 parallel: Warning: A record was longer than 1000000000. Increasing to --blocksize 1300000001.
@@ -16,7 +16,7 @@ parallel: Warning: A record was longer than 1300000001. Increasing to --blocksiz
 parallel: Warning: A record was longer than 1690000003. Increasing to --blocksize 2147483647.
 echo '2 GB version: eats 10 GB'
 2 GB version: eats 10 GB
-  (yes "`seq 3000`" | head -c 2300M; echo FOO;    yes "`seq 3000`" | head -c 2300M; echo FOO;    yes "`seq 3000`" | head -c 1000M;) |    PERL5LIB=input-files/perl-v5.14.2/lib input-files/perl-v5.14.2/perl    `which parallel` --pipe --recend FOO -N2 --block 1g -k LANG=c wc -c
+  PATH=input-files/perl-v5.14.2:$PATH;   (yes "`seq 3000`" | head -c 2300M; echo FOO;    yes "`seq 3000`" | head -c 2300M; echo FOO;    yes "`seq 3000`" | head -c 1000M;) |    PERL5LIB=input-files/perl-v5.14.2/lib input-files/perl-v5.14.2/perl    `which parallel` --pipe --recend FOO -N2 --block 1g -k LANG=c wc -c
 4823449607
 1048576001
 parallel: Warning: A record was longer than 1000000000. Increasing to --blocksize 1300000001.
@@ -42,12 +42,12 @@ perl -e '$buf=("x"x(2**31))."x"; substr($buf,0,2**31+1)=""; print ((length $buf)
 0
 echo 'Eats 4.7 GB'
 Eats 4.7 GB
-  (yes "`seq 3000`" | head -c 2300M; echo ged) |   PERL5LIB=input-files/perl-v5.14.2/lib input-files/perl-v5.14.2/perl `which parallel` -k --block 2G --pipe --recend ged md5sum
+  PATH=input-files/perl-v5.14.2:$PATH;   (yes "`seq 3000`" | head -c 2300M; echo ged) |   PERL5LIB=input-files/perl-v5.14.2/lib input-files/perl-v5.14.2/perl `which parallel` -k --block 2G --pipe --recend ged md5sum
 8d87694eab8991a10815067709c3bd51  -
 parallel: Warning: --blocksize >= 2G causes problems. Using 2G-1.
 echo 'Eats 4.7 GB'
 Eats 4.7 GB
-  (yes "`seq 3000`" | head -c 2300M; echo ged) |   PERL5LIB=input-files/perl-v5.14.2/lib input-files/perl-v5.14.2/perl `which parallel` -k --block 2G --pipe --recend ged cat | wc -c
+  PATH=input-files/perl-v5.14.2:$PATH;   (yes "`seq 3000`" | head -c 2300M; echo ged) |   PERL5LIB=input-files/perl-v5.14.2/lib input-files/perl-v5.14.2/perl `which parallel` -k --block 2G --pipe --recend ged cat | wc -c
 2411724804
 parallel: Warning: --blocksize >= 2G causes problems. Using 2G-1.
 echo '**'

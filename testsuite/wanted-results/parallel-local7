@@ -30,52 +30,19 @@ See output with: tmux1.9 -S /tmp/parallel-local7-tmpdir/tmsXXXXX attach
   seq 900  1000 | TMUX=tmux1.9 par_tmux
 See output with: tmux1.9 -S /tmp/parallel-local7-tmpdir/tmsXXXXX attach
 0
-  seq 1000 1100 | TMUX=tmux1.9 par_tmux
-parallel: Error: Command line too long (2023 >= 2023) at input 0: 1007
-255
-  seq 1100 1200 | TMUX=tmux1.9 par_tmux
-parallel: Error: Command line too long (2209 >= 2023) at input 0: 1100
-255
-  seq 1200 1300 | TMUX=tmux1.9 par_tmux
-parallel: Error: Command line too long (2409 >= 2023) at input 0: 1200
-255
-  seq 1300 1400 | TMUX=tmux1.9 par_tmux
-parallel: Error: Command line too long (2609 >= 2023) at input 0: 1300
-255
-  seq 1400 1500 | TMUX=tmux1.9 par_tmux
-parallel: Error: Command line too long (2809 >= 2023) at input 0: 1400
-255
-  seq 1500 1600 | TMUX=tmux1.9 par_tmux
-parallel: Error: Command line too long (3009 >= 2023) at input 0: 1500
-255
-  seq 1600 1700 | TMUX=tmux1.9 par_tmux
-parallel: Error: Command line too long (3209 >= 2023) at input 0: 1600
-255
-  seq 1700 1800 | TMUX=tmux1.9 par_tmux
-parallel: Error: Command line too long (3409 >= 2023) at input 0: 1700
-255
-  seq 1800 1900 | TMUX=tmux1.9 par_tmux
-parallel: Error: Command line too long (3609 >= 2023) at input 0: 1800
-255
-  seq 1900 2000 | TMUX=tmux1.9 par_tmux
-parallel: Error: Command line too long (3809 >= 2023) at input 0: 1900
-255
-  seq 2000 2018 | TMUX=tmux1.9 par_tmux
-parallel: Error: Command line too long (4009 >= 2023) at input 0: 2000
-255
+  seq 1000 1006 | TMUX=tmux1.9 par_tmux
+See output with: tmux1.9 -S /tmp/parallel-local7-tmpdir/tmsXXXXX attach
+0
 echo '### tmux1.9 fails'
 ### tmux1.9 fails
-  echo 2019 | TMUX=tmux1.9 par_tmux
-parallel: Error: Command line too long (4047 >= 2023) at input 0: 2019
+  echo 1007 | TMUX=tmux1.9 par_tmux
+parallel: Error: Command line too long (2023 >= 2023) at input 0: 1007
 255
-  echo 2020 | TMUX=tmux1.9 par_tmux
-parallel: Error: Command line too long (4049 >= 2023) at input 0: 2020
+  echo 1008 | TMUX=tmux1.9 par_tmux
+parallel: Error: Command line too long (2025 >= 2023) at input 0: 1008
 255
-  echo 2021 | TMUX=tmux1.9 par_tmux
-parallel: Error: Command line too long (4051 >= 2023) at input 0: 2021
-255
-  echo 2022 | TMUX=tmux1.9 par_tmux
-parallel: Error: Command line too long (4053 >= 2023) at input 0: 2022
+  echo 1009 | TMUX=tmux1.9 par_tmux
+parallel: Error: Command line too long (2027 >= 2023) at input 0: 1009
 255
 echo '### tmux1.8'
 ### tmux1.8
@@ -85,38 +52,24 @@ See output with: tmux1.8 -S /tmp/parallel-local7-tmpdir/tmsXXXXX attach
   seq  51 100 | TMUX=tmux1.8 par_tmux
 See output with: tmux1.8 -S /tmp/parallel-local7-tmpdir/tmsXXXXX attach
 0
-  seq 101 150 | TMUX=tmux1.8 par_tmux
+  seq 101 113 | TMUX=tmux1.8 par_tmux
 See output with: tmux1.8 -S /tmp/parallel-local7-tmpdir/tmsXXXXX attach
-parallel: Error: Command line too long (236 >= 236) at input 0: 114
-255
-  seq 151 200 | TMUX=tmux1.8 par_tmux
-parallel: Error: Command line too long (310 >= 236) at input 0: 151
-255
-  seq 201 231 | TMUX=tmux1.8 par_tmux
-parallel: Error: Command line too long (410 >= 236) at input 0: 201
-255
+0
 echo '### tmux1.8 fails'
 ### tmux1.8 fails
-  echo 232 | TMUX=tmux1.8 par_tmux
-parallel: Error: Command line too long (472 >= 236) at input 0: 232
+  echo 114 | TMUX=tmux1.8 par_tmux
+parallel: Error: Command line too long (236 >= 236) at input 0: 114
 255
-  echo 233 | TMUX=tmux1.8 par_tmux
-parallel: Error: Command line too long (474 >= 236) at input 0: 233
+  echo 115 | TMUX=tmux1.8 par_tmux
+parallel: Error: Command line too long (238 >= 236) at input 0: 115
 255
-  echo 234 | TMUX=tmux1.8 par_tmux
-parallel: Error: Command line too long (476 >= 236) at input 0: 234
-255
-  echo 235 | TMUX=tmux1.8 par_tmux
-parallel: Error: Command line too long (478 >= 236) at input 0: 235
-255
-  echo 236 | TMUX=tmux1.8 par_tmux
-parallel: Error: Command line too long (480 >= 236) at input 0: 236
+  echo 116 | TMUX=tmux1.8 par_tmux
+parallel: Error: Command line too long (240 >= 236) at input 0: 116
 255
 echo '### tmux1.8 0..255 ascii'
 ### tmux1.8 0..255 ascii
-perl -e 'print map { ($_, map { pack("c*",$_) } grep { $_>=1 && $_!=10 } 0..$_),"\n" } 0..255' |    TMUX=tmux1.8 stdout parallel --tmux --timeout 3 echo | par_tmux_filter; echo $?
+perl -e 'print map { ($_, map { pack("c*",$_) } grep { $_>=1 && $_!=10 } $_-110..$_),"\n" } 0..255' |    TMUX=tmux1.8 stdout parallel --tmux --timeout 3 echo | par_tmux_filter; echo $?
 See output with: tmux1.8 -S /tmp/parallel-local7-tmpdir/tmsXXXXX attach
-parallel: Error: Command line too long (236 >= 236) at input 0: 155	 !"#$%&'()*+,-./0...
 0
 echo '### tmux1.9 0..255 ascii'
 ### tmux1.9 0..255 ascii
