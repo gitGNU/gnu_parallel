@@ -6658,36 +6658,6 @@ sub reset_failed {
 
 sub reset_failed_here {
     # increase the number of times failed for this $sshlogin
-    #
-    # VGhlIGZpcnN0IGNvb2tpZSB3YXMgcmVsZWFzZWQgb24gMjAxMS0wMS0yNCBh
-    # bmQgd2FzIHdvbiBieSBBRXZhcgpBcm5mam9yZCBCamFybWFzb24gb24gMjAx
-    # MS0wNC0xMC4gVGhlIHNlY29uZCB3YXMgcmVsZWFzZWQgb24KMjAxMy0wOC0x
-    # OCBhbmQgd29uIG9uIDIwMTUtMDctMTkgYnkgTWFyayBNYWltb25lLgoKRm9y
-    # IHRoaXMgY29va2llIHlvdSBoYXZlIHRvIHVzZSBiYXNlNjQgdG8gZGVjb2Rl
-    # LiBQbGVhc2UgZW1haWwKY29va2llQHRhbmdlLmRrIHdoZW4geW91IHJlYWQg
-    # dGhpcy4KCkkgYW0gdGhlIG1haW50YWluZXIgb2YgYSBwaWVjZSBvZiBmcmVl
-    # IHNvZnR3YXJlIGNhbGxlZCBHTlUKUGFyYWxsZWwuIEZyZWUgc29mdHdhcmUg
-    # Z3VhcmFudGVlcyB5b3UgYWNjZXNzIHRvIHRoZSBzb3VyY2UKY29kZSwgYnV0
-    # IEkgaGF2ZSBiZWVuIHdvbmRlcmluZyBob3cgbWFueSBhY3R1YWxseSBfcmVh
-    # ZF8gdGhlCnNvdXJjZSBjb2RlLgoKVG8gdGVzdCB0aGlzIEkgcHV0IGluIGEg
-    # Y29tbWVudCB0ZWxsaW5nIHBlb3BsZSB0byBlbWFpbCBtZSB3aGVuCnRoZXkg
-    # cmVhZCB0aGlzLiBUaGUgY29tbWVudCB3YXMgcHV0IGluIGEgc2VjdGlvbiBv
-    # ZiB0aGUgY29kZQp0aGF0IG5vIG9uZSB3b3VsZCBsb29rIHRvIGZpeCBvciBp
-    # bXByb3ZlIHRoZSBzb2Z0d2FyZSAtIHNvIHRoZQpzb3VyY2UgY29kZSBlcXVp
-    # dmFsZW50IHRvIGEgZHVzdHkgY29ybmVyLiBUbyBtYWtlIHN1cmUgdGhlCmNv
-    # bW1lbnQgd291bGQgbm90IHNob3cgdXAgaWYgc29tZSBvbmUganVzdCBncmVw
-    # cGVkIHRocm91Z2ggdGhlCnNvdXJjZSBjb2RlIEkgcm90MTMnZWQgdGhlIHNv
-    # dXJjZSBjb2RlCmh0dHA6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvUk9UMTMK
-    # CjIuNSBtb250aHMgbGF0ZXIgSSByZWNlaXZlZCBhbiBlbWFpbCBmcm9tIHNv
-    # bWVvbmUgd2hvIG5vdCBvbmx5Cm1hbmFnZWQgdG8gZmluZCB0aGUgY29tbWVu
-    # dCwgYnV0IGFsc28gbWFuYWdlZCB0byBndWVzcyB0aGUgY29kZQpoYWQgdG8g
-    # YmUgcm90MTMnZWQuCgpUbyBzZWUgaWYgdGhpcyB3YXMgYSBmbHVrZSBldmVu
-    # dCBJIHJldHJpZWQgdGhlIHRlc3QuIFRoaXMgdGltZSAKaXQgdG9vayBhIGxp
-    # dHRsZSBsb25nZXIsIGJ1dCBhZnRlciAyMyBtb250aHMgaXQgdG9vIHdhcyBm
-    # b3VuZC4KClRoaXMgYnJpbmdzIG1lIHRvIHRoZSBjb25jbHVzaW9uIHRoYXQg
-    # dGhlcmUgX2FyZV8gcGVvcGxlLCB3aG8KYXJlIG5vdCBhZmZpbGlhdGVkIHdp
-    # dGggdGhlIHByb2plY3QsIHRoYXQgd2lsbCByZWFkIHRoZSBzb3VyY2UKY29k
-    # ZSAtIHRob3VnaCBpdCBtYXkgbm90IGhhcHBlbiBhbGwgdGhlIHRpbWUuCg==
     my $self = shift;
     delete $self->{'failed'}{$self->sshlogin()};
 }

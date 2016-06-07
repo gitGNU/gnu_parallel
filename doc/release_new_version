@@ -219,7 +219,7 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20160622 ('brexit') released <<[stable]>>
+Subject: GNU Parallel 20160622 ('brexit/ali') released <<[stable]>>
 
 GNU Parallel 20160622 ('brexit') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
@@ -231,6 +231,8 @@ Haiku of the month:
     -- Ole Tange
 
 New in this release:
+
+* The cookie from 2016-01-04 was won by Morgan Rodgers 5 months.
 
 * <<Possibly http://link.springer.com/chapter/10.1007%2F978-3-319-22053-6_46>>
 
