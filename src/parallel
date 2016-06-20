@@ -1012,6 +1012,11 @@ sub parse_options {
 	warning("--blocksize >= 2G causes problems. Using 2G-1.");
 	$Global::blocksize = 2**31-1;
     }
+    if($^O eq "cygwin" and
+       ($opt::pipe or $opt::pipepart or $opt::roundrobin)
+       and $Global::blocksize > 65535) {
+	warning("--blocksize >= 64K causes problems on Cygwin.");
+    }
     $opt::memfree = multiply_binary_prefix($opt::memfree);
     check_invalid_option_combinations();
     if((defined $opt::fifo or defined $opt::cat)
@@ -1190,7 +1195,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160529;
+    $Global::version = 20160622;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -3053,6 +3058,9 @@ sub parse_host_filtering {
 	    # ncores: server       8
 	    # ncpus:  server       2
 	    # maxlen: server       131071
+	    if(/parallel: Warning: Cannot figure out number of/) {
+		next;
+	    }
 	    if(not $ncores{$col[0]}) {
 		$ncores{$col[0]} = $col[1];
 	    } elsif(not $ncpus{$col[0]}) {
@@ -6456,13 +6464,7 @@ sub write {
     my $written;
     while($written = syswrite($stdin_fh,$$remaining_ref)){
 	substr($$remaining_ref,0,$written) = "";
-	# Crazy cygwin - Without this, some data will silently be dropped
-	# seq 100000 | parallel --block 83k --pipe -kj3 cat | wc
-	$^O eq "cygwin" and ::usleep(200);
     }
-    # Crazy cygwin - Without this, some data will silently be dropped
-    syswrite($stdin_fh,"");
-    print $stdin_fh "";
 }
 
 sub set_block {
@@ -6531,10 +6533,6 @@ sub non_blocking_write {
 	$self->set_block(\$a,\$a,0,"","");
 	$something_written = $rv;
     }
-    # Crazy cygwin - Without this, some data will silently be dropped
-    # seq 100000 | parallel --block 83k --pipe -kj3 --round-robin cat | wc
-    $^O eq "cygwin" and ::usleep(200);
-
     ::debug("pipe", "Non-block: ", $something_written);
     return $something_written;
 }

@@ -219,20 +219,29 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20160622 ('brexit/ali') released <<[stable]>>
+Subject: GNU Parallel 20160622 ('Orlando') released <<[stable]>>
 
-GNU Parallel 20160622 ('brexit') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20160622 ('Orlando') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
 Haiku of the month:
 
-  <<>>
+  Does path on remote
+  not include GNU Parallel?
+  Try --env PATH.
     -- Ole Tange
+
 
 New in this release:
 
-* The cookie from 2016-01-04 was won by Morgan Rodgers 5 months.
+* $PATH can now be exported using --env PATH. Useful if GNU Parallel is not in your path on remote machines.
+
+* If --block is left out, --pipepart will use a block size that will result in 10 jobs per jobslot.
+
+* The cookie from 2016-01-04 was won by Morgan Rodgers on the 2016-06-06 after 5 months.
+
+* Vote for GNU Parallel's community ad on https://meta.askubuntu.com/questions/14925/community-promotion-ads-2016/15046#15046
 
 * <<Possibly http://link.springer.com/chapter/10.1007%2F978-3-319-22053-6_46>>
 
@@ -260,11 +269,21 @@ for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumb
 
 * <<link No citation: Next-generation TCP for ns-3 simulator http://www.sciencedirect.com/science/article/pii/S1569190X15300939>>
 
+* GNU Parallel was cited in: Genotypic Resistance Tests Sequences Reveal the Role of Marginalized Populations in HIV-1 Transmission in Switzerland http://www.nature.com/articles/srep27580
+
+* GNU Parallel was cited in: A Deep-Learning Approach for Operation of an Automated Realtime Flare Forecast https://arxiv.org/pdf/1606.01587.pdf
+
 * Unix parallel: Populating all the USB sticks http://www.markhneedham.com/blog/2016/06/01/unix-parallel-populating-all-the-usb-sticks/
 
 * GNU Parallel is a fantastic utility https://www.dray.be/parallel/
 
+* Combining a large number of VCF files https://gtamazian.com/2016/06/16/combining-a-large-number-of-vcf-files/
+
+* Useful Scraping Techniques http://blog.apps.npr.org/2016/06/17/scraping-tips.html
+
 * Tools of the trade http://onox.com.br/2015/05/tools-of-the-trade/#more-198
+
+* Armslist scraper https://github.com/nprapps/armslist-scraper/
 
 * Bug fixes and man page updates.
 
