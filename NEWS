@@ -1,3 +1,44 @@
+20160622
+
+* $PATH can now be exported using --env PATH. Useful if GNU Parallel
+  is not in your path on remote machines.
+
+* If --block is left out, --pipepart will use a block size that will
+  result in 10 jobs per jobslot.
+
+* The cookie from 2016-01-04 was won by Morgan Rodgers on the
+  2016-06-06 after 5 months.
+
+* Vote for GNU Parallel's community ad on
+  https://meta.askubuntu.com/questions/14925/community-promotion-ads-2016/15046#15046
+
+* GNU Parallel was cited in: Genotypic Resistance Tests Sequences
+  Reveal the Role of Marginalized Populations in HIV-1 Transmission in
+  Switzerland http://www.nature.com/articles/srep27580
+
+* GNU Parallel was cited in: A Deep-Learning Approach for Operation of
+  an Automated Realtime Flare Forecast
+  https://arxiv.org/pdf/1606.01587.pdf
+
+* Unix parallel: Populating all the USB sticks
+  http://www.markhneedham.com/blog/2016/06/01/unix-parallel-populating-all-the-usb-sticks/
+
+* GNU Parallel is a fantastic utility https://www.dray.be/parallel/
+
+* Combining a large number of VCF files
+  https://gtamazian.com/2016/06/16/combining-a-large-number-of-vcf-files/
+
+* Useful Scraping Techniques
+  http://blog.apps.npr.org/2016/06/17/scraping-tips.html
+
+* Tools of the trade
+  http://onox.com.br/2015/05/tools-of-the-trade/#more-198
+
+* Armslist scraper https://github.com/nprapps/armslist-scraper/
+
+* Bug fixes and man page updates.
+
+
 20160522
 
 * niceload --net pauses the program if the internet connection is
