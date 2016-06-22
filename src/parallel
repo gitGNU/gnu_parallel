@@ -6230,7 +6230,9 @@ sub openoutputfiles {
     if($opt::results) {
 	my $args_as_dirname = $self->{'commandline'}->args_as_dirname();
 	# Output in: prefix/name1/val1/name2/val2/stdout
-	my $dir = $opt::results."/".$args_as_dirname;
+	my $dir = $self->{'commandline'}->
+		    replace_placeholders([$opt::results],0,0) .
+		    "/".$args_as_dirname;
 	if(eval{ File::Path::mkpath($dir); }) {
 	    # OK
 	} else {
@@ -8799,10 +8801,13 @@ sub new {
 
     # Protect matching inside {= perl expr =}
     # by replacing {= and =} with \257< and \257>
-    # in @command, --return and --tagstring (if used)
-    for(@command,@$transfer_files,@$return_files,
-	(defined $opt::tagstring ? $opt::tagstring : $dummy),
-	(defined $opt::workdir ? $opt::workdir : $dummy)) {
+    # in options that can contain replacement strings:
+    # @command, --transferfile, --return,
+    # --tagstring, --workdir, --results
+    for(@command, @$transfer_files, @$return_files,
+	$opt::tagstring, $opt::workdir, $opt::results) {
+	# Skip if undefined
+	$_ or next;
 	# Disallow \257 to avoid nested {= {= =} =}
 	if(/\257/) {
 	    ::error("Command cannot contain the character \257. Use a function for that.");
@@ -8939,30 +8944,15 @@ sub replacement_counts_and_lengths {
 	    # All {= perl expr =} have been removed: The rest is non-context
 	    $noncontextlen += length $c;
 	}
-	for(@$transfer_files,@$return_files) {
+	for(@$transfer_files, @$return_files,
+	    $opt::tagstring, $opt::workdir, $opt::results) {
+	    # Options that can contain replacement strings
+	    $_ or next;
 	    my $t = $_;
 	    while($t =~ s/ \257<([^\257]*)\257> //x) {
 		# %replacecount = { "perlexpr" => number of times seen }
 		# e.g { "$_++" => 2 }
 		# But for tagstring we just need to mark it as seen
-		$replacecount{$1} ||= 1;
-	    }
-	}
-	if($opt::tagstring) {
-	    my $t = $opt::tagstring;
-	    while($t =~ s/ \257<([^\257]*)\257> //x) {
-		# %replacecount = { "perlexpr" => number of times seen }
-		# e.g { "$_++" => 2 }
-		# But for tagstring we just need to mark it as seen
-		$replacecount{$1} ||= 1;
-	    }
-	}
-	if($opt::workdir) {
-	    my $t = $opt::workdir;
-	    while($t =~ s/ \257<([^\257]*)\257> //x) {
-		# %replacecount = { "perlexpr" => number of times seen }
-		# e.g { "$_++" => 2 }
-		# But for workdir we just need to mark it as seen
 		$replacecount{$1} ||= 1;
 	    }
 	}

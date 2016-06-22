@@ -494,7 +494,7 @@ See B<--pipe> and B<--pipepart> for use of this.
 
 Create a temporary file with content. Normally B<--pipe>/B<--pipepart>
 will give data to the program on stdin (standard input). With B<--cat>
-GNU B<parallel> will create a temporary file with the name in {}, so
+GNU B<parallel> will create a temporary file with the name in B<{}>, so
 you can do: B<parallel --pipe --cat wc {}>.
 
 Implies B<--pipe> unless B<--pipepart> is used.
@@ -657,7 +657,7 @@ See also B<--bg>, B<man sem>.
 Create a temporary fifo with content. Normally B<--pipe> and
 B<--pipepart> will give data to the program on stdin (standard
 input). With B<--fifo> GNU B<parallel> will create a temporary fifo
-with the name in {}, so you can do: B<parallel --pipe --fifo wc {}>.
+with the name in B<{}>, so you can do: B<parallel --pipe --fifo wc {}>.
 
 Beware: If data is not read from the fifo, the job will block forever.
 
@@ -832,7 +832,7 @@ See also: B<--sshlogin>.
 
 =item B<-I> I<replace-str>
 
-Use the replacement string I<replace-str> instead of {}.
+Use the replacement string I<replace-str> instead of B<{}>.
 
 
 =item B<--replace>[=I<replace-str>]
@@ -840,7 +840,7 @@ Use the replacement string I<replace-str> instead of {}.
 =item B<-i>[I<replace-str>]
 
 This option is a synonym for B<-I>I<replace-str> if I<replace-str> is
-specified, and for B<-I>{} otherwise.  This option is deprecated;
+specified, and for B<-I {}> otherwise.  This option is deprecated;
 use B<-I> instead.
 
 
@@ -1954,7 +1954,7 @@ B<--tag> is ignored when using B<-u>.
 
 Tag lines with a string. Each output line will be prepended with
 I<str> and TAB (\t). I<str> can contain replacement strings such as
-{}.
+B<{}>.
 
 B<--tagstring> is ignored when using B<-u>, B<--onall>, and B<--nonall>.
 
@@ -2114,7 +2114,8 @@ See also: B<--line-buffer> B<--group>
 
 =item B<--er> I<replace-str>
 
-Use the replacement string I<replace-str> instead of {.} for input line without extension.
+Use the replacement string I<replace-str> instead of B<{.}> for input
+line without extension.
 
 
 =item B<--use-cpus-instead-of-cores>
@@ -2494,7 +2495,7 @@ download images for the past 30 days:
   parallel wget http://www.example.com/path/to/'$(date -d "today -{1} days" +%Y%m%d)_{2}.jpg' ::: $(seq 30) ::: $(seq -w 10)
 
 B<$(date -d "today -{1} days" +%Y%m%d)> will give the dates in
-YYYYMMDD with {1} days subtracted.
+YYYYMMDD with B<{1}> days subtracted.
 
 
 =head1 EXAMPLE: Copy files as last modified date (ISO8601) with added random digits
@@ -3812,7 +3813,7 @@ Killed by Ctrl-C, timeout, not enough memory or similar.
 
 =item Z<>-2 (In joblog and SQL table)
 
-$job->skip() was called in {= =}.
+$job->skip() was called in B<{= =}>.
 
 =item Z<>-1000 (In SQL table)
 
@@ -4494,7 +4495,7 @@ failed:
 B<map> requires Perl v5.10.0 making it harder to use on old systems.
 
 B<map> has no way of using % in the command (GNU Parallel has -I to
-specify another replacement string than {}).
+specify another replacement string than B<{}>).
 
 By design B<map> is option incompatible with B<xargs>, it does not
 have remote job execution, a structured way of saving results,
