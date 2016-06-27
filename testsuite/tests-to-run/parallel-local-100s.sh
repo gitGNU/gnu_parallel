@@ -4,6 +4,7 @@
 # Each should be taking >100s and be possible to run in parallel
 # I.e.: No race conditions, no logins
 
+# tmpdir with > 5 GB available
 TMP5G=${TMP5G:-/dev/shm}
 export TMP5G
 

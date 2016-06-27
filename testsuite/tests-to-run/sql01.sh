@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MYSQL_ADMIN_DBURL=mysql://tange:tange@
+MYSQL_ADMIN_DBURL=mysql://`whoami`:`whoami`@
 
 # Setup
 sql $MYSQL_ADMIN_DBURL "drop user 'sqlunittest'@'localhost'"

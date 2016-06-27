@@ -649,7 +649,7 @@ sub mysql_commands {
     my $host = defined($opt{'host'}) ? "--host=".$opt{'host'} : "";
     my $port = defined($opt{'port'}) ? "--port=".$opt{'port'} : "";
     my $user = defined($opt{'user'}) ? "--user=".$opt{'user'} : "";
-    my $database = defined($opt{'database'}) ? $opt{'database'} : "";
+    my $database = defined($opt{'database'}) ? $opt{'database'} : $ENV{'USER'};
     my $html = defined($::opt_html) ? "--html" : "";
     my $no_headers = defined($::opt_n) ? "--skip-column-names" : "";
     my $ssl = "";

@@ -11,7 +11,7 @@ export SMALLDISK
   sudo umount -l smalldisk.img
   dd if=/dev/zero of=smalldisk.img bs=100k count=1k
   yes|mkfs smalldisk.img
-  mkdir -p /mnt/ram
+  sudo mkdir -p /mnt/ram
   sudo mount smalldisk.img /mnt/ram
   sudo chmod 777 /mnt/ram
 ) >/dev/null 2>/dev/null
@@ -603,6 +603,14 @@ echo '### --pipepart autoset --block => 10*joblots'
   seq 1000 > /run/shm/parallel$$; 
     parallel -j2 -k --pipepart echo {#} :::: /run/shm/parallel$$; 
     rm /run/shm/parallel$$
+
+echo '**'
+
+echo '### bug #48295: --results should be dynamic like --wd'
+
+  rm -rf /tmp/parallel-48295; 
+    parallel --results /tmp/parallel-48295/{1} -k echo ::: A B ::: a b; 
+    find /tmp/parallel-48295 -type f | sort
 
 echo '**'
 

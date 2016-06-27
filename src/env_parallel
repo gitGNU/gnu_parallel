@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Copyright (C) 2016
 # Ole Tange and Free Software Foundation, Inc.
@@ -18,6 +18,43 @@
 # or write to the Free Software Foundation, Inc., 51 Franklin St,
 # Fifth Floor, Boston, MA 02110-1301 USA
 
+while test $# -gt 0; do
+  key="$1"
+
+  case $key in
+      -i|--install)
+	  grep env_parallel.bash $HOME/.bashrc 2>/dev/null ||
+	    echo '. `which env_parallel.bash`' >> $HOME/.bashrc
+	  grep env_parallel.zsh $HOME/.zshenv 2>/dev/null ||
+	    echo '. `which env_parallel.zsh`' >> $HOME/.zshenv
+	  mkdir -p $HOME/.config/fish
+	  grep env_parallel.fish $HOME/.config/fish/config.fish 2>/dev/null ||
+  	    echo '. (which env_parallel.fish)' >> $HOME/.config/fish/config.fish
+	  grep env_parallel.ksh $HOME/.kshrc 2>/dev/null ||
+  	    echo 'source `which env_parallel.ksh`' >> $HOME/.kshrc
+	  grep env_parallel.pdksh $HOME/.profile 2>/dev/null ||
+  	    echo 'source `which env_parallel.pdksh`' >> $HOME/.profile
+	  grep env_parallel.csh $HOME/.cshrc 2>/dev/null ||
+  	    echo 'source `which env_parallel.csh`' >> $HOME/.cshrc
+	  grep env_parallel.tcsh $HOME/.tcshrc 2>/dev/null ||
+  	    echo 'source `which env_parallel.tcsh`' >> $HOME/.tcshrc
+  	  echo 'Installed env_parallel in: '
+  	  echo "    " $HOME/.bashrc
+  	  echo "    " $HOME/.zshenv
+  	  echo "    " $HOME/.config/fish/config.fish
+  	  echo "    " $HOME/.kshrc
+  	  echo "    " $HOME/.profile
+  	  echo "    " $HOME/.cshrc
+  	  echo "    " $HOME/.tcshrc
+  	  exit
+      ;;
+      *)
+  	echo "Unknown option: $key"
+      ;;
+  esac
+  shift # past argument or value
+done
+
 
 cat <<_EOS
 env_parallel only works if it is a function. Do the below and restart your shell.
@@ -31,9 +68,9 @@ zsh:   Put this in $HOME/.zshrc:  . `which env_parallel.zsh`
        Supports: functions, variables, arrays
 
 fish:  Put this in $HOME/.config/fish/config.fish:
-         source (which env_parallel.fish)
+         . (which env_parallel.fish)
        E.g. by doing:
-         echo 'source (which env_parallel.fish)' >> $HOME/.config/fish/config.fish
+         echo '. (which env_parallel.fish)' >> $HOME/.config/fish/config.fish
        Supports: aliases, functions, variables, arrays
 
 ksh:   Put this in $HOME/.kshrc:  source `which env_parallel.ksh`
@@ -51,6 +88,10 @@ csh:   Put this in $HOME/.cshrc:  source `which env_parallel.csh`
 tcsh:  Put this in $HOME/.tcshrc:  source `which env_parallel.tcsh`
        E.g. by doing:  echo 'source `which env_parallel.tcsh`' >> $HOME/.tcshrc
        Supports: aliases, variables, arrays with no special chars
+
+To install in all shells run:
+
+  env_parallel --install
 
 For details: see  man env_parallel
 

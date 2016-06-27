@@ -637,6 +637,9 @@ Show the estimated number of seconds before finishing. This forces GNU
 B<parallel> to read all jobs before starting to find the number of
 jobs. GNU B<parallel> normally only reads the next job to run.
 
+The estimate is based on the runtime of finished jobs, so the first
+estimate will only be shown when the first job has finished.
+
 Implies B<--progress>.
 
 See also: B<--bar>, B<--progress>.
@@ -1401,6 +1404,8 @@ in two files: I<prefix>/<ARGS>/stdout and I<prefix>/<ARGS>/stderr, where
 source (if using B<--header :>) or the number of the input source and
 corresponding values.
 
+I<prefix> can contain replacement strings.
+
 E.g:
 
   parallel --header : --results foo echo {a} {b} \
@@ -1431,6 +1436,25 @@ will generate the files:
   foo/1/II/2/III/stdout
   foo/1/II/2/IIII/stderr
   foo/1/II/2/IIII/stdout
+
+and
+
+  parallel --results foo-{1} echo {1} {2} ::: I II ::: III IIII
+
+will generate the files:
+
+  foo-I/1/I/2/IIII/seq
+  foo-I/1/I/2/IIII/stderr
+  foo-I/1/I/2/IIII/stdout
+  foo-I/1/I/2/III/seq
+  foo-I/1/I/2/III/stderr
+  foo-I/1/I/2/III/stdout
+  foo-II/1/II/2/IIII/seq
+  foo-II/1/II/2/IIII/stderr
+  foo-II/1/II/2/IIII/stdout
+  foo-II/1/II/2/III/seq
+  foo-II/1/II/2/III/stderr
+  foo-II/1/II/2/III/stdout
 
 If you do not want the dir structure, try B<--files> B<--tag> instead.
 

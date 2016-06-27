@@ -4,7 +4,7 @@ echo "### BUG: The length for -X is not close to max (131072)";   seq 1 60000 | 
   seq 1 60000 | parallel -X echo a{}b{}c |head -n 1 |wc
       1    5644   65514
   seq 1 60000 | parallel -X echo |head -n 1 |wc
-      1   12771   65520
+      1   12770   65514
   seq 1 60000 | parallel -X echo a{}b{}c {} |head -n 1 |wc
       1    8098   65512
   seq 1 60000 | parallel -X echo {}aa{} |head -n 1 |wc

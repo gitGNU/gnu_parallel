@@ -1,0 +1,95 @@
+#!/bin/bash
+
+mysqlrootpass=${mysqlrootpass:-FoOo}
+
+# The testsuite depends on this:
+
+sudo aptitude install imagemagick expect autossh 
+
+# DEBIAN package
+sudo aptitude install dpkg-dev build-essential debhelper
+
+
+# DATABASES
+sudo aptitude install postgresql mysql-server
+sudo su - postgres -c 'createdb '`whoami`
+sudo su - postgres -c 'createuser '`whoami`
+sudo su - postgres -c "sql pg:/// \"ALTER USER \\\"`whoami`\\\" WITH PASSWORD '`whoami`';\""
+
+sudo su - mysql mysqladmin create `whoami`
+sql mysql://root:$mysqlrootpass@/mysql "CREATE DATABASE `whoami`;CREATE USER '`whoami`'@'localhost' IDENTIFIED BY '`whoami`'; GRANT ALL ON `whoami`.* TO '`whoami`'@'localhost';"
+
+
+# SHELLS
+sudo aptitude install ash csh fdclone fish fizsh ksh mksh pdksh posh rush sash tcsh yash zsh
+
+SSHPASS=`goodpasswd`
+export SSHPASS
+shells="sh csh ash tcsh zsh ksh fish fizsh mksh pdksh posh rc sash yash nopathbash nopathcsh"
+create_shell_user() {
+  shell="$1"
+  sudo deluser $shell && sudo mv /home/$shell /tmp/$shell.$RANDOM
+  sudo groupdel $shell
+  sudo adduser --disabled-password --gecos "$shell for parallel,,," $shell &&
+    echo "$shell:$SSHPASS" | sudo chpasswd &&
+    sshpass -e ssh-copy-id $shell@lo &&
+    echo "ssh-keyscan" &&
+    ssh $shell@lo 'ssh-keyscan -t rsa lo >> .ssh/known_hosts' &&
+    echo "chsh" &&
+    sudo chsh -s $(which $shell || which ${shell#"nopath"}) $shell &&
+    echo | ssh -t $shell@lo ssh-keygen &&
+    ssh $shell@lo 'cat .ssh/id_rsa.pub >> .ssh/authorized_keys' &&
+    ssh $shell@lo cat .ssh/id_rsa.pub | ssh parallel@lo 'cat >> .ssh/authorized_keys' &&
+    ssh $shell@lo env_parallel --install
+}
+export -f create_shell_user
+parallel -u --timeout 15 --retries 2 --tag -j1 create_shell_user ::: $shells
+# sh fails if not run by itself
+parallel -u --timeout 15 --retries 2 --tag -j1 create_shell_user ::: sh
+parallel -j10 ssh {}@lo ssh {}@lo echo {} OK ::: $shells
+
+(
+ssh parallel@lo 'ssh-keyscan -t rsa lo >> .ssh/known_hosts'
+ssh parallel@lo 'cat .ssh/id_rsa.pub >> .ssh/authorized_keys'
+)
+ssh_copy_id() {
+  from="$1"
+  to="$2"
+  ssh $from cat .ssh/id_rsa.pub | ssh $to 'cat >> .ssh/authorized_keys'
+}
+export -f ssh_copy_id
+shellsplus="parallel $shells"
+parallel --bar -j200% --timeout 3 --retries 10 --tag ssh_copy_id {1}@lo {2}@lo ::: $shellsplus ::: $shellsplus
+parallel -j10 ssh {1}@lo ssh {2}@lo echo {} OK ::: $shellsplus ::: $shellsplus 
+
+# change paths to no path
+(
+  ssh nopathbash@lo 'echo >> .bashrc PATH=/bin:/usr/bin'
+  # Remove env_parallel from .profile
+  ssh nopathbash@lo 'perl -i.bak -pe s/.*env_parallel.*// .profile .bashrc'
+  ssh nopathcsh@lo 'echo >> .cshrc setenv PATH /bin:/usr/bin'
+  ssh nopathbash@lo 'echo $PATH'
+  ssh nopathcsh@lo 'echo $PATH'
+)
+
+ssh-copy-id localhost
+
+# SHELLS: lsh-client against openssh server
+sudo aptitude install lsh-client
+cd
+mkdir .lsh
+lsh-make-seed -o ".lsh/yarrow-seed-file"
+lsh --sloppy-host-authentication --capture-to ~/.lsh/host-acls lo
+lsh-keygen | lsh-writekey -c none
+lsh-export-key --openssh < ~/.lsh/identity.pub | lsh localhost 'cat >>.ssh/authorized_keys'
+lsh-export-key --openssh < ~/.lsh/identity.pub | ssh csh@localhost 'cat >>.ssh/authorized_keys'
+
+# To configure zsh
+zsh
+parallel --record-env
+
+
+# SHEBANG TOOLS
+sudo aptitude install gnuplot octave ruby r-base-core libdbd-pg-perl libdbd-sqlite3-perl pxz pixz
+sudo cp /usr/bin/tmux /usr/local/bin/tmux1.8
+

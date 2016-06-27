@@ -3425,9 +3425,9 @@ sub reaper {
         }
         my $sshlogin = $job->sshlogin();
         $sshlogin->dec_jobs_running();
-        $sshlogin->inc_jobs_completed();
         if(not $job->should_be_retried()) {
 	    # The job is done
+	    $sshlogin->inc_jobs_completed();
 	    # Free the jobslot
 	    $job->free_slot();
 	    if($opt::timeout) {
@@ -9145,6 +9145,9 @@ sub tmux_length {
     # If $opt::tmux set, find the limit for tmux
     # tmux 1.8 has a 2kB limit
     # tmux 1.9 has a 16kB limit
+    # tmux 2.0 has a 16kB limit
+    # tmux 2.1 has a 16kB limit
+    # tmux 2.2 has a 16kB limit
     # Input:
     #   $len = maximal command line length
     # Returns:

@@ -48,7 +48,7 @@ function env_parallel
       # Convert scalar vars to fish \XX quoting
       eval (set -L | perl -ne 'chomp;
         ($name,$val)=split(/ /,$_,2);
-        $name=~/^(COLUMNS|FISH_VERSION|LINES|PWD|SHLVL|_|history|status|version)$/ and next;
+        $name=~/^(HOME|USER|COLUMNS|FISH_VERSION|LINES|PWD|SHLVL|_|history|status|version)$/ and next;
         if($val=~/^'"'"'/) { next; }
         print "set $name \"\$$name\";\n";
       ')
@@ -68,7 +68,7 @@ function env_parallel
           chop;
           ($name,$val)=split(/ /,$_,2);
           # Ignore read-only vars
-          $name=~/^(COLUMNS|FISH_VERSION|LINES|PWD|SHLVL|_|history|status|version)$/ and next;
+          $name=~/^(HOME|USER|COLUMNS|FISH_VERSION|LINES|PWD|SHLVL|_|history|status|version)$/ and next;
           # Quote $val
           $val=~s/[\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\<\=\>\~\|\; \"\!\$\&\202-\377]/\\\$&/go;
           # Quote single quote

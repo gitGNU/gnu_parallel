@@ -111,8 +111,8 @@ _EOS
   # Exporting a big variable should not fail
   setenv A "`seq 1000`"
   setenv PATH ${PATH}:/tmp
-  cp /usr/local/bin/env_parallel.csh /tmp
+  cp /usr/local/bin/env_parallel.*csh /tmp
   # --filter to see if $PATH with parallel is transferred
   env_parallel --filter --env A,PATH -Slo echo '$PATH' ::: OK
 _EOS
-  
+

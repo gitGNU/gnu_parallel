@@ -166,8 +166,6 @@ Funky-
 ### Zsh environment
 
  * Documentation:  http://www.linuxmint.com
-
-
 zsh:130: command not found: alias_echo
 function_works
 myvar  works
@@ -191,8 +189,6 @@ Funky-
 ### Ksh environment
 
  * Documentation:  http://www.linuxmint.com
-
-
 3 arg alias_works
 function_works
 myvar  works
@@ -214,8 +210,6 @@ Funky-
 ### Fish environment
 
  * Documentation:  http://www.linuxmint.com
-
-
 env_parallel: Warning: ASCII value 1 in variables is not supported
 env_parallel: Warning: ASCII value 1 in variables is not supported
 3 arg alias_works
@@ -256,8 +250,6 @@ Funkyenv-	   !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFG
 ### csh environment
 
  * Documentation:  http://www.linuxmint.com
-
-
 Warning: no access to tty (Bad file descriptor).
 Thus no job control in this shell.
 3 arg alias_works
