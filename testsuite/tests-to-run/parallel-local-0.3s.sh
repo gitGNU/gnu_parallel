@@ -614,6 +614,17 @@ echo '### bug #48295: --results should be dynamic like --wd'
 
 echo '**'
 
+  bash -O extglob -c '. `which env_parallel.bash`; 
+    _longopt () { 
+      case "$prev" in 
+        --+([-a-z0-9_])) 
+          echo foo;; 
+      esac; 
+    }; 
+    env_parallel echo ::: env_parallel 2>&1 
+  '
+
+echo '**'
 
 EOF
 echo '### 1 .par file from --files expected'

@@ -26,6 +26,7 @@
 # Fifth Floor, Boston, MA 02110-1301 USA
 
 env_parallel() {
+  # env_parallel.zsh
   export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /'; typeset -p |
     grep -aFvf <(typeset -pr) |
     egrep -iav 'ZSH_EVAL_CONTEXT|LINENO=| _=|aliases|^typeset [a-z_]+$'|

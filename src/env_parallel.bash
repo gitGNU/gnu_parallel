@@ -26,11 +26,20 @@
 # Fifth Floor, Boston, MA 02110-1301 USA
 
 # Supports env of 127426 bytes
+
 env_parallel() {
-  export PARALLEL_ENV="$(echo "shopt -s expand_aliases 2>/dev/null"; alias;typeset -p |
-    grep -vFf <(readonly) |
-    grep -v 'declare .. (GROUPS|FUNCNAME|DIRSTACK|_|PIPESTATUS|USERNAME|BASH_[A-Z_]+) ';
+  # env_parallel.bash
+  PARALLEL_ENV="$(alias;
+    typeset -p |
+      grep -vFf <(readonly) |
+      grep -v 'declare .. (GROUPS|FUNCNAME|DIRSTACK|_|PIPESTATUS|USERNAME|BASH_[A-Z_]+) ';
     typeset -f)";
+  # Copy shopt (so e.g. extended globbing works)
+  parallel_shopt="$(shopt 2>/dev/null |
+    perl -pe 's:\s+off:;: and s/^/shopt -u /;
+              s:\s+on:;: and s/^/shopt -s /;')"
+  export PARALLEL_ENV="$parallel_shopt$PARALLEL_ENV"
+  unset parallel_shopt;
   `which parallel` "$@";
   unset PARALLEL_ENV;
 }

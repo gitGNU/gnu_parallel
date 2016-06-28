@@ -33,7 +33,7 @@ while test $# -gt 0; do
 	  grep env_parallel.ksh $HOME/.kshrc 2>/dev/null ||
   	    echo 'source `which env_parallel.ksh`' >> $HOME/.kshrc
 	  grep env_parallel.pdksh $HOME/.profile 2>/dev/null ||
-  	    echo 'source `which env_parallel.pdksh`' >> $HOME/.profile
+  	    echo '. `which env_parallel.pdksh`' >> $HOME/.profile
 	  grep env_parallel.csh $HOME/.cshrc 2>/dev/null ||
   	    echo 'source `which env_parallel.csh`' >> $HOME/.cshrc
 	  grep env_parallel.tcsh $HOME/.tcshrc 2>/dev/null ||
@@ -78,7 +78,7 @@ ksh:   Put this in $HOME/.kshrc:  source `which env_parallel.ksh`
        Supports: aliases, functions, variables, arrays
 
 pdksh: Put this in $HOME/.profile:  source `which env_parallel.pdksh`
-       E.g. by doing:  echo 'source `which env_parallel.pdksh`' >> $HOME/.profile
+       E.g. by doing:  echo '. `which env_parallel.pdksh`' >> $HOME/.profile
        Supports: aliases, functions, variables, arrays
 
 csh:   Put this in $HOME/.cshrc:  source `which env_parallel.csh`

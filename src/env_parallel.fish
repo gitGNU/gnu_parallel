@@ -41,6 +41,7 @@
 #   separator.
 
 function env_parallel
+  # env_parallel.fish
   setenv PARALLEL_ENV (
     begin;
       # Export function definitions

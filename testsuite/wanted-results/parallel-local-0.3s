@@ -1677,5 +1677,9 @@ B b
 /tmp/parallel-48295/B/1/B/2/b/stdout
 echo '**'
 **
+  bash -O extglob -c '. `which env_parallel.bash`;     _longopt () {       case "$prev" in         --+([-a-z0-9_]))           echo foo;;       esac;     };     env_parallel echo ::: env_parallel 2>&1   '
+env_parallel
+echo '**'
+**
 ### 1 .par file from --files expected
 0
