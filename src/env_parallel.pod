@@ -44,6 +44,9 @@ Same as GNU B<parallel>.
 
 =head2 Bash
 
+B<--env> is supported to export only the variable, alias, function, or
+array with the given name. Multiple B<--env>s can be given.
+
 Installation
 
 Put this in $HOME/.bashrc:
@@ -58,27 +61,35 @@ E.g. by doing:
 
 =item aliases
 
-  alias myecho=echo
-  env_parallel myecho ::: test
-  env_parallel -S server myecho ::: test
+  alias myecho='echo aliases'
+  env_parallel myecho ::: work
+  env_parallel -S server myecho ::: work
+  env_parallel --env myecho myecho ::: work
+  env_parallel --env myecho -S server myecho ::: work
 
 =item functions
 
-  myfunc() { echo $*; }
-  env_parallel myfunc ::: test
-  env_parallel -S server myfunc ::: test
+  myfunc() { echo functions $*; }
+  env_parallel myfunc ::: work
+  env_parallel -S server myfunc ::: work
+  env_parallel --env myfunc myfunc ::: work
+  env_parallel --env myfunc -S server myfunc ::: work
 
 =item variables
 
-  myvar=test
-  env_parallel echo '$myvar' ::: test
-  env_parallel -S server echo '$myvar' ::: test
+  myvar=variables
+  env_parallel echo '$myvar' ::: work
+  env_parallel -S server echo '$myvar' ::: work
+  env_parallel --env myvar echo '$myvar' ::: work
+  env_parallel --env myvar -S server echo '$myvar' ::: work
 
 =item arrays
 
-  myarray=(foo bar baz)
-  env_parallel echo '${myarray[{}]}' ::: 0 1 2
-  env_parallel -S server echo '${myarray[{}]}' ::: 0 1 2
+  myarray=(arrays work, too)
+  env_parallel -k echo '${myarray[{}]}' ::: 0 1 2
+  env_parallel -k -S server echo '${myarray[{}]}' ::: 0 1 2
+  env_parallel -k --env myarray echo '${myarray[{}]}' ::: 0 1 2
+  env_parallel -k --env myarray -S server echo '${myarray[{}]}' ::: 0 1 2
 
 =back
 
