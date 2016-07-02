@@ -6,7 +6,75 @@ unset run_test
 
 # SSH only allowed to localhost/lo
 # --retries if ssh dies
-cat <<'EOF' | sed -e s/\$SERVER1/$SERVER1/\;s/\$SERVER2/$SERVER2/ | parallel -vj1 --retries 2 -k --joblog /tmp/jl-`basename $0` -L1
+cat <<'EOF' | sed -e s/\$SERVER1/$SERVER1/\;s/\$SERVER2/$SERVER2/ | parallel -vj4 --retries 2 -k --joblog /tmp/jl-`basename $0` -L1
+echo '### --env from man env_parallel'
+echo '### bash'
+ssh bash@lo ' 
+  alias myecho="echo aliases"; 
+  env_parallel myecho ::: work; 
+  env_parallel -S server myecho ::: work; 
+  env_parallel --env myecho myecho ::: work; 
+  env_parallel --env myecho -S server myecho ::: work 
+'
+
+ssh bash@lo ' 
+  myfunc() { echo functions $*; }; 
+  env_parallel myfunc ::: work; 
+  env_parallel -S server myfunc ::: work; 
+  env_parallel --env myfunc myfunc ::: work; 
+  env_parallel --env myfunc -S server myfunc ::: work 
+'
+
+ssh bash@lo ' 
+  myvar=variables; 
+  env_parallel echo "\$myvar" ::: work; 
+  env_parallel -S server echo "\$myvar" ::: work; 
+  env_parallel --env myvar echo "\$myvar" ::: work; 
+  env_parallel --env myvar -S server echo "\$myvar" ::: work 
+'
+
+ssh bash@lo ' 
+  myarray=(arrays work, too); 
+  env_parallel -k echo "\${myarray[{}]}" ::: 0 1 2; 
+  env_parallel -k -S server echo "\${myarray[{}]}" ::: 0 1 2; 
+  env_parallel -k --env myarray echo "\${myarray[{}]}" ::: 0 1 2; 
+  env_parallel -k --env myarray -S server echo "\${myarray[{}]}" ::: 0 1 2 
+'
+
+echo '### zsh'
+
+ssh zsh@lo ' 
+  alias myecho="echo aliases"; 
+  env_parallel myecho ::: work; 
+  env_parallel -S server myecho ::: work; 
+  env_parallel --env myecho myecho ::: work; 
+  env_parallel --env myecho -S server myecho ::: work 
+'
+
+ssh zsh@lo ' 
+  myfunc() { echo functions $*; }; 
+  env_parallel myfunc ::: work; 
+  env_parallel -S server myfunc ::: work; 
+  env_parallel --env myfunc myfunc ::: work; 
+  env_parallel --env myfunc -S server myfunc ::: work 
+'
+
+ssh zsh@lo ' 
+  myvar=variables; 
+  env_parallel echo "\$myvar" ::: work; 
+  env_parallel -S server echo "\$myvar" ::: work; 
+  env_parallel --env myvar echo "\$myvar" ::: work; 
+  env_parallel --env myvar -S server echo "\$myvar" ::: work 
+'
+
+ssh zsh@lo ' 
+  myarray=(arrays work, too); 
+  env_parallel -k echo "\${myarray[{}]}" ::: 1 2 3; 
+  env_parallel -k -S server echo "\${myarray[{}]}" ::: 1 2 3; 
+  env_parallel -k --env myarray echo "\${myarray[{}]}" ::: 1 2 3; 
+  env_parallel -k --env myarray -S server echo "\${myarray[{}]}" ::: 1 2 3 
+'
+
 echo '### --env _'
   fUbAr="OK FUBAR" parallel -S parallel@lo --env _ echo '$fUbAr $DEBEMAIL' ::: test
   fUbAr="OK FUBAR" parallel -S csh@lo --env _ echo '$fUbAr $DEBEMAIL' ::: test
@@ -172,11 +240,9 @@ func_echo() {
   echo Funky-"$funky"-funky
 }
 
-# alias does not work:
-#   http://unix.stackexchange.com/questions/223534/defining-an-alias-and-immediately-use-it
-env_parallel alias_echo ::: alias_does_not_work
+env_parallel alias_echo ::: alias_works
 env_parallel func_echo ::: function_works
-env_parallel -S zsh@lo alias_echo ::: alias_does_not_work_over_ssh
+env_parallel -S zsh@lo alias_echo ::: alias_works_over_ssh
 env_parallel -S zsh@lo func_echo ::: function_works_over_ssh
 echo
 echo "$funky" | parallel --shellquote

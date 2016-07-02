@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mysqlrootpass=${mysqlrootpass:-FoOo}
+mysqlrootpass=${mysqlrootpass:+FoOo}
 
 # The testsuite depends on this:
 
@@ -12,20 +12,22 @@ sudo aptitude install dpkg-dev build-essential debhelper
 
 # DATABASES
 sudo aptitude install postgresql mysql-server
+echo '# Create PostgreSQL'
 sudo su - postgres -c 'createdb '`whoami`
 sudo su - postgres -c 'createuser '`whoami`
 sudo su - postgres -c "sql pg:/// \"ALTER USER \\\"`whoami`\\\" WITH PASSWORD '`whoami`';\""
 
+echo '# Create MySQL'
 sudo su - mysql mysqladmin create `whoami`
-sql mysql://root:$mysqlrootpass@/mysql "CREATE DATABASE `whoami`;CREATE USER '`whoami`'@'localhost' IDENTIFIED BY '`whoami`'; GRANT ALL ON `whoami`.* TO '`whoami`'@'localhost';"
-
+sql mysql://root:"$mysqlrootpass"@/mysql "DROP DATABASE `whoami`;DROP USER '`whoami`'@'localhost';"
+sql mysql://root:"$mysqlrootpass"@/mysql "CREATE DATABASE `whoami`;CREATE USER '`whoami`'@'localhost' IDENTIFIED BY '`whoami`'; GRANT ALL ON `whoami`.* TO '`whoami`'@'localhost';"
 
 # SHELLS
 sudo aptitude install ash csh fdclone fish fizsh ksh mksh pdksh posh rush sash tcsh yash zsh
 
 SSHPASS=`goodpasswd`
 export SSHPASS
-shells="sh csh ash tcsh zsh ksh fish fizsh mksh pdksh posh rc sash yash nopathbash nopathcsh"
+shells="bash sh csh ash tcsh zsh ksh fish fizsh mksh pdksh posh rc sash yash nopathbash nopathcsh"
 create_shell_user() {
   shell="$1"
   sudo deluser $shell && sudo mv /home/$shell /tmp/$shell.$RANDOM
@@ -79,7 +81,7 @@ sudo aptitude install lsh-client
 cd
 mkdir .lsh
 lsh-make-seed -o ".lsh/yarrow-seed-file"
-lsh --sloppy-host-authentication --capture-to ~/.lsh/host-acls lo
+lsh --sloppy-host-authentication --capture-to ~/.lsh/host-acls lo echo Added host-auth
 lsh-keygen | lsh-writekey -c none
 lsh-export-key --openssh < ~/.lsh/identity.pub | lsh localhost 'cat >>.ssh/authorized_keys'
 lsh-export-key --openssh < ~/.lsh/identity.pub | ssh csh@localhost 'cat >>.ssh/authorized_keys'

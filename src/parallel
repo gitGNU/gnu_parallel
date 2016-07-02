@@ -6816,10 +6816,16 @@ sub wrapped {
 		close $parallel_env;
 	    }
 	    # If $PARALLEL_ENV set, put that in front of the command
-	    # Used for importing functions for fish
+	    # Used for env_parallel.*
 	    # Map \001 to \n to make it easer to quote \n in $PARALLEL_ENV
 	    $ENV{'PARALLEL_ENV'} =~ s/\001/\n/g;
-	    $command = $ENV{'PARALLEL_ENV'}."\n".$command;
+	    if($Global::shell =~ /zsh/) {
+		# The extra 'eval' will make aliases work, too
+		$command = $ENV{'PARALLEL_ENV'}."\n".
+		    "eval ".::shell_quote_scalar($command);
+	    } else {
+		$command = $ENV{'PARALLEL_ENV'}."\n".$command;
+	    }
 	}
 	# Wrap with ssh + tranferring of files
 	$command = $self->sshlogin_wrap($command);
@@ -6887,6 +6893,7 @@ sub string_zip_base64 {
     # Pipe string through 'bzip2 -9' and base64 encode it into 1000
     # byte blocks.
     # 1000 bytes is the largest word size csh supports
+    # Zipping will make exporting big environments work, too
     # Input:
     #   @strings = to be encoded
     # Returns:
@@ -6958,8 +6965,8 @@ sub base64_wrap {
     my $eval_string = shift;
     return
 	"perl -e ".
-	::shell_quote_scalar(base64_eval())." ".
-	join" ",::shell_quote(string_base64($eval_string));
+	::shell_quote_scalar(base64_zip_eval())." ".
+	join" ",::shell_quote(string_zip_base64($eval_string));
 }
 
 sub base64_eval {
@@ -7184,8 +7191,8 @@ sub sshlogin_wrap {
 		# csh does not deal well with $ENV with \n
 		$quoted_remote_command =
 		    "perl -e ".
-		    ::shell_quote_scalar(::shell_quote_scalar(base64_eval()))." ".
-		    join" ",::shell_quote(::shell_quote(string_base64($remote_command)));
+		    ::shell_quote_scalar(::shell_quote_scalar(base64_zip_eval()))." ".
+		    join" ",::shell_quote(::shell_quote(string_zip_base64($remote_command)));
 	    } else {
 		$quoted_remote_command = $dq_remote_command;
 	    }

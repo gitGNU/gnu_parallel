@@ -29,36 +29,19 @@
 
 env_parallel() {
     # env_parallel.bash
-    local argv_ARRAY=()
-    local grep_ARRAY=()
-    local _par_i
-    local _par_ARR
 
     # Get the --env variables if set
-    while test $# -gt 0; do
-	key="$1"
-
-	case $key in
-            --env)
-		argv_ARRAY+=("$1")
-		shift
-		# split --env on ,
-		IFS=',' read -ra _par_ARR <<< "$1"
-		for _par_i in "${_par_ARR[@]}"; do
-  		    grep_ARRAY+=("$_par_i")
-		done
-		;;
-	esac
-	argv_ARRAY+=("$1")
-	shift # past argument or value
-    done
-
-    # This converts  a b c  to (a|b|c)
-    local grep_REGEXP="$(perl -e 'print "(".(join "|",map { quotemeta $_ } @ARGV).")"' "${grep_ARRAY[@]}")"
-    if [[ "$grep_REGEXP" = "()" ]] ; then
-	# --env not set: Match everything
-	grep_REGEXP="(.*)"
-    fi
+    # and convert  a b c  to (a|b|c)
+    # If --env not set: Match everything (.*)
+    local grep_REGEXP="$(
+        perl -e 'for(@ARGV){
+                $next_is_env and push @envvar, split/,/, $_;
+                $next_is_env=/^--env$/;
+            }
+            $vars = join "|",map { quotemeta $_ } @envvar;
+            print $vars ? "($vars)" : "(.*)";
+            ' -- "$@"
+    )"
 
     # Grep alias names
     local _alias_NAMES="$(compgen -a |
@@ -90,20 +73,22 @@ env_parallel() {
     fi
 
     # Copy shopt (so e.g. extended globbing works)
+    # But force expand_aliases as aliases otherwise do not work
     export PARALLEL_ENV="$(
         shopt 2>/dev/null |
         perl -pe 's:\s+off:;: and s/^/shopt -u /;
                   s:\s+on:;: and s/^/shopt -s /;';
+        echo 'shopt -s expand_aliases 2>/dev/null';
         $_list_alias_BODIES;
         $_list_variable_VALUES;
         $_list_function_BODIES)";
-    `which parallel` "${argv_ARRAY[@]}";
+    `which parallel` "$@";
     unset PARALLEL_ENV;
 }
 
 # Supports env of 127375 bytes
 #
-# env_parallel() {
+# _env_parallel() {
 #   # Saving to a tempfile
 #   export PARALLEL_ENV=`tempfile`;
 #   (echo "shopt -s expand_aliases 2>/dev/null"; alias;typeset -p |
