@@ -23,5 +23,8 @@ echo "### Test --tmpdir running full. bug #40733 was caused by this"
 
 echo '**'
 
+echo "### bug #48290: round-robin does not distribute data based on business"
+  echo "Jobslot 1 is 8 times slower than jobslot 8 and should get much less data"
+  seq 10000000 | parallel --tagstring {%} --linebuffer --compress -j8 --roundrobin --pipe --block 300k 'pv -qL {%}00000'| perl -ne '/^\d+/ and $s{$&}++; END { print map { "$_\n" } sort { $s{$a} <=> $s{$b} } keys %s}'
 
 EOF

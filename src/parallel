@@ -2029,6 +2029,35 @@ sub open_or_exit {
     return $fh;
 }
 
+sub set_fh_blocking {
+    # Set filehandle as blocking
+    # Inputs:
+    #   $fh = filehandle to be blocking
+    # Returns:
+    #   N/A
+    my $fh = shift;
+    $Global::use{"Fcntl"} ||= eval "use Fcntl qw(:DEFAULT :flock); 1;";
+    my $flags;
+    fcntl($fh, &F_GETFL, $flags) || die $!; # Get the current flags on the filehandle
+    $flags &= ~&O_NONBLOCK; # Remove non-blocking to the flags
+    fcntl($fh, &F_SETFL, $flags) || die $!; # Set the flags on the filehandle
+}
+
+sub set_fh_non_blocking {
+    # Set filehandle as non-blocking
+    # Inputs:
+    #   $fh = filehandle to be blocking
+    # Returns:
+    #   N/A
+    my $fh = shift;
+    $Global::use{"Fcntl"} ||= eval "use Fcntl qw(:DEFAULT :flock); 1;";
+    my $flags;
+    fcntl($fh, &F_GETFL, $flags) || die $!; # Get the current flags on the filehandle
+    $flags |= &O_NONBLOCK; # Add non-blocking to the flags
+    fcntl($fh, &F_SETFL, $flags) || die $!; # Set the flags on the filehandle
+}
+
+
 sub __RUNNING_THE_JOBS_AND_PRINTING_PROGRESS__ {}
 
 # Variable structure:
@@ -6344,7 +6373,11 @@ sub openoutputfiles {
 	$self->grouped();
     }
     if($opt::linebuffer) {
-	$self->set_non_blocking();
+	# Make it possible to read non-blocking from
+	# the buffer files
+	for my $fdno (1,2) {
+	    ::set_fh_non_blocking($self->fh($fdno,'r'));
+	}
     }
 }
 
@@ -6421,18 +6454,6 @@ sub filter_through_compress {
 	    || die $?;
 	$self->set_fh($fdno,'r',$fdr);
 	$self->set_fh($fdno,'rpid',$rpid);
-    }
-}
-
-sub set_non_blocking {
-    my $self = shift;
-    $Global::use{"Fcntl"} ||= eval "use Fcntl qw(:DEFAULT :flock); 1;";
-    for my $fdno (1,2) {
-	my $fdr = $self->fh($fdno,'r');
-	my $flags;
-	fcntl($fdr, &::F_GETFL, $flags) || die $!; # Get the current flags on the filehandle
-	$flags |= &::O_NONBLOCK; # Add non-blocking to the flags
-	fcntl($fdr, &::F_SETFL, $flags) || die $!; # Set the flags on the filehandle
     }
 }
 
@@ -6552,8 +6573,8 @@ sub non_blocking_write {
     my $rv = syswrite($in,
 		      substr($self->{'block'},$self->{'block_pos'}));
     if (!defined($rv) && $! == EAGAIN) {
-	# would block
-	$something_written = 0;
+	# would block - but would have written
+	$something_written = 1;
     } elsif ($self->{'block_pos'}+$rv != $self->{'block_length'}) {
 	# incomplete write
 	# Remove the written part
@@ -7586,6 +7607,9 @@ sub start {
     if($opt::pipe) {
 	my ($stdin_fh) = ::gensym();
 	$pid = open3_setpgrp($stdin_fh,$stdout_fh,$stderr_fh,$command);
+	if($opt::roundrobin) {
+	    ::set_fh_non_blocking($stdin_fh);
+	}
 	$job->set_fh(0,"w",$stdin_fh);
     } elsif(@opt::a and not $Global::stdin_in_opt_a and $job->seq() == 1
 	    and $job->sshlogin()->string() eq ":") {
@@ -7978,11 +8002,7 @@ sub linebuffer_print {
 	    # Blocked reading in final round
 	    $Global::use{"Fcntl"} ||= eval "use Fcntl qw(:DEFAULT :flock); 1;";
 	    for my $fdno (1,2) {
-		my $fdr = $self->fh($fdno,'r');
-		my $flags;
-		fcntl($fdr, &F_GETFL, $flags) || die $!; # Get the current flags on the filehandle
-		$flags &= ~&O_NONBLOCK; # Remove non-blocking to the flags
-		fcntl($fdr, &F_SETFL, $flags) || die $!; # Set the flags on the filehandle
+		::set_fh_blocking($self->fh($fdno,'r'));
 	    }
 	}
     }
