@@ -1146,7 +1146,9 @@ Pipe parts of a physical file. B<--pipepart> works similar to
 B<--pipe>, but is much faster.
 
 If B<--block> is left out, B<--pipepart> will use a block size that
-will result in 10 jobs per jobslot.
+will result in 10 jobs per jobslot, except if run with
+B<--round-robin> in which case it will result in 1 job per jobslot.
+
 
 B<--pipepart> has a few limitations:
 
@@ -1154,8 +1156,12 @@ B<--pipepart> has a few limitations:
 
 =item Z<>*
 
-The file must be a physical (seekable) file (not a stream) and must be
-given using B<-a> or B<::::>.
+The file must be a normal file or a block device (technically it must
+be seekable) and must be given using B<-a> or B<::::>. The file cannot
+be a pipe or a fifo as they are not seekable.
+
+If using a block device with lot of NUL bytes, remember to set
+B<--recend ''>.
 
 =item Z<>*
 
@@ -1559,7 +1565,7 @@ time to initialize.
 B<--keep-order> will not work with B<--round-robin> as it is
 impossible to track which input block corresponds to which output.
 
-B<--round-robin> implies B<--pipe>.
+B<--round-robin> implies B<--pipe>, except if B<--pipepart> is given.
 
 
 =item B<--rpl> 'I<tag> I<perl expression>'
@@ -3969,29 +3975,9 @@ E1 -  -  E4 -  E6
 R1 -  -  -  -  R6 -  -  -
 S1 -
 
-xjobs: TODO - Please file a bug-report if you know what features xjobs
-supports (See REPORTING BUGS).
-
-prll: TODO - Please file a bug-report if you know what features prll
-supports (See REPORTING BUGS).
-
-dxargs: TODO - Please file a bug-report if you know what features dxargs
-supports (See REPORTING BUGS).
-
-mdm/middelman: TODO - Please file a bug-report if you know what
-features mdm/middelman supports (See REPORTING BUGS).
-
-xapply: TODO - Please file a bug-report if you know what features xapply
-supports (See REPORTING BUGS).
-
-paexec: TODO - Please file a bug-report if you know what features paexec
-supports (See REPORTING BUGS).
-
-ladon: TODO - Please file a bug-report if you know what features ladon
-supports (See REPORTING BUGS).
-
-ClusterSSH: TODO - Please file a bug-report if you know what features ClusterSSH
-supports (See REPORTING BUGS).
+xjobs, prll, dxargs, mdm/middelman, xapply, paexec, ladon, jobflow,
+ClusterSSH: TODO - Please file a bug-report if you know what features
+they support (See REPORTING BUGS).
 
 
 =head2 DIFFERENCES BETWEEN xargs AND GNU Parallel
@@ -4572,6 +4558,48 @@ B<3> parallel mkdir -p thumbs/RELDIR\; convert FULLPATH -thumbnail 100x100^ -gra
 B<4> ladon "~/Music/*.wav" -- lame -V 2 FULLPATH DIRNAME/BASENAME.mp3
 
 B<4> parallel lame -V 2 FULLPATH DIRNAME/BASENAME.mp3 ::: ~/Music/*.wav 
+
+
+=head2 DIFFERENCES BETWEEN jobflow AND GNU Parallel
+
+B<jobflow> can run multiple jobs in parallel.
+
+Just like B<xargs> output from B<jobflow> jobs running in parallel mix
+together by default. B<jobflow> can buffer into files (placed in
+/run/shm), but these are not cleaned up - not even if B<jobflow> dies
+unexpectently. If the total output is big (in the order of RAM+swap)
+it can cause the system to run out of memory.
+
+B<jobflow> gives no error if the command is unknown, and like B<xargs>
+redirection requires wrapping with B<bash -c>.
+
+B<jobflow> makes it possible to set ressource limits on the running
+jobs. This can be emulated by GNU B<parallel> using B<bash>'s B<ulimit>:
+
+
+  jobflow -limits=mem=100M,cpu=3,fsize=20M,nofiles=300 myjob
+
+  parallel 'ulimit -v 102400 -t 3 -f 204800 -n 300 myjob'
+
+
+=head3 EXAMPLES FROM jobflow README
+
+B<1> cat things.list | jobflow -threads=8 -exec ./mytask {}
+
+B<1> cat things.list | parallel -j8 ./mytask {}
+
+B<2> seq 100 | jobflow -threads=100 -exec echo {}
+
+B<2> seq 100 | parallel -j100 echo {}
+
+B<3> cat urls.txt | jobflow -threads=32 -exec wget {}
+
+B<3> cat urls.txt | parallel -j32 wget {}
+
+B<4> find . -name '*.bmp' | jobflow -threads=8 -exec bmp2jpeg {.}.bmp {.}.jpg
+
+B<4> find . -name '*.bmp' | parallel -j8 bmp2jpeg {.}.bmp {.}.jpg
+
 
 
 =head2 DIFFERENCES BETWEEN ClusterSSH AND GNU Parallel

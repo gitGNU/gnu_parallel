@@ -126,7 +126,16 @@ if($opt::pipepart) {
 	# --roundrobin => divide equally between jobslots
 	my $size = 0;
 	# Compute size of -a
-	$size += -s $_ for @opt::a;
+	for(@opt::a) {
+	    if(-f $_) {
+		$size += -s $_;
+	    } elsif(-b $_) {
+		$size += size_of_block_dev($_);
+	    } else {
+		::error("$_ is neither a file nor a block device");
+		wait_and_exit(255);
+	    }
+	}
 	# Compute $Global::max_jobs_running
 	$Global::dummy_jobs = 1;
 	for my $sshlogin (values %Global::host) {
@@ -222,7 +231,7 @@ sub pipe_part_files {
     #   @commands that will cat_partial each part
     my ($file) = @_;
     my $buf = "";
-    if(not -f $file) {
+    if(not -f $file and not -b $file) {
 	::error("$file is not a seekable file.");
 	::wait_and_exit(255);
     }
@@ -274,6 +283,10 @@ sub find_split_positions {
     #   @positions of block start/end
     my($file, $block, $headerlen) = @_;
     my $size = -s $file;
+    if(-b $file) {
+	# $file is a blockdevice
+	$size = size_of_block_dev($file);
+    }
     $block = int $block;
     # The optimal dd blocksize for mint, redhat, solaris, openbsd = 2^17..2^20
     # The optimal dd blocksize for freebsd = 2^15..2^17
@@ -3795,6 +3808,24 @@ sub tmpfifo {
     my $tmpfifo = tmpname("fif",@_);
     mkfifo($tmpfifo,0600);
     return $tmpfifo;
+}
+
+sub size_of_block_dev {
+    # Like -s but for block devices
+    # Input:
+    #   $blockdev = file name of block device
+    # Returns:
+    #   $size = in bytes, undef if error
+    my $blockdev = shift;
+    if(open(my $fh, "<", $blockdev)) {
+	seek($fh,0,2) || ::die_bug("cannot seek $blockdev");
+	my $size = tell($fh);
+	close $fh;
+	return $size;
+    } else {
+	::error("cannot open $blockdev");
+	wait_and_exit(255);
+    }
 }
 
 sub qqx {
