@@ -75,6 +75,43 @@ ssh zsh@lo '
   env_parallel -k --env myarray -S server echo "\${myarray[{}]}" ::: 1 2 3 
 '
 
+echo '### ksh'
+ssh ksh@lo ' 
+  . `which env_parallel.ksh`; 
+  alias myecho="echo aliases"; 
+  env_parallel myecho ::: work; 
+  env_parallel -S server myecho ::: work; 
+  env_parallel --env myecho myecho ::: work; 
+  env_parallel --env myecho -S server myecho ::: work 
+'
+
+ssh ksh@lo ' 
+  . `which env_parallel.ksh`; 
+  myfunc() { echo functions $*; }; 
+  env_parallel myfunc ::: work; 
+  env_parallel -S server myfunc ::: work; 
+  env_parallel --env myfunc myfunc ::: work; 
+  env_parallel --env myfunc -S server myfunc ::: work 
+'
+
+ssh ksh@lo ' 
+  . `which env_parallel.ksh`; 
+  myvar=variables; 
+  env_parallel echo "\$myvar" ::: work; 
+  env_parallel -S server echo "\$myvar" ::: work; 
+  env_parallel --env myvar echo "\$myvar" ::: work; 
+  env_parallel --env myvar -S server echo "\$myvar" ::: work 
+'
+
+ssh ksh@lo ' 
+  . `which env_parallel.ksh`; 
+  myarray=(arrays work, too); 
+  env_parallel -k echo "\${myarray[{}]}" ::: 0 1 2; 
+  env_parallel -k -S server echo "\${myarray[{}]}" ::: 0 1 2; 
+  env_parallel -k --env myarray echo "\${myarray[{}]}" ::: 0 1 2; 
+  env_parallel -k --env myarray -S server echo "\${myarray[{}]}" ::: 0 1 2 
+'
+
 echo '### --env _'
   fUbAr="OK FUBAR" parallel -S parallel@lo --env _ echo '$fUbAr $DEBEMAIL' ::: test
   fUbAr="OK FUBAR" parallel -S csh@lo --env _ echo '$fUbAr $DEBEMAIL' ::: test

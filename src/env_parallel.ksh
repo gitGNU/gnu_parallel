@@ -26,8 +26,67 @@
 # Fifth Floor, Boston, MA 02110-1301 USA
 
 env_parallel() {
-  # env_parallel.ksh
-  export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p|egrep -v 'typeset( -i)? -r|PIPESTATUS';typeset -f)";
-  `which parallel` "$@";
-  unset PARALLEL_ENV;
+    # env_parallel.ksh
+
+    # Get the --env variables if set
+    # and convert  a b c  to (a|b|c)
+    # If --env not set: Match everything (.*)
+    grep_REGEXP="$(
+        perl -e 'for(@ARGV){
+                $next_is_env and push @envvar, split/,/, $_;
+                $next_is_env=/^--env$/;
+            }
+            $vars = join "|",map { quotemeta $_ } @envvar;
+            print $vars ? "($vars)" : "(.*)";
+            ' -- "$@"
+    )"
+
+    # Grep alias names
+    _alias_NAMES="$(alias | perl -pe 's/=.*//' |
+        egrep "^${grep_REGEXP}\$")"
+    _list_alias_BODIES="alias $_alias_NAMES | perl -pe 's/^/alias /'"
+    if [[ "$_alias_NAMES" = "" ]] ; then
+	# no aliases selected
+	_list_alias_BODIES="true"
+    fi
+    unset _alias_NAMES
+
+    # Grep function names
+    _function_NAMES="$(typeset +p -f | perl -pe 's/\(\).*//' |
+        egrep "^${grep_REGEXP}\$")"
+    _list_function_BODIES="typeset -f $_function_NAMES"
+    if [[ "$_function_NAMES" = "" ]] ; then
+	# no functions selected
+	_list_function_BODIES="true"
+    fi
+    unset _function_NAMES
+
+    # Grep variable names
+    _variable_NAMES="$(typeset +p | perl -pe 's/^typeset .. //' |
+        egrep "^${grep_REGEXP}\$" |
+        egrep -v '^(PIPESTATUS)$')"
+    _list_variable_VALUES="typeset -p $_variable_NAMES"
+    if [[ "$_variable_NAMES" = "" ]] ; then
+	# no variables selected
+	_list_variable_VALUES="true"
+    fi
+    unset _variable_NAMES
+
+    # eval is needed for aliases - cannot explain why
+    export PARALLEL_ENV="$(
+        eval $_list_alias_BODIES;
+        $_list_variable_VALUES;
+        $_list_function_BODIES)";
+    unset _list_alias_BODIES
+    unset _list_variable_VALUES
+    unset _list_function_BODIES
+    `which parallel` "$@";
+    unset PARALLEL_ENV;
 }
+
+# _env_parallel() {
+#   # env_parallel.ksh
+#   export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p|egrep -v 'typeset( -i)? -r|PIPESTATUS';typeset -f)";
+#   `which parallel` "$@";
+#   unset PARALLEL_ENV;
+# }

@@ -37,7 +37,7 @@ aliases work
 aliases work
 aliases work
 aliases work
-  ssh zsh@lo '   myfunc() { echo functions $*; };   env_parallel myfunc ::: work;   env_parallel -S server myfunc ::: work;   env_parallel --env myfunc myfunc ::: work;   env_parallel --env myfunc -S server myfunc ::: work '
+ssh zsh@lo '   myfunc() { echo functions $*; };   env_parallel myfunc ::: work;   env_parallel -S server myfunc ::: work;   env_parallel --env myfunc myfunc ::: work;   env_parallel --env myfunc -S server myfunc ::: work '
 functions work
 functions work
 functions work
@@ -48,6 +48,36 @@ variables work
 variables work
 variables work
 ssh zsh@lo '   myarray=(arrays work, too);   env_parallel -k echo "\${myarray[{}]}" ::: 1 2 3;   env_parallel -k -S server echo "\${myarray[{}]}" ::: 1 2 3;   env_parallel -k --env myarray echo "\${myarray[{}]}" ::: 1 2 3;   env_parallel -k --env myarray -S server echo "\${myarray[{}]}" ::: 1 2 3 '
+arrays
+work,
+too
+arrays
+work,
+too
+arrays
+work,
+too
+arrays
+work,
+too
+echo '### ksh'
+### ksh
+ssh ksh@lo '   . `which env_parallel.ksh`;   alias myecho="echo aliases";   env_parallel myecho ::: work;   env_parallel -S server myecho ::: work;   env_parallel --env myecho myecho ::: work;   env_parallel --env myecho -S server myecho ::: work '
+aliases work
+aliases work
+aliases work
+aliases work
+ssh ksh@lo '   . `which env_parallel.ksh`;   myfunc() { echo functions $*; };   env_parallel myfunc ::: work;   env_parallel -S server myfunc ::: work;   env_parallel --env myfunc myfunc ::: work;   env_parallel --env myfunc -S server myfunc ::: work '
+functions work
+functions work
+functions work
+functions work
+ssh ksh@lo '   . `which env_parallel.ksh`;   myvar=variables;   env_parallel echo "\$myvar" ::: work;   env_parallel -S server echo "\$myvar" ::: work;   env_parallel --env myvar echo "\$myvar" ::: work;   env_parallel --env myvar -S server echo "\$myvar" ::: work '
+variables work
+variables work
+variables work
+variables work
+ssh ksh@lo '   . `which env_parallel.ksh`;   myarray=(arrays work, too);   env_parallel -k echo "\${myarray[{}]}" ::: 0 1 2;   env_parallel -k -S server echo "\${myarray[{}]}" ::: 0 1 2;   env_parallel -k --env myarray echo "\${myarray[{}]}" ::: 0 1 2;   env_parallel -k --env myarray -S server echo "\${myarray[{}]}" ::: 0 1 2 '
 arrays
 work,
 too
