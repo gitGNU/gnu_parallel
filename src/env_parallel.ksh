@@ -25,14 +25,18 @@
 # or write to the Free Software Foundation, Inc., 51 Franklin St,
 # Fifth Floor, Boston, MA 02110-1301 USA
 
+# Supports env of 127426 bytes
+
 env_parallel() {
     # env_parallel.ksh
 
     # Get the --env variables if set
+    # --env _ should be ignored
     # and convert  a b c  to (a|b|c)
     # If --env not set: Match everything (.*)
-    grep_REGEXP="$(
+    _grep_REGEXP="$(
         perl -e 'for(@ARGV){
+                /^_$/ and $next_is_env = 0;
                 $next_is_env and push @envvar, split/,/, $_;
                 $next_is_env=/^--env$/;
             }
@@ -40,10 +44,20 @@ env_parallel() {
             print $vars ? "($vars)" : "(.*)";
             ' -- "$@"
     )"
+    # Deal with --env _
+    _ignore_UNDERSCORE="$(
+        perl -e 'for(@ARGV){
+                $next_is_env and push @envvar, split/,/, $_;
+                $next_is_env=/^--env$/;
+            }
+            $underscore = grep { /^_$/ } @envvar;
+            print $underscore ? "grep -vf $ENV{HOME}/.parallel/ignored_vars" : "cat";
+            ' -- "$@"
+    )"
 
     # Grep alias names
     _alias_NAMES="$(alias | perl -pe 's/=.*//' |
-        egrep "^${grep_REGEXP}\$")"
+        egrep "^${_grep_REGEXP}\$" | $_ignore_UNDERSCORE)"
     _list_alias_BODIES="alias $_alias_NAMES | perl -pe 's/^/alias /'"
     if [[ "$_alias_NAMES" = "" ]] ; then
 	# no aliases selected
@@ -53,7 +67,7 @@ env_parallel() {
 
     # Grep function names
     _function_NAMES="$(typeset +p -f | perl -pe 's/\(\).*//' |
-        egrep "^${grep_REGEXP}\$")"
+        egrep "^${_grep_REGEXP}\$" | $_ignore_UNDERSCORE)"
     _list_function_BODIES="typeset -f $_function_NAMES"
     if [[ "$_function_NAMES" = "" ]] ; then
 	# no functions selected
@@ -63,7 +77,7 @@ env_parallel() {
 
     # Grep variable names
     _variable_NAMES="$(typeset +p | perl -pe 's/^typeset .. //' |
-        egrep "^${grep_REGEXP}\$" |
+        egrep "^${_grep_REGEXP}\$" | $_ignore_UNDERSCORE |
         egrep -v '^(PIPESTATUS)$')"
     _list_variable_VALUES="typeset -p $_variable_NAMES"
     if [[ "$_variable_NAMES" = "" ]] ; then
