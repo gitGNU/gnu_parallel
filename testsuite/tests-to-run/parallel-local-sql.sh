@@ -14,7 +14,7 @@ p_showsqlresult() {
 
 p_wrapper() {
   INNER=$1
-  SERVERURL=$2
+  SERVERURL=$(eval echo $2)
   TABLE=TBL$RANDOM
   DBURL=$SERVERURL/$TABLE
   T1=$(tempfile)
@@ -29,53 +29,47 @@ p_wrapper() {
   $DEBUG || sql $SERVERURL "drop table $TABLE;" >/dev/null
 }
 
-p_sqlandworker() {
-  (sleep 2; parallel --sqlworker $DBURL sleep .3\;echo >$T1) &
-  parallel --sqlandworker $DBURL sleep .3\;echo ::: {1..5} ::: {a..e} >$T2; 
+p_template() {
+  (sleep 2; parallel "$@" --sqlworker $DBURL sleep .3\;echo >$T1) &
+  parallel "$@" --sqlandworker $DBURL sleep .3\;echo ::: {1..5} ::: {a..e} >$T2; 
 }
-export -f p_sqlandworker
+export -f p_template
 
 par_sqlandworker() {
-  p_wrapper p_sqlandworker $1
-}
-
-p_sqlandworker_lo() {
-  (sleep 2; parallel -S lo --sqlworker $DBURL sleep .3\;echo >$T1) &
-  parallel -S lo --sqlandworker $DBURL sleep .3\;echo ::: {1..5} ::: {a..e} >$T2; 
+  p_template
 }
 
 par_sqlandworker_lo() {
-  p_wrapper p_sqlandworker_lo $1
-}
-
-p_sqlandworker_results() {
-  (sleep 2; parallel --results /tmp/out--sql --sqlworker $DBURL sleep .3\;echo >$T1) &
-  parallel --results /tmp/out--sql --sqlandworker $DBURL sleep .3\;echo ::: {1..5} ::: {a..e} >$T2; 
+  p_template -S lo
 }
 
 par_sqlandworker_results() {
-  p_wrapper p_sqlandworker_results $1
-}
-
-p_sqlandworker_linebuffer() {
-  (sleep 2; parallel --linebuffer --sqlworker $DBURL sleep .3\;echo >$T1) &
-  parallel --linebuffer --sqlandworker $DBURL sleep .3\;echo ::: {1..5} ::: {a..e} >$T2; 
+  p_template --results /tmp/out--sql
 }
 
 par_sqlandworker_linebuffer() {
-  p_wrapper p_sqlandworker_linebuffer $1
+  p_template --linebuffer
 }
 
-p_sqlandworker_unbuffer() {
-  (sleep 2; parallel -u --sqlworker $DBURL sleep .3\;echo >$T1) &
-  parallel -u --sqlandworker $DBURL sleep .3\;echo ::: {1..5} ::: {a..e} >$T2; 
+par_sqlandworker_tag() {
+  p_template --tag
+}
+
+par_sqlandworker_linebuffer_tag() {
+  p_template --linebuffer --tag
+}
+
+par_sqlandworker_compress_linebuffer_tag() {
+  p_template --compress --linebuffer --tag
 }
 
 par_sqlandworker_unbuffer() {
-  p_wrapper p_sqlandworker_unbuffer $1
+  p_template -u
 }
+
 
 export -f $(compgen -A function | egrep 'p_|par_')
 # Tested that -j0 in parallel is fastest (up to 15 jobs)
 compgen -A function | grep par_ | sort |
-  stdout parallel -vj0 -k --tag --joblog /tmp/jl-`basename $0` :::: - ::: \$MYSQL \$PG \$SQLITE
+  stdout parallel -vj5 -k --tag --joblog /tmp/jl-`basename $0` p_wrapper \
+    :::: - ::: \$MYSQL \$PG \$SQLITE

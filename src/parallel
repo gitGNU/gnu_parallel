@@ -1208,7 +1208,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160627;
+    $Global::version = 20160704;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -8000,7 +8000,6 @@ sub linebuffer_print {
 	}
 	if($opt::compress) {
 	    # Blocked reading in final round
-	    $Global::use{"Fcntl"} ||= eval "use Fcntl qw(:DEFAULT :flock); 1;";
 	    for my $fdno (1,2) {
 		::set_fh_blocking($self->fh($fdno,'r'));
 	    }
@@ -8051,7 +8050,28 @@ sub linebuffer_print {
 	if($self->fh($fdno,"rpid") and CORE::kill 0, $self->fh($fdno,"rpid")) {
 	    # decompress still running
 	} else {
-	    # decompress done: close fh
+	    # decompress done:
+	    #   copy to sql (if needed)
+	    #   then close fh
+	    if($opt::sqlworker) {
+		my @output;
+		my $tag = $self->tag();
+		seek $in_fh, 0, 0;
+		while(<$in_fh>) {
+		    push @output, $tag,$_;
+		}
+		if($fdno == 1) {
+		    if(not $opt::results) {
+			$Global::sql->update("SET Stdout = ? WHERE Seq = ".$self->seq(),
+					     join("",@output));
+		    }
+		} else {
+		    if(not $opt::results) {
+			$Global::sql->update("SET Stderr = ? WHERE Seq = ".$self->seq(),
+					     join("",@output));
+		    }
+		}
+	    }
 	    close $in_fh;
 	    if($? and $opt::compress) {
 		::error($opt::decompress_program." failed.");
@@ -8075,12 +8095,25 @@ sub tag_print {
     # $in_fh is now ready for reading at position 0
     my $tag = $self->tag();
     my $outputlength = 0;
+    my @output;
     while(<$in_fh>) {
 	print $out_fd $tag,$_;
 	$outputlength += length $_;
+	if($opt::sqlworker) {
+	    push @output, $tag,$_;
+	}
     }
     if($fdno == 1) {
 	$self->add_returnsize($outputlength);
+	if($opt::sqlworker and not $opt::results) {
+	    $Global::sql->update("SET Stdout = ? WHERE Seq = ".$self->seq(),
+				 join("",@output));
+	}
+    } else {
+	if($opt::sqlworker and not $opt::results) {
+	    $Global::sql->update("SET Stderr = ? WHERE Seq = ".$self->seq(),
+				 join("",@output));
+	}
     }
     close $in_fh;
     if($? and $opt::compress) {
@@ -8149,13 +8182,13 @@ sub print_joblog {
 
 sub tag {
     my $self = shift;
-    if($opt::tag or defined $opt::tagstring) {
-	if(not defined $self->{'tag'}) {
+    if(not defined $self->{'tag'}) {
+	if($opt::tag or defined $opt::tagstring) {
 	    $self->{'tag'} = $self->{'commandline'}->
 		replace_placeholders([$opt::tagstring],0,0)."\t";
+	} else {
+	    $self->{'tag'} = "";
 	}
-    } else {
-	return "";
     }
     return $self->{'tag'};
 }
@@ -9906,7 +9939,10 @@ sub new {
 	or die $DBI::errstr;
     $dbh->{'PrintWarn'} = $Global::debug || 0;
     $dbh->{'PrintError'} = $Global::debug || 0;
-    $dbh->{'RaiseError'} = $Global::debug || 0;
+    $dbh->{'RaiseError'} = 1;
+    $dbh->{'ShowErrorStatement'} = 1;
+    $dbh->{'HandleError'} = sub {};
+
 
     return bless {
 	'dbh' => $dbh,
@@ -10083,21 +10119,36 @@ sub run {
     my $lockretry = 0;
     while($lockretry < 10) {
 	$sth = $dbh->prepare($stmt);
-	if($rv = $sth->execute(@_)) {
+	if($sth
+	   and
+	   eval { $rv = $sth->execute(@_) }) {
 	    last;
 	} else {
+	    if($@ =~ /no such table/
+	       or
+	       $DBI::errstr =~ /no such table/) {
+		# This is fine:
+		# It is just a worker that reported back too late -
+		# another worker had finished the job first
+		# and the table was then dropped
+		$rv = $sth = 0;
+		last;
+	    }
 	    if($DBI::errstr =~ /locked/) {
 		::debug("sql","Lock retry: $lockretry");
 		$lockretry++;
 		::usleep(rand()*300);
+	    } elsif(not $sth) {
+		# Try again
+		$lockretry++;
 	    } else {
 		::error($DBI::errstr);
-		wait_and_exit(255);
+		::wait_and_exit(255);
 	    }
 	}
     }
     if($lockretry >= 10) {
-	::die_bug("lockretry > 10");
+	::die_bug("retry > 10: $DBI::errstr");
     }
     if($rv < 0){
 	::error($DBI::errstr);
