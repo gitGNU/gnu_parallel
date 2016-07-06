@@ -1953,7 +1953,7 @@ sub save_stdin_stdout_stderr {
     #   $Global::original_stderr
     #   $Global::original_stdin
     # Returns: N/A
-    
+
     # TODO Disabled until we have an open3 that will take n filehandles
     # for my $fdno (1..61) {
     # # /dev/fd/62 and above are used by bash for <(cmd)
@@ -3181,7 +3181,7 @@ sub parallelized_host_filtering {
     ::debug("init", $cmd, "\n");
     my @out;
     my $prepend = "";
-    
+
     my ($host_fh,$in,$err);
     open3($in, $host_fh, $err, $cmd) || ::die_bug("parallel host check: $cmd");
     if(not fork()) {
@@ -9904,6 +9904,10 @@ sub new {
     my $dbh = DBI->connect($dsn, $userid, $password,
 			   { RaiseError => 1, AutoInactiveDestroy => 1 })
 	or die $DBI::errstr;
+    $dbh->{'PrintWarn'} = $Global::debug || 0;
+    $dbh->{'PrintError'} = $Global::debug || 0;
+    $dbh->{'RaiseError'} = $Global::debug || 0;
+
     return bless {
 	'dbh' => $dbh,
 	'driver' => $driver,
@@ -10085,13 +10089,19 @@ sub run {
 	    if($DBI::errstr =~ /locked/) {
 		::debug("sql","Lock retry: $lockretry");
 		$lockretry++;
+		::usleep(rand()*300);
 	    } else {
 		::error($DBI::errstr);
+		wait_and_exit(255);
 	    }
 	}
     }
+    if($lockretry >= 10) {
+	::die_bug("lockretry > 10");
+    }
     if($rv < 0){
-	print $DBI::errstr;
+	::error($DBI::errstr);
+	::wait_and_exit(255);
     }
     return $sth;
 }

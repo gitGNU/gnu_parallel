@@ -1,301 +1,550 @@
-echo '### --sqlandworker mysql'
-### --sqlandworker mysql
-  (sleep 2; parallel --sqlworker $MYSQLTBL sleep .3\;echo >$T1) &
-  parallel --sqlandworker $MYSQLTBL sleep .3\;echo ::: {1..5} ::: {a..e} >$T2;   true sort -u $T1 $T2;   sleep 1; sql $MYSQL 'select * from parsql order by seq;'
-Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	_Signal	Command	V1	V2	Stdout	Stderr
-1	:9999990	4	0	0	sleep .3;echo 1 a	1	a	1 a\n	
-2	:9999990	4	0	0	sleep .3;echo 1 b	1	b	1 b\n	
-3	:9999990	4	0	0	sleep .3;echo 1 c	1	c	1 c\n	
-4	:9999990	4	0	0	sleep .3;echo 1 d	1	d	1 d\n	
-5	:9999990	4	0	0	sleep .3;echo 1 e	1	e	1 e\n	
-6	:9999990	4	0	0	sleep .3;echo 2 a	2	a	2 a\n	
-7	:9999990	4	0	0	sleep .3;echo 2 b	2	b	2 b\n	
-8	:9999990	4	0	0	sleep .3;echo 2 c	2	c	2 c\n	
-9	:9999990	4	0	0	sleep .3;echo 2 d	2	d	2 d\n	
-999:9999990	4	0	0	sleep .3;echo 2 e	2	e	2 e\n	
-999:9999990	4	0	0	sleep .3;echo 3 a	3	a	3 a\n	
-999:9999990	4	0	0	sleep .3;echo 3 b	3	b	3 b\n	
-999:9999990	4	0	0	sleep .3;echo 3 c	3	c	3 c\n	
-999:9999990	4	0	0	sleep .3;echo 3 d	3	d	3 d\n	
-999:9999990	4	0	0	sleep .3;echo 3 e	3	e	3 e\n	
-999:9999990	4	0	0	sleep .3;echo 4 a	4	a	4 a\n	
-999:9999990	4	0	0	sleep .3;echo 4 b	4	b	4 b\n	
-999:9999990	4	0	0	sleep .3;echo 4 c	4	c	4 c\n	
-999:9999990	4	0	0	sleep .3;echo 4 d	4	d	4 d\n	
-999:9999990	4	0	0	sleep .3;echo 4 e	4	e	4 e\n	
-999:9999990	4	0	0	sleep .3;echo 5 a	5	a	5 a\n	
-999:9999990	4	0	0	sleep .3;echo 5 b	5	b	5 b\n	
-999:9999990	4	0	0	sleep .3;echo 5 c	5	c	5 c\n	
-999:9999990	4	0	0	sleep .3;echo 5 d	5	d	5 d\n	
-999:9999990	4	0	0	sleep .3;echo 5 e	5	e	5 e\n	
-echo '### --sqlandworker postgresql'
-### --sqlandworker postgresql
-  (sleep 2; parallel --sqlworker $PGTBL sleep .3\;echo >$T3) &
-  parallel --sqlandworker $PGTBL sleep .3\;echo ::: {1..5} ::: {a..e} >$T4;   true sort -u $T3 $T4;   sleep 1; sql $PG 'select * from parsql order by seq;'
- seq | host |   starttime    | jobruntime | send | receive | exitval | _signal |      command      | v1 | v2 | stdout | stderr 
------+------+----------------+------------+------+---------+---------+---------+-------------------+----+----+--------+--------
-   1 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 a | 1  | a  | 1 a   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-   2 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 b | 1  | b  | 1 b   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-   3 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 c | 1  | c  | 1 c   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-   4 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 d | 1  | d  | 1 d   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-   5 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 e | 1  | e  | 1 e   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-   6 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 a | 2  | a  | 2 a   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-   7 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 b | 2  | b  | 2 b   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-   8 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 c | 2  | c  | 2 c   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-   9 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 d | 2  | d  | 2 d   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 e | 2  | e  | 2 e   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 a | 3  | a  | 3 a   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 b | 3  | b  | 3 b   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 c | 3  | c  | 3 c   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 d | 3  | d  | 3 d   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 e | 3  | e  | 3 e   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 a | 4  | a  | 4 a   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 b | 4  | b  | 4 b   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 c | 4  | c  | 4 c   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 d | 4  | d  | 4 d   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 e | 4  | e  | 4 e   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 a | 5  | a  | 5 a   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 b | 5  | b  | 5 b   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 c | 5  | c  | 5 c   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 d | 5  | d  | 5 d   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 e | 5  | e  | 5 e   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-(999rows)
-
-echo '### --sqlandworker sqlite'
-### --sqlandworker sqlite
-  (sleep 2; parallel --sqlworker $SQLITETBL sleep .3\;echo >$T5) &
-  parallel --sqlandworker $SQLITETBL sleep .3\;echo ::: {1..5} ::: {a..e} >$T6;   true sort -u $T5 $T6;   sleep 1; sql $SQLITE 'select * from parsql order by seq;'
-Seq|Host|Starttime|JobRuntime|Send|Receive|Exitval|_Signal|Command|V1|V2|Stdout|Stderr
-1|:|999|999|0|4|0|0|sleep .3;echo 1 a|1|a|1 a
-|
-2|:|999|999|0|4|0|0|sleep .3;echo 1 b|1|b|1 b
-|
-3|:|999|999|0|4|0|0|sleep .3;echo 1 c|1|c|1 c
-|
-4|:|999|999|0|4|0|0|sleep .3;echo 1 d|1|d|1 d
-|
-5|:|999|999|0|4|0|0|sleep .3;echo 1 e|1|e|1 e
-|
-6|:|999|999|0|4|0|0|sleep .3;echo 2 a|2|a|2 a
-|
-7|:|999|999|0|4|0|0|sleep .3;echo 2 b|2|b|2 b
-|
-8|:|999|999|0|4|0|0|sleep .3;echo 2 c|2|c|2 c
-|
-9|:|999|999|0|4|0|0|sleep .3;echo 2 d|2|d|2 d
-|
-999|:|999|999|0|4|0|0|sleep .3;echo 2 e|2|e|2 e
-|
-999|:|999|999|0|4|0|0|sleep .3;echo 3 a|3|a|3 a
-|
-999|:|999|999|0|4|0|0|sleep .3;echo 3 b|3|b|3 b
-|
-999|:|999|999|0|4|0|0|sleep .3;echo 3 c|3|c|3 c
-|
-999|:|999|999|0|4|0|0|sleep .3;echo 3 d|3|d|3 d
-|
-999|:|999|999|0|4|0|0|sleep .3;echo 3 e|3|e|3 e
-|
-999|:|999|999|0|4|0|0|sleep .3;echo 4 a|4|a|4 a
-|
-999|:|999|999|0|4|0|0|sleep .3;echo 4 b|4|b|4 b
-|
-999|:|999|999|0|4|0|0|sleep .3;echo 4 c|4|c|4 c
-|
-999|:|999|999|0|4|0|0|sleep .3;echo 4 d|4|d|4 d
-|
-999|:|999|999|0|4|0|0|sleep .3;echo 4 e|4|e|4 e
-|
-999|:|999|999|0|4|0|0|sleep .3;echo 5 a|5|a|5 a
-|
-999|:|999|999|0|4|0|0|sleep .3;echo 5 b|5|b|5 b
-|
-999|:|999|999|0|4|0|0|sleep .3;echo 5 c|5|c|5 c
-|
-999|:|999|999|0|4|0|0|sleep .3;echo 5 d|5|d|5 d
-|
-999|:|999|999|0|4|0|0|sleep .3;echo 5 e|5|e|5 e
-|
-echo '### --sqlandworker postgresql -S lo'
-### --sqlandworker postgresql -S lo
-  (sleep 2; parallel -S lo --sqlworker $PGTBL2 sleep .3\;echo >$T7) &
-  parallel -S lo --sqlandworker $PGTBL2 sleep .3\;echo ::: {1..5} ::: {a..e} >$T8;   true sort -u $T7 $T8;   sleep 1; sql $PG 'select * from parsql2 order by seq;'
- seq | host |   starttime    | jobruntime | send | receive | exitval | _signal |      command      | v1 | v2 | stdout | stderr 
------+------+----------------+------------+------+---------+---------+---------+-------------------+----+----+--------+--------
-   1 | lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 a | 1  | a  | 1 a   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-   2 | lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 b | 1  | b  | 1 b   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-   3 | lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 c | 1  | c  | 1 c   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-   4 | lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 d | 1  | d  | 1 d   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-   5 | lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 e | 1  | e  | 1 e   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-   6 | lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 a | 2  | a  | 2 a   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-   7 | lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 b | 2  | b  | 2 b   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-   8 | lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 c | 2  | c  | 2 c   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-   9 | lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 d | 2  | d  | 2 d   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 e | 2  | e  | 2 e   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 a | 3  | a  | 3 a   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 b | 3  | b  | 3 b   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 c | 3  | c  | 3 c   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 d | 3  | d  | 3 d   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 e | 3  | e  | 3 e   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 a | 4  | a  | 4 a   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 b | 4  | b  | 4 b   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 c | 4  | c  | 4 c   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 d | 4  | d  | 4 d   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 e | 4  | e  | 4 e   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 a | 5  | a  | 5 a   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 b | 5  | b  | 5 b   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 c | 5  | c  | 5 c   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 d | 5  | d  | 5 d   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-999| lo   |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 e | 5  | e  | 5 e   +| 
-     |      |                |            |      |         |         |         |                   |    |    |        | 
-(999rows)
-
-echo '### --sqlandworker postgresql --results'
-### --sqlandworker postgresql --results
-  mkdir -p /tmp/out--sql
-  (sleep 2; parallel --results /tmp/out--sql --sqlworker $PGTBL3 sleep .3\;echo >$T9) &
-  parallel --results /tmp/out--sql --sqlandworker $PGTBL3 sleep .3\;echo ::: {1..5} ::: {a..e} >$T999;   true sort -u $T9 $T999;   sleep 1; sql $PG 'select * from parsql3 order by seq;'
- seq | host |   starttime    | jobruntime | send | receive | exitval | _signal |      command      | v1 | v2 |            stdout            |            stderr            
------+------+----------------+------------+------+---------+---------+---------+-------------------+----+----+------------------------------+------------------------------
-   1 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 a | 1  | a  | /tmp/out--sql/1/1/2/a/stdout | /tmp/out--sql/1/1/2/a/stderr
-   2 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 b | 1  | b  | /tmp/out--sql/1/1/2/b/stdout | /tmp/out--sql/1/1/2/b/stderr
-   3 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 c | 1  | c  | /tmp/out--sql/1/1/2/c/stdout | /tmp/out--sql/1/1/2/c/stderr
-   4 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 d | 1  | d  | /tmp/out--sql/1/1/2/d/stdout | /tmp/out--sql/1/1/2/d/stderr
-   5 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 e | 1  | e  | /tmp/out--sql/1/1/2/e/stdout | /tmp/out--sql/1/1/2/e/stderr
-   6 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 a | 2  | a  | /tmp/out--sql/1/2/2/a/stdout | /tmp/out--sql/1/2/2/a/stderr
-   7 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 b | 2  | b  | /tmp/out--sql/1/2/2/b/stdout | /tmp/out--sql/1/2/2/b/stderr
-   8 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 c | 2  | c  | /tmp/out--sql/1/2/2/c/stdout | /tmp/out--sql/1/2/2/c/stderr
-   9 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 d | 2  | d  | /tmp/out--sql/1/2/2/d/stdout | /tmp/out--sql/1/2/2/d/stderr
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 e | 2  | e  | /tmp/out--sql/1/2/2/e/stdout | /tmp/out--sql/1/2/2/e/stderr
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 a | 3  | a  | /tmp/out--sql/1/3/2/a/stdout | /tmp/out--sql/1/3/2/a/stderr
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 b | 3  | b  | /tmp/out--sql/1/3/2/b/stdout | /tmp/out--sql/1/3/2/b/stderr
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 c | 3  | c  | /tmp/out--sql/1/3/2/c/stdout | /tmp/out--sql/1/3/2/c/stderr
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 d | 3  | d  | /tmp/out--sql/1/3/2/d/stdout | /tmp/out--sql/1/3/2/d/stderr
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 e | 3  | e  | /tmp/out--sql/1/3/2/e/stdout | /tmp/out--sql/1/3/2/e/stderr
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 a | 4  | a  | /tmp/out--sql/1/4/2/a/stdout | /tmp/out--sql/1/4/2/a/stderr
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 b | 4  | b  | /tmp/out--sql/1/4/2/b/stdout | /tmp/out--sql/1/4/2/b/stderr
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 c | 4  | c  | /tmp/out--sql/1/4/2/c/stdout | /tmp/out--sql/1/4/2/c/stderr
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 d | 4  | d  | /tmp/out--sql/1/4/2/d/stdout | /tmp/out--sql/1/4/2/d/stderr
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 e | 4  | e  | /tmp/out--sql/1/4/2/e/stdout | /tmp/out--sql/1/4/2/e/stderr
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 a | 5  | a  | /tmp/out--sql/1/5/2/a/stdout | /tmp/out--sql/1/5/2/a/stderr
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 b | 5  | b  | /tmp/out--sql/1/5/2/b/stdout | /tmp/out--sql/1/5/2/b/stderr
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 c | 5  | c  | /tmp/out--sql/1/5/2/c/stdout | /tmp/out--sql/1/5/2/c/stderr
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 d | 5  | d  | /tmp/out--sql/1/5/2/d/stdout | /tmp/out--sql/1/5/2/d/stderr
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 e | 5  | e  | /tmp/out--sql/1/5/2/e/stdout | /tmp/out--sql/1/5/2/e/stderr
-(999rows)
-
-echo '### --sqlandworker postgresql --linebuffer'
-### --sqlandworker postgresql --linebuffer
-  (sleep 2; parallel --linebuffer --sqlworker $PGTBL4 sleep .3\;echo >$T999) &
-  parallel --linebuffer --sqlandworker $PGTBL4 sleep .3\;echo ::: {1..5} ::: {a..e} >$T999;   true sort -u $T999$T999;   sleep 1; sql $PG 'select * from parsql4 order by seq;'
- seq | host |   starttime    | jobruntime | send | receive | exitval | _signal |      command      | v1 | v2 | stdout | stderr 
------+------+----------------+------------+------+---------+---------+---------+-------------------+----+----+--------+--------
-   1 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 a | 1  | a  |        | 
-   2 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 b | 1  | b  |        | 
-   3 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 c | 1  | c  |        | 
-   4 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 d | 1  | d  |        | 
-   5 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 1 e | 1  | e  |        | 
-   6 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 a | 2  | a  |        | 
-   7 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 b | 2  | b  |        | 
-   8 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 c | 2  | c  |        | 
-   9 | :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 d | 2  | d  |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 2 e | 2  | e  |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 a | 3  | a  |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 b | 3  | b  |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 c | 3  | c  |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 d | 3  | d  |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 3 e | 3  | e  |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 a | 4  | a  |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 b | 4  | b  |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 c | 4  | c  |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 d | 4  | d  |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 4 e | 4  | e  |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 a | 5  | a  |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 b | 5  | b  |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 c | 5  | c  |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 d | 5  | d  |        | 
-999| :    |999|999|    0 |       4 |       0 |       0 | sleep .3;echo 5 e | 5  | e  |        | 
-(999rows)
-
-echo '### --sqlandworker postgresql -u'
-### --sqlandworker postgresql -u
-  (sleep 2; parallel -u --sqlworker $PGTBL5 sleep .3\;echo >$T999) &
-  parallel -u --sqlandworker $PGTBL5 sleep .3\;echo ::: {1..5} ::: {a..e} >$T999;   true sort -u $T999$T999;   sleep 1; sql $PG 'select * from parsql5 order by seq;'
- seq | host |   starttime    | jobruntime | send | receive | exitval | _signal |      command      | v1 | v2 | stdout | stderr 
------+------+----------------+------------+------+---------+---------+---------+-------------------+----+----+--------+--------
-   1 | :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 1 a | 1  | a  |        | 
-   2 | :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 1 b | 1  | b  |        | 
-   3 | :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 1 c | 1  | c  |        | 
-   4 | :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 1 d | 1  | d  |        | 
-   5 | :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 1 e | 1  | e  |        | 
-   6 | :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 2 a | 2  | a  |        | 
-   7 | :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 2 b | 2  | b  |        | 
-   8 | :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 2 c | 2  | c  |        | 
-   9 | :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 2 d | 2  | d  |        | 
-999| :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 2 e | 2  | e  |        | 
-999| :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 3 a | 3  | a  |        | 
-999| :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 3 b | 3  | b  |        | 
-999| :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 3 c | 3  | c  |        | 
-999| :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 3 d | 3  | d  |        | 
-999| :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 3 e | 3  | e  |        | 
-999| :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 4 a | 4  | a  |        | 
-999| :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 4 b | 4  | b  |        | 
-999| :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 4 c | 4  | c  |        | 
-999| :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 4 d | 4  | d  |        | 
-999| :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 4 e | 4  | e  |        | 
-999| :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 5 a | 5  | a  |        | 
-999| :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 5 b | 5  | b  |        | 
-999| :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 5 c | 5  | c  |        | 
-999| :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 5 d | 5  | d  |        | 
-999| :    |999|999|    0 |       0 |       0 |       0 | sleep .3;echo 5 e | 5  | e  |        | 
-(999rows)
-
+par_sqlandworker $MYSQL
+par_sqlandworker $MYSQL	Exit=0
+par_sqlandworker $MYSQL	Exit=0
+par_sqlandworker $MYSQL	Host	Command	V1	V2	Stdout	Stderr
+par_sqlandworker $MYSQL	:	sleep .3;echo 1 a	1	a	1 a\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 1 b	1	b	1 b\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 1 c	1	c	1 c\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 1 d	1	d	1 d\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 1 e	1	e	1 e\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 2 a	2	a	2 a\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 2 b	2	b	2 b\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 2 c	2	c	2 c\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 2 d	2	d	2 d\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 2 e	2	e	2 e\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 3 a	3	a	3 a\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 3 b	3	b	3 b\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 3 c	3	c	3 c\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 3 d	3	d	3 d\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 3 e	3	e	3 e\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 4 a	4	a	4 a\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 4 b	4	b	4 b\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 4 c	4	c	4 c\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 4 d	4	d	4 d\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 4 e	4	e	4 e\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 5 a	5	a	5 a\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 5 b	5	b	5 b\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 5 c	5	c	5 c\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 5 d	5	d	5 d\n	
+par_sqlandworker $MYSQL	:	sleep .3;echo 5 e	5	e	5 e\n	
+par_sqlandworker $PG
+par_sqlandworker $PG	Exit=0
+par_sqlandworker $PG	Exit=0
+par_sqlandworker $PG	 host |      command      | v1 | v2 | stdout | stderr 
+par_sqlandworker $PG	------+-------------------+----+----+--------+--------
+par_sqlandworker $PG	 :    | sleep .3;echo 1 a | 1  | a  | 1 a   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 1 b | 1  | b  | 1 b   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 1 c | 1  | c  | 1 c   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 1 d | 1  | d  | 1 d   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 1 e | 1  | e  | 1 e   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 2 a | 2  | a  | 2 a   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 2 b | 2  | b  | 2 b   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 2 c | 2  | c  | 2 c   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 2 d | 2  | d  | 2 d   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 2 e | 2  | e  | 2 e   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 3 a | 3  | a  | 3 a   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 3 b | 3  | b  | 3 b   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 3 c | 3  | c  | 3 c   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 3 d | 3  | d  | 3 d   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 3 e | 3  | e  | 3 e   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 4 a | 4  | a  | 4 a   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 4 b | 4  | b  | 4 b   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 4 c | 4  | c  | 4 c   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 4 d | 4  | d  | 4 d   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 4 e | 4  | e  | 4 e   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 5 a | 5  | a  | 5 a   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 5 b | 5  | b  | 5 b   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 5 c | 5  | c  | 5 c   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 5 d | 5  | d  | 5 d   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	 :    | sleep .3;echo 5 e | 5  | e  | 5 e   +| 
+par_sqlandworker $PG	      |                   |    |    |        | 
+par_sqlandworker $PG	(25 rows)
+par_sqlandworker $PG	
+par_sqlandworker $SQLITE
+par_sqlandworker $SQLITE	Exit=0
+par_sqlandworker $SQLITE	Exit=0
+par_sqlandworker $SQLITE	Host|Command|V1|V2|Stdout|Stderr
+par_sqlandworker $SQLITE	:|sleep .3;echo 1 a|1|a|1 a
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 1 b|1|b|1 b
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 1 c|1|c|1 c
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 1 d|1|d|1 d
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 1 e|1|e|1 e
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 2 a|2|a|2 a
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 2 b|2|b|2 b
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 2 c|2|c|2 c
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 2 d|2|d|2 d
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 2 e|2|e|2 e
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 3 a|3|a|3 a
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 3 b|3|b|3 b
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 3 c|3|c|3 c
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 3 d|3|d|3 d
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 3 e|3|e|3 e
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 4 a|4|a|4 a
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 4 b|4|b|4 b
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 4 c|4|c|4 c
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 4 d|4|d|4 d
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 4 e|4|e|4 e
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 5 a|5|a|5 a
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 5 b|5|b|5 b
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 5 c|5|c|5 c
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 5 d|5|d|5 d
+par_sqlandworker $SQLITE	|
+par_sqlandworker $SQLITE	:|sleep .3;echo 5 e|5|e|5 e
+par_sqlandworker $SQLITE	|
+par_sqlandworker_linebuffer $MYSQL
+par_sqlandworker_linebuffer $MYSQL	Exit=0
+par_sqlandworker_linebuffer $MYSQL	Exit=0
+par_sqlandworker_linebuffer $MYSQL	Host	Command	V1	V2	Stdout	Stderr
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 1 a	1	a	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 1 b	1	b	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 1 c	1	c	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 1 d	1	d	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 1 e	1	e	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 2 a	2	a	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 2 b	2	b	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 2 c	2	c	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 2 d	2	d	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 2 e	2	e	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 3 a	3	a	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 3 b	3	b	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 3 c	3	c	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 3 d	3	d	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 3 e	3	e	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 4 a	4	a	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 4 b	4	b	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 4 c	4	c	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 4 d	4	d	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 4 e	4	e	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 5 a	5	a	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 5 b	5	b	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 5 c	5	c	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 5 d	5	d	NULL	NULL
+par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 5 e	5	e	NULL	NULL
+par_sqlandworker_linebuffer $PG
+par_sqlandworker_linebuffer $PG	Exit=0
+par_sqlandworker_linebuffer $PG	Exit=0
+par_sqlandworker_linebuffer $PG	 host |      command      | v1 | v2 | stdout | stderr 
+par_sqlandworker_linebuffer $PG	------+-------------------+----+----+--------+--------
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 1 a | 1  | a  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 1 b | 1  | b  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 1 c | 1  | c  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 1 d | 1  | d  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 1 e | 1  | e  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 2 a | 2  | a  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 2 b | 2  | b  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 2 c | 2  | c  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 2 d | 2  | d  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 2 e | 2  | e  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 3 a | 3  | a  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 3 b | 3  | b  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 3 c | 3  | c  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 3 d | 3  | d  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 3 e | 3  | e  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 4 a | 4  | a  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 4 b | 4  | b  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 4 c | 4  | c  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 4 d | 4  | d  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 4 e | 4  | e  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 5 a | 5  | a  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 5 b | 5  | b  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 5 c | 5  | c  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 5 d | 5  | d  |        | 
+par_sqlandworker_linebuffer $PG	 :    | sleep .3;echo 5 e | 5  | e  |        | 
+par_sqlandworker_linebuffer $PG	(25 rows)
+par_sqlandworker_linebuffer $PG	
+par_sqlandworker_linebuffer $SQLITE
+par_sqlandworker_linebuffer $SQLITE	Exit=0
+par_sqlandworker_linebuffer $SQLITE	Exit=0
+par_sqlandworker_linebuffer $SQLITE	Host|Command|V1|V2|Stdout|Stderr
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 1 a|1|a||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 1 b|1|b||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 1 c|1|c||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 1 d|1|d||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 1 e|1|e||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 2 a|2|a||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 2 b|2|b||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 2 c|2|c||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 2 d|2|d||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 2 e|2|e||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 3 a|3|a||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 3 b|3|b||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 3 c|3|c||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 3 d|3|d||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 3 e|3|e||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 4 a|4|a||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 4 b|4|b||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 4 c|4|c||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 4 d|4|d||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 4 e|4|e||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 5 a|5|a||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 5 b|5|b||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 5 c|5|c||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 5 d|5|d||
+par_sqlandworker_linebuffer $SQLITE	:|sleep .3;echo 5 e|5|e||
+par_sqlandworker_lo $MYSQL
+par_sqlandworker_lo $MYSQL	Exit=0
+par_sqlandworker_lo $MYSQL	Exit=0
+par_sqlandworker_lo $MYSQL	Host	Command	V1	V2	Stdout	Stderr
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 1 a	1	a	1 a\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 1 b	1	b	1 b\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 1 c	1	c	1 c\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 1 d	1	d	1 d\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 1 e	1	e	1 e\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 2 a	2	a	2 a\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 2 b	2	b	2 b\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 2 c	2	c	2 c\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 2 d	2	d	2 d\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 2 e	2	e	2 e\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 3 a	3	a	3 a\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 3 b	3	b	3 b\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 3 c	3	c	3 c\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 3 d	3	d	3 d\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 3 e	3	e	3 e\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 4 a	4	a	4 a\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 4 b	4	b	4 b\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 4 c	4	c	4 c\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 4 d	4	d	4 d\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 4 e	4	e	4 e\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 5 a	5	a	5 a\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 5 b	5	b	5 b\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 5 c	5	c	5 c\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 5 d	5	d	5 d\n	
+par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 5 e	5	e	5 e\n	
+par_sqlandworker_lo $PG
+par_sqlandworker_lo $PG	Exit=0
+par_sqlandworker_lo $PG	Exit=0
+par_sqlandworker_lo $PG	 host |      command      | v1 | v2 | stdout | stderr 
+par_sqlandworker_lo $PG	------+-------------------+----+----+--------+--------
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 1 a | 1  | a  | 1 a   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 1 b | 1  | b  | 1 b   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 1 c | 1  | c  | 1 c   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 1 d | 1  | d  | 1 d   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 1 e | 1  | e  | 1 e   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 2 a | 2  | a  | 2 a   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 2 b | 2  | b  | 2 b   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 2 c | 2  | c  | 2 c   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 2 d | 2  | d  | 2 d   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 2 e | 2  | e  | 2 e   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 3 a | 3  | a  | 3 a   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 3 b | 3  | b  | 3 b   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 3 c | 3  | c  | 3 c   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 3 d | 3  | d  | 3 d   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 3 e | 3  | e  | 3 e   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 4 a | 4  | a  | 4 a   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 4 b | 4  | b  | 4 b   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 4 c | 4  | c  | 4 c   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 4 d | 4  | d  | 4 d   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 4 e | 4  | e  | 4 e   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 5 a | 5  | a  | 5 a   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 5 b | 5  | b  | 5 b   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 5 c | 5  | c  | 5 c   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 5 d | 5  | d  | 5 d   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	 lo   | sleep .3;echo 5 e | 5  | e  | 5 e   +| 
+par_sqlandworker_lo $PG	      |                   |    |    |        | 
+par_sqlandworker_lo $PG	(25 rows)
+par_sqlandworker_lo $PG	
+par_sqlandworker_lo $SQLITE
+par_sqlandworker_lo $SQLITE	Exit=0
+par_sqlandworker_lo $SQLITE	Exit=0
+par_sqlandworker_lo $SQLITE	Host|Command|V1|V2|Stdout|Stderr
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 1 a|1|a|1 a
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 1 b|1|b|1 b
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 1 c|1|c|1 c
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 1 d|1|d|1 d
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 1 e|1|e|1 e
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 2 a|2|a|2 a
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 2 b|2|b|2 b
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 2 c|2|c|2 c
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 2 d|2|d|2 d
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 2 e|2|e|2 e
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 3 a|3|a|3 a
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 3 b|3|b|3 b
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 3 c|3|c|3 c
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 3 d|3|d|3 d
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 3 e|3|e|3 e
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 4 a|4|a|4 a
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 4 b|4|b|4 b
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 4 c|4|c|4 c
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 4 d|4|d|4 d
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 4 e|4|e|4 e
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 5 a|5|a|5 a
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 5 b|5|b|5 b
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 5 c|5|c|5 c
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 5 d|5|d|5 d
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_lo $SQLITE	lo|sleep .3;echo 5 e|5|e|5 e
+par_sqlandworker_lo $SQLITE	|
+par_sqlandworker_results $MYSQL
+par_sqlandworker_results $MYSQL	Exit=0
+par_sqlandworker_results $MYSQL	Exit=0
+par_sqlandworker_results $MYSQL	Host	Command	V1	V2	Stdout	Stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 1 a	1	a	/tmp/out--sql/1/1/2/a/stdout	/tmp/out--sql/1/1/2/a/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 1 b	1	b	/tmp/out--sql/1/1/2/b/stdout	/tmp/out--sql/1/1/2/b/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 1 c	1	c	/tmp/out--sql/1/1/2/c/stdout	/tmp/out--sql/1/1/2/c/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 1 d	1	d	/tmp/out--sql/1/1/2/d/stdout	/tmp/out--sql/1/1/2/d/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 1 e	1	e	/tmp/out--sql/1/1/2/e/stdout	/tmp/out--sql/1/1/2/e/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 2 a	2	a	/tmp/out--sql/1/2/2/a/stdout	/tmp/out--sql/1/2/2/a/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 2 b	2	b	/tmp/out--sql/1/2/2/b/stdout	/tmp/out--sql/1/2/2/b/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 2 c	2	c	/tmp/out--sql/1/2/2/c/stdout	/tmp/out--sql/1/2/2/c/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 2 d	2	d	/tmp/out--sql/1/2/2/d/stdout	/tmp/out--sql/1/2/2/d/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 2 e	2	e	/tmp/out--sql/1/2/2/e/stdout	/tmp/out--sql/1/2/2/e/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 3 a	3	a	/tmp/out--sql/1/3/2/a/stdout	/tmp/out--sql/1/3/2/a/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 3 b	3	b	/tmp/out--sql/1/3/2/b/stdout	/tmp/out--sql/1/3/2/b/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 3 c	3	c	/tmp/out--sql/1/3/2/c/stdout	/tmp/out--sql/1/3/2/c/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 3 d	3	d	/tmp/out--sql/1/3/2/d/stdout	/tmp/out--sql/1/3/2/d/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 3 e	3	e	/tmp/out--sql/1/3/2/e/stdout	/tmp/out--sql/1/3/2/e/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 4 a	4	a	/tmp/out--sql/1/4/2/a/stdout	/tmp/out--sql/1/4/2/a/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 4 b	4	b	/tmp/out--sql/1/4/2/b/stdout	/tmp/out--sql/1/4/2/b/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 4 c	4	c	/tmp/out--sql/1/4/2/c/stdout	/tmp/out--sql/1/4/2/c/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 4 d	4	d	/tmp/out--sql/1/4/2/d/stdout	/tmp/out--sql/1/4/2/d/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 4 e	4	e	/tmp/out--sql/1/4/2/e/stdout	/tmp/out--sql/1/4/2/e/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 5 a	5	a	/tmp/out--sql/1/5/2/a/stdout	/tmp/out--sql/1/5/2/a/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 5 b	5	b	/tmp/out--sql/1/5/2/b/stdout	/tmp/out--sql/1/5/2/b/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 5 c	5	c	/tmp/out--sql/1/5/2/c/stdout	/tmp/out--sql/1/5/2/c/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 5 d	5	d	/tmp/out--sql/1/5/2/d/stdout	/tmp/out--sql/1/5/2/d/stderr
+par_sqlandworker_results $MYSQL	:	sleep .3;echo 5 e	5	e	/tmp/out--sql/1/5/2/e/stdout	/tmp/out--sql/1/5/2/e/stderr
+par_sqlandworker_results $PG
+par_sqlandworker_results $PG	Exit=0
+par_sqlandworker_results $PG	Exit=0
+par_sqlandworker_results $PG	 host |      command      | v1 | v2 |            stdout            |            stderr            
+par_sqlandworker_results $PG	------+-------------------+----+----+------------------------------+------------------------------
+par_sqlandworker_results $PG	 :    | sleep .3;echo 1 a | 1  | a  | /tmp/out--sql/1/1/2/a/stdout | /tmp/out--sql/1/1/2/a/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 1 b | 1  | b  | /tmp/out--sql/1/1/2/b/stdout | /tmp/out--sql/1/1/2/b/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 1 c | 1  | c  | /tmp/out--sql/1/1/2/c/stdout | /tmp/out--sql/1/1/2/c/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 1 d | 1  | d  | /tmp/out--sql/1/1/2/d/stdout | /tmp/out--sql/1/1/2/d/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 1 e | 1  | e  | /tmp/out--sql/1/1/2/e/stdout | /tmp/out--sql/1/1/2/e/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 2 a | 2  | a  | /tmp/out--sql/1/2/2/a/stdout | /tmp/out--sql/1/2/2/a/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 2 b | 2  | b  | /tmp/out--sql/1/2/2/b/stdout | /tmp/out--sql/1/2/2/b/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 2 c | 2  | c  | /tmp/out--sql/1/2/2/c/stdout | /tmp/out--sql/1/2/2/c/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 2 d | 2  | d  | /tmp/out--sql/1/2/2/d/stdout | /tmp/out--sql/1/2/2/d/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 2 e | 2  | e  | /tmp/out--sql/1/2/2/e/stdout | /tmp/out--sql/1/2/2/e/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 3 a | 3  | a  | /tmp/out--sql/1/3/2/a/stdout | /tmp/out--sql/1/3/2/a/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 3 b | 3  | b  | /tmp/out--sql/1/3/2/b/stdout | /tmp/out--sql/1/3/2/b/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 3 c | 3  | c  | /tmp/out--sql/1/3/2/c/stdout | /tmp/out--sql/1/3/2/c/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 3 d | 3  | d  | /tmp/out--sql/1/3/2/d/stdout | /tmp/out--sql/1/3/2/d/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 3 e | 3  | e  | /tmp/out--sql/1/3/2/e/stdout | /tmp/out--sql/1/3/2/e/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 4 a | 4  | a  | /tmp/out--sql/1/4/2/a/stdout | /tmp/out--sql/1/4/2/a/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 4 b | 4  | b  | /tmp/out--sql/1/4/2/b/stdout | /tmp/out--sql/1/4/2/b/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 4 c | 4  | c  | /tmp/out--sql/1/4/2/c/stdout | /tmp/out--sql/1/4/2/c/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 4 d | 4  | d  | /tmp/out--sql/1/4/2/d/stdout | /tmp/out--sql/1/4/2/d/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 4 e | 4  | e  | /tmp/out--sql/1/4/2/e/stdout | /tmp/out--sql/1/4/2/e/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 5 a | 5  | a  | /tmp/out--sql/1/5/2/a/stdout | /tmp/out--sql/1/5/2/a/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 5 b | 5  | b  | /tmp/out--sql/1/5/2/b/stdout | /tmp/out--sql/1/5/2/b/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 5 c | 5  | c  | /tmp/out--sql/1/5/2/c/stdout | /tmp/out--sql/1/5/2/c/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 5 d | 5  | d  | /tmp/out--sql/1/5/2/d/stdout | /tmp/out--sql/1/5/2/d/stderr
+par_sqlandworker_results $PG	 :    | sleep .3;echo 5 e | 5  | e  | /tmp/out--sql/1/5/2/e/stdout | /tmp/out--sql/1/5/2/e/stderr
+par_sqlandworker_results $PG	(25 rows)
+par_sqlandworker_results $PG	
+par_sqlandworker_results $SQLITE
+par_sqlandworker_results $SQLITE	Exit=0
+par_sqlandworker_results $SQLITE	Exit=0
+par_sqlandworker_results $SQLITE	Host|Command|V1|V2|Stdout|Stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 1 a|1|a|/tmp/out--sql/1/1/2/a/stdout|/tmp/out--sql/1/1/2/a/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 1 b|1|b|/tmp/out--sql/1/1/2/b/stdout|/tmp/out--sql/1/1/2/b/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 1 c|1|c|/tmp/out--sql/1/1/2/c/stdout|/tmp/out--sql/1/1/2/c/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 1 d|1|d|/tmp/out--sql/1/1/2/d/stdout|/tmp/out--sql/1/1/2/d/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 1 e|1|e|/tmp/out--sql/1/1/2/e/stdout|/tmp/out--sql/1/1/2/e/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 2 a|2|a|/tmp/out--sql/1/2/2/a/stdout|/tmp/out--sql/1/2/2/a/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 2 b|2|b|/tmp/out--sql/1/2/2/b/stdout|/tmp/out--sql/1/2/2/b/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 2 c|2|c|/tmp/out--sql/1/2/2/c/stdout|/tmp/out--sql/1/2/2/c/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 2 d|2|d|/tmp/out--sql/1/2/2/d/stdout|/tmp/out--sql/1/2/2/d/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 2 e|2|e|/tmp/out--sql/1/2/2/e/stdout|/tmp/out--sql/1/2/2/e/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 3 a|3|a|/tmp/out--sql/1/3/2/a/stdout|/tmp/out--sql/1/3/2/a/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 3 b|3|b|/tmp/out--sql/1/3/2/b/stdout|/tmp/out--sql/1/3/2/b/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 3 c|3|c|/tmp/out--sql/1/3/2/c/stdout|/tmp/out--sql/1/3/2/c/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 3 d|3|d|/tmp/out--sql/1/3/2/d/stdout|/tmp/out--sql/1/3/2/d/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 3 e|3|e|/tmp/out--sql/1/3/2/e/stdout|/tmp/out--sql/1/3/2/e/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 4 a|4|a|/tmp/out--sql/1/4/2/a/stdout|/tmp/out--sql/1/4/2/a/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 4 b|4|b|/tmp/out--sql/1/4/2/b/stdout|/tmp/out--sql/1/4/2/b/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 4 c|4|c|/tmp/out--sql/1/4/2/c/stdout|/tmp/out--sql/1/4/2/c/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 4 d|4|d|/tmp/out--sql/1/4/2/d/stdout|/tmp/out--sql/1/4/2/d/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 4 e|4|e|/tmp/out--sql/1/4/2/e/stdout|/tmp/out--sql/1/4/2/e/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 5 a|5|a|/tmp/out--sql/1/5/2/a/stdout|/tmp/out--sql/1/5/2/a/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 5 b|5|b|/tmp/out--sql/1/5/2/b/stdout|/tmp/out--sql/1/5/2/b/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 5 c|5|c|/tmp/out--sql/1/5/2/c/stdout|/tmp/out--sql/1/5/2/c/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 5 d|5|d|/tmp/out--sql/1/5/2/d/stdout|/tmp/out--sql/1/5/2/d/stderr
+par_sqlandworker_results $SQLITE	:|sleep .3;echo 5 e|5|e|/tmp/out--sql/1/5/2/e/stdout|/tmp/out--sql/1/5/2/e/stderr
+par_sqlandworker_unbuffer $MYSQL
+par_sqlandworker_unbuffer $MYSQL	Exit=0
+par_sqlandworker_unbuffer $MYSQL	Exit=0
+par_sqlandworker_unbuffer $MYSQL	Host	Command	V1	V2	Stdout	Stderr
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 1 a	1	a	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 1 b	1	b	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 1 c	1	c	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 1 d	1	d	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 1 e	1	e	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 2 a	2	a	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 2 b	2	b	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 2 c	2	c	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 2 d	2	d	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 2 e	2	e	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 3 a	3	a	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 3 b	3	b	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 3 c	3	c	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 3 d	3	d	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 3 e	3	e	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 4 a	4	a	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 4 b	4	b	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 4 c	4	c	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 4 d	4	d	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 4 e	4	e	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 a	5	a	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 b	5	b	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 c	5	c	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 d	5	d	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 e	5	e	NULL	NULL
+par_sqlandworker_unbuffer $PG
+par_sqlandworker_unbuffer $PG	Exit=0
+par_sqlandworker_unbuffer $PG	Exit=0
+par_sqlandworker_unbuffer $PG	 host |      command      | v1 | v2 | stdout | stderr 
+par_sqlandworker_unbuffer $PG	------+-------------------+----+----+--------+--------
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 1 a | 1  | a  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 1 b | 1  | b  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 1 c | 1  | c  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 1 d | 1  | d  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 1 e | 1  | e  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 2 a | 2  | a  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 2 b | 2  | b  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 2 c | 2  | c  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 2 d | 2  | d  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 2 e | 2  | e  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 3 a | 3  | a  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 3 b | 3  | b  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 3 c | 3  | c  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 3 d | 3  | d  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 3 e | 3  | e  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 4 a | 4  | a  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 4 b | 4  | b  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 4 c | 4  | c  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 4 d | 4  | d  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 4 e | 4  | e  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 5 a | 5  | a  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 5 b | 5  | b  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 5 c | 5  | c  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 5 d | 5  | d  |        | 
+par_sqlandworker_unbuffer $PG	 :    | sleep .3;echo 5 e | 5  | e  |        | 
+par_sqlandworker_unbuffer $PG	(25 rows)
+par_sqlandworker_unbuffer $PG	
+par_sqlandworker_unbuffer $SQLITE
+par_sqlandworker_unbuffer $SQLITE	Exit=0
+par_sqlandworker_unbuffer $SQLITE	Exit=0
+par_sqlandworker_unbuffer $SQLITE	Host|Command|V1|V2|Stdout|Stderr
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 1 a|1|a||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 1 b|1|b||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 1 c|1|c||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 1 d|1|d||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 1 e|1|e||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 2 a|2|a||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 2 b|2|b||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 2 c|2|c||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 2 d|2|d||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 2 e|2|e||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 3 a|3|a||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 3 b|3|b||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 3 c|3|c||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 3 d|3|d||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 3 e|3|e||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 4 a|4|a||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 4 b|4|b||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 4 c|4|c||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 4 d|4|d||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 4 e|4|e||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 5 a|5|a||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 5 b|5|b||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 5 c|5|c||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 5 d|5|d||
+par_sqlandworker_unbuffer $SQLITE	:|sleep .3;echo 5 e|5|e||
