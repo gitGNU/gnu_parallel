@@ -4,6 +4,10 @@ par_bug_48290	4
 par_bug_48290	3
 par_bug_48290	2
 par_bug_48290	1
+par_linebuffer_matters_compress	### (--linebuffer) --compress --tag should give different output
+par_linebuffer_matters_compress	OK: --linebuffer makes a difference
+par_linebuffer_matters_compress_tag	### (--linebuffer) --compress --tag should give different output
+par_linebuffer_matters_compress_tag	OK: --linebuffer makes a difference
 par_memory_leak	### Test for memory leaks
 par_memory_leak	Of 10 runs of 1 job at least one should be bigger than a 3000 job run
 par_memory_leak	Good: No memleak detected.

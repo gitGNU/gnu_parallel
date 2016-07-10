@@ -49,6 +49,49 @@ par_memory_leak() {
     fi
 }
 
+par_linebuffer_matters_compress_tag() {
+    echo "### (--linebuffer) --compress --tag should give different output"
+    random_data_with_id_prepended() {
+	perl -pe 's/^/'$1'/' /dev/urandom |
+	  pv -qL 300000 | head -c 1000000
+    }
+    export -f random_data_with_id_prepended
+
+    nolb=$(seq 10 |
+      parallel -j0 --compress --tag random_data_with_id_prepended {#} |
+      field 1 | uniq)
+    lb=$(seq 10 |
+      parallel -j0 --linebuffer --compress --tag random_data_with_id_prepended {#} |
+      field 1 | uniq)
+    if [ "$lb" == "$nolb" ] ; then
+	echo "BAD: --linebuffer makes no difference"
+    else
+	echo "OK: --linebuffer makes a difference"
+    fi
+}
+
+par_linebuffer_matters_compress() {
+    echo "### (--linebuffer) --compress --tag should give different output"
+    random_data_with_id_prepended() {
+	perl -pe 's/^/'$1'/' /dev/urandom |
+	  pv -qL 300000 | head -c 1000000
+    }
+    export -f random_data_with_id_prepended
+
+    nolb=$(seq 10 |
+      parallel -j0 --compress random_data_with_id_prepended {#} |
+      field 1 | uniq)
+    lb=$(seq 10 |
+      parallel -j0 --linebuffer --compress random_data_with_id_prepended {#} |
+      field 1 | uniq)
+    if [ "$lb" == "$nolb" ] ; then
+	echo "BAD: --linebuffer makes no difference"
+    else
+	echo "OK: --linebuffer makes a difference"
+    fi
+}
+
+
 
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort | parallel -j6 --tag -k '{} 2>&1'
