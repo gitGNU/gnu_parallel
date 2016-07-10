@@ -10194,7 +10194,8 @@ sub get {
     my $self = shift;
     my $sth = $self->run(@_);
     my @retval;
-    while(1) {
+    # If $sth = 0 it means the table was dropped by another process
+    while($sth) {
 	my @row = $sth->fetchrow_array();
 	@row or last;
 	push @retval, \@row;
