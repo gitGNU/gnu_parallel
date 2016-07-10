@@ -191,10 +191,10 @@ reaper();
 ::debug("init", "Done reaping\n");
 if($opt::pipe and @opt::a) {
     for my $job (@Global::tee_jobs) {
-	unlink $job->fh(2,"name");
+	::rm($job->fh(2,"name"));
 	$job->set_fh(2,"name","");
 	$job->print();
-	unlink $job->fh(1,"name");
+	::rm($job->fh(1,"name"));
     }
 }
 ::debug("init", "Cleaning\n");
@@ -3488,6 +3488,7 @@ sub reaper {
 		::wait_and_exit($Global::halt_exitstatus);
             }
         }
+	$job->cleanup();
 	start_more_jobs();
 	if($opt::progress) {
 	    my %progress = progress();
@@ -3814,6 +3815,7 @@ sub tmpfile {
 sub tmpname {
     # Select a name that does not exist
     # Do not create the file as it may be used for creating a socket (by tmux)
+    # Remember the name in $Global::unlink to avoid hitting the same name twice
     my $name = shift;
     my($tmpname);
     if(not -w $ENV{'TMPDIR'}) {
@@ -3832,11 +3834,19 @@ sub tmpname {
 }
 
 sub tmpfifo {
-    # Securely make a fifo by securely making a dir with a fifo in it
+    # Find an unused name and mkfifo on it
     use POSIX qw(mkfifo);
     my $tmpfifo = tmpname("fif",@_);
     mkfifo($tmpfifo,0600);
     return $tmpfifo;
+}
+
+sub rm {
+    # Remove file and remove it from %Global::unlink
+    # Uses:
+    #   %Global::unlink
+    delete @Global::unlink{@_};
+    unlink @_;
 }
 
 sub size_of_block_dev {
@@ -4452,8 +4462,8 @@ sub new {
 sub DESTROY {
     my $self = shift;
     # Remove temporary files if they are created.
-    unlink $self->{'loadavg_file'};
-    unlink $self->{'swap_activity_file'};
+    ::rm($self->{'loadavg_file'});
+    ::rm($self->{'swap_activity_file'});
 }
 
 sub string {
@@ -6158,6 +6168,8 @@ sub new {
         # filehandle for stdin (used for --pipe)
 	# filename for writing stdout to (used for --files)
         # remaining data not sent to stdin (used for --pipe)
+	# tmpfiles to cleanup when job is done
+	'unlink' => [],
 	# amount of data sent via stdin (used for --pipe)
         'transfersize' => 0, # size of files using --transfer
         'returnsize' => 0, # size of files using --return
@@ -6381,6 +6393,25 @@ sub openoutputfiles {
     }
 }
 
+sub add_rm {
+    # Files to remove when job is done
+    my $self = shift;
+    push $self->{'unlink'}, @_;
+}
+
+sub get_rm {
+    # Files to remove when job is done
+    my $self = shift;
+    return @{$self->{'unlink'}};
+}
+
+sub cleanup {
+    # Remove files when job is done
+    my $self = shift;
+    unlink $self->get_rm();
+    delete @Global::unlink{$self->get_rm()};
+}
+
 sub grouped {
     my $self = shift;
     # Set reading FD if using --group (--ungroup does not need)
@@ -6392,7 +6423,7 @@ sub grouped {
 	    ::die_bug("fdr: Cannot open ".$self->fh($fdno,'name'));
 	$self->set_fh($fdno,'r',$fdr);
 	# Unlink if required
-	$Global::debug or unlink $self->fh($fdno,"unlink");
+	$Global::debug or ::rm($self->fh($fdno,"unlink"));
     }
 }
 
@@ -7402,7 +7433,7 @@ sub sshcleanup {
     my $workdir = $self->workdir();
     my $cleancmd = "";
 
-    for my $file ($self->cleanup()) {
+    for my $file ($self->remote_cleanup()) {
 	my @subworkdirs = parentdirs_of($file);
 	$cleancmd .= $sshlogin->cleanup_cmd($file,$workdir).";";
     }
@@ -7412,7 +7443,7 @@ sub sshcleanup {
     return $cleancmd;
 }
 
-sub cleanup {
+sub remote_cleanup {
     # Returns:
     #   Files to remove at cleanup
     my $self = shift;
@@ -7602,6 +7633,7 @@ sub start {
     $ENV{'PARALLEL_SEQ'} = $job->seq();
     $ENV{'PARALLEL_PID'} = $$;
     $ENV{'PARALLEL_TMP'} = ::tmpname("par");
+    $job->add_rm($ENV{'PARALLEL_TMP'});
     ::debug("run", $Global::total_running, " processes . Starting (",
 	    $job->seq(), "): $command\n");
     if($opt::pipe) {
@@ -7721,6 +7753,7 @@ sub print_dryrun_and_verbose {
 	my $actual_command = shift;
 	# Temporary file name. Used for fifo to communicate exit val
 	my $tmpfifo=::tmpname("tmx");
+	$self->add_rm($tmpfifo);
 
 	if(length($tmpfifo) >=100) {
 	    ::error("tmux does not support sockets with path > 100.");
@@ -7882,7 +7915,7 @@ sub print {
     if($opt::dryrun) {
 	# Nothing was printed to this job:
 	# cleanup tmp files if --files was set
-	unlink $self->fh(1,"name");
+	::rm($self->fh(1,"name"));
     }
     if($opt::pipe and $self->virgin()) {
 	# Skip --joblog, --dryrun, --verbose
@@ -7973,8 +8006,8 @@ sub files_print {
 	# Nothing was printed to this job:
 	# cleanup unused tmp files if --files was set
 	for my $fdno (1,2) {
-	    unlink $self->fh($fdno,"name");
-	    unlink $self->fh($fdno,"unlink");
+	    ::rm($self->fh($fdno,"name"));
+	    ::rm($self->fh($fdno,"unlink"));
 	}
     } elsif($fdno == 1 and $self->fh($fdno,"name")) {
 	print $out_fd $self->tag(),$self->fh($fdno,"name"),"\n";
@@ -9256,7 +9289,7 @@ sub tmux_length {
 	    my $tmuxcmd = $ENV{'TMUX'}." -S $tmpfile new-session -d -n echo $l".
 		("x"x$l). " && echo $l; rm -f $tmpfile";
 	    push @out, ::qqx($tmuxcmd);
-	    unlink $tmpfile;
+	    ::rm($tmpfile);
 	}
 	::debug("tmux","tmux-out ",@out);
 	chomp @out;
@@ -10124,9 +10157,9 @@ sub run {
 	   eval { $rv = $sth->execute(@_) }) {
 	    last;
 	} else {
-	    if($@ =~ /no such table/
+	    if($@ =~ /no such table|Table .* doesn.t exist|relation ".*" does not exist/
 	       or
-	       $DBI::errstr =~ /no such table/) {
+	       $DBI::errstr =~ /no such table|Table .* doesn.t exist|relation ".*" does not exist/) {
 		# This is fine:
 		# It is just a worker that reported back too late -
 		# another worker had finished the job first
@@ -10330,7 +10363,7 @@ sub remove_dead_locks {
 	if($host eq ::hostname()) {
 	    if(not kill 0, $pid) {
 		::debug("sem", "Dead: $d\n");
-		unlink $d;
+		::rm($d);
 	    } else {
 		::debug("sem", "Alive: $d\n");
 	    }
@@ -10379,12 +10412,12 @@ sub acquire {
 
 sub release {
     my $self = shift;
-    unlink $self->{'pidfile'};
+    ::rm($self->{'pidfile'});
     if($self->nlinks() == 1) {
 	# This is the last link, so atomic cleanup
 	$self->lock();
 	if($self->nlinks() == 1) {
-	    unlink $self->{'idfile'};
+	    ::rm($self->{'idfile'});
 	    rmdir $self->{'lockdir'};
 	}
 	$self->unlock();
@@ -10402,7 +10435,7 @@ sub pid_change {
     $self->{'pidfile'} = $self->{'lockdir'}."/".$$.'@'.::hostname();
     my $retval = link $self->{'idfile'}, $self->{'pidfile'};
     ::debug("sem","link($self->{'idfile'},$self->{'pidfile'})=$retval\n");
-    unlink $old_pidfile;
+    ::rm($old_pidfile);
 }
 
 sub atomic_link_if_count_less_than {
@@ -10500,7 +10533,7 @@ sub lock {
 
 sub unlock {
     my $self = shift;
-    unlink $self->{'lockfile'};
+    ::rm($self->{'lockfile'});
     close $self->{'lockfh'};
     ::debug("run", "unlocked\n");
 }

@@ -1,34 +1,23 @@
-echo '### Test race condition on 8 CPU (my laptop)';   seq 1 5000000 > /tmp/parallel_test;   seq 1 10 | parallel -k "cat /tmp/parallel_test | parallel --pipe --recend '' -k gzip >/dev/null; echo {}";   rm /tmp/parallel_test
-### Test race condition on 8 CPU (my laptop)
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-echo '**'
-**
-echo "### Test --tmpdir running full. bug #40733 was caused by this"
-### Test --tmpdir running full. bug #40733 was caused by this
-  stdout parallel -j1 --tmpdir $SHM cat /dev/zero ::: dummy
-parallel: Error: Output is incomplete. Cannot append to buffer file in /tmp/shm/parallel. Is the disk full?
-parallel: Error: Change $TMPDIR with --tmpdir or use --compress.
-echo '**'
-**
-echo "### bug #48290: round-robin does not distribute data based on business"
-### bug #48290: round-robin does not distribute data based on business
-  echo "Jobslot 1 is 8 times slower than jobslot 8 and should get much less data"
-Jobslot 1 is 8 times slower than jobslot 8 and should get much less data
-  seq 10000000 | parallel --tagstring {%} --linebuffer --compress -j8 --roundrobin --pipe --block 300k 'pv -qL {%}00000'| perl -ne '/^\d+/ and $s{$&}++; END { print map { "$_\n" } sort { $s{$a} <=> $s{$b} } keys %s}'
-1
-2
-3
-5
-4
-7
-6
-8
+par_bug_48290	### bug #48290: round-robin does not distribute data based on business
+par_bug_48290	Jobslot 1 is 256 times slower than jobslot 4 and should get much less data
+par_bug_48290	4
+par_bug_48290	3
+par_bug_48290	2
+par_bug_48290	1
+par_memory_leak	### Test for memory leaks
+par_memory_leak	Of 10 runs of 1 job at least one should be bigger than a 3000 job run
+par_memory_leak	Good: No memleak detected.
+par_race_condition1	### Test race condition on 8 CPU (my laptop)
+par_race_condition1	1
+par_race_condition1	2
+par_race_condition1	3
+par_race_condition1	4
+par_race_condition1	5
+par_race_condition1	6
+par_race_condition1	7
+par_race_condition1	8
+par_race_condition1	9
+par_race_condition1	10
+par_tmp_full	### Test --tmpdir running full. bug #40733 was caused by this
+par_tmp_full	parallel: Error: Output is incomplete. Cannot append to buffer file in /tmp/shm/parallel. Is the disk full?
+par_tmp_full	parallel: Error: Change $TMPDIR with --tmpdir or use --compress.
