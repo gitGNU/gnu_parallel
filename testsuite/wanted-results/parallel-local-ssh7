@@ -216,6 +216,24 @@ par_tcsh_man	arrays
 par_tcsh_man	work,
 par_tcsh_man	too
 par_tcsh_man	Connection to lo closed.
+par_tcsh_underscore	### tcsh
+par_tcsh_underscore	### Testing of --env _
+par_tcsh_underscore	#: Command not found.
+par_tcsh_underscore	variables and arrays in aliases work
+par_tcsh_underscore	variables and arrays in aliases work
+par_tcsh_underscore	variables and arrays in aliases work
+par_tcsh_underscore	variables and arrays in aliases work
+par_tcsh_underscore	variables and arrays in aliases work
+par_tcsh_underscore	variables and arrays in aliases work
+par_tcsh_underscore	myvar: Undefined variable.
+par_tcsh_underscore	myvar: Undefined variable.
+par_tcsh_underscore	myarray: Undefined variable.
+par_tcsh_underscore	myarray: Undefined variable.
+par_tcsh_underscore	myecho: Command not found.
+par_tcsh_underscore	OK      ^^^^^^^^^^^^^^^^^ if no myecho
+par_tcsh_underscore	myecho: Command not found.
+par_tcsh_underscore	OK      ^^^^^^^^^^^^^^^^^ if no myecho
+par_tcsh_underscore	Connection to lo closed.
 par_zsh_funky	3 arg alias_works
 par_zsh_funky	function_works
 par_zsh_funky	myvar  works

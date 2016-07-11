@@ -289,6 +289,40 @@ _EOF
   ssh ksh@lo "$myscript"
 }
 
+par_tcsh_underscore() {
+  echo '### tcsh'
+  myscript=$(cat <<'_EOF'
+    echo "### Testing of --env _"
+
+#    . `which env_parallel.tcsh`;
+    env_parallel --record-env;
+    alias myecho "echo "\$"myvar "\$'myarray'" aliases";
+    set myvar="variables";
+    set myarray=(and arrays in);
+    env_parallel myecho ::: work;
+    env_parallel -S server myecho ::: work;
+    env_parallel --env myvar,myarray,myecho myecho ::: work;
+    env_parallel --env myvar,myarray,myecho -S server myecho ::: work;
+    env_parallel --env _ myecho ::: work;
+    env_parallel --env _ -S server myecho ::: work;
+
+    echo myvar >> ~/.parallel/ignored_vars;
+    env_parallel --env _ myecho ::: work;
+    env_parallel --env _ -S server myecho ::: work;
+    alias myecho "echo "\$'myarray'" aliases";
+    echo myarray >> ~/.parallel/ignored_vars;
+    env_parallel --env _ myecho ::: work;
+    env_parallel --env _ -S server myecho ::: work;
+    echo myecho >> ~/.parallel/ignored_vars;
+    env_parallel --env _ myecho ::: work;
+    echo "OK      ^^^^^^^^^^^^^^^^^ if no myecho" >/dev/stderr;
+    env_parallel --env _ -S server myecho ::: work;
+    echo "OK      ^^^^^^^^^^^^^^^^^ if no myecho" >/dev/stderr;
+_EOF
+  )
+  ssh -tt tcsh@lo "$myscript"
+}
+
 # Test env_parallel:
 # + for each shell
 # + remote, locally

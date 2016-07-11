@@ -66,7 +66,7 @@ else
   set _ignore_UNDERSCORE="`perl $_tMpscRIpt -- !*`"
   rm $_tMpscRIpt
   # Get the scalar and array variable names
-  set _vARnAmES=(`set | awk -e '{print $1}' |grep -vE '^(_|killring|prompt2|command)$' | grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$`)
+  set _vARnAmES=(`set | awk -e '{print $1}' |grep -vE '^(#|_|killring|prompt2|command)$' | grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$`)
 
   # Make a tmpfile for the variable definitions
   set _tMpvARfILe=`tempfile`

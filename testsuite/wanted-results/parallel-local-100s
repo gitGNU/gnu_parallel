@@ -1,9 +1,3 @@
-par_compress_linebuffer 2>&1
-bug #41613: --compress --line-buffer no --tagstring
-Good: --line-buffer matters
-par_compress_linebuffer_tagstring 2>&1
-bug #41613: --compress --line-buffer with --tagstring
-Good: --line-buffer matters
 par_outside_file_handle_limit 2>&1
 par_outside_file_handle_limit	### Test Force outside the file handle limit, 2009-02-17 Gave fork error
 par_outside_file_handle_limit	parallel: Warning: Only enough file handles to run 252 jobs in parallel.
