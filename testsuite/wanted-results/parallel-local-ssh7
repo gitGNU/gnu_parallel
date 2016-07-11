@@ -93,6 +93,24 @@ par_csh_man	too
 par_csh_man	arrays
 par_csh_man	work,
 par_csh_man	too
+par_csh_underscore	### csh
+par_csh_underscore	### Testing of --env _
+par_csh_underscore	#: Command not found.
+par_csh_underscore	variables and arrays in aliases work
+par_csh_underscore	variables and arrays in aliases work
+par_csh_underscore	variables and arrays in aliases work
+par_csh_underscore	variables and arrays in aliases work
+par_csh_underscore	variables and arrays in aliases work
+par_csh_underscore	variables and arrays in aliases work
+par_csh_underscore	variables and arrays in aliases work
+par_csh_underscore	variables and arrays in aliases work
+par_csh_underscore	and arrays in aliases work
+par_csh_underscore	and arrays in aliases work
+par_csh_underscore	and arrays in aliases work
+par_csh_underscore	OK      ^^^^^^^^^^^^^^^^^ if no myecho
+par_csh_underscore	and arrays in aliases work
+par_csh_underscore	OK      ^^^^^^^^^^^^^^^^^ if no myecho
+par_csh_underscore	Connection to lo closed.
 par_fish_funky	env_parallel: Warning: ASCII value 1 in variables is not supported
 par_fish_funky	env_parallel: Warning: ASCII value 1 in variables is not supported
 par_fish_funky	3 arg alias_works
