@@ -148,22 +148,22 @@ par_csh_man() {
     alias myecho 'echo aliases'
     env_parallel myecho ::: work
     env_parallel -S server myecho ::: work
-    #env_parallel --env myecho myecho ::: work
-    #env_parallel --env myecho -S server myecho ::: work
+    env_parallel --env myecho myecho ::: work
+    env_parallel --env myecho -S server myecho ::: work
 
     # Functions not supported
 
     set myvar=variables
     env_parallel echo '$myvar' ::: work
     env_parallel -S server echo '$myvar' ::: work
-    #env_parallel --env myvar echo '$myvar' ::: work
-    #env_parallel --env myvar -S server echo '$myvar' ::: work
+    env_parallel --env myvar echo '$myvar' ::: work
+    env_parallel --env myvar -S server echo '$myvar' ::: work
 
     set myarray=(arrays work, too)
     env_parallel -k echo \$'{myarray[{}]}' ::: 1 2 3
     env_parallel -k -S server echo \$'{myarray[{}]}' ::: 1 2 3
-    #env_parallel -k --env myarray echo \$'{myarray[{}]}' ::: 1 2 3
-    #env_parallel -k --env myarray -S server echo \$'{myarray[{}]}' ::: 1 2 3
+    env_parallel -k --env myarray echo \$'{myarray[{}]}' ::: 1 2 3
+    env_parallel -k --env myarray -S server echo \$'{myarray[{}]}' ::: 1 2 3
 
 _EOF
   )

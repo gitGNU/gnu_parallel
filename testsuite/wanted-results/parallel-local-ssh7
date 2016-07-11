@@ -85,8 +85,18 @@ par_csh_man	### csh
 par_csh_man	### From man env_parallel
 par_csh_man	aliases work
 par_csh_man	aliases work
+par_csh_man	aliases work
+par_csh_man	aliases work
 par_csh_man	variables work
 par_csh_man	variables work
+par_csh_man	variables work
+par_csh_man	variables work
+par_csh_man	arrays
+par_csh_man	work,
+par_csh_man	too
+par_csh_man	arrays
+par_csh_man	work,
+par_csh_man	too
 par_csh_man	arrays
 par_csh_man	work,
 par_csh_man	too

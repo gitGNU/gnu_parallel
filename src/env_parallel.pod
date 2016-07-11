@@ -296,6 +296,8 @@ E.g. by doing:
   alias myecho echo
   env_parallel myecho ::: test
   env_parallel -S server myecho ::: test
+  env_parallel --env myecho myecho ::: work
+  env_parallel --env myecho -S server myecho ::: work
 
 =item functions
 
@@ -306,6 +308,8 @@ Not supported by B<csh>.
   set myvar=test
   env_parallel echo "\$myvar" ::: test
   env_parallel -S csh@server echo "\$myvar" ::: test
+  env_parallel --env myvar echo '$myvar' ::: work
+  env_parallel --env myvar -S server echo '$myvar' ::: work
 
 
 =item arrays with no special chars
@@ -313,6 +317,8 @@ Not supported by B<csh>.
   set myarray=(foo bar baz)
   env_parallel echo "\${myarray\[\{\}\]}" ::: 1 2 3
   env_parallel -S csh@server echo "\${myarray\[\{\}\]}" ::: 1 2 3
+  env_parallel -k --env myarray echo \$'{myarray[{}]}' ::: 1 2 3
+  env_parallel -k --env myarray -S server echo \$'{myarray[{}]}' ::: 1 2 3
 
 =back
 
