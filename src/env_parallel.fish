@@ -44,10 +44,44 @@ function env_parallel
   # env_parallel.fish
   setenv PARALLEL_ENV (
     begin;
+      set _grep_REGEXP (
+        begin;
+          perl -e 'for(@ARGV){
+                /^_$/ and $next_is_env = 0;
+                $next_is_env and push @envvar, split/,/, $_;
+                $next_is_env = /^--env$/;
+            }
+            $vars = join "|",map { quotemeta $_ } @envvar;
+            print $vars ? "($vars)" : "(.*)";
+            ' -- $argv;
+        end;
+      )
+      # Deal with --env _
+      set _ignore_UNDERSCORE (
+        begin;
+          perl -e '
+            for(@ARGV){
+                $next_is_env and push @envvar, split/,/, $_;
+                $next_is_env=/^--env$/;
+            }
+            if(grep { /^_$/ } @envvar) {
+                if(not open(IN, "<", "$ENV{HOME}/.parallel/ignored_vars")) {
+            	    print STDERR "parallel: Error: ",
+            	    "Run \"parallel --record-env\" in a clean environment first.\n";
+                } else {
+            	    chomp(@ignored_vars = <IN>);
+            	    $vars = join "|",map { quotemeta $_ } @ignored_vars;
+            	    print $vars ? "($vars)" : "(nO,VaRs)";
+                }
+            }
+            ' -- $argv;
+        end;
+      )
+
       # Export function definitions
-      functions -n | perl -pe 's/,/\n/g' | while read d; functions $d; end;
+      functions -n | perl -pe 's/,/\n/g' | grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ | while read d; functions $d; end;
       # Convert scalar vars to fish \XX quoting
-      eval (set -L | perl -ne 'chomp;
+      eval (set -L | grep -E "^$_grep_REGEXP " | grep -vE "^$_ignore_UNDERSCORE " | perl -ne 'chomp;
         ($name,$val)=split(/ /,$_,2);
         $name=~/^(HOME|USER|COLUMNS|FISH_VERSION|LINES|PWD|SHLVL|_|history|status|version)$/ and next;
         if($val=~/^'"'"'/) { next; }
@@ -55,7 +89,7 @@ function env_parallel
       ')
       # Generate commands to set scalar variables
       begin;
-        for v in (set -n);
+        for v in (set -n | grep -E "^$_grep_REGEXP\$" | grep -vE "^$_ignore_UNDERSCORE\$");
           # Separate variables with the string: \000
           eval "for i in \$$v;
             echo -n $v \$i;

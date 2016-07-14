@@ -62,14 +62,14 @@ par_bash_underscore	aliases in and arrays in functions work
 par_bash_underscore	aliases in and arrays in functions work
 par_bash_underscore	aliases in functions work
 par_bash_underscore	aliases in functions work
-par_bash_underscore	/bin/bash: line 64: myecho: command not found
-par_bash_underscore	OK if no myecho     ^^^^^^^^^^^^^^^^^^^^^^^^^
-par_bash_underscore	/bin/bash: line 64: myecho: command not found
-par_bash_underscore	OK if no myecho     ^^^^^^^^^^^^^^^^^^^^^^^^^
-par_bash_underscore	/bin/bash: line 62: myfunc: command not found
-par_bash_underscore	OK if no myfunc     ^^^^^^^^^^^^^^^^^^^^^^^^^
-par_bash_underscore	/bin/bash: line 62: myfunc: command not found
-par_bash_underscore	OK if no myfunc     ^^^^^^^^^^^^^^^^^^^^^^^^^
+par_bash_underscore	/bin/bash: line 139: myecho: command not found
+par_bash_underscore	OK if no myecho      ^^^^^^^^^^^^^^^^^^^^^^^^^
+par_bash_underscore	/bin/bash: line 139: myecho: command not found
+par_bash_underscore	OK if no myecho      ^^^^^^^^^^^^^^^^^^^^^^^^^
+par_bash_underscore	/bin/bash: line 136: myfunc: command not found
+par_bash_underscore	OK if no myfunc      ^^^^^^^^^^^^^^^^^^^^^^^^^
+par_bash_underscore	/bin/bash: line 136: myfunc: command not found
+par_bash_underscore	OK if no myfunc      ^^^^^^^^^^^^^^^^^^^^^^^^^
 par_csh_funky	3 arg alias_works
 par_csh_funky	myvar  works
 par_csh_funky	space special chars problem
@@ -112,13 +112,13 @@ par_csh_underscore	variables and arrays in aliases work
 par_csh_underscore	variables and arrays in aliases work
 par_csh_underscore	variables and arrays in aliases work
 par_csh_underscore	variables and arrays in aliases work
-par_csh_underscore	variables and arrays in aliases work
-par_csh_underscore	variables and arrays in aliases work
-par_csh_underscore	and arrays in aliases work
-par_csh_underscore	and arrays in aliases work
-par_csh_underscore	and arrays in aliases work
+par_csh_underscore	myvar: Undefined variable.
+par_csh_underscore	myvar: Undefined variable.
+par_csh_underscore	myarray: Undefined variable.
+par_csh_underscore	myarray: Undefined variable.
+par_csh_underscore	myecho: Command not found.
 par_csh_underscore	OK      ^^^^^^^^^^^^^^^^^ if no myecho
-par_csh_underscore	and arrays in aliases work
+par_csh_underscore	myecho: Command not found.
 par_csh_underscore	OK      ^^^^^^^^^^^^^^^^^ if no myecho
 par_csh_underscore	Connection to lo closed.
 par_fish_funky	env_parallel: Warning: ASCII value 1 in variables is not supported
@@ -157,6 +157,68 @@ par_fish_funky
 par_fish_funky	
 par_fish_funky	
 par_fish_funky	\\\\\\\\	\ \\\\\\\\\\\\\\\\\ \ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+par_fish_man	### fish
+par_fish_man	### From man env_parallel
+par_fish_man	aliases work
+par_fish_man	aliases work
+par_fish_man	aliases work
+par_fish_man	aliases work
+par_fish_man	functions work
+par_fish_man	functions work
+par_fish_man	functions work
+par_fish_man	functions work
+par_fish_man	variables work
+par_fish_man	variables work
+par_fish_man	variables work
+par_fish_man	variables work
+par_fish_man	arrays
+par_fish_man	work,
+par_fish_man	too
+par_fish_man	arrays
+par_fish_man	work,
+par_fish_man	too
+par_fish_man	arrays
+par_fish_man	work,
+par_fish_man	too
+par_fish_man	arrays
+par_fish_man	work,
+par_fish_man	too
+par_fish_underscore	### fish
+par_fish_underscore	### Testing of --env _
+par_fish_underscore	variables in aliases and arrays in functions work
+par_fish_underscore	variables in aliases and arrays in functions work
+par_fish_underscore	variables in aliases and arrays in functions work
+par_fish_underscore	variables in aliases and arrays in functions work
+par_fish_underscore	variables in aliases and arrays in functions work
+par_fish_underscore	variables in aliases and arrays in functions work
+par_fish_underscore	aliases and arrays in functions work
+par_fish_underscore	aliases and arrays in functions work
+par_fish_underscore	aliases functions work
+par_fish_underscore	aliases functions work
+par_fish_underscore	fish: Unknown command â€œmyechoâ€
+par_fish_underscore	Standard input: myecho $myarray functions $argv
+par_fish_underscore	                ^
+par_fish_underscore	in function â€œmyfuncâ€,
+par_fish_underscore		called on standard input,
+par_fish_underscore		with parameter list â€œworkâ€
+par_fish_underscore	
+par_fish_underscore	OK if   ^^^^^^^^^^^^^^^^^ no myecho
+par_fish_underscore	fish: Unknown command â€œmyechoâ€
+par_fish_underscore	Standard input: myecho $myarray functions $argv
+par_fish_underscore	                ^
+par_fish_underscore	in function â€œmyfuncâ€,
+par_fish_underscore		called on standard input,
+par_fish_underscore		with parameter list â€œworkâ€
+par_fish_underscore	
+par_fish_underscore	OK if   ^^^^^^^^^^^^^^^^^ no myecho
+par_fish_underscore	fish: Unknown command â€œmyfuncâ€
+par_fish_underscore	Standard input: myfunc work
+par_fish_underscore	                ^
+par_fish_underscore	OK if   ^^^^^^^^^^^^^^^^^ no myfunc
+par_fish_underscore	fish: Unknown command â€œmyfuncâ€
+par_fish_underscore	Standard input: myfunc work
+par_fish_underscore	                ^
+par_fish_underscore	OK if   ^^^^^^^^^^^^^^^^^ no myfunc
 par_ksh_funky	3 arg alias_works
 par_ksh_funky	function_works
 par_ksh_funky	myvar  works
@@ -212,14 +274,91 @@ par_ksh_underscore	aliases in and arrays in functions work
 par_ksh_underscore	aliases in and arrays in functions work
 par_ksh_underscore	aliases in functions work
 par_ksh_underscore	aliases in functions work
-par_ksh_underscore	/usr/bin/ksh[100]: myecho: not found [No such file or directory]
+par_ksh_underscore	/usr/bin/ksh[193]: myecho: not found [No such file or directory]
 par_ksh_underscore	OK if no myecho    ^^^^^^^^^^^^^^^^^
-par_ksh_underscore	/usr/bin/ksh[100]: myecho: not found [No such file or directory]
+par_ksh_underscore	/usr/bin/ksh[193]: myecho: not found [No such file or directory]
 par_ksh_underscore	OK if no myecho    ^^^^^^^^^^^^^^^^^
-par_ksh_underscore	/usr/bin/ksh: line 100: myfunc: not found
+par_ksh_underscore	/usr/bin/ksh: line 193: myfunc: not found
 par_ksh_underscore	OK if no myfunc         ^^^^^^^^^^^^^^^^^
-par_ksh_underscore	/usr/bin/ksh: line 100: myfunc: not found
+par_ksh_underscore	/usr/bin/ksh: line 193: myfunc: not found
 par_ksh_underscore	OK if no myfunc         ^^^^^^^^^^^^^^^^^
+par_pdksh_funky	3 arg alias_works
+par_pdksh_funky	function_works
+par_pdksh_funky	myvar  works
+par_pdksh_funky	  space  6  
+par_pdksh_funky	assoc_val_b
+par_pdksh_funky	Funky-	
+par_pdksh_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
+par_pdksh_funky	3 arg alias_works_over_ssh
+par_pdksh_funky	function_works_over_ssh
+par_pdksh_funky	myvar  works
+par_pdksh_funky	  space  6  
+par_pdksh_funky	assoc_val_b
+par_pdksh_funky	Funky-	
+par_pdksh_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
+par_pdksh_funky	
+par_pdksh_funky	\\\\\\\\	
+par_pdksh_funky	\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+par_pdksh_man	### pdksh
+par_pdksh_man	### From man env_parallel
+par_pdksh_man	aliases work
+par_pdksh_man	aliases work
+par_pdksh_man	aliases work
+par_pdksh_man	aliases work
+par_pdksh_man	functions work
+par_pdksh_man	functions work
+par_pdksh_man	functions work
+par_pdksh_man	functions work
+par_pdksh_man	variables work
+par_pdksh_man	variables work
+par_pdksh_man	variables work
+par_pdksh_man	variables work
+par_pdksh_man	arrays
+par_pdksh_man	work,
+par_pdksh_man	too
+par_pdksh_man	arrays
+par_pdksh_man	work,
+par_pdksh_man	too
+par_pdksh_man	arrays
+par_pdksh_man	work,
+par_pdksh_man	too
+par_pdksh_man	arrays
+par_pdksh_man	work,
+par_pdksh_man	too
+par_pdksh_underscore	### pdksh
+par_pdksh_underscore	### Testing of --env _
+par_pdksh_underscore	variables in aliases in and arrays in functions work
+par_pdksh_underscore	variables in aliases in and arrays in functions work
+par_pdksh_underscore	variables in aliases in and arrays in functions work
+par_pdksh_underscore	variables in aliases in and arrays in functions work
+par_pdksh_underscore	variables in aliases in and arrays in functions work
+par_pdksh_underscore	variables in aliases in and arrays in functions work
+par_pdksh_underscore	aliases in and arrays in functions work
+par_pdksh_underscore	aliases in and arrays in functions work
+par_pdksh_underscore	aliases in functions work
+par_pdksh_underscore	aliases in functions work
+par_pdksh_underscore	aliases in functions work
+par_pdksh_underscore	OK if no myecho    ^^^^^^^^^^^^^^^^^
+par_pdksh_underscore	aliases in functions work
+par_pdksh_underscore	OK if no myecho    ^^^^^^^^^^^^^^^^^
+par_pdksh_underscore	/bin/pdksh: myfunc: not found
+par_pdksh_underscore	OK if no myfunc         ^^^^^^^^^^^^^^^^^
+par_pdksh_underscore	/bin/pdksh: myfunc: not found
+par_pdksh_underscore	OK if no myfunc         ^^^^^^^^^^^^^^^^^
+par_tcsh_funky	3 arg alias_works
+par_tcsh_funky	
+par_tcsh_funky	myvar  works
+par_tcsh_funky	space special chars problem
+par_tcsh_funky	Funky-	  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùú-funky alias_var_works
+par_tcsh_funky	func_echo: Command not found.
+par_tcsh_funky	3 arg alias_works_over_ssh
+par_tcsh_funky	
+par_tcsh_funky	myvar  works
+par_tcsh_funky	space special chars problem
+par_tcsh_funky	Funky-	  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùú-funky alias_var_works_over_ssh
+par_tcsh_funky	func_echo: Command not found.
+par_tcsh_funky	
+par_tcsh_funky	\\\\\\\\	\ \\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú
 par_tcsh_man	### tcsh
 par_tcsh_man	### From man env_parallel
 par_tcsh_man	aliases work

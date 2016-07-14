@@ -25,8 +25,6 @@
 # or write to the Free Software Foundation, Inc., 51 Franklin St,
 # Fifth Floor, Boston, MA 02110-1301 USA
 
-# Supports env of 127426 bytes
-
 env_parallel() {
     # env_parallel.ksh
 
@@ -35,10 +33,11 @@ env_parallel() {
     # and convert  a b c  to (a|b|c)
     # If --env not set: Match everything (.*)
     _grep_REGEXP="$(
-        perl -e 'for(@ARGV){
+        perl -e '
+            for(@ARGV){
                 /^_$/ and $next_is_env = 0;
                 $next_is_env and push @envvar, split/,/, $_;
-                $next_is_env=/^--env$/;
+                $next_is_env = /^--env$/;
             }
             $vars = join "|",map { quotemeta $_ } @envvar;
             print $vars ? "($vars)" : "(.*)";
@@ -46,18 +45,27 @@ env_parallel() {
     )"
     # Deal with --env _
     _ignore_UNDERSCORE="$(
-        perl -e 'for(@ARGV){
+        perl -e '
+            for(@ARGV){
                 $next_is_env and push @envvar, split/,/, $_;
                 $next_is_env=/^--env$/;
             }
-            $underscore = grep { /^_$/ } @envvar;
-            print $underscore ? "grep -vf $ENV{HOME}/.parallel/ignored_vars" : "cat";
+            if(grep { /^_$/ } @envvar) {
+                if(not open(IN, "<", "$ENV{HOME}/.parallel/ignored_vars")) {
+            	print STDERR "parallel: Error: ",
+            	"Run \"parallel --record-env\" in a clean environment first.\n";
+                } else {
+            	chomp(@ignored_vars = <IN>);
+            	$vars = join "|",map { quotemeta $_ } @ignored_vars;
+            	print $vars ? "($vars)" : "(,,nO,,VaRs,,)";
+                }
+            }
             ' -- "$@"
     )"
 
     # Grep alias names
     _alias_NAMES="$(alias | perl -pe 's/=.*//' |
-        egrep "^${_grep_REGEXP}\$" | $_ignore_UNDERSCORE)"
+        grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ )"
     _list_alias_BODIES="alias $_alias_NAMES | perl -pe 's/^/alias /'"
     if [[ "$_alias_NAMES" = "" ]] ; then
 	# no aliases selected
@@ -67,7 +75,7 @@ env_parallel() {
 
     # Grep function names
     _function_NAMES="$(typeset +p -f | perl -pe 's/\(\).*//' |
-        egrep "^${_grep_REGEXP}\$" | $_ignore_UNDERSCORE)"
+        grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ )"
     _list_function_BODIES="typeset -f $_function_NAMES"
     if [[ "$_function_NAMES" = "" ]] ; then
 	# no functions selected
@@ -77,7 +85,7 @@ env_parallel() {
 
     # Grep variable names
     _variable_NAMES="$(typeset +p | perl -pe 's/^typeset .. //' |
-        egrep "^${_grep_REGEXP}\$" | $_ignore_UNDERSCORE |
+        grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ |
         egrep -v '^(PIPESTATUS)$')"
     _list_variable_VALUES="typeset -p $_variable_NAMES"
     if [[ "$_variable_NAMES" = "" ]] ; then
@@ -97,10 +105,3 @@ env_parallel() {
     `which parallel` "$@";
     unset PARALLEL_ENV;
 }
-
-# _env_parallel() {
-#   # env_parallel.ksh
-#   export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /';typeset -p|egrep -v 'typeset( -i)? -r|PIPESTATUS';typeset -f)";
-#   `which parallel` "$@";
-#   unset PARALLEL_ENV;
-# }

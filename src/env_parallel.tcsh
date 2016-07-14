@@ -35,6 +35,8 @@ else
   # If --env not set: Match everything (.*)
   set _tMpscRIpt=`tempfile`
   cat <<'EOF' > $_tMpscRIpt
+            #!/usr/bin/perl
+
             for(@ARGV){
                 /^_$/ and $next_is_env = 0;
                 $next_is_env and push @envvar, split/,/, $_;
@@ -43,7 +45,8 @@ else
             $vars = join "|",map { quotemeta $_ } @envvar;
             print $vars ? "($vars)" : "(.*)";
 'EOF'
-  set _grep_REGEXP="`perl $_tMpscRIpt -- !*`"
+  set _grep_REGEXP="`perl $_tMpscRIpt -- $PARALLEL`"
+
   # Deal with --env _
   cat <<'EOF' > $_tMpscRIpt
             #!/usr/bin/perl
@@ -59,12 +62,13 @@ else
                 } else {
             	chomp(@ignored_vars = <IN>);
             	$vars = join "|",map { quotemeta $_ } @ignored_vars;
-            	print $vars ? "($vars)" : "(nOVaRs)";
+            	print $vars ? "($vars)" : "(,,nO,,VaRs,,)";
                 }
             }
 'EOF'
-  set _ignore_UNDERSCORE="`perl $_tMpscRIpt -- !*`"
+  set _ignore_UNDERSCORE="`perl $_tMpscRIpt -- $PARALLEL`"
   rm $_tMpscRIpt
+
   # Get the scalar and array variable names
   set _vARnAmES=(`set | awk -e '{print $1}' |grep -vE '^(#|_|killring|prompt2|command)$' | grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$`)
 

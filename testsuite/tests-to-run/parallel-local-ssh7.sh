@@ -108,6 +108,43 @@ _EOF
   ssh ksh@lo "$myscript"
 }
 
+par_pdksh_man() {
+  echo '### pdksh'
+  myscript=$(cat <<'_EOF'
+    echo "### From man env_parallel"
+
+    . `which env_parallel.pdksh`;
+    alias myecho="echo aliases";
+    env_parallel myecho ::: work;
+    env_parallel -S server myecho ::: work;
+    env_parallel --env myecho myecho ::: work;
+    env_parallel --env myecho -S server myecho ::: work
+
+    . `which env_parallel.pdksh`;
+    myfunc() { echo functions $*; };
+    env_parallel myfunc ::: work;
+    env_parallel -S server myfunc ::: work;
+    env_parallel --env myfunc myfunc ::: work;
+    env_parallel --env myfunc -S server myfunc ::: work
+
+    . `which env_parallel.pdksh`;
+    myvar=variables;
+    env_parallel echo "\$myvar" ::: work;
+    env_parallel -S server echo "\$myvar" ::: work;
+    env_parallel --env myvar echo "\$myvar" ::: work;
+    env_parallel --env myvar -S server echo "\$myvar" ::: work
+
+    . `which env_parallel.pdksh`;
+    myarray=(arrays work, too);
+    env_parallel -k echo "\${myarray[{}]}" ::: 0 1 2;
+    env_parallel -k -S server echo "\${myarray[{}]}" ::: 0 1 2;
+    env_parallel -k --env myarray echo "\${myarray[{}]}" ::: 0 1 2;
+    env_parallel -k --env myarray -S server echo "\${myarray[{}]}" ::: 0 1 2
+_EOF
+  )
+  ssh pdksh@lo "$myscript"
+}
+
 par_tcsh_man() {
   echo '### tcsh'
   myscript=$(cat <<'_EOF'
@@ -143,7 +180,7 @@ par_csh_man() {
   myscript=$(cat <<'_EOF'
     echo "### From man env_parallel"
 
-    source `which env_parallel.csh`;
+#    source `which env_parallel.csh`;
 
     alias myecho 'echo aliases'
     env_parallel myecho ::: work
@@ -170,6 +207,43 @@ _EOF
   ssh csh@lo "$myscript"
 }
 
+par_fish_man() {
+  echo '### fish'
+  myscript=$(cat <<'_EOF'
+    echo "### From man env_parallel"
+
+    alias myecho 'echo aliases'
+    env_parallel myecho ::: work
+    env_parallel -S server myecho ::: work
+    env_parallel --env myecho myecho ::: work
+    env_parallel --env myecho -S server myecho ::: work
+
+    function myfunc
+      echo functions $argv
+    end
+    env_parallel myfunc ::: work
+    env_parallel -S server myfunc ::: work
+    env_parallel --env myfunc myfunc ::: work
+    env_parallel --env myfunc -S server myfunc ::: work
+
+    set myvar variables
+    env_parallel echo '$myvar' ::: work
+    env_parallel -S server echo '$myvar' ::: work
+    env_parallel --env myvar echo '$myvar' ::: work
+    env_parallel --env myvar -S server echo '$myvar' ::: work
+
+    set myarray arrays work, too
+    env_parallel -k echo '$myarray[{}]' ::: 1 2 3
+    env_parallel -k -S server echo '$myarray[{}]' ::: 1 2 3
+    env_parallel -k --env myarray echo '$myarray[{}]' ::: 1 2 3
+    env_parallel -k --env myarray -S server echo '$myarray[{}]' ::: 1 2 3
+
+_EOF
+  )
+  ssh fish@lo "$myscript"
+}
+
+
 par_bash_underscore() {
   echo '### bash'
   myscript=$(cat <<'_EOF'
@@ -195,14 +269,14 @@ par_bash_underscore() {
     env_parallel --env _ -S server myfunc ::: work;
     echo myecho >> ~/.parallel/ignored_vars;
     env_parallel --env _ myfunc ::: work;
-    echo "OK if no myecho     ^^^^^^^^^^^^^^^^^^^^^^^^^" >&2;
+    echo "OK if no myecho      ^^^^^^^^^^^^^^^^^^^^^^^^^" >&2;
     env_parallel --env _ -S server myfunc ::: work;
-    echo "OK if no myecho     ^^^^^^^^^^^^^^^^^^^^^^^^^" >&2;
+    echo "OK if no myecho      ^^^^^^^^^^^^^^^^^^^^^^^^^" >&2;
     echo myfunc >> ~/.parallel/ignored_vars;
     env_parallel --env _ myfunc ::: work;
-    echo "OK if no myfunc     ^^^^^^^^^^^^^^^^^^^^^^^^^" >&2;
+    echo "OK if no myfunc      ^^^^^^^^^^^^^^^^^^^^^^^^^" >&2;
     env_parallel --env _ -S server myfunc ::: work;
-    echo "OK if no myfunc     ^^^^^^^^^^^^^^^^^^^^^^^^^" >&2;
+    echo "OK if no myfunc      ^^^^^^^^^^^^^^^^^^^^^^^^^" >&2;
 _EOF
   )
   ssh bash@lo "$myscript"
@@ -289,6 +363,45 @@ _EOF
   ssh ksh@lo "$myscript"
 }
 
+par_pdksh_underscore() {
+  echo '### pdksh'
+  myscript=$(cat <<'_EOF'
+    echo "### Testing of --env _"
+
+    . `which env_parallel.pdksh`;
+    env_parallel --record-env;
+    alias myecho="echo \$myvar aliases in";
+    myfunc() { myecho ${myarray[@]} functions $*; };
+    myvar="variables in";
+    myarray=(and arrays in);
+    env_parallel myfunc ::: work;
+    env_parallel -S server myfunc ::: work;
+    env_parallel --env myfunc,myvar,myarray,myecho myfunc ::: work;
+    env_parallel --env myfunc,myvar,myarray,myecho -S server myfunc ::: work;
+    env_parallel --env _ myfunc ::: work;
+    env_parallel --env _ -S server myfunc ::: work;
+
+    echo myvar >> ~/.parallel/ignored_vars;
+    env_parallel --env _ myfunc ::: work;
+    env_parallel --env _ -S server myfunc ::: work;
+    echo myarray >> ~/.parallel/ignored_vars;
+    env_parallel --env _ myfunc ::: work;
+    env_parallel --env _ -S server myfunc ::: work;
+    echo myecho >> ~/.parallel/ignored_vars;
+    env_parallel --env _ myfunc ::: work;
+    echo "OK if no myecho    ^^^^^^^^^^^^^^^^^" >&2;
+    env_parallel --env _ -S server myfunc ::: work;
+    echo "OK if no myecho    ^^^^^^^^^^^^^^^^^" >&2;
+    echo myfunc >> ~/.parallel/ignored_vars;
+    env_parallel --env _ myfunc ::: work;
+    echo "OK if no myfunc         ^^^^^^^^^^^^^^^^^" >&2;
+    env_parallel --env _ -S server myfunc ::: work;
+    echo "OK if no myfunc         ^^^^^^^^^^^^^^^^^" >&2;
+_EOF
+  )
+  ssh pdksh@lo "$myscript"
+}
+
 par_tcsh_underscore() {
   echo '### tcsh'
   myscript=$(cat <<'_EOF'
@@ -328,7 +441,7 @@ par_csh_underscore() {
   myscript=$(cat <<'_EOF'
     echo "### Testing of --env _"
 
-#    . `which env_parallel.tcsh`;
+#    . `which env_parallel.csh`;
     env_parallel --record-env;
     alias myecho "echo "\$"myvar "\$'myarray'" aliases";
     set myvar="variables";
@@ -355,6 +468,47 @@ par_csh_underscore() {
 _EOF
   )
   ssh -tt csh@lo "$myscript"
+}
+
+par_fish_underscore() {
+  echo '### fish'
+  myscript=$(cat <<'_EOF'
+    echo "### Testing of --env _"
+
+#    . `which env_parallel.fish`;
+    env_parallel --record-env;
+    alias myecho="echo \$myvar aliases";
+    function myfunc
+      myecho $myarray functions $argv
+    end
+    set myvar "variables in";
+    set myarray and arrays in;
+    env_parallel myfunc ::: work;
+    env_parallel -S server myfunc ::: work;
+    env_parallel --env myfunc,myvar,myarray,myecho myfunc ::: work;
+    env_parallel --env myfunc,myvar,myarray,myecho -S server myfunc ::: work;
+    env_parallel --env _ myfunc ::: work;
+    env_parallel --env _ -S server myfunc ::: work;
+
+    echo myvar >> ~/.parallel/ignored_vars;
+    env_parallel --env _ myfunc ::: work;
+    env_parallel --env _ -S server myfunc ::: work;
+    echo myarray >> ~/.parallel/ignored_vars;
+    env_parallel --env _ myfunc ::: work;
+    env_parallel --env _ -S server myfunc ::: work;
+    echo myecho >> ~/.parallel/ignored_vars;
+    env_parallel --env _ myfunc ::: work;
+    echo "OK if   ^^^^^^^^^^^^^^^^^ no myecho" >&2;
+    env_parallel --env _ -S server myfunc ::: work;
+    echo "OK if   ^^^^^^^^^^^^^^^^^ no myecho" >&2;
+    echo myfunc >> ~/.parallel/ignored_vars;
+    env_parallel --env _ myfunc ::: work;
+    echo "OK if   ^^^^^^^^^^^^^^^^^ no myfunc" >&2;
+    env_parallel --env _ -S server myfunc ::: work;
+    echo "OK if   ^^^^^^^^^^^^^^^^^ no myfunc" >&2;
+_EOF
+  )
+  ssh fish@lo "$myscript"
 }
 
 # Test env_parallel:
@@ -448,6 +602,35 @@ _EOF
   ssh ksh@lo "$myscript"
 }
 
+par_pdksh_funky() {
+  myscript=$(cat <<'_EOF'
+    . `which env_parallel.pdksh`;
+
+    myvar="myvar  works"
+    funky=$(perl -e "print pack \"c*\", 1..255")
+    myarray=("" array_val2 3 "" 5 "  space  6  ")
+    assocarr[a]=assoc_val_a
+    assocarr[b]=assoc_val_b
+    alias alias_echo="echo 3 arg";
+    func_echo() {
+      echo $*;
+      echo "$myvar"
+      echo "${myarray[5]}"
+      echo ${assocarr[a]}
+      echo Funky-"$funky"-funky
+    }
+
+    env_parallel alias_echo ::: alias_works
+    env_parallel func_echo ::: function_works
+    env_parallel -S lo alias_echo ::: alias_works_over_ssh
+    env_parallel -S lo func_echo ::: function_works_over_ssh
+    echo
+    echo "$funky" | parallel --shellquote
+_EOF
+  )
+  ssh pdksh@lo "$myscript"
+}
+
 par_fish_funky() {
   myscript=$(cat <<'_EOF'
     set myvar "myvar  works"
@@ -522,6 +705,38 @@ par_csh_funky() {
 _EOF
   )
   ssh csh@lo "$myscript"
+}
+
+par_tcsh_funky() {
+  myscript=$(cat <<'_EOF'
+    set myvar = "myvar  works"
+    set funky = "`perl -e 'print pack q(c*), 2..255'`"
+    set myarray = ('' 'array_val2' '3' '' '5' '  space  6  ')
+    # declare -A assocarr
+    # assocarr[a]=assoc_val_a
+    # assocarr[b]=assoc_val_b
+    alias alias_echo echo 3 arg;
+    alias alias_echo_var 'echo $argv; echo "$myvar"; echo "${myarray[4]} special chars problem"; echo Funky-"$funky"-funky'
+
+    # function func_echo
+    #  echo $argv;
+    #  echo $myvar;
+    #  echo ${myarray[2]}
+    #  #echo ${assocarr[a]}
+    #  echo Funky-"$funky"-funky
+    # end
+
+    env_parallel alias_echo ::: alias_works
+    env_parallel alias_echo_var ::: alias_var_works
+    env_parallel func_echo ::: function_does_not_work
+    env_parallel -S tcsh@lo alias_echo ::: alias_works_over_ssh
+    env_parallel -S tcsh@lo alias_echo_var ::: alias_var_works_over_ssh
+    env_parallel -S tcsh@lo func_echo ::: function_does_not_work_over_ssh
+    echo
+    echo "$funky" | parallel --shellquote
+_EOF
+  )
+  ssh tcsh@lo "$myscript"
 }
 
 

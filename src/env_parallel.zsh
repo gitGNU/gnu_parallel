@@ -33,7 +33,8 @@ env_parallel() {
     # and convert  a b c  to (a|b|c)
     # If --env not set: Match everything (.*)
     _grep_REGEXP="$(
-        perl -e 'for(@ARGV){
+        perl -e '
+            for(@ARGV){
                 /^_$/ and $next_is_env = 0;
                 $next_is_env and push @envvar, split/,/, $_;
                 $next_is_env = /^--env$/;
@@ -44,18 +45,27 @@ env_parallel() {
     )"
     # Deal with --env _
     local _ignore_UNDERSCORE="$(
-        perl -e 'for(@ARGV){
+        perl -e '
+            for(@ARGV){
                 $next_is_env and push @envvar, split/,/, $_;
                 $next_is_env=/^--env$/;
             }
-            $underscore = grep { /^_$/ } @envvar;
-            print $underscore ? "grep -vf $ENV{HOME}/.parallel/ignored_vars" : "cat";
+            if(grep { /^_$/ } @envvar) {
+                if(not open(IN, "<", "$ENV{HOME}/.parallel/ignored_vars")) {
+            	print STDERR "parallel: Error: ",
+            	"Run \"parallel --record-env\" in a clean environment first.\n";
+                } else {
+            	chomp(@ignored_vars = <IN>);
+            	$vars = join "|",map { quotemeta $_ } @ignored_vars;
+            	print $vars ? "($vars)" : "(,,nO,,VaRs,,)";
+                }
+            }
             ' -- "$@"
     )"
 
     # Grep alias names
     _alias_NAMES="$(print -l ${(k)aliases} |
-        egrep "^${_grep_REGEXP}\$" | eval $_ignore_UNDERSCORE )"
+        grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ )"
     _list_alias_BODIES="alias "$(echo $_alias_NAMES|xargs)" | perl -pe 's/^/alias /'"
     if [[ "$_alias_NAMES" = "" ]] ; then
 	# no aliases selected
@@ -65,7 +75,7 @@ env_parallel() {
 
     # Grep function names
     _function_NAMES="$(print -l ${(k)functions} |
-        egrep "^${_grep_REGEXP}\$" | eval $_ignore_UNDERSCORE |
+        grep -E "^$_grep_REGEXP\$" | grep -vE "^$_ignore_UNDERSCORE\$" |
         grep -v '='
         )"
     _list_function_BODIES="typeset -f "$(echo $_function_NAMES|xargs)
@@ -78,7 +88,7 @@ env_parallel() {
     # Grep variable names
     # The egrep -v is crap and should be better
     _variable_NAMES="$(print -l ${(k)parameters} |
-        egrep "^${_grep_REGEXP}\$" | eval $_ignore_UNDERSCORE |
+        grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ |
         egrep -v '^([-?#!$*@_0]|zsh_eval_context|ZSH_EVAL_CONTEXT|LINENO|IFS|commands|functions|options|aliases|EUID|EGID|UID|GID)$' |
         egrep -v 'terminfo|funcstack|galiases|keymaps|parameters|jobdirs|dirstack|functrace|funcsourcetrace|zsh_scheduled_events|dis_aliases|dis_reswords|dis_saliases|modules|reswords|saliases|widgets|userdirs|historywords|nameddirs|termcap|dis_builtins|dis_functions|jobtexts|funcfiletrace|dis_galiases|builtins|history|jobstates'
         )"
@@ -102,15 +112,4 @@ env_parallel() {
     unset _list_function_BODIES
     `which parallel` "$@";
     unset PARALLEL_ENV;
-}
-
-_old_env_parallel() {
-  # env_parallel.zsh
-  export PARALLEL_ENV="$(alias | perl -pe 's/^/alias /'; typeset -p |
-    grep -aFvf <(typeset -pr) |
-    egrep -iav 'ZSH_EVAL_CONTEXT|LINENO=| _=|aliases|^typeset [a-z_]+$'|
-    egrep -av '^(typeset -A (commands|functions|options)|typeset IFS=|..$)|cyan';
-    typeset -f)";
-  parallel "$@";
-  unset PARALLEL_ENV;
 }
