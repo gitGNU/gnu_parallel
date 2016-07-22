@@ -62,13 +62,13 @@ par_bash_underscore	aliases in and arrays in functions work
 par_bash_underscore	aliases in and arrays in functions work
 par_bash_underscore	aliases in functions work
 par_bash_underscore	aliases in functions work
-par_bash_underscore	/bin/bash: line 139: myecho: command not found
+par_bash_underscore	/bin/bash: line 70: myecho: command not found
 par_bash_underscore	OK if no myecho      ^^^^^^^^^^^^^^^^^^^^^^^^^
-par_bash_underscore	/bin/bash: line 139: myecho: command not found
+par_bash_underscore	/bin/bash: line 70: myecho: command not found
 par_bash_underscore	OK if no myecho      ^^^^^^^^^^^^^^^^^^^^^^^^^
-par_bash_underscore	/bin/bash: line 136: myfunc: command not found
+par_bash_underscore	/bin/bash: line 68: myfunc: command not found
 par_bash_underscore	OK if no myfunc      ^^^^^^^^^^^^^^^^^^^^^^^^^
-par_bash_underscore	/bin/bash: line 136: myfunc: command not found
+par_bash_underscore	/bin/bash: line 68: myfunc: command not found
 par_bash_underscore	OK if no myfunc      ^^^^^^^^^^^^^^^^^^^^^^^^^
 par_csh_funky	3 arg alias_works
 par_csh_funky	myvar  works
@@ -274,13 +274,13 @@ par_ksh_underscore	aliases in and arrays in functions work
 par_ksh_underscore	aliases in and arrays in functions work
 par_ksh_underscore	aliases in functions work
 par_ksh_underscore	aliases in functions work
-par_ksh_underscore	/usr/bin/ksh[193]: myecho: not found [No such file or directory]
+par_ksh_underscore	/usr/bin/ksh[113]: myecho: not found [No such file or directory]
 par_ksh_underscore	OK if no myecho    ^^^^^^^^^^^^^^^^^
-par_ksh_underscore	/usr/bin/ksh[193]: myecho: not found [No such file or directory]
+par_ksh_underscore	/usr/bin/ksh[113]: myecho: not found [No such file or directory]
 par_ksh_underscore	OK if no myecho    ^^^^^^^^^^^^^^^^^
-par_ksh_underscore	/usr/bin/ksh: line 193: myfunc: not found
+par_ksh_underscore	/usr/bin/ksh: line 113: myfunc: not found
 par_ksh_underscore	OK if no myfunc         ^^^^^^^^^^^^^^^^^
-par_ksh_underscore	/usr/bin/ksh: line 193: myfunc: not found
+par_ksh_underscore	/usr/bin/ksh: line 113: myfunc: not found
 par_ksh_underscore	OK if no myfunc         ^^^^^^^^^^^^^^^^^
 par_pdksh_funky	3 arg alias_works
 par_pdksh_funky	function_works

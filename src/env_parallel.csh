@@ -57,12 +57,12 @@ else
             }
             if(grep { /^_$/ } @envvar) {
                 if(not open(IN, "<", "$ENV{HOME}/.parallel/ignored_vars")) {
-            	print STDERR "parallel: Error: ",
-            	"Run 'parallel --record-env' in a clean environment first.\n";
+             	    print STDERR "parallel: Error: ",
+            	    "Run \"parallel --record-env\" in a clean environment first.\n";
                 } else {
-            	chomp(@ignored_vars = <IN>);
-            	$vars = join "|",map { quotemeta $_ } @ignored_vars;
-            	print $vars ? "($vars)" : "(,,nO,,VaRs,,)";
+            	    chomp(@ignored_vars = <IN>);
+            	    $vars = join "|",map { quotemeta $_ } "env_parallel", @ignored_vars;
+		    print $vars ? "($vars)" : "(,,nO,,VaRs,,)";
                 }
             }
 'EOF'

@@ -15,7 +15,7 @@ par_tmp_full() {
     # Assume /tmp/shm is easy to fill up
     export SHM=/tmp/shm/parallel
     mkdir -p $SHM
-    sudo umount -l $SHM
+    sudo umount -l $SHM 2>/dev/null
     sudo mount -t tmpfs -o size=10% none $SHM
 
     echo "### Test --tmpdir running full. bug #40733 was caused by this"

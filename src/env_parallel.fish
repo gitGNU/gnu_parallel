@@ -46,7 +46,8 @@ function env_parallel
     begin;
       set _grep_REGEXP (
         begin;
-          perl -e 'for(@ARGV){
+          perl -e '
+	    for(@ARGV){
                 /^_$/ and $next_is_env = 0;
                 $next_is_env and push @envvar, split/,/, $_;
                 $next_is_env = /^--env$/;
@@ -66,12 +67,12 @@ function env_parallel
             }
             if(grep { /^_$/ } @envvar) {
                 if(not open(IN, "<", "$ENV{HOME}/.parallel/ignored_vars")) {
-            	    print STDERR "parallel: Error: ",
+             	    print STDERR "parallel: Error: ",
             	    "Run \"parallel --record-env\" in a clean environment first.\n";
                 } else {
             	    chomp(@ignored_vars = <IN>);
-            	    $vars = join "|",map { quotemeta $_ } @ignored_vars;
-            	    print $vars ? "($vars)" : "(nO,VaRs)";
+            	    $vars = join "|",map { quotemeta $_ } "env_parallel", @ignored_vars;
+		    print $vars ? "($vars)" : "(,,nO,,VaRs,,)";
                 }
             }
             ' -- $argv;
