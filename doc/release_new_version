@@ -239,6 +239,10 @@ New in this release:
 
 * Selectively choosing what to export using --env now works for env_parallel (bash, csh, fish, ksh, pdksh, tcsh, zsh).
 
+* --round-robin now gives more work to a job that processes faster instead of same amount to all jobs.
+
+* --pipepart works on block devices on GNU/Linux.
+
 * <<Possibly http://link.springer.com/chapter/10.1007%2F978-3-319-22053-6_46>>
 
 * <<Possibly http://link.springer.com/article/10.1007/s12021-015-9290-5>>

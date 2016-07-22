@@ -1208,7 +1208,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160704;
+    $Global::version = 20160720;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -3173,7 +3173,7 @@ sub parallelized_host_filtering {
     #               command should never take > 10 sec.
     # --delay 0.1:  If multiple sshlogins use the same proxy the delay
     #               will make it less likely to overload the ssh daemon.
-    # --retries 3:  If the ssh daemon it overloaded, try 3 times
+    # --retries 3:  If the ssh daemon is overloaded, try 3 times
     my $cmd =
 	"$0 -j0 --timeout 10 --joblog - --plain --delay 0.1 --retries 3 ".
 	"--tag --tagstring '{1}' -0 --colsep '\t' -k eval '{2}' && true ";
@@ -6396,7 +6396,7 @@ sub openoutputfiles {
 sub add_rm {
     # Files to remove when job is done
     my $self = shift;
-    push $self->{'unlink'}, @_;
+    push @{$self->{'unlink'}}, @_;
 }
 
 sub get_rm {
@@ -10183,7 +10183,7 @@ sub run {
     if($lockretry >= 10) {
 	::die_bug("retry > 10: $DBI::errstr");
     }
-    if($rv < 0){
+    if($rv < 0 and $DBI::errstr){
 	::error($DBI::errstr);
 	::wait_and_exit(255);
     }

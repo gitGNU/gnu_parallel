@@ -6,8 +6,8 @@ P_ALL="vax freebsd solaris openbsd netbsd debian alpha aix redhat hpux ultrix mi
 P_NOTWORKING="vax alpha openstep"
 P_NOTWORKING_YET="ultrix irix"
 
-P_WORKING="pidora raspbian tru64 solaris openindiana aix hpux qnx debian-ppc suse solaris-x86 mandriva ubuntu scosysv dragonfly unixware centos miros macosx hpux-ia64 redhat netbsd openbsd freebsd debian"
-P_TEMPORARILY_BROKEN="minix syllable hurd dragonfly"
+P_WORKING="pidora raspbian solaris openindiana aix hpux qnx debian-ppc suse solaris-x86 mandriva ubuntu scosysv  unixware centos miros macosx redhat netbsd openbsd freebsd debian"
+P_TEMPORARILY_BROKEN="minix  tru64 syllable hurd hpux-ia64 dragonfly"
 
 P="$P_WORKING"
 POLAR=`parallel -k echo {}.polarhome.com ::: $P`

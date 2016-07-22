@@ -150,6 +150,8 @@ par_tcsh_man() {
   myscript=$(cat <<'_EOF'
     echo "### From man env_parallel"
 
+#    source `which env_parallel.tcsh`
+
     alias myecho 'echo aliases'
     env_parallel myecho ::: work
     env_parallel -S server myecho ::: work
@@ -407,7 +409,8 @@ par_tcsh_underscore() {
   myscript=$(cat <<'_EOF'
     echo "### Testing of --env _"
 
-#    . `which env_parallel.tcsh`;
+#    source `which env_parallel.tcsh`;
+
     env_parallel --record-env;
     alias myecho "echo "\$"myvar "\$'myarray'" aliases";
     set myvar="variables";
@@ -441,7 +444,8 @@ par_csh_underscore() {
   myscript=$(cat <<'_EOF'
     echo "### Testing of --env _"
 
-#    . `which env_parallel.csh`;
+#    source `which env_parallel.csh`;
+
     env_parallel --record-env;
     alias myecho "echo "\$"myvar "\$'myarray'" aliases";
     set myvar="variables";
@@ -743,4 +747,5 @@ _EOF
 export -f $(compgen -A function | grep par_)
 # Tested with -j1..8
 # -j6 was fastest
-compgen -A function | grep par_ | sort | parallel -j6 --tag -k '{} 2>&1'
+#compgen -A function | grep par_ | sort | parallel --delay $D -j$P --tag -k '{} 2>&1'
+compgen -A function | grep par_ | sort | parallel --delay 0.1 -j10 --tag -k '{} 2>&1'

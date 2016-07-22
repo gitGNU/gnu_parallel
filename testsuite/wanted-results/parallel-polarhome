@@ -10,9 +10,6 @@ raspbian.polarhome.com	### Run the test on raspbian.polarhome.com
 raspbian.polarhome.com	Works on raspbian.polarhome.com
 raspbian.polarhome.com	Error in tempfile() using /XXXXXXXX.arg: Could not create temp file /XXXXXXXX.arg: Permission denied at bin/parallel line 0000
 raspbian.polarhome.com	OK
-copy_and_test tru64.polarhome.com
-tru64.polarhome.com	### Run the test on tru64.polarhome.com
-tru64.polarhome.com	Works on tru64.polarhome.com
 copy_and_test solaris.polarhome.com
 solaris.polarhome.com	### Run the test on solaris.polarhome.com
 solaris.polarhome.com	Works on solaris.polarhome.com
@@ -71,11 +68,6 @@ scosysv.polarhome.com	Works on scosysv.polarhome.com
 scosysv.polarhome.com	Error in tempfile() using /XXXXXXXX.arg: Parent directory (/) is not writable
 scosysv.polarhome.com	 at bin/parallel line 0000
 scosysv.polarhome.com	OK
-copy_and_test dragonfly.polarhome.com
-dragonfly.polarhome.com	### Run the test on dragonfly.polarhome.com
-dragonfly.polarhome.com	Works on dragonfly.polarhome.com
-dragonfly.polarhome.com	Error in tempfile() using /XXXXXXXX.arg: Could not create temp file /XXXXXXXX.arg: Permission denied at bin/parallel line 0000
-dragonfly.polarhome.com	OK
 copy_and_test unixware.polarhome.com
 unixware.polarhome.com	### Run the test on unixware.polarhome.com
 unixware.polarhome.com	Works on unixware.polarhome.com
@@ -98,12 +90,6 @@ macosx.polarhome.com	### Run the test on macosx.polarhome.com
 macosx.polarhome.com	Works on macosx.polarhome.com
 macosx.polarhome.com	Error in tempfile() using /XXXXXXXX.arg: Could not create temp file /XXXXXXXX.arg: Permission denied at bin/parallel line 0000
 macosx.polarhome.com	OK
-copy_and_test hpux-ia64.polarhome.com
-hpux-ia64.polarhome.com	### Run the test on hpux-ia64.polarhome.com
-hpux-ia64.polarhome.com	Works on hpux-ia64.polarhome.com
-hpux-ia64.polarhome.com	Error in tempfile() using /XXXXXXXX.arg: Parent directory (/) is not writable
-hpux-ia64.polarhome.com	 at bin/parallel line 0000
-hpux-ia64.polarhome.com	OK
 copy_and_test redhat.polarhome.com
 redhat.polarhome.com	### Run the test on redhat.polarhome.com
 redhat.polarhome.com	Works on redhat.polarhome.com
@@ -136,9 +122,7 @@ aix7
 centos.polarhome.com
 debian-ppc
 debian
-dragonfly.polarhome.com
 freebsd.polarhome.com
-hpux-ia64
 hpux64
 macosx.polarhome.com
 mandriva.polarhome.com
@@ -154,7 +138,6 @@ scosysv.polarhome.com
 solaris-x86
 solaris
 suse
-tru64.polarhome.com
 ubuntu
 unixware.polarhome.com
 
@@ -164,9 +147,7 @@ aix.polarhome.com	bash only A
 centos.polarhome.com	bash only A
 debian-ppc.polarhome.com	bash only A
 debian.polarhome.com	bash only A
-dragonfly.polarhome.com	Syntax error: "(" unexpected
 freebsd.polarhome.com	Syntax error: "(" unexpected (expecting word)
-hpux-ia64.polarhome.com	bash only A
 hpux.polarhome.com	bash only A
 macosx.polarhome.com	bash only A
 mandriva.polarhome.com	bash only A
@@ -182,7 +163,6 @@ scosysv.polarhome.com	bash only A
 solaris-x86.polarhome.com	bash only A
 solaris.polarhome.com	bash only A
 suse.polarhome.com	bash only A
-tru64.polarhome.com	bash only A
 ubuntu.polarhome.com	bash only A
 unixware.polarhome.com	UX:sh (/bin/sh): ERROR: /bin/sh: Syntax error at line 1: `(' unexpected
 

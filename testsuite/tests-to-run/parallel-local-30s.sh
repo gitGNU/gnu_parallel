@@ -53,7 +53,7 @@ par_linebuffer_matters_compress_tag() {
     echo "### (--linebuffer) --compress --tag should give different output"
     random_data_with_id_prepended() {
 	perl -pe 's/^/'$1'/' /dev/urandom |
-	  pv -qL 300000 | head -c 1000000
+	  pv -qL 300000 | head -c 3000000
     }
     export -f random_data_with_id_prepended
 

@@ -48,7 +48,7 @@ please cite:
   url = {http://www.gnu.org/s/parallel},
   year = {2011},
   pages = {42-47},
-  doi = {10.5281/zenodo.16303}
+  doi = {http://dx.doi.org/10.5281/zenodo.16303}
 }
 
 (Feel free to use \nocite{Tange2011a})
