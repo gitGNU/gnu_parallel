@@ -52,12 +52,12 @@ env_parallel() {
             }
             if(grep { /^_$/ } @envvar) {
                 if(not open(IN, "<", "$ENV{HOME}/.parallel/ignored_vars")) {
-            	print STDERR "parallel: Error: ",
-            	"Run \"parallel --record-env\" in a clean environment first.\n";
+             	    print STDERR "parallel: Error: ",
+            	    "Run \"parallel --record-env\" in a clean environment first.\n";
                 } else {
-            	chomp(@ignored_vars = <IN>);
-            	$vars = join "|",map { quotemeta $_ } @ignored_vars;
-            	print $vars ? "($vars)" : "(,,nO,,VaRs,,)";
+            	    chomp(@ignored_vars = <IN>);
+            	    $vars = join "|",map { quotemeta $_ } "env_parallel", @ignored_vars;
+		    print $vars ? "($vars)" : "(,,nO,,VaRs,,)";
                 }
             }
             ' -- "$@"
@@ -86,11 +86,11 @@ env_parallel() {
     unset _function_NAMES
 
     # Grep variable names
-    # The egrep -v is crap and should be better
+    # The grep -Ev is crap and should be better
     _variable_NAMES="$(print -l ${(k)parameters} |
         grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ |
-        egrep -v '^([-?#!$*@_0]|zsh_eval_context|ZSH_EVAL_CONTEXT|LINENO|IFS|commands|functions|options|aliases|EUID|EGID|UID|GID)$' |
-        egrep -v 'terminfo|funcstack|galiases|keymaps|parameters|jobdirs|dirstack|functrace|funcsourcetrace|zsh_scheduled_events|dis_aliases|dis_reswords|dis_saliases|modules|reswords|saliases|widgets|userdirs|historywords|nameddirs|termcap|dis_builtins|dis_functions|jobtexts|funcfiletrace|dis_galiases|builtins|history|jobstates'
+        grep -Ev '^([-?#!$*@_0]|zsh_eval_context|ZSH_EVAL_CONTEXT|LINENO|IFS|commands|functions|options|aliases|EUID|EGID|UID|GID)$' |
+        grep -Ev 'terminfo|funcstack|galiases|keymaps|parameters|jobdirs|dirstack|functrace|funcsourcetrace|zsh_scheduled_events|dis_aliases|dis_reswords|dis_saliases|modules|reswords|saliases|widgets|userdirs|historywords|nameddirs|termcap|dis_builtins|dis_functions|jobtexts|funcfiletrace|dis_galiases|builtins|history|jobstates'
         )"
     _list_variable_VALUES="typeset -p "$(echo $_variable_NAMES|xargs)" |
         grep -aFvf <(typeset -pr)

@@ -219,29 +219,26 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20160622 ('Orlando') released <<[stable]>>
+Subject: GNU Parallel 20160722 ('Brexit') released <<[stable]>>
 
-GNU Parallel 20160622 ('Orlando') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20160722 ('Brexit') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
 Haiku of the month:
 
-  Does path on remote
-  not include GNU Parallel?
-  Try --env PATH.
+  
+  <<>>
     -- Ole Tange
 
 
 New in this release:
 
-* $PATH can now be exported using --env PATH. Useful if GNU Parallel is not in your path on remote machines.
+* env_parallel is now ready for wider testing. It is still beta quality.
 
-* If --block is left out, --pipepart will use a block size that will result in 10 jobs per jobslot.
+* env_parallel is heavily modified for all shells and testing has been increased.
 
-* The cookie from 2016-01-04 was won by Morgan Rodgers on the 2016-06-06 after 5 months.
-
-* Vote for GNU Parallel's community ad on https://meta.askubuntu.com/questions/14925/community-promotion-ads-2016/15046#15046
+* Selectively choosing what to export using --env now works for env_parallel (bash, csh, fish, ksh, pdksh, tcsh, zsh).
 
 * <<Possibly http://link.springer.com/chapter/10.1007%2F978-3-319-22053-6_46>>
 
@@ -269,21 +266,31 @@ for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumb
 
 * <<link No citation: Next-generation TCP for ns-3 simulator http://www.sciencedirect.com/science/article/pii/S1569190X15300939>>
 
-* GNU Parallel was cited in: Genotypic Resistance Tests Sequences Reveal the Role of Marginalized Populations in HIV-1 Transmission in Switzerland http://www.nature.com/articles/srep27580
+* <<No citation: Argumentation Models for Cyber Attribution http://arxiv.org/pdf/1607.02171.pdf>>
 
-* GNU Parallel was cited in: A Deep-Learning Approach for Operation of an Automated Realtime Flare Forecast https://arxiv.org/pdf/1606.01587.pdf
+* <<Possible: http://link.springer.com/article/10.1007/s12021-015-9290-5 http://link.springer.com/protocol/10.1007/978-1-4939-3578-9_14>>
 
-* Unix parallel: Populating all the USB sticks http://www.markhneedham.com/blog/2016/06/01/unix-parallel-populating-all-the-usb-sticks/
+* GNU Parallel was cited in: HybPiper: Extracting Coding Sequence and Introns for Phylogenetics from High-Throughput Sequencing Reads Using Target Enrichment http://www.bioone.org/doi/full/10.3732/apps.1600016
 
-* GNU Parallel is a fantastic utility https://www.dray.be/parallel/
+* GNU Parallel was cited in: StrAuto - Automation and Parallelization of STRUCTURE Analysis http://www.crypticlineage.net/download/strauto/strauto_doc.pdf
 
-* Combining a large number of VCF files https://gtamazian.com/2016/06/16/combining-a-large-number-of-vcf-files/
+* GNU Parallel was cited in: Tools and techniques for computational reproducibility http://gigascience.biomedcentral.com/articles/10.1186/s13742-016-0135-4
 
-* Useful Scraping Techniques http://blog.apps.npr.org/2016/06/17/scraping-tips.html
+* GNU Parallel was cited in: FlashPCA: fast sparse canonical correlation analysis of genomic data http://biorxiv.org/content/biorxiv/suppl/2016/04/06/047217.DC1/047217-1.pdf
 
-* Tools of the trade http://onox.com.br/2015/05/tools-of-the-trade/#more-198
+* GNU Parallel was cited in: Computational Design of DNA-Binding Proteins http://link.springer.com/protocol/10.1007/978-1-4939-3569-7_16
 
-* Armslist scraper https://github.com/nprapps/armslist-scraper/
+* GNU Parallel was cited in: Math Indexer and Searcher under the Hood: Fine-tuning Query Expansion and Unification Strategies http://research.nii.ac.jp/ntcir/workshop/OnlineProceedings12/pdf/ntcir/MathIR/05-NTCIR12-MathIR-RuzickaM.pdf
+
+* GNU Parallel was cited in: The Evolution and Fate of Super-Chandrasekhar Mass White Dwarf Merger Remnants http://arxiv.org/pdf/1606.02300.pdf
+
+* GNU Parallel was cited in: Evaluation of Coastal Scatterometer Products https://mdc.coaps.fsu.edu/scatterometry/meeting/docs/2016/Thu_AM/coastal-poster.pdf
+
+* GNU Parallel was used in: https://github.com/splitice/bulkdnsblcheck
+
+* The iconv slurp misfeature http://www.openfusion.net/linux/iconv_slurp_misfeature
+
+* แบบว่า CPU เหลือ https://veer66.wordpress.com/2016/06/15/gnu-parallel/
 
 * Bug fixes and man page updates.
 

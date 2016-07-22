@@ -266,6 +266,14 @@ shell quote a string
 
 number of jobs in total
 
+=item Z<> B<$job->slot()>
+
+slot number of job
+
+=item Z<> B<$job->seq()>
+
+sequence number of job
+
 =back
 
 Example:
@@ -1476,7 +1484,7 @@ sequence numbers in B<--joblog> then the input, the command, and
 B<--joblog> all have to remain unchanged; otherwise GNU B<parallel>
 may run wrong commands.
 
-See also B<--joblog>, B<--results>, B<--resume-failed>.
+See also B<--joblog>, B<--results>, B<--resume-failed>, B<--retries>.
 
 
 =item B<--resume-failed>
@@ -1489,7 +1497,7 @@ numbers in B<--joblog> then the input, the command, and B<--joblog>
 all have to remain unchanged; otherwise GNU B<parallel> may run wrong
 commands.
 
-See also B<--joblog>, B<--resume>.
+See also B<--joblog>, B<--resume>, B<--retry-failed>, B<--retries>.
 
 
 =item B<--retry-failed>
@@ -1497,10 +1505,66 @@ See also B<--joblog>, B<--resume>.
 Retry all failed jobs in joblog. By reading B<--joblog> GNU
 B<parallel> will figure out the failed jobs and run those again.
 
-B<--retry-failed> ignore the command and arguments: It only looks at
-the joblog.
+B<--retry-failed> ignores the command and arguments on the command
+line: It only looks at the joblog.
 
-See also B<--joblog>, B<--resume>, B<--resume-failed>.
+    B<Differences between --resume, --resume-failed, --retry-failed>
+
+In this example B<exit {= $_%=2 =}> will cause every other job to fail.
+
+  timeout -k 1 4 parallel --joblog log -j10 'sleep {}; exit {= $_%=2 =}' ::: {10..1}
+
+4 jobs completed. 2 failed:
+
+  Seq	[...]	Exitval	Signal	Command
+  10	[...]	1	0	sleep 1; exit 1
+  9	[...]	0	0	sleep 2; exit 0
+  8	[...]	1	0	sleep 3; exit 1
+  7	[...]	0	0	sleep 4; exit 0
+
+B<--resume> does not care about the Exitval, but only looks at Seq. If
+the Seq is run, it will not be run again. So if needed, you can change
+the command for the seqs not run yet:
+
+  parallel --resume --joblog log -j10 'sleep .{}; exit {= $_%=2 =}' ::: {10..1}
+
+  Seq	[...]	Exitval	Signal	Command
+  [... as above ...]
+  1	[...]	0	0	sleep .10; exit 0
+  6	[...]	1	0	sleep .5; exit 1
+  5	[...]	0	0	sleep .6; exit 0
+  4	[...]	1	0	sleep .7; exit 1
+  3	[...]	0	0	sleep .8; exit 0
+  2	[...]	1	0	sleep .9; exit 1
+
+B<--resume-failed> cares about the Exitval, but also only looks at Seq
+to figure out which commands to run. Again this means you can change
+the command, but not the arguments. It will run the failed seqs and
+the seqs not yet run:
+
+  parallel --resume-failed --joblog log -j10 'echo {};sleep .{}; exit {= $_%=3 =}' ::: {10..1}
+
+  Seq	[...]	Exitval	Signal	Command
+  [... as above ...]
+  10	[...]	1	0	echo 1;sleep .1; exit 1
+  8	[...]	0	0	echo 3;sleep .3; exit 0
+  6	[...]	2	0	echo 5;sleep .5; exit 2
+  4	[...]	1	0	echo 7;sleep .7; exit 1
+  2	[...]	0	0	echo 9;sleep .9; exit 0
+
+B<--retry-failed> cares about the Exitval, but takes the command from
+the joblog. It ignores any arguments or commands given on the command
+line:
+
+  parallel --retry-failed --joblog log -j10 this part is ignored
+
+  Seq	[...]	Exitval	Signal	Command
+  [... as above ...]
+  10	[...]	1	0	echo 1;sleep .1; exit 1
+  6	[...]	2	0	echo 5;sleep .5; exit 2
+  4	[...]	1	0	echo 7;sleep .7; exit 1
+
+See also B<--joblog>, B<--resume>, B<--resume-failed>, B<--retries>.
 
 
 =item B<--retries> I<n>
@@ -1609,6 +1673,8 @@ Here are a few examples:
   --rpl '{0#} $f = "%0".int(1+log(total_jobs())/log(10))."d"; $_=sprintf($f,$job->seq())'
   Job sequence counting from 0
   --rpl '{#0} $_ = $job->seq() - 1'
+  Job slot counting from 2
+  --rpl '{%1} $_ = $job->slot() + 1'
 
 See also: B<{= perl expression =}> B<--parens>
 

@@ -52,12 +52,12 @@ env_parallel() {
             }
             if(grep { /^_$/ } @envvar) {
                 if(not open(IN, "<", "$ENV{HOME}/.parallel/ignored_vars")) {
-            	print STDERR "parallel: Error: ",
-            	"Run \"parallel --record-env\" in a clean environment first.\n";
+             	    print STDERR "parallel: Error: ",
+            	    "Run \"parallel --record-env\" in a clean environment first.\n";
                 } else {
-            	chomp(@ignored_vars = <IN>);
-            	$vars = join "|",map { quotemeta $_ } @ignored_vars;
-            	print $vars ? "($vars)" : "(,,nO,,VaRs,,)";
+            	    chomp(@ignored_vars = <IN>);
+            	    $vars = join "|",map { quotemeta $_ } "env_parallel", @ignored_vars;
+		    print $vars ? "($vars)" : "(,,nO,,VaRs,,)";
                 }
             }
             ' -- "$@"
@@ -87,7 +87,7 @@ env_parallel() {
     local _variable_NAMES="$(compgen -A variable |
         grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ |
         grep -vFf <(readonly) |
-        egrep -v '^(BASHOPTS|BASHPID|EUID|GROUPS|FUNCNAME|DIRSTACK|_|PIPESTATUS|PPID|SHELLOPTS|UID|USERNAME|BASH_[A-Z_]+)$')"
+        grep -Ev '^(BASHOPTS|BASHPID|EUID|GROUPS|FUNCNAME|DIRSTACK|_|PIPESTATUS|PPID|SHELLOPTS|UID|USERNAME|BASH_[A-Z_]+)$')"
     local _list_variable_VALUES="typeset -p $_variable_NAMES"
     if [[ "$_variable_NAMES" = "" ]] ; then
 	# no variables selected
