@@ -160,29 +160,37 @@ E.g. by doing:
 
 =item aliases
 
-  alias myecho=echo
-  env_parallel myecho ::: test
-  env_parallel -S server myecho ::: test
+  alias myecho 'echo aliases'
+  env_parallel myecho ::: work
+  env_parallel -S server myecho ::: work
+  env_parallel --env myecho myecho ::: work
+  env_parallel --env myecho -S server myecho ::: work
 
 =item functions
 
   function myfunc
-    echo $argv
+    echo functions $argv
   end
-  env_parallel myfunc ::: test
-  env_parallel -S server myfunc ::: test
+  env_parallel myfunc ::: work
+  env_parallel -S server myfunc ::: work
+  env_parallel --env myfunc myfunc ::: work
+  env_parallel --env myfunc -S server myfunc ::: work
 
 =item variables
 
-  set myvar test
-  env_parallel echo '$myvar' ::: test
-  env_parallel -S server echo '$myvar' ::: test
+  set myvar variables
+  env_parallel echo '$myvar' ::: work
+  env_parallel -S server echo '$myvar' ::: work
+  env_parallel --env myvar echo '$myvar' ::: work
+  env_parallel --env myvar -S server echo '$myvar' ::: work
 
 =item arrays
 
-  set myarray foo bar baz
-  env_parallel echo '$myarray[{}]' ::: 1 2 3
-  env_parallel -S server echo '$myarray[{}]' ::: 1 2 3
+  set myarray arrays work, too
+  env_parallel -k echo '$myarray[{}]' ::: 1 2 3
+  env_parallel -k -S server echo '$myarray[{}]' ::: 1 2 3
+  env_parallel -k --env myarray echo '$myarray[{}]' ::: 1 2 3
+  env_parallel -k --env myarray -S server echo '$myarray[{}]' ::: 1 2 3
 
 =back
 
@@ -202,27 +210,35 @@ E.g. by doing:
 
 =item aliases
 
-  alias myecho=echo
-  env_parallel myecho ::: test
-  env_parallel -S server myecho ::: test
+  alias myecho='echo aliases'
+  env_parallel myecho ::: work
+  env_parallel -S server myecho ::: work
+  env_parallel --env myecho myecho ::: work
+  env_parallel --env myecho -S server myecho ::: work
 
 =item functions
 
-  myfunc() { echo $*; }
-  env_parallel myfunc ::: test
-  env_parallel -S server myfunc ::: test
+  myfunc() { echo functions $*; }
+  env_parallel myfunc ::: work
+  env_parallel -S server myfunc ::: work
+  env_parallel --env myfunc myfunc ::: work
+  env_parallel --env myfunc -S server myfunc ::: work
 
 =item variables
 
-  myvar=test
-  env_parallel echo '$myvar' ::: test
-  env_parallel -S server echo '$myvar' ::: test
+  myvar=variables
+  env_parallel echo '$myvar' ::: work
+  env_parallel -S server echo '$myvar' ::: work
+  env_parallel --env myvar echo '$myvar' ::: work
+  env_parallel --env myvar -S server echo '$myvar' ::: work
 
 =item arrays
 
-  myarray=(foo bar baz)
-  env_parallel echo '${myarray[{}]}' ::: 0 1 2
-  env_parallel -S server echo '${myarray[{}]}' ::: 0 1 2
+  myarray=(arrays work, too)
+  env_parallel -k echo '${myarray[{}]}' ::: 0 1 2
+  env_parallel -k -S server echo '${myarray[{}]}' ::: 0 1 2
+  env_parallel -k --env myarray echo '${myarray[{}]}' ::: 0 1 2
+  env_parallel -k --env myarray -S server echo '${myarray[{}]}' ::: 0 1 2
 
 =back
 
@@ -242,27 +258,35 @@ E.g. by doing:
 
 =item aliases
 
-  alias myecho=echo
-  env_parallel myecho ::: test
-  env_parallel -S server myecho ::: test
+  alias myecho="echo aliases";
+  env_parallel myecho ::: work;
+  env_parallel -S server myecho ::: work;
+  env_parallel --env myecho myecho ::: work;
+  env_parallel --env myecho -S server myecho ::: work
 
 =item functions
 
-  myfunc() { echo $*; }
-  env_parallel myfunc ::: test
-  env_parallel -S server myfunc ::: test
+  myfunc() { echo functions $*; };
+  env_parallel myfunc ::: work;
+  env_parallel -S server myfunc ::: work;
+  env_parallel --env myfunc myfunc ::: work;
+  env_parallel --env myfunc -S server myfunc ::: work
 
 =item variables
 
-  myvar=test
-  env_parallel echo '$myvar' ::: test
-  env_parallel -S server echo '$myvar' ::: test
+  myvar=variables;
+  env_parallel echo "\$myvar" ::: work;
+  env_parallel -S server echo "\$myvar" ::: work;
+  env_parallel --env myvar echo "\$myvar" ::: work;
+  env_parallel --env myvar -S server echo "\$myvar" ::: work
 
 =item arrays
 
-  myarray=(foo bar baz)
-  env_parallel echo '${myarray[{}]}' ::: 0 1 2
-  env_parallel -S server echo '${myarray[{}]}' ::: 0 1 2
+  myarray=(arrays work, too);
+  env_parallel -k echo "\${myarray[{}]}" ::: 0 1 2;
+  env_parallel -k -S server echo "\${myarray[{}]}" ::: 0 1 2;
+  env_parallel -k --env myarray echo "\${myarray[{}]}" ::: 0 1 2;
+  env_parallel -k --env myarray -S server echo "\${myarray[{}]}" ::: 0 1 2
 
 =back
 
@@ -288,6 +312,8 @@ E.g. by doing:
   alias myecho echo
   env_parallel myecho ::: test
   env_parallel -S server myecho ::: test
+  env_parallel --env myecho myecho ::: work
+  env_parallel --env myecho -S server myecho ::: work
 
 =item functions
 
@@ -298,6 +324,8 @@ Not supported by B<csh>.
   set myvar=test
   env_parallel echo "\$myvar" ::: test
   env_parallel -S csh@server echo "\$myvar" ::: test
+  env_parallel --env myvar echo '$myvar' ::: work
+  env_parallel --env myvar -S server echo '$myvar' ::: work
 
 
 =item arrays with no special chars
@@ -305,6 +333,8 @@ Not supported by B<csh>.
   set myarray=(foo bar baz)
   env_parallel echo "\${myarray\[\{\}\]}" ::: 1 2 3
   env_parallel -S csh@server echo "\${myarray\[\{\}\]}" ::: 1 2 3
+  env_parallel -k --env myarray echo \$'{myarray[{}]}' ::: 1 2 3
+  env_parallel -k --env myarray -S server echo \$'{myarray[{}]}' ::: 1 2 3
 
 =back
 
@@ -327,9 +357,11 @@ E.g. by doing:
 
 =item aliases
 
-  alias myecho echo
-  env_parallel myecho ::: test
-  env_parallel -S server myecho ::: test
+  alias myecho 'echo aliases'
+  env_parallel myecho ::: work
+  env_parallel -S server myecho ::: work
+  env_parallel --env myecho myecho ::: work
+  env_parallel --env myecho -S server myecho ::: work
 
 =item functions
 
@@ -337,16 +369,19 @@ Not supported by B<tcsh>.
 
 =item variables
 
-  set myvar=test
-  env_parallel echo "\$myvar" ::: test
-  env_parallel -S tcsh@server echo "\$myvar" ::: test
-
+  set myvar=variables
+  env_parallel echo '$myvar' ::: work
+  env_parallel -S server echo '$myvar' ::: work
+  env_parallel --env myvar echo '$myvar' ::: work
+  env_parallel --env myvar -S server echo '$myvar' ::: work
 
 =item arrays with no special chars
 
-  set myarray=(foo bar baz)
-  env_parallel echo "\${myarray\[\{\}\]}" ::: 1 2 3
-  env_parallel -S tcsh@server echo "\${myarray\[\{\}\]}" ::: 1 2 3
+  set myarray=(arrays work, too)
+  env_parallel -k echo \$'{myarray[{}]}' ::: 1 2 3
+  env_parallel -k -S server echo \$'{myarray[{}]}' ::: 1 2 3
+  env_parallel -k --env myarray echo \$'{myarray[{}]}' ::: 1 2 3
+  env_parallel -k --env myarray -S server echo \$'{myarray[{}]}' ::: 1 2 3
 
 =back
 

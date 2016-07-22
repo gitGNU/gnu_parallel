@@ -1,34 +1,17 @@
-echo '### Test of --retries on unreachable host'
-### Test of --retries on unreachable host
-  seq 2 | stdout parallel -k --retries 2 -v -S 4.3.2.1,: echo
-parallel: Warning: Could not figure out number of cpus on 4.3.2.1 (). Using 1.
-echo 1
-1
-echo 2
-2
-echo '**'
-**
-echo "### Test Force outside the file handle limit, 2009-02-17 Gave fork error"
-### Test Force outside the file handle limit, 2009-02-17 Gave fork error
-  (echo echo Start; seq 1 20000 | perl -pe 's/^/true /'; echo echo end) | stdout parallel -uj 0 | egrep -v 'processes took|adjusting'
-parallel: Warning: Only enough file handles to run 252 jobs in parallel.
-parallel: Warning: Running 'parallel -j0 -N 252 --pipe parallel -j0' or 
-parallel: Warning: raising ulimit -n or /etc/security/limits.conf may help.
-Start
-end
-echo '**'
-**
-echo '### Test if we can deal with output > 4 GB'
-### Test if we can deal with output > 4 GB
-  echo | nice parallel --tmpdir $TMP5G -q perl -e '$a="x"x1000000;for(0..4300){print $a}' | nice md5sum
-46a318993dfc8e2afd71ff2bc6f605f1  -
-echo '**'
-**
-echo 'bug #41613: --compress --line-buffer no --tagstring';   diff     <(nice perl -e 'for("x011".."x110"){print "$_\t", ("\n", map { rand } (1..100000)) }'|       nice parallel -N10 -L1 --pipe -j6 --block 20M --compress       pv -qL 1000000 | perl -pe 's/(....).*/$1/')     <(nice perl -e 'for("x011".."x110"){print "$_\t", ("\n", map { rand } (1..100000)) }'|       nice parallel -N10 -L1 --pipe -j6 --block 20M --compress --line-buffer       pv -qL 1000000 | perl -pe 's/(....).*/$1/')     >/dev/null   || (echo 'Good: --line-buffer matters'; false) && echo 'Bad: --line-buffer not working'
-bug #41613: --compress --line-buffer no --tagstring
-Good: --line-buffer matters
-echo 'bug #41613: --compress --line-buffer with --tagstring';   diff     <(nice perl -e 'for("x011".."x110"){print "$_\t", ("\n", map { rand } (1..100000)) }'|       nice parallel -N10 -L1 --pipe -j6 --block 20M --compress --tagstring {#}       pv -qL 1000000 | perl -pe 's/(....).*/$1/')     <(nice perl -e 'for("x011".."x110"){print "$_\t", ("\n", map { rand } (1..100000)) }'|       nice parallel -N10 -L1 --pipe -j6 --block 20M --compress --tagstring {#} --line-buffer       pv -qL 1000000 | perl -pe 's/(....).*/$1/')     >/dev/null   || (echo 'Good: --line-buffer matters'; false) && echo 'Bad: --line-buffer not working'
-bug #41613: --compress --line-buffer with --tagstring
-Good: --line-buffer matters
-echo '**'
-**
+par_outside_file_handle_limit 2>&1
+par_outside_file_handle_limit	### Test Force outside the file handle limit, 2009-02-17 Gave fork error
+par_outside_file_handle_limit	parallel: Warning: Only enough file handles to run 252 jobs in parallel.
+par_outside_file_handle_limit	parallel: Warning: Running 'parallel -j0 -N 252 --pipe parallel -j0' or 
+par_outside_file_handle_limit	parallel: Warning: raising ulimit -n or /etc/security/limits.conf may help.
+par_outside_file_handle_limit	Start
+par_outside_file_handle_limit	end
+par_over_4GB 2>&1
+par_over_4GB	### Test if we can deal with output > 4 GB
+par_over_4GB	46a318993dfc8e2afd71ff2bc6f605f1  -
+par_retries_unreachable 2>&1
+par_retries_unreachable	### Test of --retries on unreachable host
+par_retries_unreachable	parallel: Warning: Could not figure out number of cpus on 4.3.2.1 (). Using 1.
+par_retries_unreachable	echo 1
+par_retries_unreachable	1
+par_retries_unreachable	echo 2
+par_retries_unreachable	2

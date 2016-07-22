@@ -191,10 +191,10 @@ reaper();
 ::debug("init", "Done reaping\n");
 if($opt::pipe and @opt::a) {
     for my $job (@Global::tee_jobs) {
-	unlink $job->fh(2,"name");
+	::rm($job->fh(2,"name"));
 	$job->set_fh(2,"name","");
 	$job->print();
-	unlink $job->fh(1,"name");
+	::rm($job->fh(1,"name"));
     }
 }
 ::debug("init", "Cleaning\n");
@@ -1208,7 +1208,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160627;
+    $Global::version = 20160704;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1953,7 +1953,7 @@ sub save_stdin_stdout_stderr {
     #   $Global::original_stderr
     #   $Global::original_stdin
     # Returns: N/A
-    
+
     # TODO Disabled until we have an open3 that will take n filehandles
     # for my $fdno (1..61) {
     # # /dev/fd/62 and above are used by bash for <(cmd)
@@ -3181,7 +3181,7 @@ sub parallelized_host_filtering {
     ::debug("init", $cmd, "\n");
     my @out;
     my $prepend = "";
-    
+
     my ($host_fh,$in,$err);
     open3($in, $host_fh, $err, $cmd) || ::die_bug("parallel host check: $cmd");
     if(not fork()) {
@@ -3488,6 +3488,7 @@ sub reaper {
 		::wait_and_exit($Global::halt_exitstatus);
             }
         }
+	$job->cleanup();
 	start_more_jobs();
 	if($opt::progress) {
 	    my %progress = progress();
@@ -3814,6 +3815,7 @@ sub tmpfile {
 sub tmpname {
     # Select a name that does not exist
     # Do not create the file as it may be used for creating a socket (by tmux)
+    # Remember the name in $Global::unlink to avoid hitting the same name twice
     my $name = shift;
     my($tmpname);
     if(not -w $ENV{'TMPDIR'}) {
@@ -3832,11 +3834,19 @@ sub tmpname {
 }
 
 sub tmpfifo {
-    # Securely make a fifo by securely making a dir with a fifo in it
+    # Find an unused name and mkfifo on it
     use POSIX qw(mkfifo);
     my $tmpfifo = tmpname("fif",@_);
     mkfifo($tmpfifo,0600);
     return $tmpfifo;
+}
+
+sub rm {
+    # Remove file and remove it from %Global::unlink
+    # Uses:
+    #   %Global::unlink
+    delete @Global::unlink{@_};
+    unlink @_;
 }
 
 sub size_of_block_dev {
@@ -4452,8 +4462,8 @@ sub new {
 sub DESTROY {
     my $self = shift;
     # Remove temporary files if they are created.
-    unlink $self->{'loadavg_file'};
-    unlink $self->{'swap_activity_file'};
+    ::rm($self->{'loadavg_file'});
+    ::rm($self->{'swap_activity_file'});
 }
 
 sub string {
@@ -6158,6 +6168,8 @@ sub new {
         # filehandle for stdin (used for --pipe)
 	# filename for writing stdout to (used for --files)
         # remaining data not sent to stdin (used for --pipe)
+	# tmpfiles to cleanup when job is done
+	'unlink' => [],
 	# amount of data sent via stdin (used for --pipe)
         'transfersize' => 0, # size of files using --transfer
         'returnsize' => 0, # size of files using --return
@@ -6381,6 +6393,25 @@ sub openoutputfiles {
     }
 }
 
+sub add_rm {
+    # Files to remove when job is done
+    my $self = shift;
+    push $self->{'unlink'}, @_;
+}
+
+sub get_rm {
+    # Files to remove when job is done
+    my $self = shift;
+    return @{$self->{'unlink'}};
+}
+
+sub cleanup {
+    # Remove files when job is done
+    my $self = shift;
+    unlink $self->get_rm();
+    delete @Global::unlink{$self->get_rm()};
+}
+
 sub grouped {
     my $self = shift;
     # Set reading FD if using --group (--ungroup does not need)
@@ -6392,7 +6423,7 @@ sub grouped {
 	    ::die_bug("fdr: Cannot open ".$self->fh($fdno,'name'));
 	$self->set_fh($fdno,'r',$fdr);
 	# Unlink if required
-	$Global::debug or unlink $self->fh($fdno,"unlink");
+	$Global::debug or ::rm($self->fh($fdno,"unlink"));
     }
 }
 
@@ -7402,7 +7433,7 @@ sub sshcleanup {
     my $workdir = $self->workdir();
     my $cleancmd = "";
 
-    for my $file ($self->cleanup()) {
+    for my $file ($self->remote_cleanup()) {
 	my @subworkdirs = parentdirs_of($file);
 	$cleancmd .= $sshlogin->cleanup_cmd($file,$workdir).";";
     }
@@ -7412,7 +7443,7 @@ sub sshcleanup {
     return $cleancmd;
 }
 
-sub cleanup {
+sub remote_cleanup {
     # Returns:
     #   Files to remove at cleanup
     my $self = shift;
@@ -7602,6 +7633,7 @@ sub start {
     $ENV{'PARALLEL_SEQ'} = $job->seq();
     $ENV{'PARALLEL_PID'} = $$;
     $ENV{'PARALLEL_TMP'} = ::tmpname("par");
+    $job->add_rm($ENV{'PARALLEL_TMP'});
     ::debug("run", $Global::total_running, " processes . Starting (",
 	    $job->seq(), "): $command\n");
     if($opt::pipe) {
@@ -7721,6 +7753,7 @@ sub print_dryrun_and_verbose {
 	my $actual_command = shift;
 	# Temporary file name. Used for fifo to communicate exit val
 	my $tmpfifo=::tmpname("tmx");
+	$self->add_rm($tmpfifo);
 
 	if(length($tmpfifo) >=100) {
 	    ::error("tmux does not support sockets with path > 100.");
@@ -7882,7 +7915,7 @@ sub print {
     if($opt::dryrun) {
 	# Nothing was printed to this job:
 	# cleanup tmp files if --files was set
-	unlink $self->fh(1,"name");
+	::rm($self->fh(1,"name"));
     }
     if($opt::pipe and $self->virgin()) {
 	# Skip --joblog, --dryrun, --verbose
@@ -7973,8 +8006,8 @@ sub files_print {
 	# Nothing was printed to this job:
 	# cleanup unused tmp files if --files was set
 	for my $fdno (1,2) {
-	    unlink $self->fh($fdno,"name");
-	    unlink $self->fh($fdno,"unlink");
+	    ::rm($self->fh($fdno,"name"));
+	    ::rm($self->fh($fdno,"unlink"));
 	}
     } elsif($fdno == 1 and $self->fh($fdno,"name")) {
 	print $out_fd $self->tag(),$self->fh($fdno,"name"),"\n";
@@ -8000,7 +8033,6 @@ sub linebuffer_print {
 	}
 	if($opt::compress) {
 	    # Blocked reading in final round
-	    $Global::use{"Fcntl"} ||= eval "use Fcntl qw(:DEFAULT :flock); 1;";
 	    for my $fdno (1,2) {
 		::set_fh_blocking($self->fh($fdno,'r'));
 	    }
@@ -8051,7 +8083,28 @@ sub linebuffer_print {
 	if($self->fh($fdno,"rpid") and CORE::kill 0, $self->fh($fdno,"rpid")) {
 	    # decompress still running
 	} else {
-	    # decompress done: close fh
+	    # decompress done:
+	    #   copy to sql (if needed)
+	    #   then close fh
+	    if($opt::sqlworker) {
+		my @output;
+		my $tag = $self->tag();
+		seek $in_fh, 0, 0;
+		while(<$in_fh>) {
+		    push @output, $tag,$_;
+		}
+		if($fdno == 1) {
+		    if(not $opt::results) {
+			$Global::sql->update("SET Stdout = ? WHERE Seq = ".$self->seq(),
+					     join("",@output));
+		    }
+		} else {
+		    if(not $opt::results) {
+			$Global::sql->update("SET Stderr = ? WHERE Seq = ".$self->seq(),
+					     join("",@output));
+		    }
+		}
+	    }
 	    close $in_fh;
 	    if($? and $opt::compress) {
 		::error($opt::decompress_program." failed.");
@@ -8075,12 +8128,25 @@ sub tag_print {
     # $in_fh is now ready for reading at position 0
     my $tag = $self->tag();
     my $outputlength = 0;
+    my @output;
     while(<$in_fh>) {
 	print $out_fd $tag,$_;
 	$outputlength += length $_;
+	if($opt::sqlworker) {
+	    push @output, $tag,$_;
+	}
     }
     if($fdno == 1) {
 	$self->add_returnsize($outputlength);
+	if($opt::sqlworker and not $opt::results) {
+	    $Global::sql->update("SET Stdout = ? WHERE Seq = ".$self->seq(),
+				 join("",@output));
+	}
+    } else {
+	if($opt::sqlworker and not $opt::results) {
+	    $Global::sql->update("SET Stderr = ? WHERE Seq = ".$self->seq(),
+				 join("",@output));
+	}
     }
     close $in_fh;
     if($? and $opt::compress) {
@@ -8149,13 +8215,13 @@ sub print_joblog {
 
 sub tag {
     my $self = shift;
-    if($opt::tag or defined $opt::tagstring) {
-	if(not defined $self->{'tag'}) {
+    if(not defined $self->{'tag'}) {
+	if($opt::tag or defined $opt::tagstring) {
 	    $self->{'tag'} = $self->{'commandline'}->
 		replace_placeholders([$opt::tagstring],0,0)."\t";
+	} else {
+	    $self->{'tag'} = "";
 	}
-    } else {
-	return "";
     }
     return $self->{'tag'};
 }
@@ -9223,7 +9289,7 @@ sub tmux_length {
 	    my $tmuxcmd = $ENV{'TMUX'}." -S $tmpfile new-session -d -n echo $l".
 		("x"x$l). " && echo $l; rm -f $tmpfile";
 	    push @out, ::qqx($tmuxcmd);
-	    unlink $tmpfile;
+	    ::rm($tmpfile);
 	}
 	::debug("tmux","tmux-out ",@out);
 	chomp @out;
@@ -9904,6 +9970,13 @@ sub new {
     my $dbh = DBI->connect($dsn, $userid, $password,
 			   { RaiseError => 1, AutoInactiveDestroy => 1 })
 	or die $DBI::errstr;
+    $dbh->{'PrintWarn'} = $Global::debug || 0;
+    $dbh->{'PrintError'} = $Global::debug || 0;
+    $dbh->{'RaiseError'} = 1;
+    $dbh->{'ShowErrorStatement'} = 1;
+    $dbh->{'HandleError'} = sub {};
+
+
     return bless {
 	'dbh' => $dbh,
 	'driver' => $driver,
@@ -10079,19 +10152,40 @@ sub run {
     my $lockretry = 0;
     while($lockretry < 10) {
 	$sth = $dbh->prepare($stmt);
-	if($rv = $sth->execute(@_)) {
+	if($sth
+	   and
+	   eval { $rv = $sth->execute(@_) }) {
 	    last;
 	} else {
+	    if($@ =~ /no such table|Table .* doesn.t exist|relation ".*" does not exist/
+	       or
+	       $DBI::errstr =~ /no such table|Table .* doesn.t exist|relation ".*" does not exist/) {
+		# This is fine:
+		# It is just a worker that reported back too late -
+		# another worker had finished the job first
+		# and the table was then dropped
+		$rv = $sth = 0;
+		last;
+	    }
 	    if($DBI::errstr =~ /locked/) {
 		::debug("sql","Lock retry: $lockretry");
 		$lockretry++;
+		::usleep(rand()*300);
+	    } elsif(not $sth) {
+		# Try again
+		$lockretry++;
 	    } else {
 		::error($DBI::errstr);
+		::wait_and_exit(255);
 	    }
 	}
     }
+    if($lockretry >= 10) {
+	::die_bug("retry > 10: $DBI::errstr");
+    }
     if($rv < 0){
-	print $DBI::errstr;
+	::error($DBI::errstr);
+	::wait_and_exit(255);
     }
     return $sth;
 }
@@ -10100,7 +10194,8 @@ sub get {
     my $self = shift;
     my $sth = $self->run(@_);
     my @retval;
-    while(1) {
+    # If $sth = 0 it means the table was dropped by another process
+    while($sth) {
 	my @row = $sth->fetchrow_array();
 	@row or last;
 	push @retval, \@row;
@@ -10269,7 +10364,7 @@ sub remove_dead_locks {
 	if($host eq ::hostname()) {
 	    if(not kill 0, $pid) {
 		::debug("sem", "Dead: $d\n");
-		unlink $d;
+		::rm($d);
 	    } else {
 		::debug("sem", "Alive: $d\n");
 	    }
@@ -10318,12 +10413,12 @@ sub acquire {
 
 sub release {
     my $self = shift;
-    unlink $self->{'pidfile'};
+    ::rm($self->{'pidfile'});
     if($self->nlinks() == 1) {
 	# This is the last link, so atomic cleanup
 	$self->lock();
 	if($self->nlinks() == 1) {
-	    unlink $self->{'idfile'};
+	    ::rm($self->{'idfile'});
 	    rmdir $self->{'lockdir'};
 	}
 	$self->unlock();
@@ -10341,7 +10436,7 @@ sub pid_change {
     $self->{'pidfile'} = $self->{'lockdir'}."/".$$.'@'.::hostname();
     my $retval = link $self->{'idfile'}, $self->{'pidfile'};
     ::debug("sem","link($self->{'idfile'},$self->{'pidfile'})=$retval\n");
-    unlink $old_pidfile;
+    ::rm($old_pidfile);
 }
 
 sub atomic_link_if_count_less_than {
@@ -10439,7 +10534,7 @@ sub lock {
 
 sub unlock {
     my $self = shift;
-    unlink $self->{'lockfile'};
+    ::rm($self->{'lockfile'});
     close $self->{'lockfh'};
     ::debug("run", "unlocked\n");
 }

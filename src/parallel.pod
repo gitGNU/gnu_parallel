@@ -2902,30 +2902,87 @@ Or if the regexps are fixed strings:
 
   grep -F -f regexps.txt bigfile
 
-There are 2 limiting factors: CPU and disk I/O. CPU is easy to
-measure: If the B<grep> takes >90% CPU (e.g. when running top), then the
-CPU is a limiting factor, and parallelization will speed this up. If
-not, then disk I/O is the limiting factor, and depending on the disk
-system it may be faster or slower to parallelize. The only way to know
-for certain is to measure.
+There are 3 limiting factors: CPU, RAM, and disk I/O.
 
-If the CPU is the limiting factor parallelization should be done on the regexps:
+RAM is easy to measure: If the B<grep> process takes up most of your
+free memory (e.g. when running B<top>), then RAM is a limiting factor.
 
-  cat regexp.txt | parallel --pipe -L1000 --round-robin grep -f - bigfile
+CPU is also easy to measure: If the B<grep> takes >90% CPU in B<top>,
+then the CPU is a limiting factor, and parallelization will speed this
+up.
 
-If a line matches multiple regexps, the line may be duplicated. The
-command will start one B<grep> per CPU and read I<bigfile> one time
-per CPU, but as that is done in parallel, all reads except the first
-will be cached in RAM. Depending on the size of I<regexp.txt> it may
-be faster to use B<--block 10m> instead of B<-L1000>. If I<regexp.txt>
-is too big to fit in RAM, remove B<--round-robin> and adjust
-B<-L1000>. This will cause I<bigfile> to be read more times.
+It is harder to see if disk I/O is the limiting factor, and depending
+on the disk system it may be faster or slower to parallelize. The only
+way to know for certain is to test and measure.
+
+
+=head2 Limiting factor: RAM
+
+The normal B<grep -f regexs.txt bigfile> works no matter the size of
+bigfile, but if regexps.txt is so big it cannot fit into memory, then
+you need to split this.
+
+B<grep -F> takes around 100 bytes of RAM and B<grep> takes about 500
+bytes of RAM per 1 byte of regexp. So if regexps.txt is 1% of your
+RAM, then it may be too big.
+
+If you can convert your regexps into fixed strings do that. E.g. if
+the lines you are looking for in bigfile all looks like:
+
+  ID1 foo bar baz Identifier1 quux
+  fubar ID2 foo bar baz Identifier2
+
+then your regexps.txt can be converted from:
+
+  ID1.*Identifier1
+  ID2.*Identifier2
+
+into:
+
+  ID1 foo bar baz Identifier1
+  ID2 foo bar baz Identifier2
+
+This way you can use B<grep -F> which takes around 80% less memory and
+is much faster.
+
+If it still does not fit in memory you can do this:
+
+  parallel --pipepart -a regexps.txt --block 1M grep -F -f - -n bigfile |
+    sort -un | perl -pe 's/^\d+://'
+
+The 1M should be your free memory divided by the number of cores and
+divided by 200 for B<grep -F> and by 1000 for normal B<grep>. On
+GNU/Linux you can do:
+
+  free=$(awk '/^((Swap)?Cached|MemFree|Buffers):/ { sum += $2 }
+              END { print sum }' /proc/meminfo)
+  percpu=$((free / 200 / $(parallel --number-of-cores)))k
+
+  parallel --pipepart -a regexps.txt --block $percpu --compress grep -F -f - -n bigfile |
+    sort -un | perl -pe 's/^\d+://'
+
+If you can live with duplicated lines and wrong order, it is faster to do:
+
+  parallel --pipepart -a regexps.txt --block $percpu --compress grep -F -f - bigfile
+
+=head2 Limiting factor: CPU
+
+If the CPU is the limiting factor parallelization should be done on
+the regexps:
+
+  cat regexp.txt | parallel --pipe -L1000 --round-robin --compress grep -f - -n bigfile |
+    sort -un | perl -pe 's/^\d+://'
+
+The command will start one B<grep> per CPU and read I<bigfile> one
+time per CPU, but as that is done in parallel, all reads except the
+first will be cached in RAM. Depending on the size of I<regexp.txt> it
+may be faster to use B<--block 10m> instead of B<-L1000>.
 
 Some storage systems perform better when reading multiple chunks in
 parallel. This is true for some RAID systems and for some network file
 systems. To parallelize the reading of I<bigfile>:
 
-  parallel --pipepart --block 100M -a bigfile -k grep -f regexp.txt
+  parallel --pipepart --block 100M -a bigfile -k --compress grep -f regexp.txt
 
 This will split I<bigfile> into 100MB chunks and run B<grep> on each of
 these chunks. To parallelize both reading of I<bigfile> and I<regexp.txt>
@@ -2935,6 +2992,11 @@ combine the two using B<--fifo>:
     \| parallel --pipe -L1000 --round-robin grep -f - {}
 
 If a line matches multiple regexps, the line may be duplicated.
+
+=head2 Bigger problem
+
+If the problem is too big to be solved by this, you are probably ready
+for Lucene.
 
 
 =head1 EXAMPLE: Using remote computers

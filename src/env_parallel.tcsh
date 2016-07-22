@@ -29,8 +29,48 @@ if ("`alias env_parallel`" == '') then
   # Activate alias
   alias env_parallel 'setenv PARALLEL "\!*"; source `which env_parallel.tcsh`'
 else
+  # Get the --env variables if set
+  # --env _ should be ignored
+  # and convert  a b c  to (a|b|c)
+  # If --env not set: Match everything (.*)
+  set _tMpscRIpt=`tempfile`
+  cat <<'EOF' > $_tMpscRIpt
+            #!/usr/bin/perl
+
+            for(@ARGV){
+                /^_$/ and $next_is_env = 0;
+                $next_is_env and push @envvar, split/,/, $_;
+                $next_is_env = /^--env$/;
+            }
+            $vars = join "|",map { quotemeta $_ } @envvar;
+            print $vars ? "($vars)" : "(.*)";
+'EOF'
+  set _grep_REGEXP="`perl $_tMpscRIpt -- $PARALLEL`"
+
+  # Deal with --env _
+  cat <<'EOF' > $_tMpscRIpt
+            #!/usr/bin/perl
+            
+            for(@ARGV){
+                $next_is_env and push @envvar, split/,/, $_;
+                $next_is_env=/^--env$/;
+            }
+            if(grep { /^_$/ } @envvar) {
+                if(not open(IN, "<", "$ENV{HOME}/.parallel/ignored_vars")) {
+            	print STDERR "parallel: Error: ",
+            	"Run 'parallel --record-env' in a clean environment first.\n";
+                } else {
+            	chomp(@ignored_vars = <IN>);
+            	$vars = join "|",map { quotemeta $_ } @ignored_vars;
+            	print $vars ? "($vars)" : "(,,nO,,VaRs,,)";
+                }
+            }
+'EOF'
+  set _ignore_UNDERSCORE="`perl $_tMpscRIpt -- $PARALLEL`"
+  rm $_tMpscRIpt
+
   # Get the scalar and array variable names
-  set _vARnAmES=(`set | awk -e '{print $1}' |grep -vE '^(_|killring|prompt2)$'`)
+  set _vARnAmES=(`set | awk -e '{print $1}' |grep -vE '^(#|_|killring|prompt2|command)$' | grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$`)
 
   # Make a tmpfile for the variable definitions
   set _tMpvARfILe=`tempfile`
@@ -38,18 +78,20 @@ else
   # Make a tmpfile for the variable definitions + alias
   set _tMpaLLfILe=`tempfile`
   foreach _vARnAmE ($_vARnAmES);
-    # if $?myvar && $#myvar <= 1 echo scalar_myvar=$var
-    eval if'($?'$_vARnAmE' && ${#'$_vARnAmE'} <= 1) echo scalar_'$_vARnAmE'='\"\$$_vARnAmE\" >> $_tMpvARfILe;
-    # if $?myvar && $#myvar > 1 echo array_myvar=$var
-    eval if'($?'$_vARnAmE' && ${#'$_vARnAmE'} > 1) echo array_'$_vARnAmE'="$'$_vARnAmE'"' >> $_tMpvARfILe;
+    # if not defined: next
+    eval if'(! $?'$_vARnAmE') continue'
+    # if $#myvar <= 1 echo scalar_myvar=$var
+    eval if'(${#'$_vARnAmE'} <= 1) echo scalar_'$_vARnAmE'='\"\$$_vARnAmE\" >> $_tMpvARfILe;
+    # if $#myvar > 1 echo array_myvar=$var
+    eval if'(${#'$_vARnAmE'} > 1) echo array_'$_vARnAmE'="$'$_vARnAmE'"' >> $_tMpvARfILe;
   end
-
+  unset _vARnAmE _vARnAmES
   # shell quote variables (--plain needed due to $PARALLEL abuse)
   # Convert 'scalar_myvar=...' to 'set myvar=...'
   # Convert 'array_myvar=...' to 'set array=(...)'
   cat $_tMpvARfILe | parallel --plain --shellquote |  perl -pe 's/^scalar_(\S+).=/set $1=/ or s/^array_(\S+).=(.*)/set $1=($2)/ && s/\\ / /g;' > $_tMpaLLfILe
   # Cleanup
-  rm $_tMpvARfILe; unset _tMpvARfILe _vARnAmE _vARnAmES
+  rm $_tMpvARfILe; unset _tMpvARfILe
 
 # ALIAS TO EXPORT ALIASES:
 
@@ -76,7 +118,10 @@ else
 #   Prepend with "\nalias "
 #   s/^/\001alias /;
 #   Quoted: s/\^/\\001alias\ /\;
-  alias | perl -pe s/\\047/\\047\\042\\047\\042\\047/g\;s/\^\(\\S+\)\(\\s+\)\\\(\(.\*\)\\\)/\\1\\2\\3/\;s/\^\(\\S+\)\(\\s+\)\(.\*\)/\\1\\2\\047\\3\\047/\;s/\^/\\001alias\ /\;s/\\\!/\\\\\\\!/g >> $_tMpaLLfILe 
+  alias | \
+    grep -E "^$_grep_REGEXP" | \
+    grep -vE "^$_ignore_UNDERSCORE""[^_a-zA-Z]" | \
+    perl -pe s/\\047/\\047\\042\\047\\042\\047/g\;s/\^\(\\S+\)\(\\s+\)\\\(\(.\*\)\\\)/\\1\\2\\3/\;s/\^\(\\S+\)\(\\s+\)\(.\*\)/\\1\\2\\047\\3\\047/\;s/\^/\\001alias\ /\;s/\\\!/\\\\\\\!/g >> $_tMpaLLfILe 
   
   setenv PARALLEL_ENV "`cat $_tMpaLLfILe; rm $_tMpaLLfILe`";
   unset _tMpaLLfILe;

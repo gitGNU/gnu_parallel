@@ -25,45 +25,67 @@
 # or write to the Free Software Foundation, Inc., 51 Franklin St,
 # Fifth Floor, Boston, MA 02110-1301 USA
 
-# Supports env of 127426 bytes
-
 env_parallel() {
     # env_parallel.bash
 
     # Get the --env variables if set
+    # --env _ should be ignored
     # and convert  a b c  to (a|b|c)
     # If --env not set: Match everything (.*)
-    local grep_REGEXP="$(
-        perl -e 'for(@ARGV){
+    local _grep_REGEXP="$(
+        perl -e '
+            for(@ARGV){
+                /^_$/ and $next_is_env = 0;
                 $next_is_env and push @envvar, split/,/, $_;
-                $next_is_env=/^--env$/;
+                $next_is_env = /^--env$/;
             }
             $vars = join "|",map { quotemeta $_ } @envvar;
             print $vars ? "($vars)" : "(.*)";
             ' -- "$@"
     )"
+    # Deal with --env _
+    local _ignore_UNDERSCORE="$(
+        perl -e '
+            for(@ARGV){
+                $next_is_env and push @envvar, split/,/, $_;
+                $next_is_env=/^--env$/;
+            }
+            if(grep { /^_$/ } @envvar) {
+                if(not open(IN, "<", "$ENV{HOME}/.parallel/ignored_vars")) {
+            	print STDERR "parallel: Error: ",
+            	"Run \"parallel --record-env\" in a clean environment first.\n";
+                } else {
+            	chomp(@ignored_vars = <IN>);
+            	$vars = join "|",map { quotemeta $_ } @ignored_vars;
+            	print $vars ? "($vars)" : "(,,nO,,VaRs,,)";
+                }
+            }
+            ' -- "$@"
+    )"
 
     # Grep alias names
     local _alias_NAMES="$(compgen -a |
-        egrep "^${grep_REGEXP}\$")"
+        grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ )"
     local _list_alias_BODIES="alias $_alias_NAMES"
     if [[ "$_alias_NAMES" = "" ]] ; then
 	# no aliases selected
 	_list_alias_BODIES="true"
     fi
+    unset _alias_NAMES
 
     # Grep function names
     local _function_NAMES="$(compgen -A function |
-        egrep "^${grep_REGEXP}\$")"
+        grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ )"
     local _list_function_BODIES="typeset -f $_function_NAMES"
     if [[ "$_function_NAMES" = "" ]] ; then
 	# no functions selected
 	_list_function_BODIES="true"
     fi
+    unset _function_NAMES
 
     # Grep variable names
     local _variable_NAMES="$(compgen -A variable |
-        egrep "^${grep_REGEXP}\$" |
+        grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ |
         grep -vFf <(readonly) |
         egrep -v '^(BASHOPTS|BASHPID|EUID|GROUPS|FUNCNAME|DIRSTACK|_|PIPESTATUS|PPID|SHELLOPTS|UID|USERNAME|BASH_[A-Z_]+)$')"
     local _list_variable_VALUES="typeset -p $_variable_NAMES"
@@ -71,6 +93,7 @@ env_parallel() {
 	# no variables selected
 	_list_variable_VALUES="true"
     fi
+    unset _variable_NAMES
 
     # Copy shopt (so e.g. extended globbing works)
     # But force expand_aliases as aliases otherwise do not work
@@ -82,20 +105,9 @@ env_parallel() {
         $_list_alias_BODIES;
         $_list_variable_VALUES;
         $_list_function_BODIES)";
+    unset _list_alias_BODIES
+    unset _list_variable_VALUES
+    unset _list_function_BODIES
     `which parallel` "$@";
     unset PARALLEL_ENV;
 }
-
-# Supports env of 127375 bytes
-#
-# _env_parallel() {
-#   # Saving to a tempfile
-#   export PARALLEL_ENV=`tempfile`;
-#   (echo "shopt -s expand_aliases 2>/dev/null"; alias;typeset -p |
-#     grep -vFf <(readonly) |
-#     grep -v 'declare .. (GROUPS|FUNCNAME|DIRSTACK|_|PIPESTATUS|USERNAME|BASH_[A-Z_]+) ';
-#     typeset -f) > $PARALLEL_ENV
-#   `which parallel` "$@";
-#   rm "$PARALLEL_ENV"
-#   unset PARALLEL_ENV;
-# }

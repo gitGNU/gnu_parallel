@@ -1,65 +1,3 @@
-echo '### --env from man env_parallel'
-### --env from man env_parallel
-echo '### bash'
-### bash
-ssh bash@lo '   alias myecho="echo aliases";   env_parallel myecho ::: work;   env_parallel -S server myecho ::: work;   env_parallel --env myecho myecho ::: work;   env_parallel --env myecho -S server myecho ::: work '
-aliases work
-aliases work
-aliases work
-aliases work
-ssh bash@lo '   myfunc() { echo functions $*; };   env_parallel myfunc ::: work;   env_parallel -S server myfunc ::: work;   env_parallel --env myfunc myfunc ::: work;   env_parallel --env myfunc -S server myfunc ::: work '
-functions work
-functions work
-functions work
-functions work
-ssh bash@lo '   myvar=variables;   env_parallel echo "\$myvar" ::: work;   env_parallel -S server echo "\$myvar" ::: work;   env_parallel --env myvar echo "\$myvar" ::: work;   env_parallel --env myvar -S server echo "\$myvar" ::: work '
-variables work
-variables work
-variables work
-variables work
-ssh bash@lo '   myarray=(arrays work, too);   env_parallel -k echo "\${myarray[{}]}" ::: 0 1 2;   env_parallel -k -S server echo "\${myarray[{}]}" ::: 0 1 2;   env_parallel -k --env myarray echo "\${myarray[{}]}" ::: 0 1 2;   env_parallel -k --env myarray -S server echo "\${myarray[{}]}" ::: 0 1 2 '
-arrays
-work,
-too
-arrays
-work,
-too
-arrays
-work,
-too
-arrays
-work,
-too
-echo '### zsh'
-### zsh
-ssh zsh@lo '   alias myecho="echo aliases";   env_parallel myecho ::: work;   env_parallel -S server myecho ::: work;   env_parallel --env myecho myecho ::: work;   env_parallel --env myecho -S server myecho ::: work '
-aliases work
-aliases work
-aliases work
-aliases work
-  ssh zsh@lo '   myfunc() { echo functions $*; };   env_parallel myfunc ::: work;   env_parallel -S server myfunc ::: work;   env_parallel --env myfunc myfunc ::: work;   env_parallel --env myfunc -S server myfunc ::: work '
-functions work
-functions work
-functions work
-functions work
-ssh zsh@lo '   myvar=variables;   env_parallel echo "\$myvar" ::: work;   env_parallel -S server echo "\$myvar" ::: work;   env_parallel --env myvar echo "\$myvar" ::: work;   env_parallel --env myvar -S server echo "\$myvar" ::: work '
-variables work
-variables work
-variables work
-variables work
-ssh zsh@lo '   myarray=(arrays work, too);   env_parallel -k echo "\${myarray[{}]}" ::: 1 2 3;   env_parallel -k -S server echo "\${myarray[{}]}" ::: 1 2 3;   env_parallel -k --env myarray echo "\${myarray[{}]}" ::: 1 2 3;   env_parallel -k --env myarray -S server echo "\${myarray[{}]}" ::: 1 2 3 '
-arrays
-work,
-too
-arrays
-work,
-too
-arrays
-work,
-too
-arrays
-work,
-too
 echo '### --env _'
 ### --env _
   fUbAr="OK FUBAR" parallel -S parallel@lo --env _ echo '$fUbAr $DEBEMAIL' ::: test
@@ -77,14 +15,6 @@ bug #40137: SHELL not bash: Warning when exporting funcs
 no_warning
   . <(printf 'myfunc() {\necho $1\n}'); export -f myfunc; SHELL=/bin/sh parallel --env myfunc -S lo myfunc ::: warning
 warning
-echo 'env_parallel from man page - transfer non-exported var'
-env_parallel from man page - transfer non-exported var
-  source $(which env_parallel.bash);   var=nonexported env_parallel -S parallel@lo echo '$var' ::: variable
-nonexported variable
-echo 'compared to parallel - no transfer non-exported var'
-compared to parallel - no transfer non-exported var
-  var=nonexported parallel -S parallel@lo echo '$var' ::: variable
-variable
 echo '### zsh'
 ### zsh
 echo 'env in zsh'
@@ -194,135 +124,3 @@ echo '### bug #45575: -m and multiple hosts repeats first args'
 1
 2
 3
-
-Test env_parallel:
-+ for each shell
-+ remote, locally
-+ variables, variables with funky content, arrays, assoc array, functions, aliases
-
-### Bash environment
-3 arg alias_works
-function_works
-myvar  works
-  space  6  
-assoc_val_a
-Funky-
-
-	
- !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
-€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-3 arg alias_works_over_ssh
-function_works_over_ssh
-myvar  works
-  space  6  
-assoc_val_a
-Funky-
-
-	
- !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
-€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-
-\\\\\\\\	
-\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
-
-### Zsh environment
-
- * Documentation:  http://www.linuxmint.com
-3 arg alias_works
-function_works
-myvar  works
-  space  6  
-assoc_val_a
-Funky-
-	
- !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-3 arg alias_works_over_ssh
-function_works_over_ssh
-myvar  works
-  space  6  
-assoc_val_a
-Funky-
-	
- !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-
-\\\\\\\\	
-\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
-
-### Ksh environment
-
- * Documentation:  http://www.linuxmint.com
-3 arg alias_works
-function_works
-myvar  works
-  space  6  
-assoc_val_a
-Funky-	
- !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-3 arg alias_works_over_ssh
-function_works_over_ssh
-myvar  works
-  space  6  
-assoc_val_a
-Funky-	
- !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-
-\\\\\\\\	
-\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
-
-### Fish environment
-
- * Documentation:  http://www.linuxmint.com
-env_parallel: Warning: ASCII value 1 in variables is not supported
-env_parallel: Warning: ASCII value 1 in variables is not supported
-3 arg alias_works
-env_parallel: Warning: ASCII value 1 in variables is not supported
-env_parallel: Warning: ASCII value 1 in variables is not supported
-function_works
-myvar  works
-myenvvar  works
-  space  6  
-
-
-
-Funky-	   !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-Funkyenv-	   !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funkyenv
-
-
-
-env_parallel: Warning: ASCII value 1 in variables is not supported
-env_parallel: Warning: ASCII value 1 in variables is not supported
-3 arg alias_works_over_ssh
-env_parallel: Warning: ASCII value 1 in variables is not supported
-env_parallel: Warning: ASCII value 1 in variables is not supported
-function_works_over_ssh
-myvar  works
-myenvvar  works
-  space  6  
-
-
-
-Funky-	   !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-Funkyenv-	   !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funkyenv
-
-
-
-
-\\\\\\\\	\ \\\\\\\\\\\\\\\\\ \ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
-
-### csh environment
-
- * Documentation:  http://www.linuxmint.com
-Warning: no access to tty (Bad file descriptor).
-Thus no job control in this shell.
-3 arg alias_works
-
-myvar  works
-space special chars problem
-Funky-	  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky alias_var_works
-func_echo: Command not found.
-3 arg alias_works_over_ssh
-myvar  works
-space special chars problem
-Funky-	  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky alias_var_works_over_ssh
-func_echo: Command not found.
-\\\\\\\\	\ \\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
