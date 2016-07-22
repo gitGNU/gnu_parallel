@@ -227,9 +227,10 @@ GNU Parallel 20160722 ('Brexit') <<[stable]>> has been released. It is available
 
 Haiku of the month:
 
-  <<>>
+  Pipes are fast and good.
+  Use them in your programs, too.
+  Use GNU Parallel
     -- Ole Tange
-
 
 New in this release:
 

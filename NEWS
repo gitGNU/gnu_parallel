@@ -1,3 +1,60 @@
+20160722
+
+* env_parallel is now ready for wider testing. It is still beta
+  quality.
+
+* env_parallel is heavily modified for all shells and testing has been
+  increased.
+
+* Selectively choosing what to export using --env now works for
+  env_parallel (bash, csh, fish, ksh, pdksh, tcsh, zsh).
+
+* --round-robin now gives more work to a job that processes faster
+  instead of same amount to all jobs.
+
+* --pipepart works on block devices on GNU/Linux.
+
+* GNU Parallel was cited in: HybPiper: Extracting Coding Sequence and
+  Introns for Phylogenetics from High-Throughput Sequencing Reads
+  Using Target Enrichment
+  http://www.bioone.org/doi/full/10.3732/apps.1600016
+
+* GNU Parallel was cited in: StrAuto - Automation and Parallelization
+  of STRUCTURE Analysis
+  http://www.crypticlineage.net/download/strauto/strauto_doc.pdf
+
+* GNU Parallel was cited in: Tools and techniques for computational
+  reproducibility
+  http://gigascience.biomedcentral.com/articles/10.1186/s13742-016-0135-4
+
+* GNU Parallel was cited in: FlashPCA: fast sparse canonical correlation analysis of genomic data http://biorxiv.org/content/biorxiv/suppl/2016/04/06/047217.DC1/047217-1.pdf
+
+* GNU Parallel was cited in: Computational Design of DNA-Binding
+  Proteins
+  http://link.springer.com/protocol/10.1007/978-1-4939-3569-7_16
+
+* GNU Parallel was cited in: Math Indexer and Searcher under the Hood:
+  Fine-tuning Query Expansion and Unification Strategies
+  http://research.nii.ac.jp/ntcir/workshop/OnlineProceedings12/pdf/ntcir/MathIR/05-NTCIR12-MathIR-RuzickaM.pdf
+
+* GNU Parallel was cited in: The Evolution and Fate of
+  Super-Chandrasekhar Mass White Dwarf Merger Remnants
+  http://arxiv.org/pdf/1606.02300.pdf
+
+* GNU Parallel was cited in: Evaluation of Coastal Scatterometer
+  Products
+  https://mdc.coaps.fsu.edu/scatterometry/meeting/docs/2016/Thu_AM/coastal-poster.pdf
+
+* GNU Parallel was used in: https://github.com/splitice/bulkdnsblcheck
+
+* The iconv slurp misfeature
+  http://www.openfusion.net/linux/iconv_slurp_misfeature
+
+* แบบว่า CPU เหลือ https://veer66.wordpress.com/2016/06/15/gnu-parallel/
+
+* Bug fixes and man page updates.
+
+
 20160622
 
 * $PATH can now be exported using --env PATH. Useful if GNU Parallel
