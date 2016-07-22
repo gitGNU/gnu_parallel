@@ -8,7 +8,16 @@ sudo aptitude install imagemagick expect autossh
 
 # DEBIAN package
 sudo aptitude install dpkg-dev build-essential debhelper
+# SHEBANG TOOLS
+sudo aptitude install gnuplot octave ruby r-base-core
+# SQL TOOLS
+sudo aptitude install libdbd-pg-perl libdbd-sqlite3-perl
+# Compression
+sudo aptitude install pxz pixz
 
+# To configure zsh
+echo Configure zsh and exit
+zsh
 
 # DATABASES
 sudo aptitude install postgresql mysql-server
@@ -37,6 +46,7 @@ create_shell_user() {
     sshpass -e ssh-copy-id $shell@lo &&
     echo "ssh-keyscan" &&
     ssh $shell@lo 'ssh-keyscan -t rsa lo >> .ssh/known_hosts' &&
+    ssh $shell@lo 'ssh-keyscan -t rsa server >> .ssh/known_hosts' &&
     echo "chsh" &&
     sudo chsh -s $(which $shell || which ${shell#"nopath"}) $shell &&
     echo | ssh -t $shell@lo ssh-keygen &&
@@ -62,7 +72,7 @@ ssh_copy_id() {
 export -f ssh_copy_id
 shellsplus="parallel $shells"
 parallel --bar -j200% --timeout 3 --retries 10 --tag ssh_copy_id {1}@lo {2}@lo ::: $shellsplus ::: $shellsplus
-parallel -j10 ssh {1}@lo ssh {2}@lo echo {} OK ::: $shellsplus ::: $shellsplus 
+parallel -j10 --retries 3 --tag ssh {1}@lo ssh {2}@lo echo OK ::: $shellsplus ::: $shellsplus 
 
 # change paths to no path
 (
@@ -86,12 +96,9 @@ lsh-keygen | lsh-writekey -c none
 lsh-export-key --openssh < ~/.lsh/identity.pub | lsh localhost 'cat >>.ssh/authorized_keys'
 lsh-export-key --openssh < ~/.lsh/identity.pub | ssh csh@localhost 'cat >>.ssh/authorized_keys'
 
-# To configure zsh
-zsh
+
 parallel --record-env
 
 
-# SHEBANG TOOLS
-sudo aptitude install gnuplot octave ruby r-base-core libdbd-pg-perl libdbd-sqlite3-perl pxz pixz
 sudo cp /usr/bin/tmux /usr/local/bin/tmux1.8
 

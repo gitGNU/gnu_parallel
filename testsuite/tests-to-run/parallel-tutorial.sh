@@ -26,6 +26,8 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
 ' |
   stdout parallel --joblog /tmp/jl-`basename $0` -j6 -vd'\n\n' |
   perl -pe '$|=1;
+            # --pipe --roundrobin wc
+            s: \d{6}  \d{6} \d{7}: 999999  999999 9999999:;
             # --tmux
             s:(/tmp\S+)(tms).....:$1$2XXXXX:;
             # --files

@@ -92,7 +92,7 @@ With script in $PARALLEL /bin/bash=/home/tange/privat/parallel/testsuite
 echo '### bug #42892: parallel -a nonexiting --pipepart'
 ### bug #42892: parallel -a nonexiting --pipepart
   parallel --pipepart -a nonexisting wc
-parallel: Error: nonexisting is not a seekable file.
+parallel: Error: nonexisting is neither a file nor a block device
 echo '### bug #42913: Dont use $SHELL but the shell currently running'
 ### bug #42913: Dont use $SHELL but the shell currently running
   echo '## Unknown shell => $SHELL (bash)'

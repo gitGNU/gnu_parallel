@@ -9,7 +9,7 @@ sql $MYSQL_ADMIN_DBURL CREATE DATABASE sqlunittest;
 sql $MYSQL_ADMIN_DBURL "CREATE USER 'sqlunittest'@'localhost' IDENTIFIED BY 'CB5A1FFFA5A';"
 sql $MYSQL_ADMIN_DBURL "GRANT ALL PRIVILEGES ON sqlunittest.* TO 'sqlunittest'@'localhost';"
 
-MYSQL_TEST_DBURL=mysql://sqlunittest:CB5A1FFFA5A@
+MYSQL_TEST_DBURL=mysql://sqlunittest:CB5A1FFFA5A@/
 
 echo '### Test of #! -Y with file as input'
 cat >/tmp/shebang <<EOF
