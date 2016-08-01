@@ -34,7 +34,7 @@ prereqlocal: installparallel
 	tcsh -c echo tcsh installed || (echo tcsh is required for testsuite; /bin/false)
 	seq 1 2 >/dev/null || (echo seq is required for testsuite; /bin/false)
 	stdout echo || (echo stdout is required for testsuite; /bin/false)
-	convert >/dev/null || (echo convert is required for testsuite; /bin/false)
+	convert -version >/dev/null || (echo convert is required for testsuite; /bin/false)
 	echo 1+2 | bc >/dev/null || (echo bc is required for testsuite; /bin/false)
 	echo | gawk '{print "gawk is installed"}' || (echo gawk is required for testsuite; /bin/false)
 	expect -c 'spawn cat; puts "expect is installed"' || (echo expect is required for testsuite; /bin/false)
@@ -53,7 +53,7 @@ prereqremote: installparallel startvm
 
 startvm:
 	# Make sure we can reach the virtual machines
-	sudo ifconfig wlan0:0 192.168.1.72
+	sudo ifconfig wlp13s0:0 192.168.1.72 ||	sudo ifconfig wlan0:0 192.168.1.72
 	# If they are already running: Don't fail
 	VBoxManage startvm CentOS3-root:centos3 || VBoxManage controlvm CentOS3-root:centos3 resume || true
 	VBoxManage startvm RedHat9-root:redhat9 || VBoxManage controlvm RedHat9-root:redhat9 resume || true
