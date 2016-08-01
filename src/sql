@@ -205,7 +205,7 @@ postgres), PostgreSQL with SSL (postgresqlssl, pgs, pgsqlssl,
 postgresssl, pgssl, postgresqls, pgsqls, postgress), SQLite2 (sqlite,
 sqlite2), SQLite3 (sqlite3).
 
-Aliases must start with ':' and are read from 
+Aliases must start with ':' and are read from
 /etc/sql/aliases and ~/.sql/aliases. The user's own
 ~/.sql/aliases should only be readable by the user.
 
@@ -566,7 +566,7 @@ $Global::Initfile && unlink $Global::Initfile;
 exit ($err);
 
 sub parse_options {
-    $Global::version = 20160722;
+    $Global::version = 20160724;
     $Global::progname = 'sql';
 
     # This must be done first as this may exec myself
@@ -689,7 +689,9 @@ sub oracle_commands {
     my ($database_driver,%opt) = (@_);
     # oracle://user:pass@grum:1521/XE becomes:
     # sqlplus 'user/pass@(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = grum)(PORT = 1521)) (CONNECT_DATA =(SERVER = DEDICATED)(SERVICE_NAME = XE) ))'
-    find_command_in_path("sqlplus") || die ("sqlplus not in path");
+    my $sqlplus = find_command_in_path("sqlplus") ||
+	find_command_in_path("sqlplus64") or
+	die ("sqlplus/sqlplus64 not in path");
 
     # Readline support: if rlwrap installed run rlwrap sqlplus
     my $rlwrap = find_command_in_path("rlwrap");
@@ -729,8 +731,8 @@ sub oracle_commands {
     my $ssl = "";
     # -L: Do not re-ask for password if it is wrong
     my $common_options = "-L $pass_through_options '$user$password\@$tns' \@$Global::Initfile";
-    my $batch_command =	"sqlplus -S ".$common_options;
-    my $interactive_command = "$rlwrap sqlplus ".$common_options;
+    my $batch_command =	"$sqlplus -S ".$common_options;
+    my $interactive_command = "$rlwrap $sqlplus ".$common_options;
     return($batch_command,$interactive_command);
 }
 
@@ -974,7 +976,7 @@ sub get_alias {
 
 sub check_permissions {
     my $file = shift;
-    
+
     if(-e $file) {
 	if(not -o $file) {
 	    my $username = (getpwuid($<))[0];
@@ -984,7 +986,7 @@ sub check_permissions {
 	    $atime,$mtime,$ctime,$blksize,$blocks) = stat($file);
 	if($mode & 077) {
 	    my $username = (getpwuid($<))[0];
-	    print STDERR "$file should be only be readable by $username: chmod 600 $file\n";	
+	    print STDERR "$file should be only be readable by $username: chmod 600 $file\n";
 	}
     }
 }
