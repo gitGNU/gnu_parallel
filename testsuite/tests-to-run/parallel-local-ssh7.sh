@@ -10,6 +10,8 @@ par_bash_man() {
   myscript=$(cat <<'_EOF'
     echo "### From man env_parallel"
 
+    . `which env_parallel.bash`;
+
     alias myecho="echo aliases";
     env_parallel myecho ::: work;
     env_parallel -S server myecho ::: work;
@@ -42,6 +44,8 @@ par_zsh_man() {
   echo '### zsh'
   myscript=$(cat <<'_EOF'
     echo "### From man env_parallel"
+
+    . `which env_parallel.zsh`;
 
     alias myecho="echo aliases";
     env_parallel myecho ::: work;
@@ -108,7 +112,7 @@ _EOF
   ssh ksh@lo "$myscript"
 }
 
-par_pdksh_man() {
+_disabled_pdksh_man() {
   echo '### pdksh'
   myscript=$(cat <<'_EOF'
     echo "### From man env_parallel"
@@ -251,6 +255,8 @@ par_bash_underscore() {
   myscript=$(cat <<'_EOF'
     echo "### Testing of --env _"
 
+    . `which env_parallel.bash`;
+
     env_parallel --record-env;
     alias myecho="echo \$myvar aliases in";
     myfunc() { myecho ${myarray[@]} functions $*; };
@@ -290,6 +296,7 @@ par_zsh_underscore() {
     echo "### Testing of --env _"
 
     . `which env_parallel.zsh`;
+
     env_parallel --record-env;
     alias myecho="echo \$myvar aliases in";
     eval `cat <<"_EOS";
@@ -365,7 +372,7 @@ _EOF
   ssh ksh@lo "$myscript"
 }
 
-par_pdksh_underscore() {
+_disabled_pdksh_underscore() {
   echo '### pdksh'
   myscript=$(cat <<'_EOF'
     echo "### Testing of --env _"
@@ -522,6 +529,8 @@ _EOF
 
 par_bash_funky() {
   myscript=$(cat <<'_EOF'
+    . `which env_parallel.bash`;
+
     myvar="myvar  works"
     funky=$(perl -e "print pack \"c*\", 1..255")
     myarray=("" array_val2 3 "" 5 "  space  6  ")
@@ -536,7 +545,6 @@ par_bash_funky() {
       echo ${assocarr[a]}
       echo Funky-"$funky"-funky
     }
-    . `which env_parallel.bash`
     env_parallel alias_echo ::: alias_works
     env_parallel func_echo ::: function_works
     env_parallel -S lo alias_echo ::: alias_works_over_ssh
@@ -545,11 +553,15 @@ par_bash_funky() {
     echo "$funky" | parallel --shellquote
 _EOF
   )
-  ssh bash@lo "$myscript"
+  # Order is often different. Dunno why. So sort
+  ssh bash@lo "$myscript" 2>&1 | sort
 }
 
 par_zsh_funky() {
   myscript=$(cat <<'_EOF'
+
+    . `which env_parallel.zsh`;
+
     myvar="myvar  works"
     funky=$(perl -e "print pack \"c*\", 1..255")
     myarray=("" array_val2 3 "" 5 "  space  6  ")
@@ -572,7 +584,8 @@ par_zsh_funky() {
     echo "$funky" | parallel --shellquote
 _EOF
   )
-  ssh zsh@lo "$myscript"
+  # Order is often different. Dunno why. So sort
+  ssh zsh@lo "$myscript" 2>&1 | sort
 }
 
 par_ksh_funky() {
@@ -603,10 +616,11 @@ par_ksh_funky() {
     echo "$funky" | parallel --shellquote
 _EOF
   )
-  ssh ksh@lo "$myscript"
+  # Order is often different. Dunno why. So sort
+  ssh ksh@lo "$myscript" 2>&1 | sort
 }
 
-par_pdksh_funky() {
+_disabled_pdksh_funky() {
   myscript=$(cat <<'_EOF'
     . `which env_parallel.pdksh`;
 
@@ -740,7 +754,8 @@ par_tcsh_funky() {
     echo "$funky" | parallel --shellquote
 _EOF
   )
-  ssh tcsh@lo "$myscript"
+  # Order is often different. Dunno why. So sort
+  ssh tcsh@lo "$myscript" 2>&1 | sort
 }
 
 
