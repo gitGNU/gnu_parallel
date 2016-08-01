@@ -90,7 +90,7 @@ env_parallel() {
     _variable_NAMES="$(print -l ${(k)parameters} |
         grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ |
         grep -Ev '^([-?#!$*@_0]|zsh_eval_context|ZSH_EVAL_CONTEXT|LINENO|IFS|commands|functions|options|aliases|EUID|EGID|UID|GID)$' |
-        grep -Ev 'terminfo|funcstack|galiases|keymaps|parameters|jobdirs|dirstack|functrace|funcsourcetrace|zsh_scheduled_events|dis_aliases|dis_reswords|dis_saliases|modules|reswords|saliases|widgets|userdirs|historywords|nameddirs|termcap|dis_builtins|dis_functions|jobtexts|funcfiletrace|dis_galiases|builtins|history|jobstates'
+        grep -Ev '^(dis_patchars|patchars|terminfo|funcstack|galiases|keymaps|parameters|jobdirs|dirstack|functrace|funcsourcetrace|zsh_scheduled_events|dis_aliases|dis_reswords|dis_saliases|modules|reswords|saliases|widgets|userdirs|historywords|nameddirs|termcap|dis_builtins|dis_functions|jobtexts|funcfiletrace|dis_galiases|builtins|history|jobstates)$'
         )"
     _list_variable_VALUES="typeset -p "$(echo $_variable_NAMES|xargs)" |
         grep -aFvf <(typeset -pr)
@@ -102,10 +102,9 @@ env_parallel() {
     unset _variable_NAMES
 
     export PARALLEL_ENV="$(
-        eval $_list_alias_BODIES;
-        eval $_list_function_BODIES;
-        eval $_list_variable_VALUES;
-
+        eval $_list_alias_BODIES >/dev/null;
+        eval $_list_function_BODIES >/dev/null;
+        eval $_list_variable_VALUES >/dev/null;
     )";
     unset _list_alias_BODIES
     unset _list_variable_VALUES
