@@ -9,7 +9,7 @@ export NICEPAR
 
 cat <<'EOF' | sed -e s/\$SERVER1/$SERVER1/\;s/\$SERVER2/$SERVER2/ | stdout parallel -vj4 -k --joblog /tmp/jl-`basename $0` -L1
 echo 'bug #41412: --timeout + --delay causes deadlock';
-  seq 10 | parallel -j10 --timeout 1 --delay .3 echo;
+  seq 10 | parallel -j10 --timeout 1 --delay 0.3 echo;
   parallel -j3 --timeout 1 --delay 2 echo ::: 1 2 3;
   parallel -j10 --timeout 2.2 --delay 3 "sleep {}; echo {}" ::: 1 2 7 8 9
 
