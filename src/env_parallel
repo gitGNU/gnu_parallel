@@ -18,25 +18,27 @@
 # or write to the Free Software Foundation, Inc., 51 Franklin St,
 # Fifth Floor, Boston, MA 02110-1301 USA
 
+GREPQ="grep >/dev/null 2>/dev/null"
+
 while test $# -gt 0; do
   key="$1"
 
   case $key in
       -i|--install)
-	  grep env_parallel.bash $HOME/.bashrc 2>/dev/null ||
+	  eval $GREPQ env_parallel.bash $HOME/.bashrc ||
 	    echo '. `which env_parallel.bash`' >> $HOME/.bashrc
-	  grep env_parallel.zsh $HOME/.zshenv 2>/dev/null ||
+	  eval $GREPQ env_parallel.zsh $HOME/.zshenv ||
 	    echo '. `which env_parallel.zsh`' >> $HOME/.zshenv
 	  mkdir -p $HOME/.config/fish
-	  grep env_parallel.fish $HOME/.config/fish/config.fish 2>/dev/null ||
+	  eval $GREPQ env_parallel.fish $HOME/.config/fish/config.fish ||
   	    echo '. (which env_parallel.fish)' >> $HOME/.config/fish/config.fish
-	  grep env_parallel.ksh $HOME/.kshrc 2>/dev/null ||
+	  eval $GREPQ env_parallel.ksh $HOME/.kshrc ||
   	    echo 'source `which env_parallel.ksh`' >> $HOME/.kshrc
-	  grep env_parallel.pdksh $HOME/.profile 2>/dev/null ||
+	  eval $GREPQ env_parallel.pdksh $HOME/.profile ||
   	    echo '. `which env_parallel.pdksh`' >> $HOME/.profile
-	  grep env_parallel.csh $HOME/.cshrc 2>/dev/null ||
+	  eval $GREPQ env_parallel.csh $HOME/.cshrc ||
   	    echo 'source `which env_parallel.csh`' >> $HOME/.cshrc
-	  grep env_parallel.tcsh $HOME/.tcshrc 2>/dev/null ||
+	  eval $GREPQ env_parallel.tcsh $HOME/.tcshrc ||
   	    echo 'source `which env_parallel.tcsh`' >> $HOME/.tcshrc
   	  echo 'Installed env_parallel in: '
   	  echo "    " $HOME/.bashrc
