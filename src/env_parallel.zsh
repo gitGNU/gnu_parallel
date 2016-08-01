@@ -100,11 +100,10 @@ env_parallel() {
 	_list_variable_VALUES="true"
     fi
     unset _variable_NAMES
-
     export PARALLEL_ENV="$(
-        eval $_list_alias_BODIES >/dev/null;
-        eval $_list_function_BODIES >/dev/null;
-        eval $_list_variable_VALUES >/dev/null;
+        eval $_list_alias_BODIES;
+        eval $_list_function_BODIES;
+        eval $_list_variable_VALUES;
     )";
     unset _list_alias_BODIES
     unset _list_variable_VALUES

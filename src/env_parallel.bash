@@ -100,8 +100,9 @@ env_parallel() {
     export PARALLEL_ENV="$(
         shopt 2>/dev/null |
         perl -pe 's:\s+off:;: and s/^/shopt -u /;
-                  s:\s+on:;: and s/^/shopt -s /;';
-        echo 'shopt -s expand_aliases 2>/dev/null';
+                  s:\s+on:;: and s/^/shopt -s /;
+                  s:;$:&>/dev/null;:';
+        echo 'shopt -s expand_aliases &>/dev/null';
         $_list_alias_BODIES;
         $_list_variable_VALUES;
         $_list_function_BODIES)";
