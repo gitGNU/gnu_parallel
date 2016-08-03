@@ -1208,7 +1208,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160722;
+    $Global::version = 20160724;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -8050,22 +8050,22 @@ sub linebuffer_print {
     my $outputlength = 0;
     while(read($in_fh,substr($$partial,length $$partial),3276800)) {
 	# Append to $$partial
-	# Find the last \n
-	my $i = ::rindex64($partial,"\n");
-	if($i != -1) {
+	# Find the last \n or \r
+	my $i = (::rindex64($partial,"\n")+1) || (::rindex64($partial,"\r")+1);
+	if($i) {
 	    # One or more complete lines were found
-	    $outputlength += $i+1;
+	    $outputlength += $i;
 	    if($opt::tag or defined $opt::tagstring) {
 		# Replace ^ with $tag within the full line
 		my $tag = $self->tag();
-		substr($$partial,0,$i+1) =~ s/^/$tag/gm;
-		# Length of partial line has changed: Find the last \n again
-		$i = ::rindex64($partial,"\n");
+		substr($$partial,0,$i) =~ s/^/$tag/gm;
+		# Length of partial line has changed: Find the last \n/\r again
+		$i = (::rindex64($partial,"\n")+1) || (::rindex64($partial,"\r")+1);
 	    }
 	    # Print up to and including the last \n
-	    print $out_fd substr($$partial,0,$i+1);
+	    print $out_fd substr($$partial,0,$i);
 	    # Remove the printed part
-	    substr($$partial,0,$i+1) = "";
+	    substr($$partial,0,$i) = "";
 	}
     }
     $self->add_returnsize($outputlength);
