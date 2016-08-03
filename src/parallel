@@ -7073,14 +7073,15 @@ sub base64_zip_eval {
     # Returns:
     #   $script = 1-liner for perl -e
     my $script = ::spacefree(0,q{
-        @GNU_Parallel=("use","IPC::Open3;","use","MIME::Base64");
-        eval "@GNU_Parallel";
+        @GNU_Parallel=split /_/,"use_IPC::Open3;_use_MIME::Base64";
+        eval"@GNU_Parallel";
 
 	$SIG{CHLD}="IGNORE";
 	# Search for bzip2. Not found => use default path
 	my $zip = (grep { -x $_ } "/usr/local/bin/bzip2")[0] || "bzip2";
 	# $in = stdin on $zip, $out = stdout from $zip
-	my($in, $out,$eval);
+	# Forget my() to save chars for csh
+	# my($in, $out,$eval);
 	open3($in,$out,">&STDERR",$zip,"-dc");
 	if(my $perlpid = fork) {
 	    close $in;
