@@ -4229,7 +4229,7 @@ sub usleep {
     # Input:
     #   $ms = milliseconds to sleep
     my $ms = shift;
-    ::debug(int($ms),"ms ");
+    ::debug("timing",int($ms),"ms ");
     select(undef, undef, undef, $ms/1000);
 }
 
@@ -5984,8 +5984,8 @@ sub rsync_transfer_cmd {
     my $rsync_opt = "-rlDzR -e" . ::shell_quote_scalar($sshcmd);
     my $serverlogin = $self->serverlogin();
     # Make dir if it does not exist
-    return "( $sshcmd $serverlogin -- mkdir -p $rsync_destdir;" .
-	rsync()." $rsync_opt $file $serverlogin:$rsync_destdir )";
+    return "$sshcmd $serverlogin -- mkdir -p $rsync_destdir && " .
+	rsync()." $rsync_opt $file $serverlogin:$rsync_destdir";
 }
 
 sub cleanup_cmd {
@@ -6022,7 +6022,7 @@ sub cleanup_cmd {
     $f = ::shell_quote_file($f);
     my $sshcmd = $self->sshcommand();
     my $serverlogin = $self->serverlogin();
-    return "$sshcmd $serverlogin -- ".::shell_quote_scalar("(rm -f $f; $rmdir)");
+    return "$sshcmd $serverlogin -- ".::shell_quote_scalar("rm -f $f; $rmdir");
 }
 
 {
@@ -7416,7 +7416,7 @@ sub sshreturn {
 	#   mkdir -p /home/tange/dir/subdir/;
         #   rsync (--protocol 30) -rlDzR --rsync-path="cd /home/tange/dir/subdir/; rsync"
         #   server:file.gz /home/tange/dir/subdir/
-	$pre .= "mkdir -p $basedir$cd; ".$sshlogin->rsync()." $rsync_cd $rsync_opt $serverlogin:".
+	$pre .= "mkdir -p $basedir$cd && ".$sshlogin->rsync()." $rsync_cd $rsync_opt $serverlogin:".
 	     $basename . " ".$basedir.$cd.";";
     }
     return $pre;
