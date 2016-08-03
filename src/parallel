@@ -7651,6 +7651,25 @@ sub start {
 	    ::set_fh_non_blocking($stdin_fh);
 	}
 	$job->set_fh(0,"w",$stdin_fh);
+    } elsif ($opt::tty and not $Global::tty_taken and -c "/dev/tty" and
+	     open(my $devtty_fh, "<", "/dev/tty")) {
+	# Give /dev/tty to the command if no one else is using it
+	# The eval is needed to catch exception from open3
+	local (*IN,*OUT,*ERR);
+	open OUT, '>&', $stdout_fh or ::die_bug("Can't dup STDOUT: $!");
+	open ERR, '>&', $stderr_fh or ::die_bug("Can't dup STDERR: $!");
+	*IN = $devtty_fh;
+	# The eval is needed to catch exception from open3
+	my @wrap = ('perl','-e',
+			    "eval\{setpriority\(0,0,$opt::nice\)\}\;".
+			    "exec '$Global::shell', '-c', \@ARGV");
+	eval {
+	    $pid = ::open3("<&IN", ">&OUT", ">&ERR", @wrap, $command)
+		|| ::die_bug("open3-/dev/tty");
+	    1;
+	};
+	$Global::tty_taken = $pid;
+	close $devtty_fh;
     } elsif(@opt::a and not $Global::stdin_in_opt_a and $job->seq() == 1
 	    and $job->sshlogin()->string() eq ":") {
 	# Give STDIN to the first job if using -a (but only if running
@@ -7672,24 +7691,6 @@ sub start {
 	open(STDIN, "<&", $Global::original_stdin)
 	    or ::die_bug("dup-\$Global::original_stdin: $!");
 
-    } elsif ($opt::tty and not $Global::tty_taken and -c "/dev/tty" and
-	     open(my $devtty_fh, "<", "/dev/tty")) {
-	# Give /dev/tty to the command if no one else is using it
-	# The eval is needed to catch exception from open3
-	eval {
-	    no warnings;
-	    local (*IN) = $devtty_fh;
-	    local (*OUT,*ERR);
-	    open OUT, '>&', $stdout_fh or ::die_bug("Can't dup STDOUT: $!");
-	    open ERR, '>&', $stderr_fh or ::die_bug("Can't dup STDERR: $!");
-	    $pid = ::open3("<&IN", ">&OUT", ">&ERR",
-			   "exec $Global::shell -c ".
-			   ::shell_quote_scalar($command)) ||
-			       ::die_bug("open3-/dev/tty");
-	    $Global::tty_taken = $pid;
-	    close $devtty_fh;
-	    1;
-	};
     } else {
 	$pid = open3_setpgrp(::gensym(),$stdout_fh,$stderr_fh,$command);
     }
