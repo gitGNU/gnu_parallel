@@ -3472,7 +3472,7 @@ sub reaper {
 	    $sshlogin->inc_jobs_completed();
 	    # Free the jobslot
 	    $job->free_slot();
-	    if($opt::timeout) {
+	    if($opt::timeout and not $job->exitstatus()) {
 		# Update average runtime for timeout
 		$Global::timeoutq->update_median_runtime($job->runtime());
 	    }
