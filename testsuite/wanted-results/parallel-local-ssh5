@@ -34,7 +34,7 @@ Environment variables are:
                           stderr
 
 rsync: connection unexpectedly closed (0 bytes received so far) [sender]
-rsync error: error in rsync protocol data stream (code 12) at io.c(226) [sender=3.1.0]
+rsync error: error in rsync protocol data stream (code 12) at io.c(226) [sender=3.1.1]
 /usr/lib/autossh/autossh: invalid option -- '-'
 usage: autossh [-V] [-M monitor_port[:echo_port]] [-f] [SSH_OPTIONS]
 
@@ -66,14 +66,14 @@ Environment variables are:
                           stderr
 
 rsync: connection unexpectedly closed (0 bytes received so far) [Receiver]
-rsync error: error in rsync protocol data stream (code 12) at io.c(226) [Receiver=3.1.0]
+rsync error: error in rsync protocol data stream (code 12) at io.c(226) [Receiver=3.1.1]
 echo '### bug #46520: --basefile cleans up without --cleanup'
 ### bug #46520: --basefile cleans up without --cleanup
   touch bug_46520;   parallel -S parallel@lo --bf bug_46520 ls ::: bug_46520;   ssh parallel@lo ls bug_46520;   parallel -S parallel@lo --cleanup --bf bug_46520 ls ::: bug_46520;   stdout ssh parallel@lo ls bug_46520 # should not exist
 bug_46520
 bug_46520
 bug_46520
-ls: cannot access bug_46520: No such file or directory
+ls: cannot access 'bug_46520': No such file or directory
 echo '### bug #36595: silent loss of input with --pipe and --sshlogin'
 ### bug #36595: silent loss of input with --pipe and --sshlogin
   seq 10000 | xargs | parallel --pipe -S 8/localhost cat 2>/dev/null | wc
@@ -85,9 +85,9 @@ OK1
 OK2
 echo '### --ssh lsh'
 ### --ssh lsh
-  parallel --ssh lsh -S lo echo ::: OK
+  parallel --ssh 'lsh -c aes256-ctr' -S lo echo ::: OK
 OK
-  echo OK | parallel --ssh lsh --pipe -S csh@lo cat
+  echo OK | parallel --ssh 'lsh -c aes256-ctr' --pipe -S csh@lo cat
 OK
   # Todo rsync/trc csh@lo
   # Test gl. parallel med --ssh lsh: Hvilke fejler? brug dem. Også hvis de fejler

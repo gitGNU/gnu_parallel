@@ -74,17 +74,17 @@ echo '### bug #42892: parallel -a nonexiting --pipepart'
 echo '### bug #42913: Dont use $SHELL but the shell currently running'
   echo '## Unknown shell => $SHELL (bash)'
   parallel -kj1 "cp \`which {}\` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;" 
-  ::: ash bash csh dash fish fizsh ksh ksh93 mksh pdksh posh rbash rush rzsh sash sh static-sh tcsh yash zsh; 
+  ::: ash bash csh dash fish fizsh ksh ksh93 mksh posh rbash rush rzsh sash sh static-sh tcsh yash zsh; 
   rm -f /tmp/SHELL /tmp/par*.par
 
   echo '## Known shells -c'
   parallel -k "\`which {}\` -c 'parallel -Dinit echo ::: 1' | grep which;" 
-  ::: ash bash csh dash fdsh fish fizsh ksh ksh93 mksh pdksh posh rbash rush rzsh sash sh static-sh tcsh yash zsh; 
+  ::: ash bash csh dash fdsh fish fizsh ksh ksh93 mksh posh rbash rush rzsh sash sh static-sh tcsh yash zsh; 
   rm -f /tmp/par*.par
 
   echo '## Known shells |'
   parallel -k "echo 'parallel -Dinit echo ::: 1' | \`which {}\` | grep which;" 
-  ::: ash bash csh dash fdsh fish fizsh ksh ksh93 mksh pdksh posh rbash rush rzsh sash sh static-sh tcsh yash zsh; 
+  ::: ash bash csh dash fdsh fish fizsh ksh ksh93 mksh posh rbash rush rzsh sash sh static-sh tcsh yash zsh; 
   rm -f /tmp/par*.par
 
   echo '## Started directly from perl'
@@ -121,7 +121,7 @@ echo '### added transfersize/returnsize to local jobs'
 
 echo '### --tmux test - check termination'
   perl -e 'map {printf "$_%o%c\n",$_,$_}1..255' | 
-    stdout parallel --tmux echo {} :::: - ::: a b | 
+    stdout parallel --tmux 'sleep 0.2;echo {}' :::: - ::: a b | 
     perl -pe 's:(/tmp\S+/tms).....:$1XXXXX:;'
 
 EOF

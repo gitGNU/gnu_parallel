@@ -3,6 +3,7 @@
 # Argument can be substring of tests (such as 'local')
 
 export LANG=C
+unset LC_MONETARY
 SHFILE=/tmp/unittest-parallel.sh
 MAX_SEC_PER_TEST=900
 export TIMEOUT=$MAX_SEC_PER_TEST
@@ -48,7 +49,7 @@ mv testsuite.log log/testsuite.log.1
 date
 mkdir -p actual-results
 ls -t tests-to-run/*${1}*.sh | egrep -v "${2}" |
-  stdout parallel --tty -tj1 run_test | tee testsuite.log
+  parallel --tty -tj1 run_test | tee testsuite.log
 # If testsuite.log contains @@ then there is a diff
 if grep -q '@@' testsuite.log ; then
   false

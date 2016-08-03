@@ -115,6 +115,7 @@ cat /dev/zero >$SMALLDISK/out;   parallel --tmpdir $SMALLDISK echo ::: OK;   rm 
 cat: write error: No space left on device
 parallel: Error: Output is incomplete. Cannot append to buffer file in /mnt/ram. Is the disk full?
 parallel: Error: Change $TMPDIR with --tmpdir or use --compress.
+Warning: unable to close filehandle properly: No space left on device during global destruction.
 echo '**'
 **
 echo '### bug #44614: --pipepart --header off by one'
@@ -177,7 +178,7 @@ parallel -k echo {#} ::: 1 2 ::: 1 2
 4
 echo '**'
 **
-testquote() { printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=$1 parallel -0 echo; };   export -f testquote;   parallel --tag -k testquote ::: ash bash csh dash fdsh fish fizsh ksh ksh93 mksh pdksh posh rbash rc rzsh sash sh static-sh tcsh yash zsh
+testquote() { printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=$1 parallel -0 echo; };   export -f testquote;   parallel --tag -k testquote ::: ash bash csh dash fdsh fish fizsh ksh ksh93 mksh posh rbash rc rzsh sash sh static-sh tcsh yash zsh
 ash	"#&/
 ash	()*=?'
 bash	"#&/
@@ -198,8 +199,6 @@ ksh93	"#&/
 ksh93	()*=?'
 mksh	"#&/
 mksh	()*=?'
-pdksh	"#&/
-pdksh	()*=?'
 posh	"#&/
 posh	()*=?'
 rbash	"#&/
@@ -278,9 +277,12 @@ echo '**'
 **
 echo '### bug #45998: --pipe to function broken'
 ### bug #45998: --pipe to function broken
-  myfunc() { echo $1; cat; };     export -f myfunc;     echo OK | parallel --pipe myfunc {#}
+  myfunc() { echo $1; cat; };     export -f myfunc;     echo pipefunc OK | parallel --pipe myfunc {#};     echo pipefunc and more OK | parallel --pipe 'myfunc {#};echo and more OK'
 1
-OK
+pipefunc OK
+1
+pipefunc and more OK
+and more OK
 echo '**'
 **
 echo 'bug #46016: --joblog should not log when --dryrun'
@@ -295,23 +297,23 @@ bug #45993: --wd ... should also work when run locally
 parallel: Error: Cannot change into non-executable dir /bi: No such file or directory
   parallel --wd /bin 'pwd; echo $OLDPWD; echo' ::: OK
 /bin
-/home/tange/privat/parallel/testsuite
+/mnt/4tb/home/tange/privat/parallel/testsuite
 OK
   parallel --wd / 'pwd; echo $OLDPWD; echo' ::: OK
 /
-/home/tange/privat/parallel/testsuite
+/mnt/4tb/home/tange/privat/parallel/testsuite
 OK
   parallel --wd /tmp 'pwd; echo $OLDPWD; echo' ::: OK
 /tmp
-/home/tange/privat/parallel/testsuite
+/mnt/4tb/home/tange/privat/parallel/testsuite
 OK
   parallel --wd ... 'pwd; echo $OLDPWD; echo' ::: OK | perl -pe 's/\d+/0/g'
-/home/tange/.parallel/tmp/aspire-0-0
-/home/tange/privat/parallel/testsuite
+/mnt/0tb/home/tange/.parallel/tmp/aspire-0-0
+/mnt/0tb/home/tange/privat/parallel/testsuite
 OK
   parallel --wd . 'pwd; echo $OLDPWD; echo' ::: OK
-/home/tange/privat/parallel/testsuite
-/home/tange/privat/parallel/testsuite
+/mnt/4tb/home/tange/privat/parallel/testsuite
+/mnt/4tb/home/tange/privat/parallel/testsuite
 OK
 echo '**'
 **
@@ -437,7 +439,7 @@ echo '**'
 **
 echo '### Test --shellquote'
 ### Test --shellquote
-  parallel --tag -q -k {} -c perl\ -e\ \'print\ pack\(\"c\*\",1..255\)\'\ \|\ parallel\ -0\ --shellquote ::: ash bash csh dash fish fizsh ksh ksh93 lksh mksh pdksh posh rzsh sash sh static-sh tcsh yash zsh csh tcsh
+  parallel --tag -q -k {} -c perl\ -e\ \'print\ pack\(\"c\*\",1..255\)\'\ \|\ parallel\ -0\ --shellquote ::: ash bash csh dash fish fizsh ksh ksh93 lksh mksh posh rzsh sash sh static-sh tcsh yash zsh csh tcsh
 ash	\\\\\\\\	'
 ash	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
 bash	\\\\\\\\	'
@@ -458,12 +460,8 @@ lksh	\\\\\\\\	'
 lksh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
 mksh	\\\\\\\\	'
 mksh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
-pdksh	\\\\\\\\	'
-pdksh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
 posh	\\\\\\\\	'
 posh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
-rzsh	\\\\\\\\	'
-rzsh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
 sash	\\\\\\\\	'
 sash	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
 sh	\\\\\\\\	'
@@ -480,6 +478,7 @@ csh	\\\\\\\\	"\
 csh	"\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
 tcsh	\\\\\\\\	"\
 tcsh	"\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+rzsh	zsh:1: /bin/echo: restricted
 echo '**'
 **
 echo xargs compatibility
@@ -621,59 +620,59 @@ xargs: argument line too long
 parallel: Error: Command line too long (1000007 >= 10) at input 0: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz...
   echo '### Test -x'
 ### Test -x
-  (seq 1 10; echo 12345; seq 12 15) | stdout parallel -j1 -km -s 10 -x echo
+  (seq 1 10; echo 12345; seq 12 15) | stdsort parallel -j1 -km -s 10 -x echo
 1 2
 3 4
 5 6
 7 8
 9 10
 parallel: Error: Command line too long (10 >= 10) at input 0: 12345
-  (seq 1 10; echo 12345; seq 12 15) | stdout parallel -j1 -kX -s 10 -x echo
+  (seq 1 10; echo 12345; seq 12 15) | stdsort parallel -j1 -kX -s 10 -x echo
 1 2
 3 4
 5 6
 7 8
 9 10
 parallel: Error: Command line too long (10 >= 10) at input 0: 12345
-  (seq 1 10; echo 12345; seq 12 15) | stdout xargs -s 10 -x echo
+  (seq 1 10; echo 12345; seq 12 15) | stdsort xargs -s 10 -x echo
 1 2
 3 4
 5 6
+7 8
 xargs: argument line too long
-7 8
-  (seq 1 10; echo 1234; seq 12 15) | stdout parallel -j1 -km -s 10 -x echo
+  (seq 1 10; echo 1234;  seq 12 15) | stdsort parallel -j1 -km -s 10 -x echo
 1 2
+12
+1234
+13
+14
+15
 3 4
 5 6
 7 8
 9 10
-1234
+  (seq 1 10; echo 1234;  seq 12 15) | stdsort parallel -j1 -kX -s 10 -x echo
+1 2
 12
+1234
 13
 14
 15
-  (seq 1 10; echo 1234; seq 12 15) | stdout parallel -j1 -kX -s 10 -x echo
-1 2
 3 4
 5 6
 7 8
 9 10
-1234
+  (seq 1 10; echo 1234;  seq 12 15) | stdsort xargs -s 10 -x echo
+1 2
 12
+1234
 13
 14
 15
-  (seq 1 10; echo 1234; seq 12 15) | stdout xargs -s 10 -x echo
-1 2
 3 4
 5 6
 7 8
 9 10
-1234
-12
-13
-14
-15
   echo '### Test -a and --arg-file: Read input from file instead of stdin'
 ### Test -a and --arg-file: Read input from file instead of stdin
   seq 1 10 >/tmp/parallel_$$-1; parallel -k -a /tmp/parallel_$$-1 echo; rm /tmp/parallel_$$-1

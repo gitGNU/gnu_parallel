@@ -32,6 +32,8 @@ rld
 echo '###  -E_ -0 echo < eof_-0.xi'
 ###  -E_ -0 echo < eof_-0.xi
 stdout xargs -E_ -0 echo < eof_-0.xi
+xargs: warning: the -E option has no effect if -0 or -d is used.
+
 one two _ three four
 stdout parallel -X -k -E_ -0 echo < eof_-0.xi
 one
@@ -82,12 +84,12 @@ n
 y
 echo '###  -i -s26 -0 echo from \{\} to x{}y < items-0.xi'
 ###  -i -s26 -0 echo from \{\} to x{}y < items-0.xi
-stdout xargs -i -s26 -0 echo from \{\} to x{}y < items-0.xi
-xargs: argument list too long
+stdsort xargs -i -s26 -0 echo from \{\} to x{}y < items-0.xi
 from one to xoney
-stdout parallel -k -i -s26 -0 echo from \{\} to x{}y < items-0.xi
-parallel: Error: Command line too long (42 >= 26) at input 0:  	
+xargs: argument list too long
+stdsort parallel -k -i -s26 -0 echo from \{\} to x{}y < items-0.xi
 
+parallel: Error: Command line too long (42 >= 26) at input 0:  	
 echo '###  -l -0 echo < ldata-0.xi'
 ###  -l -0 echo < ldata-0.xi
 stdout xargs -l -0 echo < ldata-0.xi
@@ -1089,20 +1091,20 @@ stdout parallel -k -L2 echo < ldata.xi
 999999999
 echo '###  echo < unmatched2.xi'
 ###  echo < unmatched2.xi
-stdout xargs echo < unmatched2.xi
+stdsort xargs echo < unmatched2.xi
+one
 xargs: unmatched double quote; by default quotes are special to xargs unless you use the -0 option
-one
-stdout parallel -k echo < unmatched2.xi
-one
+stdsort parallel -k echo < unmatched2.xi
 "two
+one
 echo '###  echo < unmatched.xi'
 ###  echo < unmatched.xi
-stdout xargs echo < unmatched.xi
+stdsort xargs echo < unmatched.xi
+one
 xargs: unmatched double quote; by default quotes are special to xargs unless you use the -0 option
-one
-stdout parallel -k echo < unmatched.xi
-one
+stdsort parallel -k echo < unmatched.xi
 "two
+one
 three
 echo '###  -n2 -x echo < unmatched.xi'
 ###  -n2 -x echo < unmatched.xi
@@ -1206,10 +1208,10 @@ from: can't read /var/mail/{}
 from: can't read /var/mail/{}
 echo '###  -i -s26 echo from \{\} to x{}y < items.xi'
 ###  -i -s26 echo from \{\} to x{}y < items.xi
-stdout xargs -i -s26 echo from \{\} to x{}y < items.xi
-xargs: argument list too long
+stdsort xargs -i -s26 echo from \{\} to x{}y < items.xi
 from dumb to xdumby
-stdout parallel -k -i -s26 echo from \{\} to x{}y < items.xi
+xargs: argument list too long
+stdsort parallel -k -i -s26 echo from \{\} to x{}y < items.xi
 parallel: Error: Command line too long (36 >= 26) at input 0:  	
 echo '###  -i__ echo FIRST __ IS OK < quotes.xi'
 ###  -i__ echo FIRST __ IS OK < quotes.xi

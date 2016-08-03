@@ -9,7 +9,7 @@ par_linebuffer_matters_compress	OK: --linebuffer makes a difference
 par_linebuffer_matters_compress_tag	### (--linebuffer) --compress --tag should give different output
 par_linebuffer_matters_compress_tag	OK: --linebuffer makes a difference
 par_memory_leak	### Test for memory leaks
-par_memory_leak	Of 10 runs of 1 job at least one should be bigger than a 3000 job run
+par_memory_leak	Of 30 runs of 1 job at least one should be bigger than a 3000 job run
 par_memory_leak	Good: No memleak detected.
 par_race_condition1	### Test race condition on 8 CPU (my laptop)
 par_race_condition1	1
@@ -25,3 +25,4 @@ par_race_condition1	10
 par_tmp_full	### Test --tmpdir running full. bug #40733 was caused by this
 par_tmp_full	parallel: Error: Output is incomplete. Cannot append to buffer file in /tmp/shm/parallel. Is the disk full?
 par_tmp_full	parallel: Error: Change $TMPDIR with --tmpdir or use --compress.
+par_tmp_full	Warning: unable to close filehandle properly: No space left on device during global destruction.

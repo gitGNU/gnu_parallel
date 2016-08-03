@@ -8,7 +8,12 @@ cd tmp
 PARALLEL=-j8
 export PARALLEL
 
-cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj0 -k --joblog /tmp/jl-`basename $0` -L1
+stdsort() {
+    "$@" 2>&1 | sort;
+}
+export -f stdsort
+
+cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj200 -k --joblog /tmp/jl-`basename $0` -L1
 echo '### -0 -n3 echo < files0.xi'
 stdout xargs -0 -n3 echo < files0.xi
 stdout parallel -k -0 -n3 echo < files0.xi
@@ -22,8 +27,8 @@ echo '###  -i -0 echo from \{\} to x{}y < items-0.xi'
 stdout xargs -i -0 echo from \{\} to x{}y < items-0.xi
 stdout parallel -k -i -0 echo from \{\} to x{}y < items-0.xi
 echo '###  -i -s26 -0 echo from \{\} to x{}y < items-0.xi'
-stdout xargs -i -s26 -0 echo from \{\} to x{}y < items-0.xi
-stdout parallel -k -i -s26 -0 echo from \{\} to x{}y < items-0.xi
+stdsort xargs -i -s26 -0 echo from \{\} to x{}y < items-0.xi
+stdsort parallel -k -i -s26 -0 echo from \{\} to x{}y < items-0.xi
 echo '###  -l -0 echo < ldata-0.xi'
 stdout xargs -l -0 echo < ldata-0.xi
 stdout parallel -l -k -0 echo < ldata-0.xi
@@ -201,11 +206,11 @@ echo '###  -L2 echo < ldata.xi'
 stdout xargs -L2 echo < ldata.xi
 stdout parallel -k -L2 echo < ldata.xi
 echo '###  echo < unmatched2.xi'
-stdout xargs echo < unmatched2.xi
-stdout parallel -k echo < unmatched2.xi
+stdsort xargs echo < unmatched2.xi
+stdsort parallel -k echo < unmatched2.xi
 echo '###  echo < unmatched.xi'
-stdout xargs echo < unmatched.xi
-stdout parallel -k echo < unmatched.xi
+stdsort xargs echo < unmatched.xi
+stdsort parallel -k echo < unmatched.xi
 echo '###  -n2 -x echo < unmatched.xi'
 stdout xargs -n2 -x echo < unmatched.xi
 stdout parallel -k -n2 -x echo < unmatched.xi
@@ -225,8 +230,8 @@ echo '###  -i echo from \{\} to x{}y < items.xi'
 stdout xargs -i echo from \{\} to x{}y < items.xi
 stdout parallel -k -i echo from \{\} to x{}y < items.xi
 echo '###  -i -s26 echo from \{\} to x{}y < items.xi'
-stdout xargs -i -s26 echo from \{\} to x{}y < items.xi
-stdout parallel -k -i -s26 echo from \{\} to x{}y < items.xi
+stdsort xargs -i -s26 echo from \{\} to x{}y < items.xi
+stdsort parallel -k -i -s26 echo from \{\} to x{}y < items.xi
 echo '###  -i__ echo FIRST __ IS OK < quotes.xi'
 stdout xargs -i__ echo FIRST __ IS OK < quotes.xi
 stdout parallel -k -i__ echo FIRST __ IS OK < quotes.xi

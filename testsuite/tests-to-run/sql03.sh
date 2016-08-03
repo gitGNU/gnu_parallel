@@ -1,6 +1,9 @@
 #!/bin/bash
 
-MYSQL_ADMIN_DBURL=mysql://tange:tange@
+mysqlrootpass=${mysqlrootpass:-b+Ydjq4ejT4E}
+MYSQL_ADMIN_DBURL=mysql://root:$mysqlrootpass@/mysql
+
+exec 2>&1
 
 # Setup
 sql $MYSQL_ADMIN_DBURL "drop user 'sqlunittest'@'localhost'"
@@ -55,9 +58,18 @@ echo "### Test dburl :"
 stdout sql ':'
 
 echo "### Test oracle with multiple arguments on the command line"
-echo ":oraunittest oracle://hr:hr@/xe" >> ~/.sql/aliases
+echo ":oraunittest oracle://hr:hr@oracle11.tange.dk/xe" >> ~/.sql/aliases
 perl -i -ne '$seen{$_}++ || print' ~/.sql/aliases
 sql :oraunittest "WHENEVER SQLERROR EXIT FAILURE" "SELECT 'arg2' FROM DUAL;" "SELECT 'arg3' FROM DUAL;"
 
 echo "### Test oracle with \n arguments on the command line"
 sql :oraunittest 'select 1 from dual;\nselect 2 from dual;\x0aselect 3 from dual;'
+
+echo "### Test --show-tables"
+sql --show-tables :oraunittest
+
+echo "### Test --show-databases"
+sql --show-databases :oraunittest
+
+echo "### Test --listproc"
+sql --listproc :oraunittest

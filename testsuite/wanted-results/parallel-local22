@@ -88,7 +88,7 @@ echo '### bug #42902: profiles containing arguments with space'
 echo /bin/bash\=/bin/bash
 /bin/bash=/bin/bash
   PARALLEL="--rpl 'FULLPATH chomp(\$_=\"/bin/bash=\".\`readlink -f \$_\`);' perl -e \'print \\\"@ARGV\\\n\\\"\' " parallel With script in \\\$PARALLEL FULLPATH ::: .
-With script in $PARALLEL /bin/bash=/home/tange/privat/parallel/testsuite
+With script in $PARALLEL /bin/bash=/mnt/4tb/home/tange/privat/parallel/testsuite
 echo '### bug #42892: parallel -a nonexiting --pipepart'
 ### bug #42892: parallel -a nonexiting --pipepart
   parallel --pipepart -a nonexisting wc
@@ -97,7 +97,7 @@ echo '### bug #42913: Dont use $SHELL but the shell currently running'
 ### bug #42913: Dont use $SHELL but the shell currently running
   echo '## Unknown shell => $SHELL (bash)'
 ## Unknown shell => $SHELL (bash)
-  parallel -kj1 "cp \`which {}\` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;"   ::: ash bash csh dash fish fizsh ksh ksh93 mksh pdksh posh rbash rush rzsh sash sh static-sh tcsh yash zsh;   rm -f /tmp/SHELL /tmp/par*.par
+  parallel -kj1 "cp \`which {}\` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;"   ::: ash bash csh dash fish fizsh ksh ksh93 mksh posh rbash rush rzsh sash sh static-sh tcsh yash zsh;   rm -f /tmp/SHELL /tmp/par*.par
 shell? /bin/bash -c cp `which ash` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
 shell? /bin/bash -c cp `which bash` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
@@ -114,8 +114,6 @@ which bash => shell path /bin/bash
 shell? /bin/bash -c cp `which ksh93` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
 shell? /bin/bash -c cp `which mksh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
-which bash => shell path /bin/bash
-shell? /bin/bash -c cp `which pdksh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
 shell? /bin/bash -c cp `which posh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
@@ -138,7 +136,7 @@ Contact the systems administrator for further assistance.
 SHELL: applet not found
   echo '## Known shells -c'
 ## Known shells -c
-  parallel -k "\`which {}\` -c 'parallel -Dinit echo ::: 1' | grep which;"   ::: ash bash csh dash fdsh fish fizsh ksh ksh93 mksh pdksh posh rbash rush rzsh sash sh static-sh tcsh yash zsh;   rm -f /tmp/par*.par
+  parallel -k "\`which {}\` -c 'parallel -Dinit echo ::: 1' | grep which;"   ::: ash bash csh dash fdsh fish fizsh ksh ksh93 mksh posh rbash rush rzsh sash sh static-sh tcsh yash zsh;   rm -f /tmp/par*.par
 which ash => shell path /bin/ash
 shell? /bin/bash -c `which bash` -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
@@ -152,8 +150,6 @@ which bash => shell path /bin/bash
 shell? /bin/bash -c `which ksh93` -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
 shell? /bin/bash -c `which mksh` -c 'parallel -Dinit echo ::: 1' | grep which;
-which bash => shell path /bin/bash
-shell? /bin/bash -c `which pdksh` -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
 which posh => shell path /bin/posh
 shell? /bin/bash -c `which rbash` -c 'parallel -Dinit echo ::: 1' | grep which;
@@ -172,7 +168,7 @@ Local configuration error occurred.
 Contact the systems administrator for further assistance.
   echo '## Known shells |'
 ## Known shells |
-  parallel -k "echo 'parallel -Dinit echo ::: 1' | \`which {}\` | grep which;"   ::: ash bash csh dash fdsh fish fizsh ksh ksh93 mksh pdksh posh rbash rush rzsh sash sh static-sh tcsh yash zsh;   rm -f /tmp/par*.par
+  parallel -k "echo 'parallel -Dinit echo ::: 1' | \`which {}\` | grep which;"   ::: ash bash csh dash fdsh fish fizsh ksh ksh93 mksh posh rbash rush rzsh sash sh static-sh tcsh yash zsh;   rm -f /tmp/par*.par
 which ash => shell path /bin/ash
 which bash => shell path /bin/bash
 which csh => shell path /bin/csh
@@ -183,7 +179,6 @@ which zsh => shell path /usr/bin/zsh
 which ksh => shell path /usr/bin/ksh
 which ksh93 => shell path /bin/ksh93
 which mksh => shell path /bin/mksh
-which pdksh => shell path /bin/pdksh
 which posh => shell path /bin/posh
 which rbash => shell path /bin/rbash
 which rzsh => shell path /bin/rzsh
@@ -354,5 +349,5 @@ Send	Receive	Exitval
 Send	Receive	Exitval
 echo '### --tmux test - check termination'
 ### --tmux test - check termination
-  perl -e 'map {printf "$_%o%c\n",$_,$_}1..255' |     stdout parallel --tmux echo {} :::: - ::: a b |     perl -pe 's:(/tmp\S+/tms).....:$1XXXXX:;'
+  perl -e 'map {printf "$_%o%c\n",$_,$_}1..255' |     stdout parallel --tmux 'sleep 0.2;echo {}' :::: - ::: a b |     perl -pe 's:(/tmp\S+/tms).....:$1XXXXX:;'
 See output with: tmux -S /tmp/parallel-local22-tmpdir/tmsXXXXX attach

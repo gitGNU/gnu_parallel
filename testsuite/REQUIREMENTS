@@ -1,26 +1,29 @@
 #!/bin/bash
 
-mysqlrootpass=${mysqlrootpass:+FoOo}
-
-# The testsuite depends on this:
-
-sudo aptitude install imagemagick expect autossh 
-
-# DEBIAN package
-sudo aptitude install dpkg-dev build-essential debhelper
-# SHEBANG TOOLS
-sudo aptitude install gnuplot octave ruby r-base-core
-# SQL TOOLS
-sudo aptitude install libdbd-pg-perl libdbd-sqlite3-perl
-# Compression
-sudo aptitude install pxz pixz
+mysqlrootpass=${mysqlrootpass:-b+Ydjq4ejT4E}
 
 # To configure zsh
 echo Configure zsh and exit
 zsh
 
+INSTALL="echo sudo aptitude -y install"
+
+# The testsuite depends on this:
+
+$INSTALL imagemagick expect autossh sshpass jq libpod-simple-perl pod2pdf
+
+
+# DEBIAN package
+$INSTALL dpkg-dev build-essential debhelper
+# SHEBANG TOOLS
+$INSTALL gnuplot octave ruby r-base-core
+# SQL TOOLS
+$INSTALL libdbd-pg-perl libdbd-sqlite3-perl libdbd-csv-perl libdbd-mysql-perl rlwrap
+# Compression
+$INSTALL pxz pixz
+
 # DATABASES
-sudo aptitude install postgresql mysql-server
+$INSTALL postgresql mysql-server sqlite
 echo '# Create PostgreSQL'
 sudo su - postgres -c 'createdb '`whoami`
 sudo su - postgres -c 'createuser '`whoami`
@@ -32,11 +35,12 @@ sql mysql://root:"$mysqlrootpass"@/mysql "DROP DATABASE `whoami`;DROP USER '`who
 sql mysql://root:"$mysqlrootpass"@/mysql "CREATE DATABASE `whoami`;CREATE USER '`whoami`'@'localhost' IDENTIFIED BY '`whoami`'; GRANT ALL ON `whoami`.* TO '`whoami`'@'localhost';"
 
 # SHELLS
-sudo aptitude install ash csh fdclone fish fizsh ksh mksh pdksh posh rush sash tcsh yash zsh
+$INSTALL ash csh fdclone fish fizsh ksh mksh pdksh posh rc rush sash tcsh yash zsh
 
 SSHPASS=`goodpasswd`
 export SSHPASS
-shells="bash sh csh ash tcsh zsh ksh fish fizsh mksh pdksh posh rc sash yash nopathbash nopathcsh"
+#shells="bash sh csh ash tcsh zsh ksh fish fizsh mksh pdksh posh rc sash yash nopathbash nopathcsh"
+shells="bash sh csh ash tcsh zsh ksh fish fizsh mksh posh rc sash yash nopathbash nopathcsh"
 create_shell_user() {
   shell="$1"
   sudo deluser $shell && sudo mv /home/$shell /tmp/$shell.$RANDOM
@@ -47,36 +51,40 @@ create_shell_user() {
     echo "ssh-keyscan" &&
     ssh $shell@lo 'ssh-keyscan -t rsa lo >> .ssh/known_hosts' &&
     ssh $shell@lo 'ssh-keyscan -t rsa server >> .ssh/known_hosts' &&
-    echo "chsh" &&
-    sudo chsh -s $(which $shell || which ${shell#"nopath"}) $shell &&
+    echo Do chsh -s $(which $shell || which ${shell#"nopath"}) $shell &&
+    (echo $shell | grep parallel ||
+     sudo chsh -s $(which $shell || which ${shell#"nopath"}) $shell) &&
     echo | ssh -t $shell@lo ssh-keygen &&
+    echo Do ssh $shell@lo 'cat .ssh/id_rsa.pub >> .ssh/authorized_keys' &&
     ssh $shell@lo 'cat .ssh/id_rsa.pub >> .ssh/authorized_keys' &&
     ssh $shell@lo cat .ssh/id_rsa.pub | ssh parallel@lo 'cat >> .ssh/authorized_keys' &&
-    ssh $shell@lo env_parallel --install
+    echo Do env_parallel --install &&
+    ssh $shell@lo env_parallel --install &&
+    echo OK Created $shell &&
+    echo
 }
 export -f create_shell_user
-parallel -u --timeout 15 --retries 2 --tag -j1 create_shell_user ::: $shells
+. `which env_parallel.bash`
+shellsplus="parallel $shells"
+parallel -u --timeout 15 --retries 2 --tag -j1 create_shell_user ::: $shellsplus
 # sh fails if not run by itself
 parallel -u --timeout 15 --retries 2 --tag -j1 create_shell_user ::: sh
-parallel -j10 ssh {}@lo ssh {}@lo echo {} OK ::: $shells
+parallel -j10 --tag ssh {}@lo ssh {}@lo echo {} OK ::: $shells
 
-(
-ssh parallel@lo 'ssh-keyscan -t rsa lo >> .ssh/known_hosts'
-ssh parallel@lo 'cat .ssh/id_rsa.pub >> .ssh/authorized_keys'
-)
 ssh_copy_id() {
   from="$1"
   to="$2"
   ssh $from cat .ssh/id_rsa.pub | ssh $to 'cat >> .ssh/authorized_keys'
 }
 export -f ssh_copy_id
-shellsplus="parallel $shells"
-parallel --bar -j200% --timeout 3 --retries 10 --tag ssh_copy_id {1}@lo {2}@lo ::: $shellsplus ::: $shellsplus
-parallel -j10 --retries 3 --tag ssh {1}@lo ssh {2}@lo echo OK ::: $shellsplus ::: $shellsplus 
+
+parallel --bar -j10 --timeout 3 --retries 10 --tag ssh_copy_id {1}@lo {2}@lo ::: $shellsplus ::: $shellsplus
+parallel       -j10 --timeout 3 --retries 10 --tag ssh {1}@lo ssh {2}@lo echo OK ::: $shellsplus ::: $shellsplus
 
 # change paths to no path
 (
-  ssh nopathbash@lo 'echo >> .bashrc PATH=/bin:/usr/bin'
+  ssh nopathbash@lo 'echo > .bashrc PATH=/bin:/usr/bin'
+  ssh nopathbash@lo 'echo > .profile PATH=/bin:/usr/bin'
   # Remove env_parallel from .profile
   ssh nopathbash@lo 'perl -i.bak -pe s/.*env_parallel.*// .profile .bashrc'
   ssh nopathcsh@lo 'echo >> .cshrc setenv PATH /bin:/usr/bin'
@@ -87,18 +95,24 @@ parallel -j10 --retries 3 --tag ssh {1}@lo ssh {2}@lo echo OK ::: $shellsplus ::
 ssh-copy-id localhost
 
 # SHELLS: lsh-client against openssh server
-sudo aptitude install lsh-client
+$INSTALL lsh-client
 cd
 mkdir .lsh
 lsh-make-seed -o ".lsh/yarrow-seed-file"
-lsh --sloppy-host-authentication --capture-to ~/.lsh/host-acls lo echo Added host-auth
+lsh -c aes256-ctr --sloppy-host-authentication --capture-to ~/.lsh/host-acls lo echo Added host-auth
+lsh -c aes256-ctr --sloppy-host-authentication --capture-to ~/.lsh/host-acls localhost echo Added host-auth
 lsh-keygen | lsh-writekey -c none
-lsh-export-key --openssh < ~/.lsh/identity.pub | lsh localhost 'cat >>.ssh/authorized_keys'
-lsh-export-key --openssh < ~/.lsh/identity.pub | ssh csh@localhost 'cat >>.ssh/authorized_keys'
+lsh-export-key --openssh < ~/.lsh/identity.pub | lsh -c aes256-ctr lo 'cat >>.ssh/authorized_keys'
+lsh-export-key --openssh < ~/.lsh/identity.pub | ssh csh@lo 'cat >>.ssh/authorized_keys'
 
 
 parallel --record-env
 
-
 sudo cp /usr/bin/tmux /usr/local/bin/tmux1.8
 
+ssh freebsd7.t cat .ssh/id_rsa.pub | ssh parallel@localhost 'cat >>.ssh/authorized_keys'
+
+echo Add:
+echo HostkeyAlgorithms +ssh-dss
+echo to .ssh/config if you get
+echo no matching host key type found. Their offer: ssh-dss

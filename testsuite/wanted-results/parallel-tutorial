@@ -138,7 +138,7 @@ num8
 num_%header
 tsv-file.tsv
 foo
-/home/tange/privat/parallel/testsuite/tmp
+/mnt/4tb/home/tange/privat/parallel/testsuite/tmp
   my_func() {
     echo in my_func $1
   }
@@ -516,7 +516,8 @@ Computers / CPU cores / Max jobs to run
 Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
 
   seq 1000 | parallel -j10 --bar '(echo -n {};sleep 0.1)' 2> >(zenity --timeout=15 --progress --auto-kill --auto-close)
-BASE64  parallel --joblog /tmp/log exit  ::: 1 2 3 0
+BASE64-Message: GtkDialog mapped without a transient parent. This is discouraged.
+  parallel --joblog /tmp/log exit  ::: 1 2 3 0
   cat /tmp/log;
   parallel --joblog /tmp/log exit  ::: 1 2 3 0
   cat /tmp/log;  parallel --resume --joblog /tmp/log exit  ::: 1 2 3 0 0 0
@@ -675,9 +676,9 @@ foo
   parallel -S $SERVER1 pwd ::: ""
   parallel --workdir . -S $SERVER1 pwd ::: ""
   parallel --workdir ... -S $SERVER1 pwd ::: ""
-/home/parallel
-/home/parallel/privat/parallel/testsuite/tmp
-/home/parallel/.TMPWORKDIR
+/mnt/4tb/home/parallel
+BASE64
+/mnt/4tb/home/parallel/.TMPWORKDIR
   parallel -S $SERVER1 --sshdelay 0.2 echo ::: 1 2 3
 9
 9
@@ -708,34 +709,34 @@ Unknown option: :::
 Unknown option: green
 env_parallel only works if it is a function. Do the below and restart your shell.
 
-bash:  Put this in /home/tange/.bashrc:  . /usr/local/bin/env_parallel.bash
-       E.g. by doing:  echo '. /usr/local/bin/env_parallel.bash' >> /home/tange/.bashrc
+bash:  Put this in /mnt/4tb/home/tange/.bashrc:  . /usr/local/bin/env_parallel.bash
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.bash' >> /mnt/4tb/home/tange/.bashrc
        Supports: aliases, functions, variables, arrays
 
-zsh:   Put this in /home/tange/.zshrc:  . /usr/local/bin/env_parallel.zsh
-       E.g. by doing:  echo '. /usr/local/bin/env_parallel.zsh' >> /home/tange/.zshenv
+zsh:   Put this in /mnt/4tb/home/tange/.zshrc:  . /usr/local/bin/env_parallel.zsh
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.zsh' >> /mnt/4tb/home/tange/.zshenv
        Supports: functions, variables, arrays
 
-fish:  Put this in /home/tange/.config/fish/config.fish:
+fish:  Put this in /mnt/4tb/home/tange/.config/fish/config.fish:
          . (which env_parallel.fish)
        E.g. by doing:
-         echo '. (which env_parallel.fish)' >> /home/tange/.config/fish/config.fish
+         echo '. (which env_parallel.fish)' >> /mnt/4tb/home/tange/.config/fish/config.fish
        Supports: aliases, functions, variables, arrays
 
-ksh:   Put this in /home/tange/.kshrc:  source /usr/local/bin/env_parallel.ksh
-       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.ksh' >> /home/tange/.kshrc
+ksh:   Put this in /mnt/4tb/home/tange/.kshrc:  source /usr/local/bin/env_parallel.ksh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.ksh' >> /mnt/4tb/home/tange/.kshrc
        Supports: aliases, functions, variables, arrays
 
-pdksh: Put this in /home/tange/.profile:  source /usr/local/bin/env_parallel.pdksh
-       E.g. by doing:  echo '. /usr/local/bin/env_parallel.pdksh' >> /home/tange/.profile
+pdksh: Put this in /mnt/4tb/home/tange/.profile:  source /usr/local/bin/env_parallel.pdksh
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.pdksh' >> /mnt/4tb/home/tange/.profile
        Supports: aliases, functions, variables, arrays
 
-csh:   Put this in /home/tange/.cshrc:  source /usr/local/bin/env_parallel.csh
-       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.csh' >> /home/tange/.cshrc
+csh:   Put this in /mnt/4tb/home/tange/.cshrc:  source /usr/local/bin/env_parallel.csh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.csh' >> /mnt/4tb/home/tange/.cshrc
        Supports: aliases, variables, arrays with no special chars
 
-tcsh:  Put this in /home/tange/.tcshrc:  source /usr/local/bin/env_parallel.tcsh
-       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.tcsh' >> /home/tange/.tcshrc
+tcsh:  Put this in /mnt/4tb/home/tange/.tcshrc:  source /usr/local/bin/env_parallel.tcsh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.tcsh' >> /mnt/4tb/home/tange/.tcshrc
        Supports: aliases, variables, arrays with no special chars
 
 To install in all shells run:
@@ -757,7 +758,6 @@ in my_func baz
   parallel --record-env
   cat ~/.parallel/ignored_vars|sort
 BASH_FUNC_run_test%%
-CLUTTER_IM_MODULE
 COLORFGBG
 DBUS_SESSION_BUS_ADDRESS
 DEBEMAIL
@@ -765,27 +765,25 @@ DEBFULLNAME
 DEFAULTS_PATH
 DESKTOP_SESSION
 DISPLAY
-DM_CONTROL
-GLADE_CATALOG_PATH
-GLADE_MODULE_PATH
-GLADE_PIXMAP_PATH
-GNOME_KEYRING_CONTROL
-GNOME_KEYRING_PID
 GPG_AGENT_INFO
-GTK_IM_MODULE
+GS_LIB
+GTK2_RC_FILES
+GTK_RC_FILES
 HISTCONTROL
 HOME
-IM_CONFIG_PHASE
-INSTANCE
 JAVA_HOME
 JDK_HOME
-JOB
+KDE_FULL_SESSION
+KDE_MULTIHEAD
+KDE_SESSION_UID
+KDE_SESSION_VERSION
 KONSOLE_DBUS_SERVICE
 KONSOLE_DBUS_SESSION
 KONSOLE_DBUS_WINDOW
 KONSOLE_PROFILE_NAME
 LANG
 LANGUAGE
+LC_TIME
 LESS
 LESSCLOSE
 LESSOPEN
@@ -793,6 +791,8 @@ LOGNAME
 LS_COLORS
 MAKEFLAGS
 MAKELEVEL
+MAKE_TERMERR
+MAKE_TERMOUT
 MANDATORY_PATH
 MFLAGS
 MOZ_NO_REMOTE
@@ -807,13 +807,11 @@ PERL_MB_OPT
 PERL_MM_OPT
 PROFILEHOME
 PWD
-QT4_IM_MODULE
+QT_ACCESSIBILITY
 QT_IM_MODULE
-SELINUX_INIT
+QT_LINUX_ACCESSIBILITY_ALWAYS_ON
 SERVER1
 SERVER2
-SESSION
-SESSIONTYPE
 SESSION_MANAGER
 SHELL
 SHELL_SESSION_ID
@@ -821,29 +819,27 @@ SHLVL
 SSH_AGENT_PID
 SSH_AUTH_SOCK
 TERM
-TEXTDOMAIN
-TEXTDOMAINDIR
 TIMEOUT
 TMPDIR
 TRIES
-UPSTART_EVENTS
-UPSTART_INSTANCE
-UPSTART_JOB
-UPSTART_SESSION
 USER
 VISUAL
 WINDOWID
-WINDOWPATH
+XAUTHORITY
+XCURSOR_SIZE
+XCURSOR_THEME
 XDG_CONFIG_DIRS
 XDG_CURRENT_DESKTOP
 XDG_DATA_DIRS
-XDG_MENU_PREFIX
 XDG_RUNTIME_DIR
 XDG_SEAT
+XDG_SEAT_PATH
+XDG_SESSION_CLASS
+XDG_SESSION_DESKTOP
 XDG_SESSION_ID
+XDG_SESSION_PATH
+XDG_SESSION_TYPE
 XDG_VTNR
-XDM_MANAGED
-XMODIFIERS
 _
   # The function is only copied if using Bash
   my_func2() {
@@ -863,7 +859,7 @@ _
   }
   export -f my_func3
   parallel -vv --workdir ... --nice 17 --env _ --trc {}.out -S $SERVER1 my_func3 {} ::: abc-file
-( ssh -l parallel lo -- mkdir -p ./.TMPWORKDIR;rsync --protocol 30 -rlDzR -essh\ -l\ parallel ./abc-file lo:./.TMPWORKDIR );ssh -l parallel lo -- exec perl -e @GNU_Parallel\\\=\\\(\\\"use\\\",\\\"IPC::Open3\\\;\\\",\\\"use\\\",\\\"MIME::Base64\\\"\\\)\\\;eval\\\"@GNU_Parallel\\\"\\\;\\\$SIG\\\{CHLD\\\}\\\=\\\"IGNORE\\\"\\\;my\\\$zip\\\=\\\(grep\\\{-x\\\$_\\\}\\\"/usr/local/bin/bzip2\\\"\\\)\\\[0\\\]\\\|\\\|\\\"bzip2\\\"\\\;my\\\(\\\$in,\\\$out,\\\$eval\\\)\\\;open3\\\(\\\$in,\\\$out,\\\"\\\>\\\&STDERR\\\",\\\$zip,\\\"-dc\\\"\\\)\\\;if\\\(my\\\$perlpid\\\=fork\\\)\\\{close\\\$in\\\;\\\$eval\\\=join\\\"\\\",\\\<\\\$out\\\>\\\;close\\\$out\\\;\\\}else\\\{close\\\$out\\\;print\\\$in\\\(decode_base64\\\(join\\\"\\\",@ARGV\\\)\\\)\\\;close\\\$in\\\;exit\\\;\\\}wait\\\;eval\\\$eval\\\; BASE64;_EXIT_status=$?; mkdir -p ./.; rsync --protocol 30 --rsync-path=cd\ ./.TMPWORKDIR/./.\;\ rsync -rlDzR -essh\ -l\ parallel lo:./abc-file.out ./.;ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file\;\ sh\ -c\ rmdir\\\ ./.TMPWORKDIR/\\\ ./.parallel/tmp/\\\ ./.parallel/\\\ 2\\\>/dev/null\\\;rm\\\ -rf\\\ ./.TMPWORKDIR\\\;\);ssh -l parallel lo -- \(rm\ -f\ ./.TMPWORKDIR/abc-file.out\;\ sh\ -c\ rmdir\\\ ./.TMPWORKDIR/\\\ ./.parallel/tmp/\\\ ./.parallel/\\\ 2\\\>/dev/null\\\;rm\\\ -rf\\\ ./.TMPWORKDIR\\\;\);ssh -l parallel lo -- rm -rf .TMPWORKDIR; exit $_EXIT_status;
+ssh -l parallel lo -- mkdir -p ./.TMPWORKDIR && rsync --protocol 30 -rlDzR -essh\ -l\ parallel ./abc-file lo:./.TMPWORKDIR;ssh -l parallel lo -- exec perl -e @GNU_Parallel\\\=split/_/,\\\"use_IPC::Open3\\\;_use_MIME::Base64\\\"\\\;eval\\\"@GNU_Parallel\\\"\\\;\\\$SIG\\\{CHLD\\\}\\\=\\\"IGNORE\\\"\\\;my\\\$zip\\\=\\\(grep\\\{-x\\\$_\\\}\\\"/usr/local/bin/bzip2\\\"\\\)\\\[0\\\]\\\|\\\|\\\"bzip2\\\"\\\;open3\\\(\\\$in,\\\$out,\\\"\\\>\\\&STDERR\\\",\\\$zip,\\\"-dc\\\"\\\)\\\;if\\\(my\\\$perlpid\\\=fork\\\)\\\{close\\\$in\\\;\\\$eval\\\=join\\\"\\\",\\\<\\\$out\\\>\\\;close\\\$out\\\;\\\}else\\\{close\\\$out\\\;print\\\$in\\\(decode_base64\\\(join\\\"\\\",@ARGV\\\)\\\)\\\;close\\\$in\\\;exit\\\;\\\}wait\\\;eval\\\$eval\\\; BASE64;_EXIT_status=$?; mkdir -p ./. && rsync --protocol 30 --rsync-path=cd\ ./.TMPWORKDIR/./.\;\ rsync -rlDzR -essh\ -l\ parallel lo:./abc-file.out ./.;ssh -l parallel lo -- rm\ -f\ ./.TMPWORKDIR/abc-file\;\ sh\ -c\ rmdir\\\ ./.TMPWORKDIR/\\\ ./.parallel/tmp/\\\ ./.parallel/\\\ 2\\\>/dev/null\\\;rm\\\ -rf\\\ ./.TMPWORKDIR\\\;;ssh -l parallel lo -- rm\ -f\ ./.TMPWORKDIR/abc-file.out\;\ sh\ -c\ rmdir\\\ ./.TMPWORKDIR/\\\ ./.parallel/tmp/\\\ ./.parallel/\\\ 2\\\>/dev/null\\\;rm\\\ -rf\\\ ./.TMPWORKDIR\\\;;ssh -l parallel lo -- rm -rf .TMPWORKDIR; exit $_EXIT_status;
   parallel --sqlandworker csv:////%2Ftmp%2Flog.csv seq ::: 10 ::: 12 13 14
   cat /tmp/log.csv
 99
@@ -1082,21 +1078,21 @@ JOB4
 /bin/bash: line 1: foo: command not found
   #!/usr/bin/perl
   print "@ARGV\n"
-Warning: unknown mime-type for "@ARGV\n" -- using "application/octet-stream"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
 Error: no such file "@ARGV\n"
   parallel perl_echo ::: foo bar
 /bin/bash: perl_echo: command not found
 /bin/bash: perl_echo: command not found
   #!/usr/bin/parallel --shebang-wrap /usr/bin/perl
   print "@ARGV\n"
-Warning: unknown mime-type for "@ARGV\n" -- using "application/octet-stream"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
 Error: no such file "@ARGV\n"
   perl_echo foo bar
 /bin/bash: perl_echo: command not found
   #!/usr/bin/parallel --shebang-wrap /usr/bin/perl
   
   print "Arguments @ARGV\n";
-Warning: unknown mime-type for "Arguments @ARGV\n" -- using "application/octet-stream"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
 Error: no such file "Arguments @ARGV\n"
   #!/usr/bin/parallel --shebang-wrap /usr/bin/python
   
@@ -1131,7 +1127,7 @@ Arguments
   
   print "Arguments "
   puts ARGV
-Warning: unknown mime-type for "Arguments " -- using "application/octet-stream"
+Unescaped left brace in regex is deprecated, passed through in regex; marked by <-- HERE in m/%{ <-- HERE (.*?)}/ at /usr/bin/print line 528.
 Error: no such file "Arguments "
 /bin/bash: line 3: puts: command not found
   #!/usr/bin/parallel --shebang-wrap /usr/bin/octave

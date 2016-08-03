@@ -1,6 +1,6 @@
 echo 'bug #41412: --timeout + --delay causes deadlock';
 bug #41412: --timeout + --delay causes deadlock
-  seq 10 | parallel -j10 --timeout 1 --delay .3 echo;
+  seq 10 | parallel -j10 --timeout 1 --delay 0.3 echo;
 1
 2
 3

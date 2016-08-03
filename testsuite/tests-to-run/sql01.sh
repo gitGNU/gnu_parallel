@@ -1,6 +1,9 @@
 #!/bin/bash
 
-MYSQL_ADMIN_DBURL=mysql://`whoami`:`whoami`@
+mysqlrootpass=${mysqlrootpass:-b+Ydjq4ejT4E}
+MYSQL_ADMIN_DBURL=mysql://root:$mysqlrootpass@/mysql
+
+exec 2>&1
 
 # Setup
 sql $MYSQL_ADMIN_DBURL "drop user 'sqlunittest'@'localhost'"

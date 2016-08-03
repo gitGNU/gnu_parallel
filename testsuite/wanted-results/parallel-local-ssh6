@@ -54,21 +54,21 @@ echo '### Test --onall -u';   parallel --onall -S parallel@lo,csh@lo -u '(echo {
 3
 echo '### Test --nonall';   parallel --nonall -k -S parallel@lo,csh@lo pwd | sort
 ### Test --nonall
-/home/csh
-/home/parallel
+/mnt/4tb/home/csh
+/mnt/4tb/home/parallel
 echo '### Test --nonall -u - should be interleaved x y x y';   parallel --nonall -S parallel@lo,csh@lo -u 'pwd|grep -q csh && sleep 3; pwd;sleep 12;pwd;'
 ### Test --nonall -u - should be interleaved x y x y
-/home/parallel
-/home/csh
-/home/parallel
-/home/csh
+/mnt/4tb/home/parallel
+/mnt/4tb/home/csh
+/mnt/4tb/home/parallel
+/mnt/4tb/home/csh
 echo '### Test read sshloginfile from STDIN';   echo parallel@lo,csh@lo | parallel -S - -k --nonall pwd;   echo parallel@lo,csh@lo | parallel --sshloginfile - -k --onall pwd\; echo ::: foo
 ### Test read sshloginfile from STDIN
-/home/csh
-/home/parallel
-/home/csh
+/mnt/4tb/home/csh
+/mnt/4tb/home/parallel
+/mnt/4tb/home/csh
 foo
-/home/parallel
+/mnt/4tb/home/parallel
 foo
 echo '**'
 **
@@ -88,24 +88,24 @@ echo '### Test --nonall --basefile --cleanup (rm should fail)';   touch tmp/nona
 ### Test --nonall --basefile --cleanup (rm should fail)
 tmp/nonall--basefile--clean
 tmp/nonall--basefile--clean
-rm: cannot remove ‘tmp/nonall--basefile--clean’: No such file or directory
-rm: cannot remove ‘tmp/nonall--basefile--clean’: No such file or directory
+rm: cannot remove 'tmp/nonall--basefile--clean': No such file or directory
+rm: cannot remove 'tmp/nonall--basefile--clean': No such file or directory
 echo '**'
 **
 echo '### Test --onall --basefile --cleanup (rm should fail)';   touch tmp/onall--basefile--clean;   stdout parallel --onall --basefile tmp/onall--basefile--clean --cleanup -S parallel@lo,csh@lo ls {} ::: tmp/onall--basefile--clean;   stdout parallel --onall -S parallel@lo,csh@lo rm {} ::: tmp/onall--basefile--clean;   stdout rm tmp/onall--basefile--clean
 ### Test --onall --basefile --cleanup (rm should fail)
 tmp/onall--basefile--clean
 tmp/onall--basefile--clean
-rm: cannot remove ‘tmp/onall--basefile--clean’: No such file or directory
-rm: cannot remove ‘tmp/onall--basefile--clean’: No such file or directory
+rm: cannot remove 'tmp/onall--basefile--clean': No such file or directory
+rm: cannot remove 'tmp/onall--basefile--clean': No such file or directory
 echo '**'
 **
 echo '### Test --workdir .';   ssh parallel@lo mkdir -p mydir;   mkdir -p $HOME/mydir; cd $HOME/mydir;   parallel --workdir . -S parallel@lo ::: pwd
 ### Test --workdir .
-/home/parallel/mydir
+/mnt/4tb/home/parallel/mydir
 echo '### Test --wd .';   ssh csh@lo mkdir -p mydir;   mkdir -p $HOME/mydir; cd $HOME/mydir;   parallel --workdir . -S csh@lo ::: pwd
 ### Test --wd .
-/home/csh/mydir
+/mnt/4tb/home/csh/mydir
 echo '### Test --wd {}';   ssh csh@lo rm -rf wd1 wd2;   mkdir -p $HOME/mydir; cd $HOME/mydir;   parallel --workdir {} -S csh@lo touch ::: wd1 wd2;   ssh csh@lo ls -d wd1 wd2
 ### Test --wd {}
 wd1

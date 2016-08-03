@@ -16,6 +16,10 @@ export SMALLDISK
   sudo chmod 777 /mnt/ram
 ) >/dev/null 2>/dev/null
 
+stdsort() {
+    "$@" 2>&1 | sort;
+}
+export -f stdsort
 
 # Test amount of parallelization
 # parallel --shuf --jl /tmp/myjl -j1 'export JOBS={1};'bash tests-to-run/parallel-local-0.3s.sh ::: {1..16} ::: {1..5}
@@ -133,7 +137,7 @@ echo '**'
 
 testquote() { printf '"#&/\n()*=?'"'" | PARALLEL_SHELL=$1 parallel -0 echo; }; 
   export -f testquote; 
-  parallel --tag -k testquote ::: ash bash csh dash fdsh fish fizsh ksh ksh93 mksh pdksh posh rbash rc rzsh sash sh static-sh tcsh yash zsh
+  parallel --tag -k testquote ::: ash bash csh dash fdsh fish fizsh ksh ksh93 mksh posh rbash rc rzsh sash sh static-sh tcsh yash zsh
 
 echo '**'
 
@@ -165,7 +169,8 @@ echo '### bug #45998: --pipe to function broken'
 
   myfunc() { echo $1; cat; }; 
     export -f myfunc; 
-    echo OK | parallel --pipe myfunc {#}
+    echo pipefunc OK | parallel --pipe myfunc {#}; 
+    echo pipefunc and more OK | parallel --pipe 'myfunc {#};echo and more OK'
 
 echo '**'
 
@@ -234,7 +239,7 @@ echo 'bug #47290: xargs: Warning: a NUL character occurred in the input'
 echo '**'
 
 echo '### Test --shellquote'
-  parallel --tag -q -k {} -c perl\ -e\ \'print\ pack\(\"c\*\",1..255\)\'\ \|\ parallel\ -0\ --shellquote ::: ash bash csh dash fish fizsh ksh ksh93 lksh mksh pdksh posh rzsh sash sh static-sh tcsh yash zsh csh tcsh
+  parallel --tag -q -k {} -c perl\ -e\ \'print\ pack\(\"c\*\",1..255\)\'\ \|\ parallel\ -0\ --shellquote ::: ash bash csh dash fish fizsh ksh ksh93 lksh mksh posh rzsh sash sh static-sh tcsh yash zsh csh tcsh
 
 echo '**'
 
@@ -305,12 +310,12 @@ echo '### test too long args'
   
 echo '### Test -x'
 
-  (seq 1 10; echo 12345; seq 12 15) | stdout parallel -j1 -km -s 10 -x echo
-  (seq 1 10; echo 12345; seq 12 15) | stdout parallel -j1 -kX -s 10 -x echo
-  (seq 1 10; echo 12345; seq 12 15) | stdout xargs -s 10 -x echo
-  (seq 1 10; echo 1234; seq 12 15) | stdout parallel -j1 -km -s 10 -x echo
-  (seq 1 10; echo 1234; seq 12 15) | stdout parallel -j1 -kX -s 10 -x echo
-  (seq 1 10; echo 1234; seq 12 15) | stdout xargs -s 10 -x echo
+  (seq 1 10; echo 12345; seq 12 15) | stdsort parallel -j1 -km -s 10 -x echo
+  (seq 1 10; echo 12345; seq 12 15) | stdsort parallel -j1 -kX -s 10 -x echo
+  (seq 1 10; echo 12345; seq 12 15) | stdsort xargs -s 10 -x echo
+  (seq 1 10; echo 1234;  seq 12 15) | stdsort parallel -j1 -km -s 10 -x echo
+  (seq 1 10; echo 1234;  seq 12 15) | stdsort parallel -j1 -kX -s 10 -x echo
+  (seq 1 10; echo 1234;  seq 12 15) | stdsort xargs -s 10 -x echo
   
 echo '### Test -a and --arg-file: Read input from file instead of stdin'
 

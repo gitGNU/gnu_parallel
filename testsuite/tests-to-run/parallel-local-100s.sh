@@ -8,6 +8,8 @@
 TMP5G=${TMP5G:-/dev/shm}
 export TMP5G
 
+rm -f /tmp/*.{tmx,pac,arg,all,log,swp,loa,ssh,df,pip,tmb,chr,tms,par}
+
 par_retries_unreachable() {
   echo '### Test of --retries on unreachable host'
   seq 2 | stdout parallel -k --retries 2 -v -S 4.3.2.1,: echo

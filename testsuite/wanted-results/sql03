@@ -1,10 +1,18 @@
+mysql: [Warning] Using a password on the command line interface can be insecure.
+mysql: [Warning] Using a password on the command line interface can be insecure.
+mysql: [Warning] Using a password on the command line interface can be insecure.
+mysql: [Warning] Using a password on the command line interface can be insecure.
+mysql: [Warning] Using a password on the command line interface can be insecure.
 ### Test reading sql from url command line
+mysql: [Warning] Using a password on the command line interface can be insecure.
 Test reading SQL from command line
 Yes it works
 ### Test reading sql from url command line %-quoting
+mysql: [Warning] Using a password on the command line interface can be insecure.
 Test %-quoting SQL from command line
 Yes it works
 ### Test .sql/aliases with url on commandline
+mysql: [Warning] Using a password on the command line interface can be insecure.
 Test if .sql/aliases with %-quoting works
 Yes it works
 ### Test cyclic alias .sql/aliases
@@ -14,6 +22,7 @@ Test statement in alias
 It works
 Test statement in alias
 It works
+mysql: [Warning] Using a password on the command line interface can be insecure.
 Test statement in alias
 It works
 ### Test alias followed by SQL as arg
@@ -33,6 +42,7 @@ It works
 Query added to alias
 'Query from stdin'
 Query from stdin
+mysql: [Warning] Using a password on the command line interface can be insecure.
 Test statement in alias
 It works
 Query added to alias
@@ -46,7 +56,7 @@ Error:
 sql [-hnr] [--table-size] [--db-size] [-p pass-through] [-s string] dburl [command]
 ### Test dburl :
 Error:
-: is not defined in /home/tange/.sql/aliases /home/tange/.dburl.aliases /etc/sql/aliases /usr/local/bin/dburl.aliases /usr/local/bin/dburl.aliases.dist
+: is not defined in /mnt/4tb/home/tange/.sql/aliases /mnt/4tb/home/tange/.dburl.aliases /etc/sql/aliases /usr/local/bin/dburl.aliases /usr/local/bin/dburl.aliases.dist
 
 sql [-hnr] [--table-size] [--db-size] [-p pass-through] [-s string] dburl [command]
 ### Test oracle with multiple arguments on the command line
@@ -75,4 +85,35 @@ arg3
 	 3
 ----------
 	 3
+
+### Test --show-tables
+
+OBJECT_NAME
+--------------------------------------------------------------------------------------------------------------------------------
+JOB_HISTORY
+EMPLOYEES
+JOBS
+DEPARTMENTS
+LOCATIONS
+COUNTRIES
+REGIONS
+
+7 rows selected.
+
+### Test --show-databases
+
+TABLESPACE_NAME 	       BLOCK_SIZE INITIAL_EXTENT NEXT_EXTENT MIN_EXTENTS MAX_EXTENTS   MAX_SIZE PCT_INCREASE MIN_EXTLEN STATUS	  CONTENTS  LOGGING   FOR EXTENT_MAN ALLOCATIO SEGMEN DEF_TAB_ RETENTION   BIG PREDICA ENC COMPRESS_FOR
+------------------------------ ---------- -------------- ----------- ----------- ----------- ---------- ------------ ---------- --------- --------- --------- --- ---------- --------- ------ -------- ----------- --- ------- --- ------------
+SYSTEM				     8192	   65536		       1  2147483645 2147483645 		  65536 ONLINE	  PERMANENT LOGGING   NO  LOCAL      SYSTEM    MANUAL DISABLED NOT APPLY   NO  HOST    NO
+SYSAUX				     8192	   65536		       1  2147483645 2147483645 		  65536 ONLINE	  PERMANENT LOGGING   NO  LOCAL      SYSTEM    AUTO   DISABLED NOT APPLY   NO  HOST    NO
+UNDOTBS1			     8192	   65536		       1  2147483645 2147483645 		  65536 ONLINE	  UNDO	    LOGGING   NO  LOCAL      SYSTEM    MANUAL DISABLED NOGUARANTEE NO  HOST    NO
+TEMP				     8192	 1048576     1048576	       1	     2147483645 	   0	1048576 ONLINE	  TEMPORARY NOLOGGING NO  LOCAL      UNIFORM   MANUAL DISABLED NOT APPLY   NO  HOST    NO
+USERS				     8192	   65536		       1  2147483645 2147483645 		  65536 ONLINE	  PERMANENT LOGGING   NO  LOCAL      SYSTEM    AUTO   DISABLED NOT APPLY   NO  HOST    NO
+
+### Test --listproc
+SELECT	   CPU_TIME/100000, SYS.V_$SQL.SQL_TEXT, USERNAME FROM	   SYS.V_$SQL, SYS.V_$SESSION WHERE	SYS.V_$SQL.SQL_ID = SYS.V_$SESSION.SQL_ID(+) AND username IS NOT NULL ORDER BY CPU_TIME DESC
+                                                                                   *
+ERROR at line 1:
+ORA-00942: table or view does not exist
+
 

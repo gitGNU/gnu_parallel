@@ -39,8 +39,8 @@ par_memory_leak() {
     }
     export -f a_run
     echo "### Test for memory leaks"
-    echo "Of 10 runs of 1 job at least one should be bigger than a 3000 job run"
-    small_max=$(seq 10 | parallel a_run 1 | jq -s max)
+    echo "Of 30 runs of 1 job at least one should be bigger than a 3000 job run"
+    small_max=$(seq 30 | parallel a_run 1 | jq -s max)
     big=$(a_run 3000)
     if [ $small_max -lt $big ] ; then
 	echo "Bad: Memleak likely."

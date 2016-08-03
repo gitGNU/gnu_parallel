@@ -1,29 +1,29 @@
 ### test --env _
 Both test that variables are copied,
 but also that they are NOT copied, if ignored
-par_bash_funky	3 arg alias_works
-par_bash_funky	function_works
-par_bash_funky	myvar  works
-par_bash_funky	  space  6  
-par_bash_funky	assoc_val_a
-par_bash_funky	Funky-
 par_bash_funky	
-par_bash_funky		
-par_bash_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
-par_bash_funky	€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-par_bash_funky	3 arg alias_works_over_ssh
-par_bash_funky	function_works_over_ssh
-par_bash_funky	myvar  works
-par_bash_funky	  space  6  
-par_bash_funky	assoc_val_a
-par_bash_funky	Funky-
 par_bash_funky	
-par_bash_funky		
-par_bash_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
-par_bash_funky	€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
 par_bash_funky	
 par_bash_funky	\\\\\\\\	
+par_bash_funky		
+par_bash_funky		
+par_bash_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+par_bash_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+par_bash_funky	  space  6  
+par_bash_funky	  space  6  
+par_bash_funky	3 arg alias_works
+par_bash_funky	3 arg alias_works_over_ssh
+par_bash_funky	Funky-
+par_bash_funky	Funky-
 par_bash_funky	\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+par_bash_funky	assoc_val_a
+par_bash_funky	assoc_val_a
+par_bash_funky	function_works
+par_bash_funky	function_works_over_ssh
+par_bash_funky	myvar  works
+par_bash_funky	myvar  works
+par_bash_funky	€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
+par_bash_funky	€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
 par_bash_man	### bash
 par_bash_man	### From man env_parallel
 par_bash_man	aliases work
@@ -219,23 +219,23 @@ par_fish_underscore	fish: Unknown command 'myfunc work'
 par_fish_underscore	fish: myfunc work
 par_fish_underscore	      ^
 par_fish_underscore	OK if   ^^^^^^^^^^^^^^^^^ no myfunc
-par_ksh_funky	3 arg alias_works
-par_ksh_funky	function_works
-par_ksh_funky	myvar  works
-par_ksh_funky	  space  6  
-par_ksh_funky	assoc_val_a
-par_ksh_funky	Funky-	
-par_ksh_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-par_ksh_funky	3 arg alias_works_over_ssh
-par_ksh_funky	function_works_over_ssh
-par_ksh_funky	myvar  works
-par_ksh_funky	  space  6  
-par_ksh_funky	assoc_val_a
-par_ksh_funky	Funky-	
-par_ksh_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
 par_ksh_funky	
 par_ksh_funky	\\\\\\\\	
+par_ksh_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
+par_ksh_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
+par_ksh_funky	  space  6  
+par_ksh_funky	  space  6  
+par_ksh_funky	3 arg alias_works
+par_ksh_funky	3 arg alias_works_over_ssh
+par_ksh_funky	Funky-	
+par_ksh_funky	Funky-	
 par_ksh_funky	\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+par_ksh_funky	assoc_val_a
+par_ksh_funky	assoc_val_a
+par_ksh_funky	function_works
+par_ksh_funky	function_works_over_ssh
+par_ksh_funky	myvar  works
+par_ksh_funky	myvar  works
 par_ksh_man	### ksh
 par_ksh_man	### From man env_parallel
 par_ksh_man	aliases work
@@ -282,83 +282,20 @@ par_ksh_underscore	/usr/bin/ksh: line 113: myfunc: not found
 par_ksh_underscore	OK if no myfunc         ^^^^^^^^^^^^^^^^^
 par_ksh_underscore	/usr/bin/ksh: line 113: myfunc: not found
 par_ksh_underscore	OK if no myfunc         ^^^^^^^^^^^^^^^^^
-par_pdksh_funky	3 arg alias_works
-par_pdksh_funky	function_works
-par_pdksh_funky	myvar  works
-par_pdksh_funky	  space  6  
-par_pdksh_funky	assoc_val_b
-par_pdksh_funky	Funky-	
-par_pdksh_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-par_pdksh_funky	3 arg alias_works_over_ssh
-par_pdksh_funky	function_works_over_ssh
-par_pdksh_funky	myvar  works
-par_pdksh_funky	  space  6  
-par_pdksh_funky	assoc_val_b
-par_pdksh_funky	Funky-	
-par_pdksh_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-par_pdksh_funky	
-par_pdksh_funky	\\\\\\\\	
-par_pdksh_funky	\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
-par_pdksh_man	### pdksh
-par_pdksh_man	### From man env_parallel
-par_pdksh_man	aliases work
-par_pdksh_man	aliases work
-par_pdksh_man	aliases work
-par_pdksh_man	aliases work
-par_pdksh_man	functions work
-par_pdksh_man	functions work
-par_pdksh_man	functions work
-par_pdksh_man	functions work
-par_pdksh_man	variables work
-par_pdksh_man	variables work
-par_pdksh_man	variables work
-par_pdksh_man	variables work
-par_pdksh_man	arrays
-par_pdksh_man	work,
-par_pdksh_man	too
-par_pdksh_man	arrays
-par_pdksh_man	work,
-par_pdksh_man	too
-par_pdksh_man	arrays
-par_pdksh_man	work,
-par_pdksh_man	too
-par_pdksh_man	arrays
-par_pdksh_man	work,
-par_pdksh_man	too
-par_pdksh_underscore	### pdksh
-par_pdksh_underscore	### Testing of --env _
-par_pdksh_underscore	variables in aliases in and arrays in functions work
-par_pdksh_underscore	variables in aliases in and arrays in functions work
-par_pdksh_underscore	variables in aliases in and arrays in functions work
-par_pdksh_underscore	variables in aliases in and arrays in functions work
-par_pdksh_underscore	variables in aliases in and arrays in functions work
-par_pdksh_underscore	variables in aliases in and arrays in functions work
-par_pdksh_underscore	aliases in and arrays in functions work
-par_pdksh_underscore	aliases in and arrays in functions work
-par_pdksh_underscore	aliases in functions work
-par_pdksh_underscore	aliases in functions work
-par_pdksh_underscore	aliases in functions work
-par_pdksh_underscore	OK if no myecho    ^^^^^^^^^^^^^^^^^
-par_pdksh_underscore	aliases in functions work
-par_pdksh_underscore	OK if no myecho    ^^^^^^^^^^^^^^^^^
-par_pdksh_underscore	/bin/pdksh: myfunc: not found
-par_pdksh_underscore	OK if no myfunc         ^^^^^^^^^^^^^^^^^
-par_pdksh_underscore	/bin/pdksh: myfunc: not found
-par_pdksh_underscore	OK if no myfunc         ^^^^^^^^^^^^^^^^^
+par_tcsh_funky	
+par_tcsh_funky	
+par_tcsh_funky	
 par_tcsh_funky	3 arg alias_works
-par_tcsh_funky	
-par_tcsh_funky	myvar  works
-par_tcsh_funky	space special chars problem
-par_tcsh_funky	Funky-	  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùú-funky alias_var_works
-par_tcsh_funky	func_echo: Command not found.
 par_tcsh_funky	3 arg alias_works_over_ssh
-par_tcsh_funky	
+par_tcsh_funky	Funky-	  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùú-funky alias_var_works
+par_tcsh_funky	Funky-	  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùú-funky alias_var_works_over_ssh
+par_tcsh_funky	\\\\\\\\	\ \\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú
+par_tcsh_funky	func_echo: Command not found.
+par_tcsh_funky	func_echo: Command not found.
+par_tcsh_funky	myvar  works
 par_tcsh_funky	myvar  works
 par_tcsh_funky	space special chars problem
-par_tcsh_funky	Funky-	  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùú-funky alias_var_works_over_ssh
-par_tcsh_funky	func_echo: Command not found.
-par_tcsh_funky	
-par_tcsh_funky	\\\\\\\\	\ \\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú
+par_tcsh_funky	space special chars problem
 par_tcsh_man	### tcsh
 par_tcsh_man	### From man env_parallel
 par_tcsh_man	#: Command not found.
@@ -402,25 +339,25 @@ par_tcsh_underscore	OK      ^^^^^^^^^^^^^^^^^ if no myecho
 par_tcsh_underscore	myecho: Command not found.
 par_tcsh_underscore	OK      ^^^^^^^^^^^^^^^^^ if no myecho
 par_tcsh_underscore	Connection to lo closed.
-par_zsh_funky	3 arg alias_works
-par_zsh_funky	function_works
-par_zsh_funky	myvar  works
-par_zsh_funky	  space  6  
-par_zsh_funky	assoc_val_a
-par_zsh_funky	Funky-
-par_zsh_funky		
-par_zsh_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
-par_zsh_funky	3 arg alias_works_over_ssh
-par_zsh_funky	function_works_over_ssh
-par_zsh_funky	myvar  works
-par_zsh_funky	  space  6  
-par_zsh_funky	assoc_val_a
-par_zsh_funky	Funky-
-par_zsh_funky		
-par_zsh_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
 par_zsh_funky	
 par_zsh_funky	\\\\\\\\	
+par_zsh_funky		
+par_zsh_funky		
+par_zsh_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
+par_zsh_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
+par_zsh_funky	  space  6  
+par_zsh_funky	  space  6  
+par_zsh_funky	3 arg alias_works
+par_zsh_funky	3 arg alias_works_over_ssh
+par_zsh_funky	Funky-
+par_zsh_funky	Funky-
 par_zsh_funky	\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+par_zsh_funky	assoc_val_a
+par_zsh_funky	assoc_val_a
+par_zsh_funky	function_works
+par_zsh_funky	function_works_over_ssh
+par_zsh_funky	myvar  works
+par_zsh_funky	myvar  works
 par_zsh_man	### zsh
 par_zsh_man	### From man env_parallel
 par_zsh_man	aliases work

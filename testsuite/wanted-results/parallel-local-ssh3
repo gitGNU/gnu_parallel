@@ -123,10 +123,11 @@ echo '### exported function to csh but with PARALLEL_SHELL=bash'
 CSH/TCSH DO NOT SUPPORT newlines IN VARIABLES/FUNCTIONS. Unset doit
 OK
 bug #47695: How to set $PATH on remote?
-Welcome to Linux Mint 17 Qiana (GNU/Linux 3.16.0-31-lowlatency x86_64)
+Welcome to Ubuntu 16.04.1 LTS (GNU/Linux 4.4.0-31-generic x86_64)
 
-Welcome to Linux Mint
- * Documentation:  http://www.linuxmint.com
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
 
 0 updates are security updates.
 
@@ -135,10 +136,11 @@ BASH Path before: /bin:/usr/bin with no parallel
 ^^^^^^^^ Not found is OK
 /bin:/usr/bin:/tmp OK
 
-Welcome to Linux Mint 17 Qiana (GNU/Linux 3.16.0-31-lowlatency x86_64)
+Welcome to Ubuntu 16.04.1 LTS (GNU/Linux 4.4.0-31-generic x86_64)
 
-Welcome to Linux Mint
- * Documentation:  http://www.linuxmint.com
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
 
 0 updates are security updates.
 
@@ -147,4 +149,5 @@ Thus no job control in this shell.
 CSH Path before: /bin:/usr/bin with no parallel
 parallel: Command not found.
 ^^^^^^^^ Not found is OK
-/bin:/usr/bin:/tmp OK
+parallel: Warning: Removed lo.
+parallel: Error: There are no hosts left to run on.
