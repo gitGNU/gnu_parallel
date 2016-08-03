@@ -632,9 +632,7 @@ The variable '_' is special. It will copy all exported environment
 variables except for the ones mentioned in ~/.parallel/ignored_vars.
 
 To copy the full environment (both exported and not exported
-variables, arrays, and functions) use B<env_parallel> as described
-under the option I<command>.
-
+variables, arrays, and functions) use B<env_parallel>.
 
 See also: B<--record-env>.
 
@@ -2512,7 +2510,7 @@ B<--env>:
 
 If your environment (aliases, variables, and functions) is small you
 can copy the full environment without having to B<export -f>
-anything. See B<env_parallel> earlier in the man page.
+anything. See B<env_parallel>.
 
 
 =head1 EXAMPLE: Function tester
@@ -2579,16 +2577,16 @@ foo) you can do:
   parallel --plus 'mkdir {..}; tar -C {..} -xf {}' ::: *.tar.gz
 
 
-=head1 EXAMPLE: Download 10 images for each of the past 30 days
+=head1 EXAMPLE: Download 24 images for each of the past 30 days
 
 Let us assume a website stores images like:
 
   http://www.example.com/path/to/YYYYMMDD_##.jpg
 
-where YYYYMMDD is the date and ## is the number 01-10. This will
+where YYYYMMDD is the date and ## is the number 01-24. This will
 download images for the past 30 days:
 
-  parallel wget http://www.example.com/path/to/'$(date -d "today -{1} days" +%Y%m%d)_{2}.jpg' ::: $(seq 30) ::: $(seq -w 10)
+  parallel wget http://www.example.com/path/to/'$(date -d "today -{1} days" +%Y%m%d)_{2}.jpg' ::: $(seq 30) ::: $(seq -w 24)
 
 B<$(date -d "today -{1} days" +%Y%m%d)> will give the dates in
 YYYYMMDD with B<{1}> days subtracted.
@@ -4383,8 +4381,7 @@ support running jobs on remote computers.
 
 B<prll> encourages using BASH aliases and BASH functions instead of
 scripts. GNU B<parallel> supports scripts directly, functions if they
-are exported using B<export -f>, and aliases if using B<env_parallel>
-described earlier.
+are exported using B<export -f>, and aliases if using B<env_parallel>.
 
 B<prll> generates a lot of status information on stderr (standard
 error) which makes it harder to use the stderr (standard error) output
@@ -4729,6 +4726,66 @@ B<4> find . -name '*.bmp' | jobflow -threads=8 -exec bmp2jpeg {.}.bmp {.}.jpg
 B<4> find . -name '*.bmp' | parallel -j8 bmp2jpeg {.}.bmp {.}.jpg
 
 
+=head2 DIFFERENCES BETWEEN gargs AND GNU Parallel
+
+B<gargs> can run multiple jobs in parallel.
+
+It caches output in memory. This causes it to be extremely slow when
+the output is larger than the physical RAM, and can cause the system
+to run out of memory.
+
+See more details on this in B<man parallel_design>.
+
+
+Output to stderr (standard error) is changed if the command fails.
+
+Here are the two examples from B<gargs> website.
+
+B<1> seq 12 -1 1 | gargs -p 4 -n 3 "sleep {0}; echo {1} {2}"
+
+B<1> seq 12 -1 1 | parallel -P 4 -n 3 "sleep {1}; echo {2} {3}"
+
+B<2> cat t.txt | gargs --sep "\s+" -p 2 "echo '{0}:{1}-{2}' full-line: \'{}\'"
+
+B<2> cat t.txt | parallel --colsep "\\s+" -P 2 "echo '{1}:{2}-{3}' full-line: \'{}\'"
+
+
+=head2 DIFFERENCES BETWEEN orgalorg AND GNU Parallel
+
+B<orgalorg> can run the same job on multiple machines. This is related
+to B<--onall> and B<--nonall>.
+
+B<orgalorg> supports entering the SSH password - provided it is the
+same for all servers. GNU B<parallel> advocates using B<ssh-agent>
+instead, but it is possible to emulate B<orgalorg>'s behavior by
+setting SSHPASS and by using B<--ssh "sshpass ssh">.
+
+To make the emulation easier, make a simple alias:
+
+  alias par_emul="parallel -j0 --ssh 'sshpass ssh' --nonall --tag --linebuffer"
+
+If you want to supply a password run:
+
+  SSHPASS=`ssh-askpass`
+
+or set the password directly:
+
+  SSHPASS=P4$$w0rd!
+
+If the above is set up you can then do:
+
+  orgalorg -o frontend1 -o frontend2 -p -C uptime
+  par_emul -S frontend1 -S frontend2 uptime
+
+  orgalorg -o frontend1 -o frontend2 -p -C top -bid 1
+  par_emul -S frontend1 -S frontend2 top -bid 1
+
+  orgalorg -o frontend1 -o frontend2 -p -er /tmp -n 'md5sum /tmp/bigfile' -S bigfile
+  par_emul -S frontend1 -S frontend2 --basefile bigfile --workdir /tmp  md5sum /tmp/bigfile
+
+B<orgalorg> has a progress indicator for the transferring of a
+file. GNU B<parallel> does not.
+
 
 =head2 DIFFERENCES BETWEEN ClusterSSH AND GNU Parallel
 
@@ -4834,8 +4891,8 @@ or:
 
 it may be because I<command> is not known, but it could also be
 because I<command> is an alias or a function. If it is a function you
-need to B<export -f> the function first. An alias will only work if you use 
-B<env_parallel> described earlier.
+need to B<export -f> the function first. An alias will only work if
+you use B<env_parallel>.
 
 
 =head1 REPORTING BUGS

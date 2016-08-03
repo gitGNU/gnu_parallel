@@ -543,7 +543,7 @@ The wrapper looks like this:
 Transferring of variables and functions given by B<--env> is done by
 running a Perl script remotely that calls the actual command. The Perl
 script sets B<$ENV{>I<variable>B<}> to the correct value before
-exec'ing the a shell that runs the function definition followed by the
+exec'ing a shell that runs the function definition followed by the
 actual command.
 
 The function B<env_parallel> copies the full current environment into
@@ -743,10 +743,63 @@ not need to sync them to disk.
 It gives the odd situation that a disk can be fully used, but there
 are no visible files on it.
 
+=head3 Comparing to buffering in memory
+
+B<gargs> is a parallelizing tool that buffers in memory. It is
+therefore a useful way of comparing the advantages and disadvantages.
+
+On an system with 6 GB RAM free and 6 GB free swap these were tested
+with different sizes:
+
+  echo /dev/zero | gargs "head -c $size {}" >/dev/null
+  echo /dev/zero | parallel "head -c $size {}" >/dev/null
+
+The results are here:
+
+  JobRuntime      Command
+       0.344      parallel_test 1M
+       0.362      parallel_test 10M
+       0.640      parallel_test 100M
+       9.818      parallel_test 1000M
+      23.888      parallel_test 2000M
+      30.217      parallel_test 2500M
+      30.963      parallel_test 2750M
+      34.648      parallel_test 3000M
+      43.302      parallel_test 4000M
+      55.167      parallel_test 5000M
+      67.493      parallel_test 6000M
+     178.654      parallel_test 7000M
+     204.138      parallel_test 8000M
+     230.052      parallel_test 9000M
+     255.639      parallel_test 10000M
+     757.981      parallel_test 30000M
+       0.537      gargs_test 1M
+       0.292      gargs_test 10M
+       0.398      gargs_test 100M
+       3.456      gargs_test 1000M
+       8.577      gargs_test 2000M
+      22.705      gargs_test 2500M
+     123.076      gargs_test 2750M
+      89.866      gargs_test 3000M
+     291.798      gargs_test 4000M
+
+GNU B<parallel> is pretty much limited by the speed of the disk: Up to
+6 GB data is written to disk but cached, so reading is fast. Above 6
+GB data are both written and read from disk. When the 30000MB job is
+running, the system is slow, but not completely unusable: If you are
+not using the disk, you almost do not feel it.
+
+B<gargs> hits a wall around 2500M. Then the system starts swapping
+like crazy and is completely unusable. At 5000M it goes out of memory.
+
+You can make GNU B<parallel> behave similar to B<gargs> if you point
+$TMPDIR to a tmpfs-filesystem: It will be faster for small outputs,
+but kill your system for larger outputs.
+
 
 =head2 Disk full
 
-GNU B<parallel> buffers on disk. If the disk is full data may be
+GNU B<parallel> buffers on disk. If the disk is full, data may be
 lost. To check if the disk is full GNU B<parallel> writes a 8193 byte
 file every second. If this file is written successfully, it is removed
 immediately. If it is not written successfully, the disk is full. The
@@ -758,7 +811,7 @@ systems, whereas 8193 did the correct thing on all tested filesystems.
 
 The shorthands for replacement strings make a command look more
 cryptic. Different users will need different replacement
-strings. Instead of inventing more shorthands you get more more
+strings. Instead of inventing more shorthands you get more
 flexible replacement strings if they can be programmed by the user.
 
 The language Perl was chosen because GNU B<parallel> is written in
@@ -939,7 +992,7 @@ was obsoleted 20130222 and removed one year later.
 Until 20150122 variables and functions were transferred by looking at
 $SHELL to see whether the shell was a B<*csh> shell. If so the
 variables would be set using B<setenv>. Otherwise they would be set
-using B<=>. The caused the content of the variable to be repeated:
+using B<=>. This caused the content of the variable to be repeated:
 
 echo $SHELL | grep "/t\{0,1\}csh" > /dev/null && setenv VAR foo ||
 export VAR=foo

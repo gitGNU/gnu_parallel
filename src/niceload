@@ -24,7 +24,7 @@
 use strict;
 use Getopt::Long;
 $Global::progname="niceload";
-$Global::version = 20160722;
+$Global::version = 20160724;
 Getopt::Long::Configure("bundling","require_order");
 get_options_from_array(\@ARGV) || die_usage();
 if($opt::version) {
@@ -1005,7 +1005,7 @@ sub load_status_linux {
 	    ::die_bug("proc_loadavg");
 	}
 	close IN;
-    } elsif (open(IN,"uptime|")) {
+    } elsif (open(IN,"LANG=C uptime|")) {
 	my $upString = <IN>;
 	if($upString =~ m/averages?.\s*(\d+\.\d+)/) {
 	    $loadavg = $1;
@@ -1019,7 +1019,7 @@ sub load_status_linux {
 
 sub load_status_darwin {
     my $loadavg = `sysctl vm.loadavg`;
-    if($loadavg =~ /vm\.loadavg: { ([0-9.]+) ([0-9.]+) ([0-9.]+) }/) {
+    if($loadavg =~ /vm\.loadavg: \{ ([0-9.]+) ([0-9.]+) ([0-9.]+) \}/) {
 	$loadavg = $1;
     } elsif (open(IN,"LANG=C uptime|")) {
 	my $upString = <IN>;

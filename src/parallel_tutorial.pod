@@ -1281,7 +1281,7 @@ B<--resume-failed> reads the commands from the command line (and
 ignores the commands in the joblog), B<--retry-failed> ignores the
 command line and reruns the commands mentioned in the joblog.
 
-  parallel --resume-failed --joblog /tmp/log
+  parallel --retry-failed --joblog /tmp/log
   cat /tmp/log
 
 Output:
