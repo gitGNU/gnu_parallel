@@ -875,8 +875,8 @@ sub options_hash {
 	 "block|block-size|blocksize=s" => \$opt::blocksize,
 	 "tollef" => \$opt::tollef,
 	 "gnu" => \$opt::gnu,
-	 "xapply" => \$opt::xapply,
-	 "xapplyinputsource=i" => \@opt::xapplyinputsource,
+	 "link|xapply" => \$opt::link,
+	 "linkinputsource|xapplyinputsource=i" => \@opt::linkinputsource,
 	 "bibtex|citation" => \$opt::citation,
 	 "wc|willcite|will-cite|nn|nonotice|no-notice" => \$opt::willcite,
 	 # Termination and retries
@@ -1697,12 +1697,12 @@ sub read_args_from_command_line {
     # Arguments given on the command line after:
     #   ::: ($Global::arg_sep)
     #   :::: ($Global::arg_file_sep)
-    #   :::+ ($Global::arg_sep with --xapply)
-    #   ::::+ ($Global::arg_file_sep with --xapply)
+    #   :::+ ($Global::arg_sep with --link)
+    #   ::::+ ($Global::arg_file_sep with --link)
     # Removes the arguments from @ARGV and:
     # - puts filenames into -a
     # - puts arguments into files and add the files to -a
-    # - adds --xapplyinputsource with 0/1 for each -a depending on :::+/::::+
+    # - adds --linkinputsource with 0/1 for each -a depending on :::+/::::+
     # Input:
     #   @::ARGV = command option ::: arg arg arg :::: argfiles
     # Uses:
@@ -1722,7 +1722,7 @@ sub read_args_from_command_line {
 	   $arg eq $Global::arg_file_sep
 	   or
 	   $arg eq $Global::arg_file_sep."+") {
-	    my $group = $arg; # This group of arguments is args or argfiles
+	    my $group_sep = $arg; # This group of arguments is args or argfiles
 	    my @group;
 	    while(defined ($arg = shift @ARGV)) {
 		if($arg eq $Global::arg_sep
@@ -1740,24 +1740,29 @@ sub read_args_from_command_line {
 		    push @group, $arg;
 		}
 	    }
-	    if($group=~/\+$/) {
-		# :::+ or ::::+
-		push @opt::xapplyinputsource, 1;
+	    if($group_sep eq $Global::arg_sep."+") {
+		# :::+
+		push @opt::linkinputsource, 1;
+	    } elsif($group_sep eq $Global::arg_file_sep."+") {
+		# ::::+
+		for(@group) {
+		    push @opt::linkinputsource, 1;
+		}
 	    } else {
-		push @opt::xapplyinputsource, 0;
+		push @opt::linkinputsource, 0;
 	    }
 
-	    if($group eq $Global::arg_file_sep
+	    if($group_sep eq $Global::arg_file_sep
 	       or
-	       $group eq $Global::arg_file_sep."+"
+	       $group_sep eq $Global::arg_file_sep."+"
 	       or ($opt::internal_pipe_means_argfiles and $opt::pipe)
 		) {
 		# Group of file names on the command line.
 		# Append args into -a
 		push @opt::a, @group;
-	    } elsif($group eq $Global::arg_sep
+	    } elsif($group_sep eq $Global::arg_sep
 		    or
-		    $group eq $Global::arg_sep."+") {
+		    $group_sep eq $Global::arg_sep."+") {
 		# Group of arguments on the command line.
 		# Put them into a file.
 		# Create argfile
@@ -1770,7 +1775,7 @@ sub read_args_from_command_line {
 		# Append filehandle to -a
 		push @opt::a, $outfh;
 	    } else {
-		::die_bug("Unknown command line group: $group");
+		::die_bug("Unknown command line group: $group_sep");
 	    }
 	    if(defined($arg)) {
 		# $arg is ::: or ::::
@@ -9582,8 +9587,8 @@ sub new {
 
 sub get {
     my $self = shift;
-    if($opt::xapply) {
-	return $self->xapply_get();
+    if($opt::link) {
+	return $self->link_get();
     } else {
 	return $self->nest_get();
     }
@@ -9606,7 +9611,7 @@ sub empty {
     return $empty;
 }
 
-sub xapply_get {
+sub link_get {
     my $self = shift;
     if(@{$self->{'unget'}}) {
 	return shift @{$self->{'unget'}};
@@ -9689,8 +9694,8 @@ sub nest_get {
 	    my @combarg = ();
 	    for (my $fhn = 0; $fhn < $no_of_inputsources; $fhn++) {
 		push(@combarg, [0, $#{$self->{'arg_matrix'}[$fhn]}],
-		     # Is input source --xapply linked to the next?
-		     $opt::xapplyinputsource[$fhn+1]);
+		     # Is input source --link'ed to the next?
+		     $opt::linkinputsource[$fhn+1]);
 	    }
 	    $combarg[2*$fhno] = [$len,$len]; # Find only combinations with this new entry
 	    # map combinations
@@ -9777,14 +9782,14 @@ sub expand_combinations {
     # Returns: ([x,y,...],[x,y,...])
     # where xmin <= x <= xmax and ymin <= y <= ymax
     my $minmax_ref = shift;
-    my $xapply = shift; # This is linked to the next input source
+    my $link = shift; # This is linked to the next input source
     my $xmin = $$minmax_ref[0];
     my $xmax = $$minmax_ref[1];
     my @p;
     if(@_) {
 	my @rest = expand_combinations(@_);
-	if($xapply) {
-	    # Linked to next col with xapply
+	if($link) {
+	    # Linked to next col with --link/:::+/::::+
 	    # TODO BUG does not wrap values if not same number of vals
 	    push(@p, map { [$$_[0], @$_] }
 		 grep { $xmin <= $$_[0] and $$_[0] <= $xmax } @rest);

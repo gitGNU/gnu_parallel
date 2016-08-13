@@ -1,67 +1,121 @@
-### Test basic --shebang-wrap
-Shebang from perl with args arg1
-Shebang from perl with args arg2
-### Test basic --shebang-wrap Same as
-Shebang from perl with args arg1
-Shebang from perl with args arg2
-### Test basic --shebang-wrap stdin
-Shebang from perl with args arg1
-Shebang from perl with args arg2
-### Test basic --shebang-wrap Same as
-Shebang from perl with args arg1
-Shebang from perl with args arg2
-### Test --shebang-wrap with parser options
-Shebang from perl with args 
-1
-Shebang from perl with args 
-2
-Shebang from perl with args 
-4
-Shebang from perl with args 
-5
-### Test --shebang-wrap with parser options Same as
-Shebang from perl with args 
-1
-Shebang from perl with args 
-2
-Shebang from perl with args 
-4
-Shebang from perl with args 
-5
-### Test --shebang-wrap with parser options stdin
-Shebang from perl with args 
-1
-Shebang from perl with args 
-2
-Shebang from perl with args 
-4
-Shebang from perl with args 
-5
-### Test --shebang-wrap with parser options Same as
-Shebang from perl with args 
-1
-Shebang from perl with args 
-2
-Shebang from perl with args 
-4
-Shebang from perl with args 
-5
-### Test --shebang-wrap --pipe with parser options
-### Test --shebang-wrap --pipe with parser options stdin
-Shebang from perl with args 
-1
-Shebang from perl with args 
-2
-Shebang from perl with args 
-4
-Shebang from perl with args 
-5
-### Test --shebang-wrap --pipe with parser options Same as
-Shebang from perl with args 
-1
-Shebang from perl with args 
-2
-Shebang from perl with args 
-4
-Shebang from perl with args 
-5
+par_basic_shebang_wrap	### Test basic --shebang-wrap
+par_basic_shebang_wrap	Shebang from perl with args arg1
+par_basic_shebang_wrap	Shebang from perl with args arg2
+par_basic_shebang_wrap	### Test basic --shebang-wrap Same as
+par_basic_shebang_wrap	Shebang from perl with args arg1
+par_basic_shebang_wrap	Shebang from perl with args arg2
+par_basic_shebang_wrap	### Test basic --shebang-wrap stdin
+par_basic_shebang_wrap	Shebang from perl with args arg1
+par_basic_shebang_wrap	Shebang from perl with args arg2
+par_basic_shebang_wrap	### Test basic --shebang-wrap Same as
+par_basic_shebang_wrap	Shebang from perl with args arg1
+par_basic_shebang_wrap	Shebang from perl with args arg2
+par_shebang_with_parser_options	### Test --shebang-wrap with parser options
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	1
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	2
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	4
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	5
+par_shebang_with_parser_options	### Test --shebang-wrap with parser options Same as
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	1
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	2
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	4
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	5
+par_shebang_with_parser_options	### Test --shebang-wrap with parser options stdin
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	1
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	2
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	4
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	5
+par_shebang_with_parser_options	### Test --shebang-wrap with parser options Same as
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	1
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	2
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	4
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	5
+par_shebang_with_parser_options	### Test --shebang-wrap --pipe with parser options
+par_shebang_with_parser_options	### Test --shebang-wrap --pipe with parser options stdin
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	1
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	2
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	4
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	5
+par_shebang_with_parser_options	### Test --shebang-wrap --pipe with parser options Same as
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	1
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	2
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	4
+par_shebang_with_parser_options	Shebang from perl with args 
+par_shebang_with_parser_options	5
+par_shebang_wrap_R	[1] "Arguments  arg1"
+par_shebang_wrap_R	[1] "Arguments  arg2"
+par_shebang_wrap_R	[1] "Arguments  arg3"
+par_shebang_wrap_bash	Arguments arg1
+par_shebang_wrap_bash	Arguments arg2
+par_shebang_wrap_bash	Arguments arg3
+par_shebang_wrap_clisp	ARGUMENTS
+par_shebang_wrap_clisp	("arg1")
+par_shebang_wrap_clisp	ARGUMENTS
+par_shebang_wrap_clisp	("arg2")
+par_shebang_wrap_clisp	ARGUMENTS
+par_shebang_wrap_clisp	("arg3")
+par_shebang_wrap_csh	Arguments arg1
+par_shebang_wrap_csh	Arguments arg2
+par_shebang_wrap_csh	Arguments arg3
+par_shebang_wrap_csharp	Arguments arg1
+par_shebang_wrap_csharp	Arguments arg2
+par_shebang_wrap_csharp	Arguments arg3
+par_shebang_wrap_gnuplot	Arguments arg1
+par_shebang_wrap_gnuplot	Arguments arg2
+par_shebang_wrap_gnuplot	Arguments arg3
+par_shebang_wrap_ksh	Arguments arg1
+par_shebang_wrap_ksh	Arguments arg2
+par_shebang_wrap_ksh	Arguments arg3
+par_shebang_wrap_lua	Arguments arg1
+par_shebang_wrap_lua	Arguments arg2
+par_shebang_wrap_lua	Arguments arg3
+par_shebang_wrap_nodejs	Arguments  [ 'arg1' ]
+par_shebang_wrap_nodejs	Arguments  [ 'arg2' ]
+par_shebang_wrap_nodejs	Arguments  [ 'arg3' ]
+par_shebang_wrap_octave	Arguments arg1
+par_shebang_wrap_octave	Arguments arg2
+par_shebang_wrap_octave	Arguments arg3
+par_shebang_wrap_perl	Arguments arg1
+par_shebang_wrap_perl	Arguments arg2
+par_shebang_wrap_perl	Arguments arg3
+par_shebang_wrap_php	Arguments arg1
+par_shebang_wrap_php	Arguments arg2
+par_shebang_wrap_php	Arguments arg3
+par_shebang_wrap_python	Arguments ['/tmp/shebang_wrap_python', 'arg1']
+par_shebang_wrap_python	Arguments ['/tmp/shebang_wrap_python', 'arg2']
+par_shebang_wrap_python	Arguments ['/tmp/shebang_wrap_python', 'arg3']
+par_shebang_wrap_ruby	Arguments arg1
+par_shebang_wrap_ruby	Arguments arg2
+par_shebang_wrap_ruby	Arguments arg3
+par_shebang_wrap_sh	Arguments arg1
+par_shebang_wrap_sh	Arguments arg2
+par_shebang_wrap_sh	Arguments arg3
+par_shebang_wrap_tcl	Arguments arg1
+par_shebang_wrap_tcl	Arguments arg2
+par_shebang_wrap_tcl	Arguments arg3
+par_shebang_wrap_zsh	Arguments arg1
+par_shebang_wrap_zsh	Arguments arg2
+par_shebang_wrap_zsh	Arguments arg3

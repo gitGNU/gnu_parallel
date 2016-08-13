@@ -120,8 +120,10 @@ echo '### TMUX not found'
 
 echo '**'
 
-parallel -j4 --halt 2 ::: 'sleep 1' burnP6 false; killall burnP6 && echo ERROR: burnP6 should be killed
-parallel -j4 --halt -2 ::: 'sleep 1' burnP5 true; killall burnP5 && echo ERROR: burnP5 should be killed
+  parallel -j4 --halt 2 ::: 'sleep 1' burnP6 false; 
+    killall burnP6 && echo ERROR: burnP6 should already have been killed
+  parallel -j4 --halt -2 ::: 'sleep 1' burnP5 true; 
+    killall burnP5 && echo ERROR: burnP5 should already have been killed
 
 parallel --halt error echo ::: should not print
 parallel --halt soon echo ::: should not print
@@ -304,9 +306,9 @@ echo '### test too long args'
 
   perl -e 'print "z"x1000000' | parallel echo 2>&1
   perl -e 'print "z"x1000000' | xargs echo 2>&1
-  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdout parallel -j1 -km -s 10 echo
-  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdout xargs -s 10 echo
-  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdout parallel -j1 -kX -s 10 echo
+  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdsort parallel -j1 -km -s 10 echo
+  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdsort xargs -s 10 echo
+  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdsort parallel -j1 -kX -s 10 echo
   
 echo '### Test -x'
 
@@ -628,6 +630,12 @@ echo '**'
     }; 
     env_parallel echo ::: env_parallel 2>&1 
   '
+
+echo '**'
+
+echo '### bug #48745: :::+ bug'
+
+  parallel -k echo ::: 11 22 33 ::::+ <(seq 3) <(seq 21 23) ::: c d e :::+ cc dd ee
 
 echo '**'
 

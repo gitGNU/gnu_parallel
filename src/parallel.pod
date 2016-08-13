@@ -336,9 +336,9 @@ B<:::> and B<::::> can be mixed. So these are equivalent:
 
 =item B<:::+> I<arguments>
 
-Like B<:::> but linked like B<--xapply> to the previous input source.
+Like B<:::> but linked like B<--link> to the previous input source.
 
-Contrary to B<--xapply> values do not wrap: The shortest input source
+Contrary to B<--link>, values do not wrap: The shortest input source
 determines the length.
 
 Example:
@@ -352,14 +352,14 @@ Another way to write B<-a> I<argfile1> B<-a> I<argfile2> ...
 
 B<:::> and B<::::> can be mixed.
 
-See B<-a>, B<:::> and B<--xapply>.
+See B<-a>, B<:::> and B<--link>.
 
 
 =item B<::::+> I<argfiles>
 
-Like B<::::+> but linked like B<--xapply> to the previous input source.
+Like B<::::> but linked like B<--link> to the previous input source.
 
-Contrary to B<--xapply> values do not wrap: The shortest input source
+Contrary to B<--link>, values do not wrap: The shortest input source
 determines the length.
 
 
@@ -387,7 +387,7 @@ contains B<a b c>.  B<-a foo> B<-a bar> will result in the combinations
 (1,a) (1,b) (1,c) (2,a) (2,b) (2,c). This is useful for replacing
 nested for-loops.
 
-See also B<--xapply> and B<{>I<n>B<}>.
+See also B<--link> and B<{>I<n>B<}>.
 
 
 =item B<--arg-file-sep> I<sep-str>
@@ -551,8 +551,8 @@ Compress temporary files. If the output is big and very compressible
 this will take up less disk space in $TMPDIR and possibly be faster
 due to less disk I/O.
 
-GNU B<parallel> will try B<lz4>, B<pigz>, B<lzop>, B<plzip>,
-B<pbzip2>, B<pxz>, B<gzip>, B<lzma>, B<xz>, B<bzip2>, B<lzip> in that
+GNU B<parallel> will try B<lz4>, B<lzop>, B<pbzip2>, B<pigz>,
+B<plzip>, B<lzip> B<gzip>, B<pxz>, B<lzma>, B<xz>, B<bzip2>, in that
 order, and use the first available.
 
 
@@ -1004,6 +1004,30 @@ limiting factor.
 See also: B<--group> B<--ungroup>
 
 
+=item B<--xapply> (alpha testing)
+
+=item B<--link> (alpha testing)
+
+Link input sources. Read multiple input sources like B<xapply>. If
+multiple input sources are given, one argument will be read from each
+of the input sources. The arguments can be accessed in the command as
+B<{1}> .. B<{>I<n>B<}>, so B<{1}> will be a line from the first input
+source, and B<{6}> will refer to the line with the same line number
+from the 6th input source.
+
+Compare these two:
+
+  parallel echo {1} {2} ::: 1 2 3 ::: a b c
+  parallel --link echo {1} {2} ::: 1 2 3 ::: a b c
+
+Arguments will be recycled if one input source has more arguments than the others:
+
+  parallel --link echo {1} {2} {3} \
+    ::: 1 2 ::: I II III ::: a b c d e f g
+
+See also B<--header>, B<:::+>, B<::::+>.
+
+
 =item B<--load> I<max-load>
 
 Do not start new jobs on a given computer unless the number of running
@@ -1113,6 +1137,7 @@ of each job is saved in a file and the filename is then printed.
 
 See also: B<--results>
 
+
 =item B<--pipe>
 
 =item B<--spreadstdin>
@@ -1154,7 +1179,6 @@ B<--pipe>, but is much faster.
 If B<--block> is left out, B<--pipepart> will use a block size that
 will result in 10 jobs per jobslot, except if run with
 B<--round-robin> in which case it will result in 1 job per jobslot.
-
 
 B<--pipepart> has a few limitations:
 
@@ -2302,27 +2326,6 @@ See also B<-m>.
 Exit if the size (see the B<-s> option) is exceeded.
 
 
-=item B<--xapply>
-
-Read multiple input sources like B<xapply>. If multiple input sources
-are given, one argument will be read from each of the input
-sources. The arguments can be accessed in the command as B<{1}>
-.. B<{>I<n>B<}>, so B<{1}> will be a line from the first input source, and
-B<{6}> will refer to the line with the same line number from the 6th
-input source.
-
-Compare these two:
-
-  parallel echo {1} {2} ::: 1 2 3 ::: a b c
-  parallel --xapply echo {1} {2} ::: 1 2 3 ::: a b c
-
-Arguments will be recycled if one input source has more arguments than the others:
-
-  parallel --xapply echo {1} {2} {3} \
-    ::: 1 2 ::: I II III ::: a b c d e f g
-
-See also B<--header>.
-
 =back
 
 =head1 EXAMPLE: Working as xargs -n1. Argument appending
@@ -3339,13 +3342,13 @@ Count in binary:
 
 Print the number on the opposing sides of a six sided die:
 
-  parallel --xapply -a <(seq 6) -a <(seq 6 -1 1) echo
-  parallel --xapply echo :::: <(seq 6) <(seq 6 -1 1)
+  parallel --link -a <(seq 6) -a <(seq 6 -1 1) echo
+  parallel --link echo :::: <(seq 6) <(seq 6 -1 1)
 
 Convert files from all subdirs to PNG-files with consecutive numbers
 (useful for making input PNG's for B<ffmpeg>):
 
-  parallel --xapply -a <(find . -type f | sort) \
+  parallel --link -a <(find . -type f | sort) \
     -a <(seq $(find . -type f|wc -l)) convert {1} {2}.png
 
 Alternative version:
@@ -3613,11 +3616,12 @@ system/batch manager: You have to submit JobSlot number of jobs before
 they will start, and after that you can submit one at a time, and job
 will start immediately if free slots are available.  Output from the
 running or completed jobs are held back and will only be printed when
-JobSlots more jobs has been started (unless you use --ungroup or -u,
-in which case the output from the jobs are printed immediately).
-E.g. if you have 10 jobslots then the output from the first completed
-job will only be printed when job 11 has started, and the output of
-second completed job will only be printed when job 12 has started.
+JobSlots more jobs has been started (unless you use --ungroup or
+--line-buffer, in which case the output from the jobs are printed
+immediately).  E.g. if you have 10 jobslots then the output from the
+first completed job will only be printed when job 11 has started, and
+the output of second completed job will only be printed when job 12
+has started.
 
 
 =head1 EXAMPLE: GNU Parallel as dir processor
@@ -4432,7 +4436,7 @@ B<2> parallel diff {} ../version5/{} < manifest | more
 
 B<3> xapply -p/dev/null -f 'diff %1 %2' manifest1 checklist1
 
-B<3> parallel --xapply diff {1} {2} :::: manifest1 checklist1
+B<3> parallel --link diff {1} {2} :::: manifest1 checklist1
 
 B<4> xapply 'indent' *.c
 

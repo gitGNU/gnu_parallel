@@ -82,16 +82,39 @@ B F
 C D
 C E
 C F
-  parallel --xapply echo ::: A B C ::: D E F
+  parallel --link echo ::: A B C ::: D E F
 A D
 B E
 C F
-  parallel --xapply echo ::: A B C D E ::: F G
+  parallel --link echo ::: A B C D E ::: F G
 A F
 B G
 C F
 D G
 E F
+  parallel echo :::: abc-file :::+ G H I :::: def-file
+A G D
+A G E
+A G F
+B H D
+B H E
+B H F
+C I D
+C I E
+C I F
+  parallel echo :::: abc-file ::: G H I ::::+ def-file
+A G D
+A H E
+A I F
+B G D
+B H E
+B I F
+C G D
+C H E
+C I F
+  parallel echo ::: A B C D E :::+ F G
+A F
+B G
   parallel --arg-sep ,, echo ,, A B C :::: def-file
 A D
 A E
@@ -524,7 +547,7 @@ BASE64-Message: GtkDialog mapped without a transient parent. This is discouraged
   cat /tmp/log;
   parallel --resume-failed --joblog /tmp/log exit  ::: 1 2 3 0 0 0
   cat /tmp/log;
-  parallel --resume-failed --joblog /tmp/log
+  parallel --retry-failed --joblog /tmp/log
   cat /tmp/log;
   parallel -j2 --halt soon,fail=1 echo {}\; exit {} ::: 0 0 1 2 3
 Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
@@ -561,6 +584,9 @@ Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
 4	:	TIMESTAMP	9.999	0	0	0	0	exit 0
 5	:	TIMESTAMP	9.999	0	0	0	0	exit 0
 6	:	TIMESTAMP	9.999	0	0	0	0	exit 0
+1	:	TIMESTAMP	9.999	0	0	1	0	exit 1
+2	:	TIMESTAMP	9.999	0	0	2	0	exit 2
+3	:	TIMESTAMP	9.999	0	0	3	0	exit 3
 1	:	TIMESTAMP	9.999	0	0	1	0	exit 1
 2	:	TIMESTAMP	9.999	0	0	2	0	exit 2
 3	:	TIMESTAMP	9.999	0	0	3	0	exit 3
@@ -709,34 +735,34 @@ Unknown option: :::
 Unknown option: green
 env_parallel only works if it is a function. Do the below and restart your shell.
 
-bash:  Put this in /mnt/4tb/home/tange/.bashrc:  . /usr/local/bin/env_parallel.bash
-       E.g. by doing:  echo '. /usr/local/bin/env_parallel.bash' >> /mnt/4tb/home/tange/.bashrc
+bash:  Put this in /home/tange/.bashrc:  . /usr/local/bin/env_parallel.bash
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.bash' >> /home/tange/.bashrc
        Supports: aliases, functions, variables, arrays
 
-zsh:   Put this in /mnt/4tb/home/tange/.zshrc:  . /usr/local/bin/env_parallel.zsh
-       E.g. by doing:  echo '. /usr/local/bin/env_parallel.zsh' >> /mnt/4tb/home/tange/.zshenv
+zsh:   Put this in /home/tange/.zshrc:  . /usr/local/bin/env_parallel.zsh
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.zsh' >> /home/tange/.zshenv
        Supports: functions, variables, arrays
 
-fish:  Put this in /mnt/4tb/home/tange/.config/fish/config.fish:
+fish:  Put this in /home/tange/.config/fish/config.fish:
          . (which env_parallel.fish)
        E.g. by doing:
-         echo '. (which env_parallel.fish)' >> /mnt/4tb/home/tange/.config/fish/config.fish
+         echo '. (which env_parallel.fish)' >> /home/tange/.config/fish/config.fish
        Supports: aliases, functions, variables, arrays
 
-ksh:   Put this in /mnt/4tb/home/tange/.kshrc:  source /usr/local/bin/env_parallel.ksh
-       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.ksh' >> /mnt/4tb/home/tange/.kshrc
+ksh:   Put this in /home/tange/.kshrc:  source /usr/local/bin/env_parallel.ksh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.ksh' >> /home/tange/.kshrc
        Supports: aliases, functions, variables, arrays
 
-pdksh: Put this in /mnt/4tb/home/tange/.profile:  source /usr/local/bin/env_parallel.pdksh
-       E.g. by doing:  echo '. /usr/local/bin/env_parallel.pdksh' >> /mnt/4tb/home/tange/.profile
+pdksh: Put this in /home/tange/.profile:  source /usr/local/bin/env_parallel.pdksh
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.pdksh' >> /home/tange/.profile
        Supports: aliases, functions, variables, arrays
 
-csh:   Put this in /mnt/4tb/home/tange/.cshrc:  source /usr/local/bin/env_parallel.csh
-       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.csh' >> /mnt/4tb/home/tange/.cshrc
+csh:   Put this in /home/tange/.cshrc:  source /usr/local/bin/env_parallel.csh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.csh' >> /home/tange/.cshrc
        Supports: aliases, variables, arrays with no special chars
 
-tcsh:  Put this in /mnt/4tb/home/tange/.tcshrc:  source /usr/local/bin/env_parallel.tcsh
-       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.tcsh' >> /mnt/4tb/home/tange/.tcshrc
+tcsh:  Put this in /home/tange/.tcshrc:  source /usr/local/bin/env_parallel.tcsh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.tcsh' >> /home/tange/.tcshrc
        Supports: aliases, variables, arrays with no special chars
 
 To install in all shells run:

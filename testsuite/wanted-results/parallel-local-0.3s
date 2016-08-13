@@ -153,11 +153,11 @@ echo '### TMUX not found'
 parallel: Error: not-existing not found in $PATH.
 echo '**'
 **
-parallel -j4 --halt 2 ::: 'sleep 1' burnP6 false; killall burnP6 && echo ERROR: burnP6 should be killed
+  parallel -j4 --halt 2 ::: 'sleep 1' burnP6 false;     killall burnP6 && echo ERROR: burnP6 should already have been killed
 parallel: This job failed:
 false
 burnP6: no process found
-parallel -j4 --halt -2 ::: 'sleep 1' burnP5 true; killall burnP5 && echo ERROR: burnP5 should be killed
+  parallel -j4 --halt -2 ::: 'sleep 1' burnP5 true;     killall burnP5 && echo ERROR: burnP5 should already have been killed
 parallel: This job succeeded:
 true
 burnP5: no process found
@@ -308,11 +308,11 @@ OK
 /mnt/4tb/home/tange/privat/parallel/testsuite
 OK
   parallel --wd ... 'pwd; echo $OLDPWD; echo' ::: OK | perl -pe 's/\d+/0/g'
-/mnt/0tb/home/tange/.parallel/tmp/aspire-0-0
+/home/tange/.parallel/tmp/aspire-0-0
 /mnt/0tb/home/tange/privat/parallel/testsuite
 OK
   parallel --wd . 'pwd; echo $OLDPWD; echo' ::: OK
-/mnt/4tb/home/tange/privat/parallel/testsuite
+/home/tange/privat/parallel/testsuite
 /mnt/4tb/home/tange/privat/parallel/testsuite
 OK
 echo '**'
@@ -597,21 +597,21 @@ e
 parallel: Error: Command line too long (1000005 >= 65528) at input 0: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz...
   perl -e 'print "z"x1000000' | xargs echo 2>&1
 xargs: argument line too long
-  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdout parallel -j1 -km -s 10 echo
+  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdsort parallel -j1 -km -s 10 echo
 1 2
 3 4
 5 6
 7 8
 9 10
 parallel: Error: Command line too long (1000007 >= 10) at input 0: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz...
-  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdout xargs -s 10 echo
+  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdsort xargs -s 10 echo
 1 2
 3 4
 5 6
 7 8
-xargs: argument line too long
 9 10
-  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdout parallel -j1 -kX -s 10 echo
+xargs: argument line too long
+  (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdsort parallel -j1 -kX -s 10 echo
 1 2
 3 4
 5 6
@@ -1687,6 +1687,20 @@ echo '**'
 **
   bash -O extglob -c '. `which env_parallel.bash`;     _longopt () {       case "$prev" in         --+([-a-z0-9_]))           echo foo;;       esac;     };     env_parallel echo ::: env_parallel 2>&1   '
 env_parallel
+echo '**'
+**
+echo '### bug #48745: :::+ bug'
+### bug #48745: :::+ bug
+  parallel -k echo ::: 11 22 33 ::::+ <(seq 3) <(seq 21 23) ::: c d e :::+ cc dd ee
+11 1 21 c cc
+11 1 21 d dd
+11 1 21 e ee
+22 2 22 c cc
+22 2 22 d dd
+22 2 22 e ee
+33 3 23 c cc
+33 3 23 d dd
+33 3 23 e ee
 echo '**'
 **
 ### 1 .par file from --files expected

@@ -11,7 +11,7 @@ INSTALL="echo sudo aptitude -y install"
 # The testsuite depends on this:
 
 $INSTALL imagemagick expect autossh sshpass jq libpod-simple-perl pod2pdf
-
+$INSTALL lua5.2 clisp php7.0-cli nodejs-legacy mono-csharp-shell
 
 # DEBIAN package
 $INSTALL dpkg-dev build-essential debhelper
