@@ -338,7 +338,7 @@ bug #38439: "open files" with --files --pipe blocks after a while
 20 of 21
 21 of 21
 parallel: Warning: Only enough file handles to run 1 jobs in parallel.
-parallel: Warning: Running 'parallel -j0 -N 1 --pipe parallel -j0' or 
+parallel: Warning: Running 'parallel -j0 -N 1 --pipe parallel -j0' or
 parallel: Warning: raising ulimit -n or /etc/security/limits.conf may help.
 echo 'bug #34241: --pipe should not spawn unneeded processes - part 2'
 bug #34241: --pipe should not spawn unneeded processes - part 2

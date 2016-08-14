@@ -3502,12 +3502,17 @@ sub reaper {
     #   @pids_reaped = PIDs of children finished
     my $stiff;
     my @pids_reaped;
+    my $children_reaped = 0;
     debug("run", "Reaper ");
     # For efficiency surround with BEGIN/COMMIT when using $opt::sqlmaster
     $opt::sqlmaster and $Global::sql->run("BEGIN;");
     while (($stiff = waitpid(-1, &WNOHANG)) > 0) {
 	# $stiff = pid of dead process
-	push(@pids_reaped,$stiff);
+	if(wantarray) {
+	    push(@pids_reaped,$stiff);
+	} else {
+	    $children_reaped++;
+	}
         if($Global::sshmaster{$stiff}) {
             # This is one of the ssh -M: ignore
             next;
@@ -3565,7 +3570,7 @@ sub reaper {
     }
     $opt::sqlmaster and $Global::sql->run("COMMIT;");
     debug("run", "done ");
-    return @pids_reaped;
+    return wantarray ? @pids_reaped : $children_reaped;
 }
 
 sub __USAGE__ {}
@@ -5313,18 +5318,20 @@ sub compute_number_of_processes {
 	if($system_limit < $wanted_processes) {
 	    # The system_limit is less than the wanted_processes
 	    if($system_limit < 1 and not $Global::JobQueue->empty()) {
-		::warning("Cannot spawn any jobs. Raising ulimit -u or /etc/security/limits.conf",
+		::warning("Cannot spawn any jobs. ".
+			  "Raising ulimit -u or /etc/security/limits.conf",
 			  "or /proc/sys/kernel/pid_max may help.");
 		::wait_and_exit(255);
 	    }
 	    if(not $more_filehandles) {
-		::warning("Only enough file handles to run ". $system_limit. " jobs in parallel.",
-			  "Running 'parallel -j0 -N $system_limit --pipe parallel -j0' or ",
+		::warning("Only enough file handles to run ".
+			  $system_limit. " jobs in parallel.",
+			  "Running 'parallel -j0 -N $system_limit --pipe parallel -j0' or",
 			  "raising ulimit -n or /etc/security/limits.conf may help.");
 	    }
 	    if($max_system_proc_reached) {
-		::warning("Only enough available processes to run ". $system_limit.
-			  " jobs in parallel.",
+		::warning("Only enough available processes to run ".
+			  $system_limit. " jobs in parallel.",
 			  "Raising ulimit -u or /etc/security/limits.conf ",
 			  "or /proc/sys/kernel/pid_max may help.");
 	    }
@@ -8484,25 +8491,21 @@ sub set_seq {
     $self->{'seq'} = shift;
 }
 
-{
-    my $max_slot_number;
-
-    sub slot {
-	# Find the number of a free job slot and return it
-        # Uses:
-        #   @Global::slots - list with free jobslots
-	# Returns:
-	#   $jobslot = number of jobslot
-	my $self = shift;
-	if(not $self->{'slot'}) {
-	    if(not @Global::slots) {
-		# $max_slot_number will typically be $Global::max_jobs_running
-		push @Global::slots, ++$Global::max_slot_number;
-	    }
-	    $self->{'slot'} = shift @Global::slots;
+sub slot {
+    # Find the number of a free job slot and return it
+    # Uses:
+    #   @Global::slots - list with free jobslots
+    # Returns:
+    #   $jobslot = number of jobslot
+    my $self = shift;
+    if(not $self->{'slot'}) {
+	if(not @Global::slots) {
+	    # $max_slot_number will typically be $Global::max_jobs_running
+	    push @Global::slots, ++$Global::max_slot_number;
 	}
-	return $self->{'slot'};
+	$self->{'slot'} = shift @Global::slots;
     }
+    return $self->{'slot'};
 }
 
 sub populate {
@@ -10622,4 +10625,5 @@ sub unlock {
 # Keep perl -w happy
 
 $opt::x = $Semaphore::timeout = $Semaphore::wait =
-$Job::file_descriptor_warning_printed = $Global::envdef = @Arg::arg;
+$Job::file_descriptor_warning_printed = $Global::envdef = @Arg::arg =
+$Global::max_slot_number;
