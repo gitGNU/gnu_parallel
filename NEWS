@@ -1,3 +1,29 @@
+20160822
+
+* GNU Parallel was cited in: Exome sequencing of geographically
+  diverse barley landraces and wild relatives gives insights into
+  environmental adaptation
+  http://www.nature.com/ng/journal/vaop/ncurrent/full/ng.3612.html?WT.feed_name=subjects_genetics#references
+
+* GNU Parallel was cited in: Vision-Enhanced Lidar Odometry and
+  Mapping https://www.ri.cmu.edu/pub_files/2016/8/DLL-thesis.pdf
+
+* Easy parallelization with GNU parallel
+  http://mpharrigan.com/2016/08/02/parallel.html
+
+* Facebook V: Predicting Check Ins, Winner's Interview: 2nd Place,
+  Markus Kliegl
+  http://blog.kaggle.com/2016/08/02/facebook-v-predicting-check-ins-winners-interview-2nd-place-markus-kliegl/
+
+* Parallel import
+  http://www.manitou-mail.org/blog/2016/07/parallel-import/
+
+* Large file batch processing using NodeJs and GNU Parallel
+  http://www.zacorndorff.com/2016/07/27/large-file-batch-processing-using-nodejs-and-gnu-parallel/
+
+* Bug fixes and man page updates.
+
+
 20160722
 
 * env_parallel is now ready for wider testing. It is still beta
