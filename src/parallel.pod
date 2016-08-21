@@ -2105,6 +2105,13 @@ Use B<tmux> for output. Start a B<tmux> session and run each job in a
 window in that session. No other output will be produced.
 
 
+=item B<--tmuxpane> (alpha testing)
+
+Use B<tmux> for output but put output into panes in the first window.
+Useful if you want to monitor the progress of less than 100 concurrent
+jobs.
+
+
 =item B<--timeout> I<secs>
 
 Time out for command. If the command runs for longer than I<secs>

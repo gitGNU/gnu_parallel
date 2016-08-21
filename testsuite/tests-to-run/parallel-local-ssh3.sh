@@ -90,7 +90,7 @@ echo 'bug #47695: How to set $PATH on remote?'
   rm -rf /tmp/parallel
   cp /usr/local/bin/parallel /tmp
   
-  cat <<'_EOS' | stdout ssh nopathbash@lo -T | grep -v 'packages can be updated'
+  cat <<'_EOS' | stdout ssh nopathbash@lo -T | grep -Ev 'packages can be updated|System restart required|Welcome to Ubuntu'
   echo BASH Path before: $PATH with no parallel
   parallel echo ::: 1
   echo '^^^^^^^^ Not found is OK'
@@ -103,7 +103,7 @@ echo 'bug #47695: How to set $PATH on remote?'
 _EOS
   echo
   
-  cat <<'_EOS' | stdout ssh nopathcsh@lo -T | grep -v 'packages can be updated'
+  cat <<'_EOS' | stdout ssh nopathcsh@lo -T | grep -Ev 'packages can be updated|System restart required|Welcome to Ubuntu'
   echo CSH Path before: $PATH with no parallel
   which parallel >& /dev/stdout
   echo '^^^^^^^^ Not found is OK'

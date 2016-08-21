@@ -1,5 +1,14 @@
 ### Tests on polarhome machines
 Setup on polarhome machines
+copy_and_test tru64.polarhome.com
+tru64.polarhome.com	### Run the test on tru64.polarhome.com
+tru64.polarhome.com	Works on tru64.polarhome.com
+tru64.polarhome.com	Error in tempfile() using /XXXXXXXX.arg: Parent directory (/) is not writable
+tru64.polarhome.com	 at bin/parallel line 0000
+tru64.polarhome.com	OK
+copy_and_test syllable.polarhome.com
+syllable.polarhome.com	### Run the test on syllable.polarhome.com
+syllable.polarhome.com	chmod: changing permissions of `bin/p.tmp': Function not implemented
 copy_and_test pidora.polarhome.com
 pidora.polarhome.com	### Run the test on pidora.polarhome.com
 pidora.polarhome.com	Works on pidora.polarhome.com
@@ -124,7 +133,7 @@ debian-ppc
 debian
 freebsd.polarhome.com
 hpux64
-macosx.polarhome.com
+macosx
 mandriva.polarhome.com
 miros.polarhome.com
 netbsd.polarhome.com
@@ -138,6 +147,7 @@ scosysv.polarhome.com
 solaris-x86
 solaris
 suse
+tru64.polarhome.com
 ubuntu
 unixware.polarhome.com
 
@@ -163,6 +173,7 @@ scosysv.polarhome.com	bash only A
 solaris-x86.polarhome.com	bash only A
 solaris.polarhome.com	bash only A
 suse.polarhome.com	bash only A
+tru64.polarhome.com	bash only A
 ubuntu.polarhome.com	bash only A
 unixware.polarhome.com	UX:sh (/bin/sh): ERROR: /bin/sh: Syntax error at line 1: `(' unexpected
 

@@ -13,7 +13,7 @@ test -n "" \
 	-exec chmod u+rwx,go+rx {} \; -o \
   ! -type d ! -perm -444 -links 1 -exec chmod a+r {} \; -o \
   ! -type d ! -perm -400 -exec chmod a+r {} \; -o \
-  ! -type d ! -perm -444 -exec /bin/bash /mnt/4tb/home/tange/privat/parallel/install-sh -c -m a+r {} {} \; \
+  ! -type d ! -perm -444 -exec /bin/bash /home/tange/privat/parallel/install-sh -c -m a+r {} {} \; \
 || chmod -R a+r "parallel-00000000"
 tardir=parallel-00000000 && ${TAR-tar} chof - "$tardir" | GZIP=--best gzip -c >parallel-00000000.tar.gz
 make[0]: Leaving directory '/mnt/4tb/home/tange/privat/parallel'

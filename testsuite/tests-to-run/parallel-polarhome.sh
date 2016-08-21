@@ -6,8 +6,8 @@ P_ALL="vax freebsd solaris openbsd netbsd debian alpha aix redhat hpux ultrix mi
 P_NOTWORKING="vax alpha openstep"
 P_NOTWORKING_YET="ultrix irix"
 
-P_WORKING="pidora raspbian solaris openindiana aix hpux qnx debian-ppc suse solaris-x86 mandriva ubuntu scosysv  unixware centos miros macosx redhat netbsd openbsd freebsd debian"
-P_TEMPORARILY_BROKEN="minix  tru64 syllable hurd hpux-ia64 dragonfly"
+P_WORKING="tru64 syllable pidora raspbian solaris openindiana aix hpux qnx debian-ppc suse solaris-x86 mandriva ubuntu scosysv  unixware centos miros macosx redhat netbsd openbsd freebsd debian"
+P_TEMPORARILY_BROKEN="minix hurd hpux-ia64 dragonfly"
 
 P="$P_WORKING"
 POLAR=`parallel -k echo {}.polarhome.com ::: $P`
@@ -15,7 +15,8 @@ S_POLAR=`parallel -k echo -S 1/{}.polarhome.com ::: $P`
 
 # 20150414 --timeout 80 -> 40
 # 20151219 --retries 5 -> 2
-TIMEOUT=10
+# 20160821 --timeout 10 -> 100 (DNS problems)
+TIMEOUT=130
 RETRIES=4
 
 echo '### Tests on polarhome machines'

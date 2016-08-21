@@ -23,8 +23,8 @@ freepl >/dev/null &
 
 cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj0 -k --joblog /tmp/jl-`basename $0` -L1
 echo '### --rm and --runmem'
-  niceload  -H --rm 1g free -g | perl -ane '/buffers.cache:/ and print $F[3],"\n"' | grep '[1-9]' >/dev/null && echo OK--rm
-  niceload  -H --runmem 1g free -g | perl -ane '/buffers.cache:/ and print $F[3],"\n"' | grep '[1-9]' >/dev/null && echo OK--runmem
+  niceload  -H --rm 1g free -g | perl -ane '/Mem:/ and print $F[5],"\n"' | grep '[1-9]' >/dev/null && echo OK--rm
+  niceload  -H --runmem 1g free -g | perl -ane '/Mem:/ and print $F[5],"\n"' | grep '[1-9]' >/dev/null && echo OK--runmem
 
 echo '### -N and --noswap. Must give 0'
   niceload -H -N vmstat 1 2 | tail -n1 | awk '{print "-N " $7*$8}'

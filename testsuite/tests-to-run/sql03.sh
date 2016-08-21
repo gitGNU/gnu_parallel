@@ -66,7 +66,7 @@ echo "### Test oracle with \n arguments on the command line"
 sql :oraunittest 'select 1 from dual;\nselect 2 from dual;\x0aselect 3 from dual;'
 
 echo "### Test --show-tables"
-sql --show-tables :oraunittest
+sql --show-tables :oraunittest | sort
 
 echo "### Test --show-databases"
 sql --show-databases :oraunittest

@@ -1,9 +1,18 @@
 #!/bin/bash
 
+minipv() {
+    sleep=$1
+    while read line; do
+	echo "$line"
+	sleep $sleep
+    done
+}
+export -f minipv
+
 echo '### Test id = --id `tty`'
-parallel --id `tty` -u --semaphore seq 1 10 '|' pv -qL 20
+parallel --id `tty` --lb --semaphore seq  1 10 '|' minipv 0.1
 echo '### Test default id = --id `tty`'
-parallel -u --semaphore seq 11 20 '|' pv -qL 100
+parallel            --lb --semaphore seq 11 20 '|' minipv 0.01
 echo '### Test --semaphorename `tty`'
 parallel --semaphorename `tty` --semaphore --wait
 echo done

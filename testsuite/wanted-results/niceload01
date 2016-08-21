@@ -3,9 +3,9 @@ This works
 
 echo '### --rm and --runmem'
 ### --rm and --runmem
-  niceload  -H --rm 1g free -g | perl -ane '/buffers.cache:/ and print $F[3],"\n"' | grep '[1-9]' >/dev/null && echo OK--rm
+  niceload  -H --rm 1g free -g | perl -ane '/Mem:/ and print $F[5],"\n"' | grep '[1-9]' >/dev/null && echo OK--rm
 OK--rm
-  niceload  -H --runmem 1g free -g | perl -ane '/buffers.cache:/ and print $F[3],"\n"' | grep '[1-9]' >/dev/null && echo OK--runmem
+  niceload  -H --runmem 1g free -g | perl -ane '/Mem:/ and print $F[5],"\n"' | grep '[1-9]' >/dev/null && echo OK--runmem
 OK--runmem
 echo '### -N and --noswap. Must give 0'
 ### -N and --noswap. Must give 0

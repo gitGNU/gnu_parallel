@@ -123,7 +123,6 @@ echo '### exported function to csh but with PARALLEL_SHELL=bash'
 CSH/TCSH DO NOT SUPPORT newlines IN VARIABLES/FUNCTIONS. Unset doit
 OK
 bug #47695: How to set $PATH on remote?
-Welcome to Ubuntu 16.04.1 LTS (GNU/Linux 4.4.0-31-generic x86_64)
 
  * Documentation:  https://help.ubuntu.com
  * Management:     https://landscape.canonical.com
@@ -136,7 +135,6 @@ BASH Path before: /bin:/usr/bin with no parallel
 ^^^^^^^^ Not found is OK
 /bin:/usr/bin:/tmp OK
 
-Welcome to Ubuntu 16.04.1 LTS (GNU/Linux 4.4.0-31-generic x86_64)
 
  * Documentation:  https://help.ubuntu.com
  * Management:     https://landscape.canonical.com

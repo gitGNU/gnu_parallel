@@ -161,7 +161,7 @@ num8
 num_%header
 tsv-file.tsv
 foo
-/mnt/4tb/home/tange/privat/parallel/testsuite/tmp
+/home/tange/privat/parallel/testsuite/tmp
   my_func() {
     echo in my_func $1
   }

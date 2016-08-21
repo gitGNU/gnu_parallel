@@ -42,7 +42,7 @@ EOF
 
 cd input-files/test15
 
-echo 'xargs Expect: 3 1 2'
+echo 'xargs Expect: 3 1'
 echo 3 | xargs -P 1 -n 1 -a files cat -
 echo 'parallel Expect: 3 1 via psedotty  2'
 cat >/tmp/parallel-script-for-script <<EOF
@@ -53,7 +53,7 @@ chmod 755 /tmp/parallel-script-for-script
 echo via pseudotty | script -q -f -c /tmp/parallel-script-for-script /dev/null
 sleep 1
 
-echo 'xargs Expect: 1 3 2'
+echo 'xargs Expect: 1 3'
 echo 3 | xargs -I {} -P 1 -n 1 -a files cat {} -
 echo 'parallel Expect: 1 3 2 via pseudotty'
 cat >/tmp/parallel-script-for-script2 <<EOF

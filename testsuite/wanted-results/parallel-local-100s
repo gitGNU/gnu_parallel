@@ -3,8 +3,8 @@ par_mem_leak	### test for mem leak
 par_mem_leak	no mem leak detected
 par_outside_file_handle_limit 2>&1
 par_outside_file_handle_limit	### Test Force outside the file handle limit, 2009-02-17 Gave fork error
-par_outside_file_handle_limit	parallel: Warning: Only enough file handles to run 251 jobs in parallel.
-par_outside_file_handle_limit	parallel: Warning: Running 'parallel -j0 -N 251 --pipe parallel -j0' or
+par_outside_file_handle_limit	parallel: Warning: Only enough file handles to run 252 jobs in parallel.
+par_outside_file_handle_limit	parallel: Warning: Running 'parallel -j0 -N 252 --pipe parallel -j0' or
 par_outside_file_handle_limit	parallel: Warning: raising ulimit -n or /etc/security/limits.conf may help.
 par_outside_file_handle_limit	Start
 par_outside_file_handle_limit	end

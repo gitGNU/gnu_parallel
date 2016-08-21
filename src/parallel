@@ -799,6 +799,7 @@ sub options_hash {
 	 "ungroup|u" => \$opt::ungroup,
 	 "linebuffer|linebuffered|line-buffer|line-buffered|lb" => \$opt::linebuffer,
 	 "tmux" => \$opt::tmux,
+	 "tmuxpane" => \$opt::tmuxpane,
 	 "null|0" => \$opt::0,
 	 "quote|q" => \$opt::q,
 	 # Replacement strings
@@ -997,6 +998,7 @@ sub parse_options {
     $opt::nice ||= 0;
     if(defined $opt::help) { die_usage(); }
     if(defined $opt::sqlandworker) { $opt::sqlmaster = $opt::sqlworker = $opt::sqlandworker; }
+    if(defined $opt::tmuxpane) { $opt::tmux = $opt::tmuxpane; }
     if(defined $opt::colsep) { $Global::trim = 'lr'; }
     if(defined $opt::header) { $opt::colsep = defined $opt::colsep ? $opt::colsep : "\t"; }
     if(defined $opt::trim) { $Global::trim = $opt::trim; }
@@ -1551,7 +1553,7 @@ sub find_compression_program {
     #   $decompress_program = decompress program with options
 
     # Search for these. Sorted by speed on 20 core
-    # parallel -j1  --joblog jl --arg-sep ,  parallel --compress-program \'{3}" "-{2}\' cat ::: gz '>'/dev/null , 1 2 3 ,  {1..3} , zstd clzip lz4 lzop pigz pxz gzip plzip pbzip2 lzma xz lzip bzip2
+    # parallel -j1  --joblog jl --arg-sep ,  parallel --compress-program \'{3}" "-{2}\' cat ::: gz '>'/dev/null , 1 2 3 ,  {1..3} , zstd clzip lz4 lzop pigz pxz gzip plzip pbzip2 lzma xz lzip bzip2 lbzip2 lrzip
     # sort -nk4 jl
     my @prg = qw(lz4 lzop pbzip2 pigz plzip lzip gzip pxz lzma xz bzip2);
     for my $p (@prg) {
@@ -1616,6 +1618,9 @@ sub read_options {
 	    # exec myself to split $ARGV[0] into separate fields
 	    exec "$0 --internal-pipe-means-argfiles @options @parser $script ::: @ARGV";
 	}
+    }
+    if($ARGV[0] =~ / --shebang(-?wrap)? /) {
+	::warning("--shebang and --shebang-wrap must be the first argument.\n");
     }
 
     Getopt::Long::Configure("bundling","require_order");
@@ -5023,8 +5028,10 @@ sub loadavg {
     if($update_loadavg_file) {
         ::debug("load", "Updating loadavg file", $self->{'loadavg_file'}, "\n");
         $self->{'last_loadavg_update'} = time;
-        -e $ENV{'HOME'}."/.parallel" or mkdir $ENV{'HOME'}."/.parallel";
-        -e $ENV{'HOME'}."/.parallel/tmp" or mkdir $ENV{'HOME'}."/.parallel/tmp";
+        -w $ENV{'HOME'}."/.parallel" or mkdir $ENV{'HOME'}."/.parallel"
+	    or ::die_bug("Cannot write to $ENV{'HOME'}/.parallel");
+        -w $ENV{'HOME'}."/.parallel/tmp" or mkdir $ENV{'HOME'}."/.parallel/tmp"
+	    or ::die_bug("Cannot write to $ENV{'HOME'}/.parallel/tmp");
         my $cmd = "";
         if($self->{'string'} ne ":") {
 	    $cmd = $self->sshcommand() . " " . $self->serverlogin() . " " .
@@ -7851,6 +7858,12 @@ sub print_dryrun_and_verbose {
 	    ::error("tmux does not support sockets with path > 100.");
 	    ::wait_and_exit(255);
 	}
+	if($opt::tmuxpane) {
+	    # Move the command into a pane in window 0
+	    $actual_command = 'tmux joinp -t :0 ; '.
+		'tmux select-layout -t :0 tiled ; '.
+		$actual_command;
+	}
 	my $visual_command = $self->replaced();
 	my $title = $visual_command;
 	if($visual_command =~ /\0/) {
@@ -10445,11 +10458,11 @@ sub remove_dead_locks {
 	$d =~ m:$lockdir/([0-9]+)\@([-\._a-z0-9]+)$:o or next;
 	my ($pid, $host) = ($1, $2);
 	if($host eq ::hostname()) {
-	    if(not kill 0, $pid) {
+	    if(kill 0, $pid) {
+		::debug("sem", "Alive: $pid $d\n");
+	    } else {
 		::debug("sem", "Dead: $d\n");
 		::rm($d);
-	    } else {
-		::debug("sem", "Alive: $d\n");
 	    }
 	}
     }

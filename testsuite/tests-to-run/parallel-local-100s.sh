@@ -46,6 +46,7 @@ no_mem_leak() {
     min30000=$(parallel measure {} 100000 ::: 30000 30000 30000 30000 |
     			sort -n | head -n 1)
     if [ $max1000 -gt $min30000 ] ; then
+	# Make sure there are a few sleeps
 	max1000=$(parallel measure {} 100 ::: 1000 1000 1000 1000 |
 			   sort -n | tail -n 1)
 	min30000=$(parallel measure {} 100 ::: 30000 30000 30000 30000 |

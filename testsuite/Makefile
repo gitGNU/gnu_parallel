@@ -53,7 +53,8 @@ prereqremote: installparallel startvm
 
 startvm:
 	# Make sure we can reach the virtual machines
-	sudo ifconfig wlp13s0:0 192.168.1.72 ||	sudo ifconfig wlan0:0 192.168.1.72
+	#sudo ifconfig wlp13s0:0 192.168.1.72 ||	sudo ifconfig wlan0:0 192.168.1.72
+	sudo ifconfig enp14s0 192.168.1.72 ||	sudo ifconfig eth0:0 192.168.1.72
 	# If they are already running: Don't fail
 	VBoxManage startvm CentOS3-root:centos3 || VBoxManage controlvm CentOS3-root:centos3 resume || true
 	VBoxManage startvm RedHat9-root:redhat9 || VBoxManage controlvm RedHat9-root:redhat9 resume || true

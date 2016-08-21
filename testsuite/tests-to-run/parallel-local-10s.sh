@@ -112,7 +112,7 @@ echo '**'
 
 echo "### Test max line length -m -I"
 
-  seq 1 60000 | parallel -I :: -m -j1 echo a::b::c | sort >/tmp/114-a$$; 
+  seq 1 60000 | parallel -I :: -km -j1 echo a::b::c | sort >/tmp/114-a$$; 
   md5sum </tmp/114-a$$; 
   export CHAR=$(cat /tmp/114-a$$ | wc -c); 
   export LINES=$(cat /tmp/114-a$$ | wc -l); 
@@ -121,7 +121,7 @@ echo "### Test max line length -m -I"
 
 echo "### Test max line length -X -I"
 
-  seq 1 60000 | parallel -I :: -X -j1 echo a::b::c | sort >/tmp/114-b$$; 
+  seq 1 60000 | parallel -I :: -kX -j1 echo a::b::c | sort >/tmp/114-b$$; 
   md5sum </tmp/114-b$$; 
   export CHAR=$(cat /tmp/114-b$$ | wc -c); 
   export LINES=$(cat /tmp/114-b$$ | wc -l); 
