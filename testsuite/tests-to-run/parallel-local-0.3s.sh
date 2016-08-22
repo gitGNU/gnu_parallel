@@ -635,7 +635,9 @@ echo '**'
 
 echo '### bug #48745: :::+ bug'
 
-  parallel -k echo ::: 11 22 33 ::::+ <(seq 3) <(seq 21 23) ::: c d e :::+ cc dd ee
+  parallel -k echo ::: 11 22 33 ::::+ <(seq 3) <(seq 21 23) ::: a b c :::+ aa bb cc
+  parallel -k echo :::: <(seq 3) <(seq 21 23) :::+ a b c ::: aa bb cc
+  parallel -k echo :::: <(seq 3) :::: <(seq 21 23) :::+ a b c ::: aa bb cc
 
 echo '**'
 

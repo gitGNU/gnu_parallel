@@ -1691,16 +1691,72 @@ echo '**'
 **
 echo '### bug #48745: :::+ bug'
 ### bug #48745: :::+ bug
-  parallel -k echo ::: 11 22 33 ::::+ <(seq 3) <(seq 21 23) ::: c d e :::+ cc dd ee
+  parallel -k echo ::: 11 22 33 ::::+ <(seq 3) <(seq 21 23) ::: a b c :::+ aa bb cc
+11 1 21 a aa
+11 1 21 b bb
 11 1 21 c cc
-11 1 21 d dd
-11 1 21 e ee
+22 2 22 a aa
+22 2 22 b bb
 22 2 22 c cc
-22 2 22 d dd
-22 2 22 e ee
+33 3 23 a aa
+33 3 23 b bb
 33 3 23 c cc
-33 3 23 d dd
-33 3 23 e ee
+  parallel -k echo :::: <(seq 3) <(seq 21 23) :::+ a b c ::: aa bb cc
+1 21 a aa
+1 21 a bb
+1 21 a cc
+1 22 b aa
+1 22 b bb
+1 22 b cc
+1 23 c aa
+1 23 c bb
+1 23 c cc
+2 21 a aa
+2 21 a bb
+2 21 a cc
+2 22 b aa
+2 22 b bb
+2 22 b cc
+2 23 c aa
+2 23 c bb
+2 23 c cc
+3 21 a aa
+3 21 a bb
+3 21 a cc
+3 22 b aa
+3 22 b bb
+3 22 b cc
+3 23 c aa
+3 23 c bb
+3 23 c cc
+  parallel -k echo :::: <(seq 3) :::: <(seq 21 23) :::+ a b c ::: aa bb cc
+1 21 a aa
+1 21 a bb
+1 21 a cc
+1 22 b aa
+1 22 b bb
+1 22 b cc
+1 23 c aa
+1 23 c bb
+1 23 c cc
+2 21 a aa
+2 21 a bb
+2 21 a cc
+2 22 b aa
+2 22 b bb
+2 22 b cc
+2 23 c aa
+2 23 c bb
+2 23 c cc
+3 21 a aa
+3 21 a bb
+3 21 a cc
+3 22 b aa
+3 22 b bb
+3 22 b cc
+3 23 c aa
+3 23 c bb
+3 23 c cc
 echo '**'
 **
 ### 1 .par file from --files expected

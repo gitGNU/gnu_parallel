@@ -1210,7 +1210,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160822;
+    $Global::version = 20160823;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1745,29 +1745,24 @@ sub read_args_from_command_line {
 		    push @group, $arg;
 		}
 	    }
-	    if($group_sep eq $Global::arg_sep."+") {
-		# :::+
-		push @opt::linkinputsource, 1;
-	    } elsif($group_sep eq $Global::arg_file_sep."+") {
-		# ::::+
-		for(@group) {
-		    push @opt::linkinputsource, 1;
-		}
+	    my $is_linked = ($group_sep =~ /\+$/) ? 1 : 0;
+	    my $is_file = ($group_sep eq $Global::arg_file_sep
+			   or
+			   $group_sep eq $Global::arg_file_sep."+");
+	    if($is_file) {
+		# :::: / ::::+
+		push @opt::linkinputsource, map { $is_linked } @group;
 	    } else {
-		push @opt::linkinputsource, 0;
+		# ::: / :::+
+		push @opt::linkinputsource, $is_linked;
 	    }
-
-	    if($group_sep eq $Global::arg_file_sep
-	       or
-	       $group_sep eq $Global::arg_file_sep."+"
+	    if($is_file
 	       or ($opt::internal_pipe_means_argfiles and $opt::pipe)
 		) {
 		# Group of file names on the command line.
 		# Append args into -a
 		push @opt::a, @group;
-	    } elsif($group_sep eq $Global::arg_sep
-		    or
-		    $group_sep eq $Global::arg_sep."+") {
+	    } else {
 		# Group of arguments on the command line.
 		# Put them into a file.
 		# Create argfile
@@ -1779,11 +1774,10 @@ sub read_args_from_command_line {
 		exit_if_disk_full();
 		# Append filehandle to -a
 		push @opt::a, $outfh;
-	    } else {
-		::die_bug("Unknown command line group: $group_sep");
 	    }
 	    if(defined($arg)) {
-		# $arg is ::: or ::::
+		# $arg is ::: :::+ :::: or ::::+
+		# so there is another group
 		redo;
 	    } else {
 		# $arg is undef -> @ARGV empty

@@ -4,7 +4,7 @@
 
 Check that documentation is updated (compare to web):
 
-Fixet for 20160222
+Fixet for 20160922
 git diff last-release-commit
 Unmodified beta since last version => production
 Unmodified alpha since last version => beta
@@ -221,20 +221,18 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
 
 Subject: GNU Parallel 20160822 ('Og Nomekop') released <<[stable]>>
 
-GNU Parallel 20160822 ('Og Nomekop') <<[stable]>> has been released. It is available for download at: http://ftp.gnu.org/gnu/parallel/
+GNU Parallel 20160822 ('Og Nomekop') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
 Haiku of the month:
 
-  <<>>
-    -- Ole Tange
+  Want to monitor
+  many job outputs at once:
+  --tmuxpane
+    --ole-tange
 
 New in this release:
-
-* GNU Parallel was cited in: Exome sequencing of geographically diverse barley landraces and wild relatives gives insights into environmental adaptation http://www.nature.com/ng/journal/vaop/ncurrent/full/ng.3612.html?WT.feed_name=subjects_genetics#references
-
-* GNU Parallel was cited in: Vision-Enhanced Lidar Odometry and Mapping https://www.ri.cmu.edu/pub_files/2016/8/DLL-thesis.pdf
 
 * <<Possibly http://link.springer.com/chapter/10.1007%2F978-3-319-22053-6_46>>
 
@@ -268,13 +266,7 @@ for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumb
 
 * <<Possible: http://link.springer.com/article/10.1007/s12021-015-9290-5 http://link.springer.com/protocol/10.1007/978-1-4939-3578-9_14>>
 
-* Easy parallelization with GNU parallel http://mpharrigan.com/2016/08/02/parallel.html
-
-* Facebook V: Predicting Check Ins, Winner's Interview: 2nd Place, Markus Kliegl http://blog.kaggle.com/2016/08/02/facebook-v-predicting-check-ins-winners-interview-2nd-place-markus-kliegl/
-
-* Parallel import http://www.manitou-mail.org/blog/2016/07/parallel-import/
-
-* Large file batch processing using NodeJs and GNU Parallel http://www.zacorndorff.com/2016/07/27/large-file-batch-processing-using-nodejs-and-gnu-parallel/
+* Chown Ceph OSD data directory using GNU Parallel http://blog.widodh.nl/2016/08/chown-ceph-osd-data-directory-using-gnu-parallel/
 
 * Bug fixes and man page updates.
 

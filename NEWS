@@ -1,5 +1,17 @@
 20160822
 
+* --tmuxpane opens jobs in panes in tmux. Useful if you want to
+  monitor progress of less than 100 simultaneous jobs.
+
+* --linebuffer now treats \r as line ending, too.
+
+* Perl changes forces use of floats to be given with leading zero, so
+  0.1 and not .1
+
+* --xapply renamed to --link.
+
+* Support for pdksh will fade until someone packages it for Ubuntu 16.
+
 * GNU Parallel was cited in: Exome sequencing of geographically
   diverse barley landraces and wild relatives gives insights into
   environmental adaptation
