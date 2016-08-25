@@ -1,4 +1,4 @@
-#!/bin/pdksh
+#!/usr/bin/env pdksh
 
 # This file must be sourced in pdksh:
 #

@@ -1,4 +1,4 @@
-#!/bin/csh
+#!/usr/bin/env tcsh
 
 # This file must be sourced in tcsh:
 #

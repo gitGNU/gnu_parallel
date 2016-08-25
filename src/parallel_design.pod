@@ -746,7 +746,8 @@ are no visible files on it.
 =head3 Comparing to buffering in memory
 
 B<gargs> is a parallelizing tool that buffers in memory. It is
-therefore a useful way of comparing the advantages and disadvantages.
+therefore a useful way of comparing the advantages and disadvantages
+of buffering in memory to buffering on disk.
 
 On an system with 6 GB RAM free and 6 GB free swap these were tested
 with different sizes:
@@ -786,15 +787,17 @@ The results are here:
 GNU B<parallel> is pretty much limited by the speed of the disk: Up to
 6 GB data is written to disk but cached, so reading is fast. Above 6
 GB data are both written and read from disk. When the 30000MB job is
-running, the system is slow, but not completely unusable: If you are
+running, the disk system is slow, but not completely unusable: If you are
 not using the disk, you almost do not feel it.
 
-B<gargs> hits a wall around 2500M. Then the system starts swapping
-like crazy and is completely unusable. At 5000M it goes out of memory.
+B<gargs> has a speed advantage up until 2500M where it hits a
+wall. Then the system starts swapping like crazy and is completely
+unusable. At 5000M it goes out of memory.
 
 You can make GNU B<parallel> behave similar to B<gargs> if you point
 $TMPDIR to a tmpfs-filesystem: It will be faster for small outputs,
-but kill your system for larger outputs.
+but may kill your system for larger outputs and cause you to lose
+output.
 
 
 =head2 Disk full

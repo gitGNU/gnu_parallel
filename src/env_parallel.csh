@@ -1,4 +1,4 @@
-#!/bin/csh
+#!/usr/bin/env csh
 
 # This file must be sourced in csh:
 #

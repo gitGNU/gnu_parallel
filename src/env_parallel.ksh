@@ -1,4 +1,4 @@
-#!/usr/bin/ksh
+#!/usr/bin/env ksh
 
 # This file must be sourced in ksh:
 #
