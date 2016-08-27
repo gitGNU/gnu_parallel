@@ -1759,5 +1759,11 @@ echo '### bug #48745: :::+ bug'
 3 23 c cc
 echo '**'
 **
+echo '### bug #48658: --linebuffer --files'
+### bug #48658: --linebuffer --files
+  parallel --files --linebuffer 'sleep .1;seq {};sleep .1' ::: {1..10} | wc -l
+10
+echo '**'
+**
 ### 1 .par file from --files expected
 0

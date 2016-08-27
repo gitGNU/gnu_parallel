@@ -641,6 +641,12 @@ echo '### bug #48745: :::+ bug'
 
 echo '**'
 
+echo '### bug #48658: --linebuffer --files'
+
+  parallel --files --linebuffer 'sleep .1;seq {};sleep .1' ::: {1..10} | wc -l
+
+echo '**'
+
 EOF
 echo '### 1 .par file from --files expected'
 find /tmp{/*,}/*.{par,tms,tmx} 2>/dev/null -mmin -10 | wc -l

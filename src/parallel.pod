@@ -4798,6 +4798,28 @@ B<orgalorg> has a progress indicator for the transferring of a
 file. GNU B<parallel> does not.
 
 
+=head2 DIFFERENCES BETWEEN Rust parallel AND GNU Parallel
+
+Rust parallel implements a few features from GNU B<parallel>, but
+lacks many functions. All of these fail:
+
+  # -q to protect quoted $ and space
+  parallel -q perl -e '$a=shift; print "$a"x10000000' ::: a b c
+  # Argument is command
+  parallel {} 10 ::: echo seq
+  # Generation of combination of inputs
+  parallel echo {1} {2} ::: red green blue ::: S M L XL XXL
+  # Composed commands
+  parallel echo {} '|' wc ::: a
+  # Output is mixed
+  parallel (-q) perl -e 'print"{}"x10000000' ::: a b c |
+    perl -pe '$_=join "\n",split //, $_' | uniq -c
+  # Show what would be executed
+  parallel --dry-run echo ::: a
+
+Rust parallel has no remote facilities.
+
+
 =head2 DIFFERENCES BETWEEN ClusterSSH AND GNU Parallel
 
 ClusterSSH solves a different problem than GNU B<parallel>.

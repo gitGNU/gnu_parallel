@@ -696,8 +696,8 @@ into the file by the size of a block and then reading until it meets
 end of a block. The seeking explains why GNU B<parallel> does not know
 the line number and why B<-L/-l> and B<-N> do not work.
 
-With a reasonable block and file size this seeking is often more than
-1000 faster than reading the full file. The byte positions are then
+With a reasonable block and file size this seeking is more than 1000
+time faster than reading the full file. The byte positions are then
 given to a small script that reads from position X to Y and sends
 output to standard output (stdout). This small script is prepended to
 the command and the full command is executed just as if GNU
@@ -787,8 +787,8 @@ The results are here:
 GNU B<parallel> is pretty much limited by the speed of the disk: Up to
 6 GB data is written to disk but cached, so reading is fast. Above 6
 GB data are both written and read from disk. When the 30000MB job is
-running, the disk system is slow, but not completely unusable: If you are
-not using the disk, you almost do not feel it.
+running, the disk system is slow, but usable: If you are not using the
+disk, you almost do not feel it.
 
 B<gargs> has a speed advantage up until 2500M where it hits a
 wall. Then the system starts swapping like crazy and is completely

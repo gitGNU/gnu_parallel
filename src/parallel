@@ -8086,21 +8086,29 @@ sub print {
 }
 
 sub files_print {
+    # Print the name of the file containing stdout on stdout
+    # Uses:
+    #   $opt::pipe
+    #   $opt::group = Print when job is done
+    #   $opt::linebuffer = Print ASAP
+    # Returns: N/A
     my $self = shift;
     my ($fdno,$in_fh,$out_fd) = @_;
 
-    # If the job is dead: close printing fh. Needed for --compress
-    close $self->fh($fdno,"w");
-    if($? and $opt::compress) {
-	::error($opt::compress_program." failed.");
-	$self->set_exitstatus(255);
+    if($opt::group and defined $self->{'exitstatus'}) {
+	# If the job is dead: close printing fh. Needed for --compress
+	close $self->fh($fdno,"w");
+	if($? and $opt::compress) {
+	    ::error($opt::compress_program." failed.");
+	    $self->set_exitstatus(255);
+	}
+	if($opt::compress) {
+	    # Kill the decompressor which will not be needed
+	    CORE::kill "TERM", $self->fh($fdno,"rpid");
+	}
+	close $in_fh;
     }
-    if($opt::compress) {
-	# Kill the decompressor which will not be needed
-	CORE::kill "TERM", $self->fh($fdno,"rpid");
-    }
-    close $in_fh;
-
+	
     if($opt::pipe and $self->virgin()) {
 	# Nothing was printed to this job:
 	# cleanup unused tmp files if --files was set
@@ -8115,6 +8123,8 @@ sub files_print {
 				 $self->tag().$self->fh($fdno,"name"));
 	}
 	$self->add_returnsize(-s $self->fh($fdno,"name"));
+	# Mark as printed - do not print again
+	$self->set_fh($fdno,"name",undef);
     }
 }
 
