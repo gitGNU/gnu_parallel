@@ -1210,7 +1210,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160823;
+    $Global::version = 20160824;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -4682,6 +4682,25 @@ sub memfree_recompute {
 			     + $sysctl->{"vm.stats.vm.v_inactive_count"}
 			     + $sysctl->{"vm.stats.vm.v_free_count"});
 		    },
+		# Mach Virtual Memory Statistics: (page size of 4096 bytes)
+		# Pages free:                         198061.
+		# Pages active:                       159701.
+		# Pages inactive:                      47378.
+		# Pages speculative:                   29707.
+		# Pages wired down:                    89231.
+		# "Translation faults":            928901425.
+		# Pages copy-on-write:             156988239.
+		# Pages zero filled:               271267894.
+		# Pages reactivated:                   48895.
+	        # Pageins:                           1798068.
+	        # Pageouts:                              257.
+		# Object cache: 6603 hits of 1713223 lookups (0% hit rate)
+		'darwin' => 
+		q[ $vm = `vm_stat`;
+		  print (($vm =~ /page size of (\d+)/)[0] *
+		  (($vm =~ /Pages free:\s+(\d+)/)[0] +
+		   ($vm =~ /Pages inactive:\s+(\d+)/)[0]));
+		],
 		);
 	    my $perlscript = "";
 	    # Make a perl script that detects the OS ($^O) and runs
