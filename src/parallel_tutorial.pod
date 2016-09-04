@@ -904,6 +904,31 @@ Output:
   pre-A-post
 
 
+=head2 Respecting the shell
+
+This tutorial uses Bash as the shell. GNU B<parallel> respects which
+shell you are using, so in B<zsh> you can do:
+
+  parallel echo \={} ::: zsh bash ls
+
+Output:
+
+  /usr/bin/zsh
+  /bin/bash
+  /bin/ls
+
+In B<csh> you can do:
+
+  parallel 'set a="{}"; if( { test -d "$a" } ) echo "$a is a dir"' ::: *
+
+Output:
+
+  [somedir] is a dir
+
+This also becomes useful if you use GNU B<parallel> in a shell script:
+GNU B<parallel> will use the same shell as the shell script.
+
+
 =head1 Controlling the output
 
 The output can prefixed with the argument:

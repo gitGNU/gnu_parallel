@@ -229,30 +229,30 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-bin_SCRIPTS = parallel sql niceload \
+bin_SCRIPTS = parallel sql niceload parcat \
 	env_parallel env_parallel.bash env_parallel.zsh env_parallel.fish \
 	env_parallel.ksh env_parallel.pdksh env_parallel.csh env_parallel.tcsh
 
 @DOCUMENTATION_TRUE@man_MANS = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 \
-@DOCUMENTATION_TRUE@	parallel_tutorial.7 parallel_design.7
+@DOCUMENTATION_TRUE@	parallel_tutorial.7 parallel_design.7  parcat.1
 
 @DOCUMENTATION_TRUE@doc_DATA = parallel.html env_parallel.html sem.html sql.html niceload.html \
-@DOCUMENTATION_TRUE@	parallel_tutorial.html parallel_design.html \
+@DOCUMENTATION_TRUE@	parallel_tutorial.html parallel_design.html parcat.html \
 @DOCUMENTATION_TRUE@	parallel.texi env_parallel.texi sem.texi sql.texi niceload.texi \
-@DOCUMENTATION_TRUE@	parallel_tutorial.texi parallel_design.texi \
+@DOCUMENTATION_TRUE@	parallel_tutorial.texi parallel_design.texi parcat.texi \
 @DOCUMENTATION_TRUE@	parallel.pdf env_parallel.pdf sem.pdf sql.pdf niceload.pdf \
-@DOCUMENTATION_TRUE@	parallel_tutorial.pdf parallel_design.pdf
+@DOCUMENTATION_TRUE@	parallel_tutorial.pdf parallel_design.pdf parcat.pdf
 
 DISTCLEANFILES = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 \
-	parallel_tutorial.7 parallel_design.7 \
+	parallel_tutorial.7 parallel_design.7 parcat.1 \
 	parallel.html env_parallel.html sem.html sql.html niceload.html \
-	parallel_tutorial.html parallel_design.html \
+	parallel_tutorial.html parallel_design.html parcat.html \
 	parallel.texi env_parallel.texi sem.texi sql.texi niceload.texi \
-	parallel_tutorial.texi parallel_design.texi \
+	parallel_tutorial.texi parallel_design.texi parcat.texi \
 	parallel.pdf env_parallel.pdf sem.pdf sql.pdf niceload.pdf \
-	parallel_tutorial.pdf parallel_design.pdf
+	parallel_tutorial.pdf parallel_design.pdf parcat.pdf
 
-EXTRA_DIST = parallel sem sql niceload env_parallel \
+EXTRA_DIST = parallel sem sql niceload parcat env_parallel \
 	env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh \
 	env_parallel.pdksh env_parallel.csh env_parallel.tcsh \
 	sem.pod parallel.pod env_parallel.pod niceload.pod parallel_tutorial.pod \
@@ -644,6 +644,12 @@ niceload.1: niceload.pod
 	&& mv $(srcdir)/niceload.1n $(srcdir)/niceload.1 \
 	|| echo "Warning: pod2man not found. Using old niceload.1"
 
+parcat.1: parcat
+	pod2man --release='$(PACKAGE_VERSION)' --center='$(PACKAGE_NAME)' \
+		--section=1 $(srcdir)/parcat > $(srcdir)/parcat.1n \
+	&& mv $(srcdir)/parcat.1n $(srcdir)/parcat.1 \
+	|| echo "Warning: pod2man not found. Using old parcat.1"
+
 parallel.html: parallel.pod
 	pod2html --title "GNU Parallel" $(srcdir)/parallel.pod > $(srcdir)/parallel.htmln \
 	&& mv $(srcdir)/parallel.htmln $(srcdir)/parallel.html \
@@ -692,6 +698,13 @@ niceload.html: niceload.pod sql.html
 	|| echo "Warning: pod2html not found. Using old niceload.html"
 	rm -f $(srcdir)/pod2htm*
 
+# Depending on niceload.html to avoid stupid pod2html race condition
+parcat.html: parcat niceload.html
+	pod2html --title "GNU parcat" $(srcdir)/parcat > $(srcdir)/parcat.htmln \
+	&& mv $(srcdir)/parcat.htmln $(srcdir)/parcat.html \
+	|| echo "Warning: pod2html not found. Using old parcat.html"
+	rm -f $(srcdir)/pod2htm*
+
 parallel.texi: parallel.pod
 	pod2texi --output=$(srcdir)/parallel.texi $(srcdir)/parallel.pod \
 	|| echo "Warning: pod2texi not found. Using old parallel.texi"
@@ -720,6 +733,10 @@ niceload.texi: niceload.pod
 	pod2texi --output=$(srcdir)/niceload.texi $(srcdir)/niceload.pod \
 	|| echo "Warning: pod2texi not found. Using old niceload.texi"
 
+parcat.texi: parcat
+	pod2texi --output=$(srcdir)/parcat.texi $(srcdir)/parcat \
+	|| echo "Warning: pod2texi not found. Using old parcat.texi"
+
 parallel.pdf: parallel.pod
 	pod2pdf --output-file $(srcdir)/parallel.pdf $(srcdir)/parallel.pod --title "GNU Parallel" \
 	|| echo "Warning: pod2pdf not found. Using old parallel.pdf"
@@ -747,6 +764,10 @@ sql.pdf: sql
 niceload.pdf: niceload.pod
 	pod2pdf --output-file $(srcdir)/niceload.pdf $(srcdir)/niceload.pod --title "GNU niceload" \
 	|| echo "Warning: pod2pdf not found. Using old niceload.pdf"
+
+parcat.pdf: parcat
+	pod2pdf --output-file $(srcdir)/parcat.pdf $(srcdir)/parcat --title "GNU parcat" \
+	|| echo "Warning: pod2pdf not found. Using old parcat.pdf"
 
 sem: parallel
 	ln -fs parallel sem

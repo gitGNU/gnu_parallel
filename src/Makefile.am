@@ -1,4 +1,4 @@
-bin_SCRIPTS = parallel sql niceload \
+bin_SCRIPTS = parallel sql niceload parcat \
 	env_parallel env_parallel.bash env_parallel.zsh env_parallel.fish \
 	env_parallel.ksh env_parallel.pdksh env_parallel.csh env_parallel.tcsh
 
@@ -8,13 +8,13 @@ install-exec-hook:
 
 if DOCUMENTATION
 man_MANS = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 \
-	parallel_tutorial.7 parallel_design.7
+	parallel_tutorial.7 parallel_design.7  parcat.1
 doc_DATA = parallel.html env_parallel.html sem.html sql.html niceload.html \
-	parallel_tutorial.html parallel_design.html \
+	parallel_tutorial.html parallel_design.html parcat.html \
 	parallel.texi env_parallel.texi sem.texi sql.texi niceload.texi \
-	parallel_tutorial.texi parallel_design.texi \
+	parallel_tutorial.texi parallel_design.texi parcat.texi \
 	parallel.pdf env_parallel.pdf sem.pdf sql.pdf niceload.pdf \
-	parallel_tutorial.pdf parallel_design.pdf
+	parallel_tutorial.pdf parallel_design.pdf parcat.pdf
 endif
 
 # Build documentation file if the tool to build exists.
@@ -60,6 +60,12 @@ niceload.1: niceload.pod
 		--section=1 $(srcdir)/niceload.pod > $(srcdir)/niceload.1n \
 	&& mv $(srcdir)/niceload.1n $(srcdir)/niceload.1 \
 	|| echo "Warning: pod2man not found. Using old niceload.1"
+
+parcat.1: parcat
+	pod2man --release='$(PACKAGE_VERSION)' --center='$(PACKAGE_NAME)' \
+		--section=1 $(srcdir)/parcat > $(srcdir)/parcat.1n \
+	&& mv $(srcdir)/parcat.1n $(srcdir)/parcat.1 \
+	|| echo "Warning: pod2man not found. Using old parcat.1"
 
 parallel.html: parallel.pod
 	pod2html --title "GNU Parallel" $(srcdir)/parallel.pod > $(srcdir)/parallel.htmln \
@@ -109,6 +115,13 @@ niceload.html: niceload.pod sql.html
 	|| echo "Warning: pod2html not found. Using old niceload.html"
 	rm -f $(srcdir)/pod2htm*
 
+# Depending on niceload.html to avoid stupid pod2html race condition
+parcat.html: parcat niceload.html
+	pod2html --title "GNU parcat" $(srcdir)/parcat > $(srcdir)/parcat.htmln \
+	&& mv $(srcdir)/parcat.htmln $(srcdir)/parcat.html \
+	|| echo "Warning: pod2html not found. Using old parcat.html"
+	rm -f $(srcdir)/pod2htm*
+
 parallel.texi: parallel.pod
 	pod2texi --output=$(srcdir)/parallel.texi $(srcdir)/parallel.pod \
 	|| echo "Warning: pod2texi not found. Using old parallel.texi"
@@ -136,6 +149,10 @@ sql.texi: sql
 niceload.texi: niceload.pod
 	pod2texi --output=$(srcdir)/niceload.texi $(srcdir)/niceload.pod \
 	|| echo "Warning: pod2texi not found. Using old niceload.texi"
+
+parcat.texi: parcat
+	pod2texi --output=$(srcdir)/parcat.texi $(srcdir)/parcat \
+	|| echo "Warning: pod2texi not found. Using old parcat.texi"
 
 parallel.pdf: parallel.pod
 	pod2pdf --output-file $(srcdir)/parallel.pdf $(srcdir)/parallel.pod --title "GNU Parallel" \
@@ -165,19 +182,23 @@ niceload.pdf: niceload.pod
 	pod2pdf --output-file $(srcdir)/niceload.pdf $(srcdir)/niceload.pod --title "GNU niceload" \
 	|| echo "Warning: pod2pdf not found. Using old niceload.pdf"
 
+parcat.pdf: parcat
+	pod2pdf --output-file $(srcdir)/parcat.pdf $(srcdir)/parcat --title "GNU parcat" \
+	|| echo "Warning: pod2pdf not found. Using old parcat.pdf"
+
 sem: parallel
 	ln -fs parallel sem
 
 DISTCLEANFILES = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 \
-	parallel_tutorial.7 parallel_design.7 \
+	parallel_tutorial.7 parallel_design.7 parcat.1 \
 	parallel.html env_parallel.html sem.html sql.html niceload.html \
-	parallel_tutorial.html parallel_design.html \
+	parallel_tutorial.html parallel_design.html parcat.html \
 	parallel.texi env_parallel.texi sem.texi sql.texi niceload.texi \
-	parallel_tutorial.texi parallel_design.texi \
+	parallel_tutorial.texi parallel_design.texi parcat.texi \
 	parallel.pdf env_parallel.pdf sem.pdf sql.pdf niceload.pdf \
-	parallel_tutorial.pdf parallel_design.pdf
+	parallel_tutorial.pdf parallel_design.pdf parcat.pdf
 
-EXTRA_DIST = parallel sem sql niceload env_parallel \
+EXTRA_DIST = parallel sem sql niceload parcat env_parallel \
 	env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh \
 	env_parallel.pdksh env_parallel.csh env_parallel.tcsh \
 	sem.pod parallel.pod env_parallel.pod niceload.pod parallel_tutorial.pod \

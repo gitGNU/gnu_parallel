@@ -86,16 +86,13 @@ B<Bash aliases>: Use B<env_parallel>.
 
 B<Ksh functions and aliases>: Use B<env_parallel>.
 
-B<Zsh functions>: Use B<env_parallel>.
-
-B<Zsh aliases>: No solution.
+B<Zsh functions and aliases>: Use B<env_parallel>.
 
 B<Fish functions and aliases>: Use B<env_parallel>.
 
 B<Ksh functions and aliases>: Use B<env_parallel>.
 
 B<Pdksh functions and aliases>: Use B<env_parallel>.
-
 
 The command cannot contain the character \257 (macron: ¯).
 
@@ -254,7 +251,8 @@ Replace with calculated I<perl expression>. B<$_> will contain the
 same as B<{}>. After evaluating I<perl expression> B<$_> will be used
 as the value. It is recommended to only change $_ but you have full
 access to all of GNU B<parallel>'s internal functions and data
-structures. A few convenience functions have been made:
+structures. A few convenience functions and data structures have been
+made:
 
 =over 15
 
@@ -273,6 +271,10 @@ slot number of job
 =item Z<> B<$job->seq()>
 
 sequence number of job
+
+=item Z<> B<@arg>
+
+the arguments
 
 =back
 
@@ -4805,19 +4807,19 @@ lacks many functions. All of these fail:
 
   # -q to protect quoted $ and space
   parallel -q perl -e '$a=shift; print "$a"x10000000' ::: a b c
-  # Argument is command
-  parallel {} 10 ::: echo seq
   # Generation of combination of inputs
   parallel echo {1} {2} ::: red green blue ::: S M L XL XXL
-  # Composed commands
-  parallel echo {} '|' wc ::: a
-  # Output is mixed
-  parallel (-q) perl -e 'print"{}"x10000000' ::: a b c |
-    perl -pe '$_=join "\n",split //, $_' | uniq -c
   # Show what would be executed
   parallel --dry-run echo ::: a
+  # Run different shell dialects
+  zsh -c 'parallel echo \={} ::: zsh && true'
+  csh -c 'parallel echo \$\{\} ::: shell && true'
+  bash -c 'parallel echo \$\({}\) ::: pwd && true'
 
-Rust parallel has no remote facilities.
+Rust parallel lacks B<::::>, B<--pipe>, and has no remote facilities.
+
+Rust parallel buffers in RAM like gargs. This can cause
+death-by-swapping. See B<man parallel_design>.
 
 
 =head2 DIFFERENCES BETWEEN ClusterSSH AND GNU Parallel
