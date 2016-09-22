@@ -3898,7 +3898,15 @@ sub tmpfile {
     # Returns:
     #   $filehandle = opened file handle
     #   $filename = file name created
-    return ::tempfile(DIR=>$ENV{'TMPDIR'}, TEMPLATE => 'parXXXXX', @_);
+    my($filehandle,$filename) =
+	::tempfile(DIR=>$ENV{'TMPDIR'}, TEMPLATE => 'parXXXXX', @_);
+    if(wantarray) {
+	return($filehandle,$filename);
+    } else {
+	# Separate unlink due to NFS dealing badly with File::Temp
+	unlink $filename;
+	return $filehandle;
+    }
 }
 
 sub tmpname {
@@ -4092,10 +4100,7 @@ sub multiply_binary_prefix {
 	# Returns:
 	#   N/A
 	if(not $disk_full_fh) {
-	    my $name;
-	    ($disk_full_fh, $name) = ::tmpfile(SUFFIX => ".df");
-	    # Separate unlink due to NFS dealing badly with File::Temp
-	    unlink $name;
+	    $disk_full_fh = ::tmpfile(SUFFIX => ".df");
 	    $b8193 = "x"x8193;
 	}
 	# Linux does not discover if a disk is full if writing <= 8192
@@ -4251,6 +4256,7 @@ sub which {
 	    %pid_parentpid_cmd =
 	    (
 	     'aix' => $sysv,
+	     'android' => $sysv,
 	     'cygwin' => $sysv,
 	     'darwin' => $bsd,
 	     'dec_osf' => $sysv,
