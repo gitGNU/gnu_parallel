@@ -1,3 +1,38 @@
+20160922
+
+* parcat - cat files or fifos in parallel
+
+* GNU Parallel was cited in: Velocity: A Netflow Based Optimized
+  Geo-IP Lookup Tool
+  https://mospace.umsystem.edu/xmlui/bitstream/handle/10355/50842/Thesis_2016_Pakhare.pdf?sequence=1&isAllowed=y
+
+* GNU Parallel was cited in: Viral deep sequencing needs an adaptive
+  approach: IRMA, the iterative refinement meta-assembler
+  http://www.ncbi.nlm.nih.gov/pmc/articles/PMC5011931/
+
+* GNU Parallel is used in Gene Set Omic Analysis:
+  https://bitbucket.org/srp33/gsoa
+
+* Using GNU Parallel and ImageMagick for Conversions
+  https://blog.fractalcomic.com/tutorials/using-gnu-parallel-and-imagemagick-for-conversions/
+
+* Training in GNU Parallel
+  http://www.cism.ucl.ac.be/Services/Formations/parcomp.pdf
+
+* Chown Ceph OSD data directory using GNU Parallel
+  http://blog.widodh.nl/2016/08/chown-ceph-osd-data-directory-using-gnu-parallel/
+
+* FastGBS uses GNU Parallel https://bitbucket.org/jerlar73/fastgbs
+
+* dDocent: A guide to ddRAD sequencing
+  https://ddocent.wordpress.com/ddocent-pipeline-user-guide/
+
+* SOFTWARE GNU Parallel
+  http://msi-riss.readthedocs.io/en/latest/software/gnu-parallel.html
+
+* Bug fixes and man page updates.
+
+
 20160822
 
 * --tmuxpane opens jobs in panes in tmux. Useful if you want to

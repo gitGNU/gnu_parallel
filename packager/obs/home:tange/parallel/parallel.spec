@@ -1,6 +1,6 @@
 Summary:	Shell tool for executing jobs in parallel
 Name: 		parallel
-Version: 	20160822
+Version: 	20160922
 Release: 	1.1
 License: 	GPL
 Group: 		Productivity/File utilities
@@ -62,6 +62,7 @@ rm $RPM_BUILD_ROOT%{_docdir}/parallel_design.html
 rm $RPM_BUILD_ROOT%{_docdir}/niceload.html
 rm $RPM_BUILD_ROOT%{_docdir}/sem.html
 rm $RPM_BUILD_ROOT%{_docdir}/sql.html
+rm $RPM_BUILD_ROOT%{_docdir}/parcat.html
 rm $RPM_BUILD_ROOT%{_docdir}/parallel.texi
 rm $RPM_BUILD_ROOT%{_docdir}/env_parallel.texi
 rm $RPM_BUILD_ROOT%{_docdir}/parallel_tutorial.texi
@@ -69,6 +70,7 @@ rm $RPM_BUILD_ROOT%{_docdir}/parallel_design.texi
 rm $RPM_BUILD_ROOT%{_docdir}/niceload.texi
 rm $RPM_BUILD_ROOT%{_docdir}/sem.texi
 rm $RPM_BUILD_ROOT%{_docdir}/sql.texi
+rm $RPM_BUILD_ROOT%{_docdir}/parcat.texi
 rm $RPM_BUILD_ROOT%{_docdir}/parallel.pdf
 rm $RPM_BUILD_ROOT%{_docdir}/env_parallel.pdf
 rm $RPM_BUILD_ROOT%{_docdir}/parallel_tutorial.pdf
@@ -76,6 +78,7 @@ rm $RPM_BUILD_ROOT%{_docdir}/parallel_design.pdf
 rm $RPM_BUILD_ROOT%{_docdir}/niceload.pdf
 rm $RPM_BUILD_ROOT%{_docdir}/sem.pdf
 rm $RPM_BUILD_ROOT%{_docdir}/sql.pdf
+rm $RPM_BUILD_ROOT%{_docdir}/parcat.pdf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -85,7 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/*
 /usr/share/man/man1/*
 /usr/share/man/man7/*
-%doc README NEWS src/parallel.html src/env_parallel.html src/parallel_tutorial.html src/parallel_design.html src/sem.html src/sql.html src/niceload.html src/parallel.texi src/env_parallel.texi src/parallel_tutorial.texi src/parallel_design.texi src/niceload.texi src/sem.texi src/sql.texi src/parallel.pdf src/env_parallel.pdf src/parallel_tutorial.pdf src/parallel_design.pdf src/niceload.pdf src/sem.pdf src/sql.pdf
+%doc README NEWS src/parallel.html src/env_parallel.html src/parallel_tutorial.html src/parallel_design.html src/sem.html src/sql.html src/parcat.html src/niceload.html src/parallel.texi src/env_parallel.texi src/parallel_tutorial.texi src/parallel_design.texi src/niceload.texi src/sem.texi src/sql.texi src/parcat.texi src/parallel.pdf src/env_parallel.pdf src/parallel_tutorial.pdf src/parallel_design.pdf src/niceload.pdf src/sem.pdf src/sql.pdf src/parcat.pdf
 
 %changelog
 * Sat Jan 22 2011 Ole Tange
