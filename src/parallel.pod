@@ -264,11 +264,11 @@ shell quote a string
 
 number of jobs in total
 
-=item Z<> B<$job->slot()>
+=item Z<> B<$job->>B<slot()>
 
 slot number of job
 
-=item Z<> B<$job->seq()>
+=item Z<> B<$job->>B<seq()>
 
 sequence number of job
 

@@ -643,7 +643,7 @@ echo '**'
 
 echo '### bug #48658: --linebuffer --files'
 
-  parallel --files --linebuffer 'sleep .1;seq {};sleep .1' ::: {1..10} | wc -l
+  stdout parallel --files --linebuffer 'sleep .1;seq {};sleep .1' ::: {1..10} | wc -l
 
 echo '**'
 

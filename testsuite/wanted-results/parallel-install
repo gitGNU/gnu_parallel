@@ -119,18 +119,32 @@ Warning: pod2html not found. Using old parallel_tutorial.html
 rm -f ./pod2htm*
 pod2texi --output=./parallel.texi ./parallel.pod \
 || echo "Warning: pod2texi not found. Using old parallel.texi"
+/bin/bash: pod2texi: command not found
+Warning: pod2texi not found. Using old parallel.texi
 pod2texi --output=./env_parallel.texi ./env_parallel.pod \
 || echo "Warning: pod2texi not found. Using old env_parallel.texi"
+/bin/bash: pod2texi: command not found
+Warning: pod2texi not found. Using old env_parallel.texi
 pod2texi --output=./sem.texi ./sem.pod \
 || echo "Warning: pod2texi not found. Using old sem.texi"
+/bin/bash: pod2texi: command not found
+Warning: pod2texi not found. Using old sem.texi
 pod2texi --output=./sql.texi ./sql \
 || echo "Warning: pod2texi not found. Using old sql.texi"
+/bin/bash: pod2texi: command not found
+Warning: pod2texi not found. Using old sql.texi
 pod2texi --output=./niceload.texi ./niceload.pod \
 || echo "Warning: pod2texi not found. Using old niceload.texi"
+/bin/bash: pod2texi: command not found
+Warning: pod2texi not found. Using old niceload.texi
 pod2texi --output=./parallel_tutorial.texi ./parallel_tutorial.pod \
 || echo "Warning: pod2texi not found. Using old parallel_tutorial.texi"
+/bin/bash: pod2texi: command not found
+Warning: pod2texi not found. Using old parallel_tutorial.texi
 pod2texi --output=./parallel_design.texi ./parallel_design.pod \
 || echo "Warning: pod2texi not found. Using old parallel_design.texi"
+/bin/bash: pod2texi: command not found
+Warning: pod2texi not found. Using old parallel_design.texi
 pod2pdf --output-file ./parallel.pdf ./parallel.pod --title "GNU Parallel" \
 || echo "Warning: pod2pdf not found. Using old parallel.pdf"
 /bin/bash: pod2pdf: command not found
@@ -161,7 +175,7 @@ pod2pdf --output-file ./parallel_design.pdf ./parallel_design.pod --title "GNU P
 Warning: pod2pdf not found. Using old parallel_design.pdf
 make[0]: Entering directory '/tmp/parallel-00000000/src'
  /bin/mkdir -p '/usr/local/bin'
- /usr/bin/install -c parallel sql niceload env_parallel env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh env_parallel.pdksh env_parallel.csh env_parallel.tcsh '/usr/local/bin'
+ /usr/bin/install -c parallel sql niceload parcat env_parallel env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh env_parallel.pdksh env_parallel.csh env_parallel.tcsh '/usr/local/bin'
 make  install-exec-hook
 make[0]: Entering directory '/tmp/parallel-00000000/src'
 rm /usr/local/bin/sem || true
@@ -209,6 +223,34 @@ pod2html --title "GNU Parallel tutorial" ./parallel_tutorial.pod > ./parallel_tu
 /bin/bash: pod2html: command not found
 Warning: pod2html not found. Using old parallel_tutorial.html
 rm -f ./pod2htm*
+pod2texi --output=./parallel.texi ./parallel.pod \
+|| echo "Warning: pod2texi not found. Using old parallel.texi"
+/bin/bash: pod2texi: command not found
+Warning: pod2texi not found. Using old parallel.texi
+pod2texi --output=./env_parallel.texi ./env_parallel.pod \
+|| echo "Warning: pod2texi not found. Using old env_parallel.texi"
+/bin/bash: pod2texi: command not found
+Warning: pod2texi not found. Using old env_parallel.texi
+pod2texi --output=./sem.texi ./sem.pod \
+|| echo "Warning: pod2texi not found. Using old sem.texi"
+/bin/bash: pod2texi: command not found
+Warning: pod2texi not found. Using old sem.texi
+pod2texi --output=./sql.texi ./sql \
+|| echo "Warning: pod2texi not found. Using old sql.texi"
+/bin/bash: pod2texi: command not found
+Warning: pod2texi not found. Using old sql.texi
+pod2texi --output=./niceload.texi ./niceload.pod \
+|| echo "Warning: pod2texi not found. Using old niceload.texi"
+/bin/bash: pod2texi: command not found
+Warning: pod2texi not found. Using old niceload.texi
+pod2texi --output=./parallel_tutorial.texi ./parallel_tutorial.pod \
+|| echo "Warning: pod2texi not found. Using old parallel_tutorial.texi"
+/bin/bash: pod2texi: command not found
+Warning: pod2texi not found. Using old parallel_tutorial.texi
+pod2texi --output=./parallel_design.texi ./parallel_design.pod \
+|| echo "Warning: pod2texi not found. Using old parallel_design.texi"
+/bin/bash: pod2texi: command not found
+Warning: pod2texi not found. Using old parallel_design.texi
 pod2pdf --output-file ./parallel.pdf ./parallel.pod --title "GNU Parallel" \
 || echo "Warning: pod2pdf not found. Using old parallel.pdf"
 /bin/bash: pod2pdf: command not found
@@ -238,7 +280,7 @@ pod2pdf --output-file ./parallel_design.pdf ./parallel_design.pod --title "GNU P
 /bin/bash: pod2pdf: command not found
 Warning: pod2pdf not found. Using old parallel_design.pdf
  /bin/mkdir -p '/usr/local/share/doc/parallel'
- /usr/bin/install -c -m 644 parallel.html env_parallel.html sem.html sql.html niceload.html parallel_tutorial.html parallel_design.html parallel.texi env_parallel.texi sem.texi sql.texi niceload.texi parallel_tutorial.texi parallel_design.texi parallel.pdf env_parallel.pdf sem.pdf sql.pdf niceload.pdf parallel_tutorial.pdf parallel_design.pdf '/usr/local/share/doc/parallel'
+ /usr/bin/install -c -m 644 parallel.html env_parallel.html sem.html sql.html niceload.html parallel_tutorial.html parallel_design.html parcat.html parallel.texi env_parallel.texi sem.texi sql.texi niceload.texi parallel_tutorial.texi parallel_design.texi parcat.texi parallel.pdf env_parallel.pdf sem.pdf sql.pdf niceload.pdf parallel_tutorial.pdf parallel_design.pdf parcat.pdf '/usr/local/share/doc/parallel'
 pod2man --release='00000000' --center='parallel' \
 	--section=1 ./parallel.pod > ./parallel.1n \
 && mv ./parallel.1n ./parallel.1 \
@@ -282,7 +324,7 @@ pod2man --release='00000000' --center='parallel' \
 /bin/bash: pod2man: command not found
 Warning: pod2man not found. Using old parallel_design.7
  /bin/mkdir -p '/usr/local/share/man/man1'
- /usr/bin/install -c -m 644 parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 '/usr/local/share/man/man1'
+ /usr/bin/install -c -m 644 parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 parcat.1 '/usr/local/share/man/man1'
  /bin/mkdir -p '/usr/local/share/man/man7'
  /usr/bin/install -c -m 644 parallel_tutorial.7 parallel_design.7 '/usr/local/share/man/man7'
 make[0]: Leaving directory '/tmp/parallel-00000000/src'

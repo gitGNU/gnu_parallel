@@ -350,6 +350,31 @@ pre- A-post
 pre-A -post
   parallel --trim lr echo pre-{}-post ::: ' A '
 pre-A-post
+  parallel echo \={} ::: zsh bash ls
+=zsh
+=bash
+=ls
+  parallel 'set a="{}"; if( { test -d "$a" } ) echo "$a is a dir"' ::: *
+/bin/bash: -c: line 0: syntax error near unexpected token `)'
+/bin/bash: -c: line 0: `set a="abc-file"; if( { test -d "$a" } ) echo "$a is a dir"'
+/bin/bash: -c: line 0: syntax error near unexpected token `)'
+/bin/bash: -c: line 0: `set a="abc0-file"; if( { test -d "$a" } ) echo "$a is a dir"'
+/bin/bash: -c: line 0: syntax error near unexpected token `)'
+/bin/bash: -c: line 0: `set a="abc_-file"; if( { test -d "$a" } ) echo "$a is a dir"'
+/bin/bash: -c: line 0: syntax error near unexpected token `)'
+/bin/bash: -c: line 0: `set a="def-file"; if( { test -d "$a" } ) echo "$a is a dir"'
+/bin/bash: -c: line 0: syntax error near unexpected token `)'
+/bin/bash: -c: line 0: `set a="num1000000"; if( { test -d "$a" } ) echo "$a is a dir"'
+/bin/bash: -c: line 0: syntax error near unexpected token `)'
+/bin/bash: -c: line 0: `set a="num128"; if( { test -d "$a" } ) echo "$a is a dir"'
+/bin/bash: -c: line 0: syntax error near unexpected token `)'
+/bin/bash: -c: line 0: `set a="num30000"; if( { test -d "$a" } ) echo "$a is a dir"'
+/bin/bash: -c: line 0: syntax error near unexpected token `)'
+/bin/bash: -c: line 0: `set a="num8"; if( { test -d "$a" } ) echo "$a is a dir"'
+/bin/bash: -c: line 0: syntax error near unexpected token `)'
+/bin/bash: -c: line 0: `set a="num_%header"; if( { test -d "$a" } ) echo "$a is a dir"'
+/bin/bash: -c: line 0: syntax error near unexpected token `)'
+/bin/bash: -c: line 0: `set a="tsv-file.tsv"; if( { test -d "$a" } ) echo "$a is a dir"'
   parallel --tag echo foo-{} ::: A B C
 A	foo-A
 B	foo-B

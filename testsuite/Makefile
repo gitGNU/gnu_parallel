@@ -58,7 +58,7 @@ startvm:
 	# If they are already running: Don't fail
 	VBoxManage startvm CentOS3-root:centos3 || VBoxManage controlvm CentOS3-root:centos3 resume || true
 	VBoxManage startvm RedHat9-root:redhat9 || VBoxManage controlvm RedHat9-root:redhat9 resume || true
-	parallel ping -c 3 ::: redhat9.tange.dk centos3.tange.dk oracle11.tange.dk
+	parallel 'ping {} | read' ::: redhat9.tange.dk centos3.tange.dk
 
 stopvm:
 	# || true - because this should not fail if the VM is not running
@@ -73,6 +73,7 @@ startdb:
 	#echo shutdown abort | sudo su - oracle -c "sqlplus / as sysdba"
 	sudo parallel /etc/init.d/{} status '||' /etc/init.d/{} restart ::: postgresql mysql # oracle-xe
 	VBoxManage startvm OracleXE || true
+	parallel 'ping {} | read' :::  oracle11.tange.dk
 
 clean:
 	rm -rf input-files/random_dirs_no_newline

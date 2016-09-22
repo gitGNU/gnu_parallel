@@ -82,6 +82,20 @@ echo 'bug #41613: --compress --line-buffer no newline';
 
   perl -e 'print "It worked"'| parallel --pipe --compress --line-buffer cat; echo
 
+echo 'bug #48658: --linebuffer --files';
+
+  doit() { parallel --files --linebuffer --compress-program $1 seq ::: 100000 | wc -l ; }; 
+  export -f doit; 
+  parallel -k doit ::: zstd pzstd clzip lz4 lzop pigz pxz gzip plzip pbzip2 lzma xz lzip bzip2 lbzip2 lrz
+
+  doit() { parallel --results /tmp/par48658$1 --linebuffer --compress-program $1 seq ::: 100000 | wc -l ; rm -rf "/tmp/par48658$1"; }; 
+  export -f doit; 
+  parallel -k doit ::: zstd pzstd clzip lz4 lzop pigz pxz gzip plzip pbzip2 lzma xz lzip bzip2 lbzip2 lrz
+
+  doit() { parallel --linebuffer --compress-program $1 seq ::: 100000 | wc -l ; }; 
+  export -f doit; 
+  parallel -k doit ::: zstd pzstd clzip lz4 lzop pigz pxz gzip plzip pbzip2 lzma xz lzip bzip2 lbzip2 lrz
+
 echo '**'
 
 echo "### Test -I"; 

@@ -32,15 +32,8 @@ GNU B<parcat> is part of GNU B<parallel>. Report bugs to <bug-parallel@gnu.org>.
 
 =head1 AUTHOR
 
-When using GNU B<sql> for a publication please cite:
-
-O. Tange (2011): GNU SQL - A Command Line Tool for Accessing Different
-Databases Using DBURLs, ;login: The USENIX Magazine, April 2011:29-32.
-
-Copyright (C) 2008,2009,2010 Ole Tange http://ole.tange.dk
-
-Copyright (C) 2010,2011 Ole Tange, http://ole.tange.dk and Free
-Software Foundation, Inc.
+Copyright (C) 2016 Ole Tange, http://ole.tange.dk and Free Software
+Foundation, Inc.
 
 =head1 LICENSE
 
@@ -203,14 +196,12 @@ sub producer {
 }
 
 my $s = IO::Select->new();
-my %fhr;
 my %buffer;
 
 sub add_file {
     my $fd = shift;
     open(my $fh, "<&=", $fd) || die;
     $s->add($fh);
-    $fhr{$fh}++;
     # Tell the producer now opened here and can be released
     $okq->enqueue($fd);
     # Initialize the buffer
@@ -236,9 +227,9 @@ my (@ready,$file,$rv,$buf);
 do {
     # Wait until at least one file is opened
     add_files_block();
-    while($q->pending or keys %fhr) {
+    while($q->pending or keys %buffer) {
 	add_files();
-	while(keys %fhr) {
+	while(keys %buffer) {
 	    @ready = $s->can_read(0.01);
 	    if(not @ready) {
 		add_files();
@@ -252,7 +243,6 @@ do {
 		    } else {
 			# This file is done
 			$s->remove($file);
-			delete $fhr{$file};
 			print @{$buffer{$file}};
 			delete $buffer{$file};
 			# Closing the $file causes it to block

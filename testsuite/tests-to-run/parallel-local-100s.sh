@@ -33,23 +33,21 @@ measure() {
     # Input:
     #   $1 = iterations
     #   $2 = sleep 1 sec for every $2
-    seq $1 |
-	stdout time -v parallel -u sleep '{= $_=$_%'$2'?0:1 =}' |
-	grep Maximum | field 6;
+    seq $1 | ramusage parallel -u sleep '{= $_=$_%'$2'?0:1 =}'
 }
 export -f measure
 
 no_mem_leak() {
     # Return false if leaking
-    max1000=$(parallel measure {} 100000 ::: 1000 1000 1000 1000 |
+    max1000=$(parallel measure {} 100000 ::: 1000 1000 1000 1000 1000 1000 1000 1000 |
     		       sort -n | tail -n 1)
-    min30000=$(parallel measure {} 100000 ::: 30000 30000 30000 30000 |
+    min30000=$(parallel measure {} 100000 ::: 30000 30000 30000 |
     			sort -n | head -n 1)
     if [ $max1000 -gt $min30000 ] ; then
 	# Make sure there are a few sleeps
-	max1000=$(parallel measure {} 100 ::: 1000 1000 1000 1000 |
+	max1000=$(parallel measure {} 100 ::: 1000 1000 1000 1000 1000 1000 1000 1000 |
 			   sort -n | tail -n 1)
-	min30000=$(parallel measure {} 100 ::: 30000 30000 30000 30000 |
+	min30000=$(parallel measure {} 100 ::: 30000 30000 30000 |
 			    sort -n | head -n 1)
 	if [ $max1000 -gt $min30000 ] ; then
 	    echo $max1000 -gt $min30000 = no leak
