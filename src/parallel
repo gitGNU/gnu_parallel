@@ -1552,10 +1552,27 @@ sub find_compression_program {
     #   $compress_program = compress program with options
     #   $decompress_program = decompress program with options
 
-    # Search for these. Sorted by speed on 20 core
-    # parallel -j1  --joblog jl --arg-sep ,  parallel --compress-program \'{3}" "-{2}\' cat ::: gz '>'/dev/null , 1 2 3 ,  {1..3} , zstd clzip lz4 lzop pigz pxz gzip plzip pbzip2 lzma xz lzip bzip2 lbzip2 lrzip
-    # sort -nk4 jl
-    my @prg = qw(lz4 lzop pbzip2 pigz plzip lzip gzip pxz lzma xz bzip2);
+    # Search for these. Sorted by speed on 32 core
+    # apt install zstd clzip liblz4-tool lzop pigz pxz gzip plzip pbzip2 lzma xz-utils lzip bzip2 lbzip2 lrzip
+    # git clone https://github.com/facebook/zstd.git
+    # cd zstd/contrib/pzstd; make -j; cp pzstd /usr/local/bin
+    # echo 'lrzip -L $((-$1))'  >/usr/local/bin/lrz
+    # chmod +x /usr/local/bin/lrz 
+    # seq 120000000|shuf > 1gb
+    # onethread="zstd clzip lz4 lzop gzip lzma xz bzip2"
+    # multithread="pzstd pigz pxz plzip pbzip2 lzip  lbzip2 lrz"
+    # parallel --shuf -j50% --delay 1  --joblog jl-s --arg-sep ,  parallel --compress-program \'{3}" "-{2}\' cat ::: 1gb '>'/dev/null , 1 2 3 ,  {1..3} , $onethread
+    # parallel --shuf -j1  --joblog jl-m --arg-sep ,  parallel --compress-program \'{3}" "-{2}\' cat ::: 1gb '>'/dev/null , 1 2 3 ,  {1..3} , $multithread
+    # sort -nk4 jl-?
+    # 1-core: 
+    # 2-cores: 
+    # 4-cores: 
+    # 8-cores: pzstd lz4 zstd pigz lzop lbzip2 pbzip2 gzip lzip lrz plzip pxz bzip2 lzma xz clzip
+    # 16-cores: pzstd lz4 pigz lzop lbzip2 pbzip2 plzip lzip lrz pxz gzip lzma xz bzip2 
+    # 32-cores: pzstd lbzip2 pbzip2 zstd pigz lz4 lzop plzip lzip lrz gzip pxz lzma bzip2 xz clzip
+
+    my @prg = qw(pzstd lbzip2 pbzip2 zstd pigz lz4 lzop plzip lzip lrz
+                 gzip pxz lzma bzip2 xz clzip);
     for my $p (@prg) {
 	if(which($p)) {
 	    return ("$p -c -1","$p -dc");
@@ -9614,8 +9631,10 @@ sub new {
     my $fhs = shift;
     for my $fh (@$fhs) {
 	if(-t $fh and -t ($Global::status_fd || *STDERR)) {
-	    ::warning("Input is read from the terminal.",
-		      "Only experts do this on purpose. ".
+	    ::warning("Input is read from the terminal. You either know what you",
+		      "are doing (in which case: YOU ARE AWESOME!) or you forgot",
+		      "::: or :::: or to pipe data into parallel. If so",
+		      "consider going through the tutorial: man parallel_tutorial",
 		      "Press CTRL-D to exit.");
 	}
     }
