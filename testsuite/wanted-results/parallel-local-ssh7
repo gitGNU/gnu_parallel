@@ -50,6 +50,7 @@ par_bash_man	too
 par_bash_man	arrays
 par_bash_man	work,
 par_bash_man	too
+par_bash_man	exit value 2 should be 2
 par_bash_underscore	### bash
 par_bash_underscore	### Testing of --env _
 par_bash_underscore	variables in aliases in and arrays in functions work
@@ -62,13 +63,13 @@ par_bash_underscore	aliases in and arrays in functions work
 par_bash_underscore	aliases in and arrays in functions work
 par_bash_underscore	aliases in functions work
 par_bash_underscore	aliases in functions work
-par_bash_underscore	/bin/bash: line 70: myecho: command not found
+par_bash_underscore	/bin/bash: line 71: myecho: command not found
 par_bash_underscore	OK if no myecho      ^^^^^^^^^^^^^^^^^^^^^^^^^
-par_bash_underscore	/bin/bash: line 70: myecho: command not found
+par_bash_underscore	/bin/bash: line 71: myecho: command not found
 par_bash_underscore	OK if no myecho      ^^^^^^^^^^^^^^^^^^^^^^^^^
-par_bash_underscore	/bin/bash: line 68: myfunc: command not found
+par_bash_underscore	/bin/bash: line 69: myfunc: command not found
 par_bash_underscore	OK if no myfunc      ^^^^^^^^^^^^^^^^^^^^^^^^^
-par_bash_underscore	/bin/bash: line 68: myfunc: command not found
+par_bash_underscore	/bin/bash: line 69: myfunc: command not found
 par_bash_underscore	OK if no myfunc      ^^^^^^^^^^^^^^^^^^^^^^^^^
 par_csh_funky	3 arg alias_works
 par_csh_funky	myvar  works
@@ -103,6 +104,7 @@ par_csh_man	too
 par_csh_man	arrays
 par_csh_man	work,
 par_csh_man	too
+par_csh_man	exit value 2 should be 2
 par_csh_underscore	### csh
 par_csh_underscore	### Testing of --env _
 par_csh_underscore	#: Command not found.
@@ -183,6 +185,7 @@ par_fish_man	too
 par_fish_man	arrays
 par_fish_man	work,
 par_fish_man	too
+par_fish_man	exit value 2 should be 2
 par_fish_underscore	### fish
 par_fish_underscore	### Testing of --env _
 par_fish_underscore	variables in aliases and arrays in functions work
@@ -262,6 +265,7 @@ par_ksh_man	too
 par_ksh_man	arrays
 par_ksh_man	work,
 par_ksh_man	too
+par_ksh_man	exit value 2 should be 2
 par_ksh_underscore	### ksh
 par_ksh_underscore	### Testing of --env _
 par_ksh_underscore	variables in aliases in and arrays in functions work
@@ -274,13 +278,13 @@ par_ksh_underscore	aliases in and arrays in functions work
 par_ksh_underscore	aliases in and arrays in functions work
 par_ksh_underscore	aliases in functions work
 par_ksh_underscore	aliases in functions work
-par_ksh_underscore	/usr/bin/ksh[113]: myecho: not found [No such file or directory]
+par_ksh_underscore	/usr/bin/ksh[114]: myecho: not found [No such file or directory]
 par_ksh_underscore	OK if no myecho    ^^^^^^^^^^^^^^^^^
-par_ksh_underscore	/usr/bin/ksh[113]: myecho: not found [No such file or directory]
+par_ksh_underscore	/usr/bin/ksh[114]: myecho: not found [No such file or directory]
 par_ksh_underscore	OK if no myecho    ^^^^^^^^^^^^^^^^^
-par_ksh_underscore	/usr/bin/ksh: line 113: myfunc: not found
+par_ksh_underscore	/usr/bin/ksh: line 114: myfunc: not found
 par_ksh_underscore	OK if no myfunc         ^^^^^^^^^^^^^^^^^
-par_ksh_underscore	/usr/bin/ksh: line 113: myfunc: not found
+par_ksh_underscore	/usr/bin/ksh: line 114: myfunc: not found
 par_ksh_underscore	OK if no myfunc         ^^^^^^^^^^^^^^^^^
 par_tcsh_funky	
 par_tcsh_funky	
@@ -320,6 +324,7 @@ par_tcsh_man	too
 par_tcsh_man	arrays
 par_tcsh_man	work,
 par_tcsh_man	too
+par_tcsh_man	exit value 2 should be 2
 par_tcsh_man	Connection to lo closed.
 par_tcsh_underscore	### tcsh
 par_tcsh_underscore	### Testing of --env _
@@ -384,6 +389,7 @@ par_zsh_man	too
 par_zsh_man	arrays
 par_zsh_man	work,
 par_zsh_man	too
+par_zsh_man	exit value 2 should be 2
 par_zsh_underscore	### zsh
 par_zsh_underscore	### Testing of --env _
 par_zsh_underscore	variables in aliases in and arrays in functions work

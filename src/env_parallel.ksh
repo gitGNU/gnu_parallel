@@ -103,5 +103,7 @@ env_parallel() {
     unset _list_variable_VALUES
     unset _list_function_BODIES
     `which parallel` "$@";
+    _parallel_exit_CODE=$?
     unset PARALLEL_ENV;
+    return $_parallel_exit_CODE
 }

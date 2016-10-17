@@ -35,6 +35,9 @@ par_bash_man() {
     env_parallel -k -S server echo "\${myarray[{}]}" ::: 0 1 2;
     env_parallel -k --env myarray echo "\${myarray[{}]}" ::: 0 1 2;
     env_parallel -k --env myarray -S server echo "\${myarray[{}]}" ::: 0 1 2
+
+    env_parallel ::: true false true false
+    echo exit value $? should be 2
 _EOF
   )
   ssh bash@lo "$myscript"
@@ -70,6 +73,9 @@ par_zsh_man() {
     env_parallel -k -S server echo "\${myarray[{}]}" ::: 1 2 3;
     env_parallel -k --env myarray echo "\${myarray[{}]}" ::: 1 2 3;
     env_parallel -k --env myarray -S server echo "\${myarray[{}]}" ::: 1 2 3
+
+    env_parallel ::: true false true false
+    echo exit value $? should be 2
 _EOF
   )
   ssh zsh@lo "$myscript"
@@ -107,6 +113,9 @@ par_ksh_man() {
     env_parallel -k -S server echo "\${myarray[{}]}" ::: 0 1 2;
     env_parallel -k --env myarray echo "\${myarray[{}]}" ::: 0 1 2;
     env_parallel -k --env myarray -S server echo "\${myarray[{}]}" ::: 0 1 2
+
+    env_parallel ::: true false true false
+    echo exit value $? should be 2
 _EOF
   )
   ssh ksh@lo "$myscript"
@@ -144,6 +153,9 @@ _disabled_pdksh_man() {
     env_parallel -k -S server echo "\${myarray[{}]}" ::: 0 1 2;
     env_parallel -k --env myarray echo "\${myarray[{}]}" ::: 0 1 2;
     env_parallel -k --env myarray -S server echo "\${myarray[{}]}" ::: 0 1 2
+
+    env_parallel ::: true false true false
+    echo exit value $? should be 2
 _EOF
   )
   ssh pdksh@lo "$myscript"
@@ -176,6 +188,8 @@ par_tcsh_man() {
     env_parallel -k --env myarray echo \$'{myarray[{}]}' ::: 1 2 3
     env_parallel -k --env myarray -S server echo \$'{myarray[{}]}' ::: 1 2 3
 
+    env_parallel ::: true false true false
+    echo exit value $status should be 2
 _EOF
   )
   ssh -tt tcsh@lo "$myscript"
@@ -208,6 +222,8 @@ par_csh_man() {
     env_parallel -k --env myarray echo \$'{myarray[{}]}' ::: 1 2 3
     env_parallel -k --env myarray -S server echo \$'{myarray[{}]}' ::: 1 2 3
 
+    env_parallel ::: true false true false
+    echo exit value $status should be 2
 _EOF
   )
   ssh csh@lo "$myscript"
@@ -244,6 +260,8 @@ par_fish_man() {
     env_parallel -k --env myarray echo '$myarray[{}]' ::: 1 2 3
     env_parallel -k --env myarray -S server echo '$myarray[{}]' ::: 1 2 3
 
+    env_parallel ::: true false true false
+    echo exit value $status should be 2
 _EOF
   )
   ssh fish@lo "$myscript"
