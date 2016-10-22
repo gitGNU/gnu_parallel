@@ -1671,7 +1671,7 @@ sub read_options {
 		while(<$in_fh>) {
 		    /^\s*\#/ and next;
 		    chomp;
-		    push @ARGV_profile, shellwords($_);
+		    push @ARGV_profile, shell_words($_);
 		}
 		close $in_fh;
 	    } else {
@@ -1685,7 +1685,7 @@ sub read_options {
 	}
 	# Add options from shell variable $PARALLEL
 	if($ENV{'PARALLEL'}) {
-	    @ARGV_env = shellwords($ENV{'PARALLEL'});
+	    @ARGV_env = shell_words($ENV{'PARALLEL'});
 	}
     }
     Getopt::Long::Configure("bundling","require_order");
@@ -1930,7 +1930,7 @@ sub shell_quote_file {
     return $a;
 }
 
-sub shellwords {
+sub shell_words {
     # Input:
     #   $string = shell line
     # Returns:
