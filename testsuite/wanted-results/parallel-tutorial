@@ -161,7 +161,7 @@ num8
 num_%header
 tsv-file.tsv
 foo
-/home/tange/privat/parallel/testsuite/tmp
+/mnt/4tb/home/tange/privat/parallel/testsuite/tmp
   my_func() {
     echo in my_func $1
   }
@@ -760,34 +760,34 @@ Unknown option: :::
 Unknown option: green
 env_parallel only works if it is a function. Do the below and restart your shell.
 
-bash:  Put this in /home/tange/.bashrc:  . /usr/local/bin/env_parallel.bash
-       E.g. by doing:  echo '. /usr/local/bin/env_parallel.bash' >> /home/tange/.bashrc
+bash:  Put this in /mnt/4tb/home/tange/.bashrc:  . /usr/local/bin/env_parallel.bash
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.bash' >> /mnt/4tb/home/tange/.bashrc
        Supports: aliases, functions, variables, arrays
 
-zsh:   Put this in /home/tange/.zshrc:  . /usr/local/bin/env_parallel.zsh
-       E.g. by doing:  echo '. /usr/local/bin/env_parallel.zsh' >> /home/tange/.zshenv
+zsh:   Put this in /mnt/4tb/home/tange/.zshrc:  . /usr/local/bin/env_parallel.zsh
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.zsh' >> /mnt/4tb/home/tange/.zshenv
        Supports: functions, variables, arrays
 
-fish:  Put this in /home/tange/.config/fish/config.fish:
+fish:  Put this in /mnt/4tb/home/tange/.config/fish/config.fish:
          . (which env_parallel.fish)
        E.g. by doing:
-         echo '. (which env_parallel.fish)' >> /home/tange/.config/fish/config.fish
+         echo '. (which env_parallel.fish)' >> /mnt/4tb/home/tange/.config/fish/config.fish
        Supports: aliases, functions, variables, arrays
 
-ksh:   Put this in /home/tange/.kshrc:  source /usr/local/bin/env_parallel.ksh
-       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.ksh' >> /home/tange/.kshrc
+ksh:   Put this in /mnt/4tb/home/tange/.kshrc:  source /usr/local/bin/env_parallel.ksh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.ksh' >> /mnt/4tb/home/tange/.kshrc
        Supports: aliases, functions, variables, arrays
 
-pdksh: Put this in /home/tange/.profile:  source /usr/local/bin/env_parallel.pdksh
-       E.g. by doing:  echo '. /usr/local/bin/env_parallel.pdksh' >> /home/tange/.profile
+pdksh: Put this in /mnt/4tb/home/tange/.profile:  source /usr/local/bin/env_parallel.pdksh
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.pdksh' >> /mnt/4tb/home/tange/.profile
        Supports: aliases, functions, variables, arrays
 
-csh:   Put this in /home/tange/.cshrc:  source /usr/local/bin/env_parallel.csh
-       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.csh' >> /home/tange/.cshrc
+csh:   Put this in /mnt/4tb/home/tange/.cshrc:  source /usr/local/bin/env_parallel.csh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.csh' >> /mnt/4tb/home/tange/.cshrc
        Supports: aliases, variables, arrays with no special chars
 
-tcsh:  Put this in /home/tange/.tcshrc:  source /usr/local/bin/env_parallel.tcsh
-       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.tcsh' >> /home/tange/.tcshrc
+tcsh:  Put this in /mnt/4tb/home/tange/.tcshrc:  source /usr/local/bin/env_parallel.tcsh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.tcsh' >> /mnt/4tb/home/tange/.tcshrc
        Supports: aliases, variables, arrays with no special chars
 
 To install in all shells run:

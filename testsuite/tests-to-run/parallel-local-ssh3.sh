@@ -83,6 +83,10 @@ echo '### exported function to csh but with PARALLEL_SHELL=bash'
   stdout parallel --env doit -S csh@lo doit ::: not_OK; 
   PARALLEL_SHELL=bash parallel --env doit -S csh@lo doit ::: OK
 
+echo '### bug #49404: "Max jobs to run" does not equal the number of jobs specified when using GNU Parallel on remote server?'
+  echo should give 12 running jobs
+  stdout parallel -S 16/lo --progress true ::: {1..12} | grep /.12
+
 EOF
 
 

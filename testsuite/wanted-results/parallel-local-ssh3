@@ -122,6 +122,12 @@ echo '### exported function to csh but with PARALLEL_SHELL=bash'
   doit() { echo "$1"; };   export -f doit;   stdout parallel --env doit -S csh@lo doit ::: not_OK;   PARALLEL_SHELL=bash parallel --env doit -S csh@lo doit ::: OK
 CSH/TCSH DO NOT SUPPORT newlines IN VARIABLES/FUNCTIONS. Unset doit
 OK
+echo '### bug #49404: "Max jobs to run" does not equal the number of jobs specified when using GNU Parallel on remote server?'
+### bug #49404: "Max jobs to run" does not equal the number of jobs specified when using GNU Parallel on remote server?
+  echo should give 12 running jobs
+should give 12 running jobs
+  stdout parallel -S 16/lo --progress true ::: {1..12} | grep /.12
+1:lo / 16 / 12
 bug #47695: How to set $PATH on remote?
 
  * Documentation:  https://help.ubuntu.com

@@ -559,7 +559,9 @@ If the strings B<{=> and B<=}> cause problems they can be replaced with B<--pare
 
   parallel --parens ,,,, echo ',, s:\.[^.]+$::;s:\.[^.]+$::; ,,' ::: foo.tar.gz
 
-Output: Same as above.
+Output:
+
+  foo
 
 To define a shorthand replacement string use B<--rpl>:
 
@@ -635,7 +637,7 @@ Output:
 
   foo bar
 
-If shorthand defined using B<--rpl> starts with B<{> it can be used as
+If a shorthand defined using B<--rpl> starts with B<{> it can be used as
 a positional replacement string, too:
 
   parallel --rpl '{..} s:\.[^.]+$::;s:\.[^.]+$::;' echo '{2..} {1}' ::: bar ::: foo.tar.gz

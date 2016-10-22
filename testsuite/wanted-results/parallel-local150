@@ -187,12 +187,10 @@ echo '### Test stdin goes to first command only'
 ### Test stdin goes to first command only
   echo via cat |parallel --arg-sep .--- -kv .--- 'cat' 'echo b'
 cat
-via cat
 echo b
 b
   echo via cat |parallel -kv ::: 'cat' 'echo b'
 cat
-via cat
 echo b
 b
 echo '### Bug made 4 5 go before 1 2 3'

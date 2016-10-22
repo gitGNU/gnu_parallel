@@ -55,7 +55,7 @@ echo '**'
 make[1]: Entering directory '/mnt/4tb/home/tange/privat/parallel/testsuite'
 # Make sure we can reach the virtual machines
 #sudo ifconfig wlp13s0:0 192.168.1.72 ||	sudo ifconfig wlan0:0 192.168.1.72
-sudo ifconfig enp14s0 192.168.1.72 ||	sudo ifconfig eth0:0 192.168.1.72
+sudo ifconfig enp14s0:0 192.168.1.72 ||	sudo ifconfig eth0:0 192.168.1.72
 # If they are already running: Don't fail
 VBoxManage startvm CentOS3-root:centos3 || VBoxManage controlvm CentOS3-root:centos3 resume || true
 Waiting for VM "CentOS3-root:centos3" to power on...
@@ -63,4 +63,5 @@ VM "CentOS3-root:centos3" has been successfully started.
 VBoxManage startvm RedHat9-root:redhat9 || VBoxManage controlvm RedHat9-root:redhat9 resume || true
 Waiting for VM "RedHat9-root:redhat9" to power on...
 VM "RedHat9-root:redhat9" has been successfully started.
+parallel 'ping {} | read' ::: redhat9.tange.dk centos3.tange.dk
 make[1]: Leaving directory '/mnt/4tb/home/tange/privat/parallel/testsuite'
