@@ -313,8 +313,6 @@ The following are equivalent:
 To avoid treating B<:::> as special use B<--arg-sep> to set the
 argument separator to something else. See also B<--arg-sep>.
 
-stdin (standard input) will be passed to the first process run.
-
 If multiple B<:::> are given, each group will be treated as an input
 source, and all combinations of input sources will be
 generated. E.g. ::: 1 2 ::: a b c will result in the combinations
@@ -1006,9 +1004,9 @@ limiting factor.
 See also: B<--group> B<--ungroup>
 
 
-=item B<--xapply> (beta testing)
+=item B<--xapply>
 
-=item B<--link> beta testing)
+=item B<--link>
 
 Link input sources. Read multiple input sources like B<xapply>. If
 multiple input sources are given, one argument will be read from each
@@ -2107,7 +2105,7 @@ Use B<tmux> for output. Start a B<tmux> session and run each job in a
 window in that session. No other output will be produced.
 
 
-=item B<--tmuxpane> (beta testing)
+=item B<--tmuxpane>
 
 Use B<tmux> for output but put output into panes in the first window.
 Useful if you want to monitor the progress of less than 100 concurrent
@@ -3310,6 +3308,8 @@ prepend B<torsocks> to B<ssh>:
 If not all hosts are accessible through TOR:
 
   parallel -S 'torsocks ssh izjafdceobowklhz.onion,host2,host3' echo ::: a b c
+
+See more B<ssh> tricks on https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Proxies_and_Jump_Hosts
 
 
 =head1 EXAMPLE: Parallelizing rsync

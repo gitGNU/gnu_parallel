@@ -2029,13 +2029,11 @@ sub open_or_exit {
     # Inputs:
     #   $file = filehandle or filename to open
     # Uses:
-    #   $Global::stdin_in_opt_a
     #   $Global::original_stdin
     # Returns:
     #   $fh = file handle to read-opened file
     my $file = shift;
     if($file eq "-") {
-	$Global::stdin_in_opt_a = 1;
 	return ($Global::original_stdin || *STDIN);
     }
     if(ref $file eq "GLOB") {
@@ -7804,27 +7802,6 @@ sub start {
 	};
 	$Global::tty_taken = $pid;
 	close $devtty_fh;
-    } elsif(@opt::a and not $Global::stdin_in_opt_a and $job->seq() == 1
-	    and $job->sshlogin()->string() eq ":") {
-	# Give STDIN to the first job if using -a (but only if running
-	# locally - otherwise CTRL-C does not work for other jobs Bug#36585)
-	local (*IN,*OUT,*ERR);
-	open OUT, '>&', $stdout_fh or ::die_bug("Can't dup STDOUT: $!");
-	open ERR, '>&', $stderr_fh or ::die_bug("Can't dup STDERR: $!");
-	*IN = *STDIN;
-	# The eval is needed to catch exception from open3
-	my @setpgrp_wrap = ('perl','-e',
-			    "setpgrp\;eval\{setpriority\(0,0,$opt::nice\)\}\;".
-			    "exec '$Global::shell', '-c', \@ARGV");
-	eval {
-	    $pid = ::open3("<&IN", ">&OUT", ">&ERR", @setpgrp_wrap, $command)
-		|| ::die_bug("open3-<IN");
-	    1;
-	};
-	# Re-open to avoid complaining
-	open(STDIN, "<&", $Global::original_stdin)
-	    or ::die_bug("dup-\$Global::original_stdin: $!");
-
     } else {
 	$pid = open3_setpgrp(::gensym(),$stdout_fh,$stderr_fh,$command);
     }
@@ -9498,13 +9475,13 @@ sub get {
 	# To fix: parallel --bar echo {%} ::: a b c ::: d e f
 	my $ret = shift @{$self->{'unget'}};
 	if($ret) {
-	    map { $_->flush_cache() } map { @$_ } $ret;
+	    map { $_->flush_cache() } @$ret;
 	}
 	return $ret;
     }
     my $ret = $self->{'arg_sub_queue'}->get();
     if($ret and
-       grep { index($_->orig(),"\0") > 0 } map { @$_ } $ret) {
+       grep { index($_->orig(),"\0") > 0 } @$ret) {
 	# Allow for \0 in position 0 because GNU Parallel uses "\0"
 	# to mean no-string
 	::warning("a NUL character occurred in the input.",
@@ -9520,7 +9497,7 @@ sub get {
 	# Flush cached computed replacements in Arg-objects
 	# To fix: parallel --bar echo {%} ::: a b c ::: d e f
 	if($ret) {
-	    map { $_->flush_cache() } map { @$_ } $ret;
+	    map { $_->flush_cache() } @$ret;
 	}
 	return $ret;
     }
