@@ -7725,8 +7725,15 @@ sub start {
 	    "perl -MIPC::Open3 -e ".
 	    ::shell_quote_scalar_default($script)
 	    );
+	# Redirect STDERR temporarily,
+	# so errors on MacOS X is ignored.
+	open my $saveerr, ">&STDERR";
+	open STDERR, '>', "/dev/null";
+	# Run the test
 	::debug("init",qq{bash -c $bash 2>/dev/null});
 	qx{ bash -c $bash 2>/dev/null };
+	open STDERR, ">&", $saveerr;
+
 	if(-e $name) {
 	    # Does not support open3(x,x,x,"-")
 	    # or does not have bash:
