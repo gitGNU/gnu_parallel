@@ -5416,11 +5416,12 @@ sub simultaneous_sshlogin_limit {
 		  "for $ssh_limit simultaneous logins.",
 		  "You may raise this by changing ".
 		  "/etc/ssh/sshd_config:MaxStartups and MaxSessions on $serverlogin.",
+		  "You can also try --sshdelay 0.1",
 		  "Using only ".($ssh_limit-1)." connections ".
 		  "to avoid race conditions.");
+	# Race condition can cause problem if using all sshs.
+	if($ssh_limit > 1) { $ssh_limit -= 1; }
     }
-    # Race condition can cause problem if using all sshs.
-    if($ssh_limit > 1) { $ssh_limit -= 1; }
     return $ssh_limit;
 }
 
@@ -7726,7 +7727,7 @@ sub start {
 	    ::shell_quote_scalar_default($script)
 	    );
 	# Redirect STDERR temporarily,
-	# so errors on MacOS X is ignored.
+	# so errors on MacOS X are ignored.
 	open my $saveerr, ">&STDERR";
 	open STDERR, '>', "/dev/null";
 	# Run the test
