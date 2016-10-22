@@ -1210,7 +1210,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20160922;
+    $Global::version = 20160924;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -4357,8 +4357,8 @@ sub reap_usleep {
 	# When a child dies, wake up from sleep (or select(,,,))
 	$SIG{CHLD} = sub { kill "ALRM", $$ };
 	usleep($ms);
-	# --compress needs $SIG{CHLD} undefined
-	delete $SIG{CHLD};
+	# --compress needs $SIG{CHLD} unset
+	$SIG{CHLD} = 'DEFAULT';
 	exit_if_disk_full();
 	if($opt::linebuffer) {
 	    if($opt::keeporder) {
