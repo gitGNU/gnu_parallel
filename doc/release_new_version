@@ -263,6 +263,8 @@ for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumb
 
 * <<Possible: http://link.springer.com/article/10.1007/s12021-015-9290-5 http://link.springer.com/protocol/10.1007/978-1-4939-3578-9_14>>
 
+* First command no longer gets stdin as it causes unpredictable issues.
+
 * GNU Parallel was cited in: Efficiently parallelized modeling of tightly focused, large bandwidth laser pulses https://arxiv.org/pdf/1609.08146v1.pdf
 
 * How to crunch lots of geodata in parallel http://blog.faraday.io/how-to-crunch-lots-of-geodata-in-parallel/

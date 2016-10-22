@@ -1,3 +1,20 @@
+20161022
+
+* First command no longer gets stdin as it causes unpredictable issues.
+
+* GNU Parallel was cited in: Efficiently parallelized modeling of
+  tightly focused, large bandwidth laser pulses
+  https://arxiv.org/pdf/1609.08146v1.pdf
+
+* How to crunch lots of geodata in parallel
+  http://blog.faraday.io/how-to-crunch-lots-of-geodata-in-parallel/
+
+* GNU parallel is my new toaster
+  http://amedee.me/gnu-parallel-is-my-new-toaster/index.html
+
+* Bug fixes and man page updates.
+
+
 20160922
 
 * parcat - cat files or fifos in parallel
