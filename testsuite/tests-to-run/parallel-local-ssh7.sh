@@ -38,6 +38,9 @@ par_bash_man() {
 
     env_parallel ::: true false true false
     echo exit value $? should be 2
+
+    env_parallel --no-such-option >/dev/null
+    echo exit value $? should be 255
 _EOF
   )
   ssh bash@lo "$myscript"
@@ -76,6 +79,9 @@ par_zsh_man() {
 
     env_parallel ::: true false true false
     echo exit value $? should be 2
+
+    env_parallel --no-such-option >/dev/null
+    echo exit value $? should be 255
 _EOF
   )
   ssh zsh@lo "$myscript"
@@ -116,6 +122,9 @@ par_ksh_man() {
 
     env_parallel ::: true false true false
     echo exit value $? should be 2
+
+    env_parallel --no-such-option >/dev/null
+    echo exit value $? should be 255
 _EOF
   )
   ssh ksh@lo "$myscript"
@@ -156,6 +165,9 @@ _disabled_pdksh_man() {
 
     env_parallel ::: true false true false
     echo exit value $? should be 2
+
+    env_parallel --no-such-option >/dev/null
+    echo exit value $? should be 255
 _EOF
   )
   ssh pdksh@lo "$myscript"
@@ -190,6 +202,9 @@ par_tcsh_man() {
 
     env_parallel ::: true false true false
     echo exit value $status should be 2
+
+    env_parallel --no-such-option >/dev/null
+    echo exit value $status should be 255
 _EOF
   )
   ssh -tt tcsh@lo "$myscript"
@@ -224,6 +239,9 @@ par_csh_man() {
 
     env_parallel ::: true false true false
     echo exit value $status should be 2
+
+    env_parallel --no-such-option >/dev/null
+    echo exit value $status should be 255
 _EOF
   )
   ssh csh@lo "$myscript"
@@ -262,6 +280,9 @@ par_fish_man() {
 
     env_parallel ::: true false true false
     echo exit value $status should be 2
+
+    env_parallel --no-such-option >/dev/null
+    echo exit value $status should be 255
 _EOF
   )
   ssh fish@lo "$myscript"

@@ -51,6 +51,8 @@ par_bash_man	arrays
 par_bash_man	work,
 par_bash_man	too
 par_bash_man	exit value 2 should be 2
+par_bash_man	Unknown option: no-such-option
+par_bash_man	exit value 255 should be 255
 par_bash_underscore	### bash
 par_bash_underscore	### Testing of --env _
 par_bash_underscore	variables in aliases in and arrays in functions work
@@ -105,6 +107,45 @@ par_csh_man	arrays
 par_csh_man	work,
 par_csh_man	too
 par_csh_man	exit value 2 should be 2
+par_csh_man	Unknown option: no-such-option
+par_csh_man	Usage:
+par_csh_man	
+par_csh_man	parallel [options] [command [arguments]] < list_of_arguments
+par_csh_man	parallel [options] [command [arguments]] (::: arguments|:::: argfile(s))...
+par_csh_man	cat ... | parallel --pipe [options] [command [arguments]]
+par_csh_man	
+par_csh_man	-j n            Run n jobs in parallel
+par_csh_man	-k              Keep same order
+par_csh_man	-X              Multiple arguments with context replace
+par_csh_man	--colsep regexp Split input on regexp for positional replacements
+par_csh_man	{} {.} {/} {/.} {#} {%} {= perl code =} Replacement strings
+par_csh_man	{3} {3.} {3/} {3/.} {=3 perl code =}    Positional replacement strings
+par_csh_man	With --plus:    {} = {+/}/{/} = {.}.{+.} = {+/}/{/.}.{+.} = {..}.{+..} =
+par_csh_man	                {+/}/{/..}.{+..} = {...}.{+...} = {+/}/{/...}.{+...}
+par_csh_man	
+par_csh_man	-S sshlogin     Example: foo@server.example.com
+par_csh_man	--slf ..        Use ~/.parallel/sshloginfile as the list of sshlogins
+par_csh_man	--trc {}.bar    Shorthand for --transfer --return {}.bar --cleanup
+par_csh_man	--onall         Run the given command with argument on all sshlogins
+par_csh_man	--nonall        Run the given command with no arguments on all sshlogins
+par_csh_man	
+par_csh_man	--pipe          Split stdin (standard input) to multiple jobs.
+par_csh_man	--recend str    Record end separator for --pipe.
+par_csh_man	--recstart str  Record start separator for --pipe.
+par_csh_man	
+par_csh_man	See 'man parallel' for details
+par_csh_man	
+par_csh_man	Academic tradition requires you to cite works you base your article on.
+par_csh_man	When using programs that use GNU Parallel to process data for publication
+par_csh_man	please cite:
+par_csh_man	
+par_csh_man	  O. Tange (2011): GNU Parallel - The Command-Line Power Tool,
+par_csh_man	  ;login: The USENIX Magazine, February 2011:42-47.
+par_csh_man	
+par_csh_man	This helps funding further development; AND IT WON'T COST YOU A CENT.
+par_csh_man	If you pay 10000 EUR you should feel free to use GNU Parallel without citing.
+par_csh_man	
+par_csh_man	exit value -1 should be 255
 par_csh_underscore	### csh
 par_csh_underscore	### Testing of --env _
 par_csh_underscore	#: Command not found.
@@ -186,6 +227,8 @@ par_fish_man	arrays
 par_fish_man	work,
 par_fish_man	too
 par_fish_man	exit value 2 should be 2
+par_fish_man	Unknown option: no-such-option
+par_fish_man	exit value 255 should be 255
 par_fish_underscore	### fish
 par_fish_underscore	### Testing of --env _
 par_fish_underscore	variables in aliases and arrays in functions work
@@ -266,6 +309,8 @@ par_ksh_man	arrays
 par_ksh_man	work,
 par_ksh_man	too
 par_ksh_man	exit value 2 should be 2
+par_ksh_man	Unknown option: no-such-option
+par_ksh_man	exit value 255 should be 255
 par_ksh_underscore	### ksh
 par_ksh_underscore	### Testing of --env _
 par_ksh_underscore	variables in aliases in and arrays in functions work
@@ -325,6 +370,45 @@ par_tcsh_man	arrays
 par_tcsh_man	work,
 par_tcsh_man	too
 par_tcsh_man	exit value 2 should be 2
+par_tcsh_man	Unknown option: no-such-option
+par_tcsh_man	Usage:
+par_tcsh_man	
+par_tcsh_man	parallel [options] [command [arguments]] < list_of_arguments
+par_tcsh_man	parallel [options] [command [arguments]] (::: arguments|:::: argfile(s))...
+par_tcsh_man	cat ... | parallel --pipe [options] [command [arguments]]
+par_tcsh_man	
+par_tcsh_man	-j n            Run n jobs in parallel
+par_tcsh_man	-k              Keep same order
+par_tcsh_man	-X              Multiple arguments with context replace
+par_tcsh_man	--colsep regexp Split input on regexp for positional replacements
+par_tcsh_man	{} {.} {/} {/.} {#} {%} {= perl code =} Replacement strings
+par_tcsh_man	{3} {3.} {3/} {3/.} {=3 perl code =}    Positional replacement strings
+par_tcsh_man	With --plus:    {} = {+/}/{/} = {.}.{+.} = {+/}/{/.}.{+.} = {..}.{+..} =
+par_tcsh_man	                {+/}/{/..}.{+..} = {...}.{+...} = {+/}/{/...}.{+...}
+par_tcsh_man	
+par_tcsh_man	-S sshlogin     Example: foo@server.example.com
+par_tcsh_man	--slf ..        Use ~/.parallel/sshloginfile as the list of sshlogins
+par_tcsh_man	--trc {}.bar    Shorthand for --transfer --return {}.bar --cleanup
+par_tcsh_man	--onall         Run the given command with argument on all sshlogins
+par_tcsh_man	--nonall        Run the given command with no arguments on all sshlogins
+par_tcsh_man	
+par_tcsh_man	--pipe          Split stdin (standard input) to multiple jobs.
+par_tcsh_man	--recend str    Record end separator for --pipe.
+par_tcsh_man	--recstart str  Record start separator for --pipe.
+par_tcsh_man	
+par_tcsh_man	See 'man parallel' for details
+par_tcsh_man	
+par_tcsh_man	Academic tradition requires you to cite works you base your article on.
+par_tcsh_man	When using programs that use GNU Parallel to process data for publication
+par_tcsh_man	please cite:
+par_tcsh_man	
+par_tcsh_man	  O. Tange (2011): GNU Parallel - The Command-Line Power Tool,
+par_tcsh_man	  ;login: The USENIX Magazine, February 2011:42-47.
+par_tcsh_man	
+par_tcsh_man	This helps funding further development; AND IT WON'T COST YOU A CENT.
+par_tcsh_man	If you pay 10000 EUR you should feel free to use GNU Parallel without citing.
+par_tcsh_man	
+par_tcsh_man	exit value 255 should be 255
 par_tcsh_man	Connection to lo closed.
 par_tcsh_underscore	### tcsh
 par_tcsh_underscore	### Testing of --env _
@@ -390,6 +474,8 @@ par_zsh_man	arrays
 par_zsh_man	work,
 par_zsh_man	too
 par_zsh_man	exit value 2 should be 2
+par_zsh_man	Unknown option: no-such-option
+par_zsh_man	exit value 255 should be 255
 par_zsh_underscore	### zsh
 par_zsh_underscore	### Testing of --env _
 par_zsh_underscore	variables in aliases in and arrays in functions work
