@@ -996,7 +996,7 @@ sub parse_options {
     if(defined $opt::timeout) { $Global::timeoutq = TimeoutQueue->new($opt::timeout); }
     if(defined $opt::tmpdir) { $ENV{'TMPDIR'} = $opt::tmpdir; }
     $opt::nice ||= 0;
-    if(defined $opt::help) { die_usage(); }
+    if(defined $opt::help) { usage(); exit(0); }
     if(defined $opt::sqlandworker) { $opt::sqlmaster = $opt::sqlworker = $opt::sqlandworker; }
     if(defined $opt::tmuxpane) { $opt::tmux = $opt::tmuxpane; }
     if(defined $opt::colsep) { $Global::trim = 'lr'; }
