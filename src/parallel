@@ -1210,7 +1210,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20161022;
+    $Global::version = 20161023;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -7922,14 +7922,14 @@ sub print_dryrun_and_verbose {
 	}
 
 	my $tmux;
-	$ENV{'TMUX'} ||= "tmux";
+	$ENV{'PARALLEL_TMUX'} ||= "tmux";
 	if(not $tmuxsocket) {
 	    $tmuxsocket = ::tmpname("tms");
-	    ::status("See output with: $ENV{'TMUX'} -S $tmuxsocket attach");
+	    ::status("See output with: $ENV{'PARALLEL_TMUX'} -S $tmuxsocket attach");
 	}
 	$tmux = "sh -c '".
-	    $ENV{'TMUX'}." -S $tmuxsocket new-session -s p$$ -d \"sleep .2\" >/dev/null 2>&1';" .
-	    $ENV{'TMUX'}." -S $tmuxsocket new-window -t p$$ -n $title";
+	    $ENV{'PARALLEL_TMUX'}." -S $tmuxsocket new-session -s p$$ -d \"sleep .2\" >/dev/null 2>&1';" .
+	    $ENV{'PARALLEL_TMUX'}." -S $tmuxsocket new-window -t p$$ -n $title";
 
 	::debug("tmux", "title len:", $l_tit, " act ", $l_act, " max ",
 		$Limits::Command::line_max_len, " tot ",
@@ -9414,15 +9414,15 @@ sub tmux_length {
     #   $tmux_len = maximal length runable in tmux
     my $len = shift;
     if($opt::tmux) {
-	$ENV{'TMUX'} ||= "tmux";
-	if(not ::which($ENV{'TMUX'})) {
-	    ::error($ENV{'TMUX'}." not found in \$PATH.");
+	$ENV{'PARALLEL_TMUX'} ||= "tmux";
+	if(not ::which($ENV{'PARALLEL_TMUX'})) {
+	    ::error($ENV{'PARALLEL_TMUX'}." not found in \$PATH.");
 	    ::wait_and_exit(255);
 	}
 	my @out;
 	for my $l (1, 2020, 16320, 100000, $len) {
 	    my $tmpfile = ::tmpname("tms");
-	    my $tmuxcmd = $ENV{'TMUX'}." -S $tmpfile new-session -d -n echo $l".
+	    my $tmuxcmd = $ENV{'PARALLEL_TMUX'}." -S $tmpfile new-session -d -n echo $l".
 		("x"x$l). " && echo $l; rm -f $tmpfile";
 	    push @out, ::qqx($tmuxcmd);
 	    ::rm($tmpfile);

@@ -147,9 +147,9 @@ foo
 8
 9
 10
-echo '### TMUX not found'
-### TMUX not found
-  TMUX=not-existing parallel --tmux echo ::: 1
+echo '### PARALLEL_TMUX not found'
+### PARALLEL_TMUX not found
+  PARALLEL_TMUX=not-existing parallel --tmux echo ::: 1
 parallel: Error: not-existing not found in $PATH.
 echo '**'
 **

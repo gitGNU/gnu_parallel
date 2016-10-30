@@ -4,7 +4,7 @@
 
 Check that documentation is updated (compare to web):
 
-Fixet for 20161022
+Fixet for 20161122
 git diff last-release-commit
 Unmodified beta since last version => production
 Unmodified alpha since last version => beta
@@ -219,17 +219,23 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20161022 ('Matthew') released <<[stable]>>
+Subject: GNU Parallel 20161122 ('Hillary') released <<[stable]>>
 
-GNU Parallel 20161022 ('Matthew') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
+GNU Parallel 20161122 ('Hillary') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
 Haiku of the month:
 
+  Speed is good for you
+  Multi speed is better still
+  Use GNU Parallel
     -- Ole Tange
 
 New in this release:
+
+http://g-liu.com/blog/2016/10/tutorial-parallel-web-scraping-with-casperjs-and-gnu-parallel/
+
 
 * <<Possibly http://link.springer.com/chapter/10.1007%2F978-3-319-22053-6_46>>
 
@@ -262,14 +268,6 @@ for Big Data Applications https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumb
 * <<No citation: Argumentation Models for Cyber Attribution http://arxiv.org/pdf/1607.02171.pdf>>
 
 * <<Possible: http://link.springer.com/article/10.1007/s12021-015-9290-5 http://link.springer.com/protocol/10.1007/978-1-4939-3578-9_14>>
-
-* First command no longer gets stdin as it causes unpredictable issues.
-
-* GNU Parallel was cited in: Efficiently parallelized modeling of tightly focused, large bandwidth laser pulses https://arxiv.org/pdf/1609.08146v1.pdf
-
-* How to crunch lots of geodata in parallel http://blog.faraday.io/how-to-crunch-lots-of-geodata-in-parallel/
-
-* GNU parallel is my new toaster http://amedee.me/gnu-parallel-is-my-new-toaster/index.html
 
 * Bug fixes and man page updates.
 

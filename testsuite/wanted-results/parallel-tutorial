@@ -337,12 +337,15 @@ foo
 A
   parallel perl -e 'print "@ARGV\n"' ::: This wont work
 
-  parallel: Warning: Input is read from the terminal. Only experts do this on purpose. Press CTRL-D to exit.
+  parallel: Warning: Input is read from the terminal. You either know what you
+  parallel: Warning: are doing (in which case: YOU ARE AWESOME!) or you forgot
+  parallel: Warning: ::: or :::: or to pipe data into parallel. If so
+  parallel: Warning: Press CTRL-D to exit.
   perl -e 'print "@ARGV\n"'
   [CTRL-D]
-
 /bin/bash: line 1: parallel:: command not found
-/bin/bash: line 3: [CTRL-D]: command not found
+/bin/bash: -c: line 2: syntax error near unexpected token `('
+/bin/bash: -c: line 2: `  parallel: Warning: are doing (in which case: YOU ARE AWESOME!) or you forgot'
 
   parallel --trim r echo pre-{}-post ::: ' A '
 pre- A-post

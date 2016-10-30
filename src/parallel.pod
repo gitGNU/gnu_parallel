@@ -3873,6 +3873,11 @@ B<Example:>
     echo seq:'$'PARALLEL_SEQ arg1:{1} arg2:{2}
 
 
+=item $PARALLEL_TMUX
+
+Path to B<tmux>. If unset the B<tmux> in $PATH is used.
+
+
 =item $TMPDIR
 
 Directory for temporary files. See: B<--tmpdir>.
@@ -4964,9 +4969,10 @@ be small and simple, so try to remove as many options as possible. A
 combination of B<yes>, B<seq>, B<cat>, B<echo>, and B<sleep> can
 reproduce most errors. If your example requires large files, see if
 you can make them by something like B<seq 1000000> > B<file> or B<yes
-| head -n 10000000> > B<file>. If your example requires remote
-execution, see if you can use B<localhost> - maybe using another
-login.
+| head -n 10000000> > B<file>.
+
+If your example requires remote execution, see if you can use
+B<localhost> - maybe using another login.
 
 =item *
 
@@ -4986,6 +4992,7 @@ If you suspect the error is dependent on your environment or
 distribution, please see if you can reproduce the error on one of
 these VirtualBox images:
 http://sourceforge.net/projects/virtualboximage/files/
+http://www.osboxes.org/virtualbox-images/
 
 Specifying the name of your distribution is not enough as you may have
 installed software that is not in the VirtualBox images.

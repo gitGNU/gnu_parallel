@@ -860,7 +860,11 @@ Output (the order may be different):
 GNU B<parallel> can also \-quote full lines. Simply run this:
 
   parallel --shellquote
-  parallel: Warning: Input is read from the terminal. Only experts do this on purpose. Press CTRL-D to exit.
+  parallel: Warning: Input is read from the terminal. You either know what you
+  parallel: Warning: are doing (in which case: YOU ARE AWESOME!) or you forgot
+  parallel: Warning: ::: or :::: or to pipe data into parallel. If so
+  parallel: Warning: consider going through the tutorial: man parallel_tutorial
+  parallel: Warning: Press CTRL-D to exit.
   perl -e 'print "@ARGV\n"'
   [CTRL-D]
 
