@@ -6,7 +6,8 @@
 cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj0 -k --joblog /tmp/jl-`basename $0` -L1
 echo '### bug #46214: Using --pipepart doesnt spawn multiple jobs in version 20150922'
   seq 1000000 > /tmp/num1000000; 
-  stdout parallel --pipepart --progress -a /tmp/num1000000 --block 10k -j0 true |grep 1:local
+  stdout parallel --pipepart --progress -a /tmp/num1000000 --block 10k -j0 true | 
+    grep 1:local | perl -pe 's/\d\d\d/999/g'
 
 echo '**'
 

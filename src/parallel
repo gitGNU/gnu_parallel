@@ -79,6 +79,12 @@ if($opt::header and not $opt::pipe) {
     # $header force $colsep = \t if undef?
     my $delimiter = $opt::colsep;
     $delimiter ||= "\t";
+    # regexp for {=
+    my $left = "\Q$Global::parensleft\E";
+    my $l = $Global::parensleft;
+    # regexp for =}
+    my $right = "\Q$Global::parensright\E";
+    my $r = $Global::parensright;
     my $id = 1;
     for my $fh (@input_source_fh) {
 	my $line = <$fh>;
@@ -89,6 +95,8 @@ if($opt::header and not $opt::pipe) {
 	    # Replace {colname} with {2}
 	    for(@command,@Global::ret_files,@Global::transfer_files) {
 	      s:\{$s(|/|//|\.|/\.)\}:\{$id$1\}:g;
+		# {=header1 ... =}  =>  {=1 ... =}
+	      s:$left $s (.*?) $right:$l$id$1$r:gx;
 	    }
 	    $Global::input_source_header{$id} = $s;
 	    $id++;

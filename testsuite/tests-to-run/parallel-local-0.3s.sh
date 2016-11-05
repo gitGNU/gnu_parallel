@@ -647,6 +647,13 @@ echo '### bug #48658: --linebuffer --files'
 
 echo '**'
 
+bug #49538: --header and {= =}
+
+  parallel --header : echo '{=v2=}{=v1 $_=Q($_)=}' ::: v1 K ::: v2 O
+  parallel --header : echo '{2}{=1 $_=Q($_)=}' ::: v2 K ::: v1 O
+
+echo '**'
+
 EOF
 echo '### 1 .par file from --files expected'
 find /tmp{/*,}/*.{par,tms,tmx} 2>/dev/null -mmin -10 | wc -l

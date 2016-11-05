@@ -1765,5 +1765,13 @@ echo '### bug #48658: --linebuffer --files'
 10
 echo '**'
 **
+bug #49538: --header and {= =}
+/bin/bash: bug: command not found
+  parallel --header : echo '{=v2=}{=v1 $_=Q($_)=}' ::: v1 K ::: v2 O
+OK
+  parallel --header : echo '{2}{=1 $_=Q($_)=}' ::: v2 K ::: v1 O
+OK
+echo '**'
+**
 ### 1 .par file from --files expected
 10
