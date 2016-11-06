@@ -79,12 +79,20 @@ function env_parallel
         end;
       )
 
+      # --record-env
+      perl -e 'exit grep { /^--record-env$/ } @ARGV' -- $argv; or begin;
+        begin;
+	  functions -n | perl -pe 's/,/\n/g';
+	  set -n;
+	end | cat > $HOME/.parallel/ignored_vars;
+      end;
+
       # Export function definitions
       functions -n | perl -pe 's/,/\n/g' | grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ | while read d; functions $d; end;
       # Convert scalar vars to fish \XX quoting
       eval (set -L | grep -E "^$_grep_REGEXP " | grep -vE "^$_ignore_UNDERSCORE " | perl -ne 'chomp;
         ($name,$val)=split(/ /,$_,2);
-        $name=~/^(HOME|USER|COLUMNS|FISH_VERSION|LINES|PWD|SHLVL|_|history|status|version)$/ and next;
+        $name=~/^(HOME|USER|COLUMNS|FISH_VERSION|LINES|PWD|SHLVL|_|history|status|version)$|\./ and next;
         if($val=~/^'"'"'/) { next; }
         print "set $name \"\$$name\";\n";
       ')
@@ -127,7 +135,7 @@ function env_parallel
     end |perl -pe 's/\001/\\cb/g and print STDERR "env_parallel: Warning: ASCII value 1 in variables is not supported\n";
                    s/\n/\001/'
     )
-  parallel $argv;
+  perl -e 'exit grep { /^--record-env$/ } @ARGV' -- $argv; and parallel $argv;
   set _parallel_exit_CODE $status
   set -e PARALLEL_ENV
   return $_parallel_exit_CODE

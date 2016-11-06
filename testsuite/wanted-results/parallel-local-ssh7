@@ -61,17 +61,21 @@ par_bash_underscore	variables in aliases in and arrays in functions work
 par_bash_underscore	variables in aliases in and arrays in functions work
 par_bash_underscore	variables in aliases in and arrays in functions work
 par_bash_underscore	variables in aliases in and arrays in functions work
+par_bash_underscore	/bin/bash: line 57: not_copied_alias: command not found
+par_bash_underscore	/bin/bash: line 57: not_copied_func: command not found
+par_bash_underscore	error=OK
+par_bash_underscore	error=OK
 par_bash_underscore	aliases in and arrays in functions work
 par_bash_underscore	aliases in and arrays in functions work
 par_bash_underscore	aliases in functions work
 par_bash_underscore	aliases in functions work
-par_bash_underscore	/bin/bash: line 71: myecho: command not found
+par_bash_underscore	/bin/bash: line 52: myecho: command not found
 par_bash_underscore	OK if no myecho      ^^^^^^^^^^^^^^^^^^^^^^^^^
-par_bash_underscore	/bin/bash: line 71: myecho: command not found
+par_bash_underscore	/bin/bash: line 52: myecho: command not found
 par_bash_underscore	OK if no myecho      ^^^^^^^^^^^^^^^^^^^^^^^^^
-par_bash_underscore	/bin/bash: line 69: myfunc: command not found
+par_bash_underscore	/bin/bash: line 50: myfunc: command not found
 par_bash_underscore	OK if no myfunc      ^^^^^^^^^^^^^^^^^^^^^^^^^
-par_bash_underscore	/bin/bash: line 69: myfunc: command not found
+par_bash_underscore	/bin/bash: line 50: myfunc: command not found
 par_bash_underscore	OK if no myfunc      ^^^^^^^^^^^^^^^^^^^^^^^^^
 par_csh_funky	3 arg alias_works
 par_csh_funky	myvar  works
@@ -237,6 +241,14 @@ par_fish_underscore	variables in aliases and arrays in functions work
 par_fish_underscore	variables in aliases and arrays in functions work
 par_fish_underscore	variables in aliases and arrays in functions work
 par_fish_underscore	variables in aliases and arrays in functions work
+par_fish_underscore	fish: Unknown command 'not_copied_alias error=OK'
+par_fish_underscore	fish: not_copied_alias error\=OK
+par_fish_underscore	      ^
+par_fish_underscore	fish: Unknown command 'not_copied_func error=OK'
+par_fish_underscore	fish: not_copied_func error\=OK
+par_fish_underscore	      ^
+par_fish_underscore	error=OK
+par_fish_underscore	error=OK
 par_fish_underscore	aliases and arrays in functions work
 par_fish_underscore	aliases and arrays in functions work
 par_fish_underscore	aliases functions work
@@ -319,17 +331,21 @@ par_ksh_underscore	variables in aliases in and arrays in functions work
 par_ksh_underscore	variables in aliases in and arrays in functions work
 par_ksh_underscore	variables in aliases in and arrays in functions work
 par_ksh_underscore	variables in aliases in and arrays in functions work
+par_ksh_underscore	/usr/bin/ksh: line 8: not_copied_alias: not found
+par_ksh_underscore	/usr/bin/ksh: line 8: not_copied_func: not found
+par_ksh_underscore	error=OK
+par_ksh_underscore	error=OK
 par_ksh_underscore	aliases in and arrays in functions work
 par_ksh_underscore	aliases in and arrays in functions work
 par_ksh_underscore	aliases in functions work
 par_ksh_underscore	aliases in functions work
-par_ksh_underscore	/usr/bin/ksh[114]: myecho: not found [No such file or directory]
+par_ksh_underscore	/usr/bin/ksh[4]: myecho: not found [No such file or directory]
 par_ksh_underscore	OK if no myecho    ^^^^^^^^^^^^^^^^^
-par_ksh_underscore	/usr/bin/ksh[114]: myecho: not found [No such file or directory]
+par_ksh_underscore	/usr/bin/ksh[4]: myecho: not found [No such file or directory]
 par_ksh_underscore	OK if no myecho    ^^^^^^^^^^^^^^^^^
-par_ksh_underscore	/usr/bin/ksh: line 114: myfunc: not found
+par_ksh_underscore	/usr/bin/ksh: line 4: myfunc: not found
 par_ksh_underscore	OK if no myfunc         ^^^^^^^^^^^^^^^^^
-par_ksh_underscore	/usr/bin/ksh: line 114: myfunc: not found
+par_ksh_underscore	/usr/bin/ksh: line 4: myfunc: not found
 par_ksh_underscore	OK if no myfunc         ^^^^^^^^^^^^^^^^^
 par_tcsh_funky	
 par_tcsh_funky	
@@ -484,6 +500,10 @@ par_zsh_underscore	variables in aliases in and arrays in functions work
 par_zsh_underscore	variables in aliases in and arrays in functions work
 par_zsh_underscore	variables in aliases in and arrays in functions work
 par_zsh_underscore	variables in aliases in and arrays in functions work
+par_zsh_underscore	(eval):1: command not found: not_copied_alias
+par_zsh_underscore	(eval):1: command not found: not_copied_func
+par_zsh_underscore	BAD error=OK
+par_zsh_underscore	error=OK
 par_zsh_underscore	aliases in and arrays in functions work
 par_zsh_underscore	aliases in and arrays in functions work
 par_zsh_underscore	aliases in functions work

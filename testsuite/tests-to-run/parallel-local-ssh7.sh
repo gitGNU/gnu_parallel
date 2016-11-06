@@ -4,6 +4,10 @@ echo '### test --env _'
 echo 'Both test that variables are copied,'
 echo 'but also that they are NOT copied, if ignored'
 
+#
+## par_*_man = tests from the man page
+#
+
 par_bash_man() {
   echo '### bash'
 
@@ -289,6 +293,10 @@ _EOF
 }
 
 
+#
+## par_*_underscore = tests with --env _
+#
+
 par_bash_underscore() {
   echo '### bash'
   myscript=$(cat <<'_EOF'
@@ -296,6 +304,10 @@ par_bash_underscore() {
 
     . `which env_parallel.bash`;
 
+    alias not_copied_alias="echo BAD"
+    not_copied_func() { echo BAD; };
+    not_copied_var=BAD
+    not_copied_array=(BAD BAD BAD); 
     env_parallel --record-env;
     alias myecho="echo \$myvar aliases in";
     myfunc() { myecho ${myarray[@]} functions $*; };
@@ -307,6 +319,11 @@ par_bash_underscore() {
     env_parallel --env myfunc,myvar,myarray,myecho -S server myfunc ::: work;
     env_parallel --env _ myfunc ::: work;
     env_parallel --env _ -S server myfunc ::: work;
+
+    env_parallel --env _ -S server not_copied_alias ::: error=OK;
+    env_parallel --env _ -S server not_copied_func ::: error=OK;
+    env_parallel --env _ -S server echo \$not_copied_var ::: error=OK;
+    env_parallel --env _ -S server echo \${not_copied_array[@]} ::: error=OK;
 
     echo myvar >> ~/.parallel/ignored_vars;
     env_parallel --env _ myfunc ::: work;
@@ -336,6 +353,10 @@ par_zsh_underscore() {
 
     . `which env_parallel.zsh`;
 
+    alias not_copied_alias="echo BAD"
+    not_copied_func() { echo BAD; };
+    not_copied_var=BAD
+    not_copied_array=(BAD BAD BAD); 
     env_parallel --record-env;
     alias myecho="echo \$myvar aliases in";
     eval `cat <<"_EOS";
@@ -348,6 +369,11 @@ par_zsh_underscore() {
     env_parallel --env myfunc,myvar,myarray,myecho -S server myfunc ::: work;
     env_parallel --env _ myfunc ::: work;
     env_parallel --env _ -S server myfunc ::: work;
+
+    env_parallel --env _ -S server not_copied_alias ::: error=OK;
+    env_parallel --env _ -S server not_copied_func ::: error=OK;
+    env_parallel --env _ -S server echo \$not_copied_var ::: error=OK;
+    env_parallel --env _ -S server echo \$\{not_copied_array\[\@\]\} ::: error=OK;
 
     echo myvar >> ~/.parallel/ignored_vars;
     env_parallel --env _ myfunc ::: work;
@@ -377,6 +403,10 @@ par_ksh_underscore() {
   myscript=$(cat <<'_EOF'
     echo "### Testing of --env _"
 
+    alias not_copied_alias="echo BAD"
+    not_copied_func() { echo BAD; };
+    not_copied_var=BAD
+    not_copied_array=(BAD BAD BAD); 
     . `which env_parallel.ksh`;
     env_parallel --record-env;
     alias myecho="echo \$myvar aliases in";
@@ -389,6 +419,11 @@ par_ksh_underscore() {
     env_parallel --env myfunc,myvar,myarray,myecho -S server myfunc ::: work;
     env_parallel --env _ myfunc ::: work;
     env_parallel --env _ -S server myfunc ::: work;
+
+    env_parallel --env _ -S server not_copied_alias ::: error=OK;
+    env_parallel --env _ -S server not_copied_func ::: error=OK;
+    env_parallel --env _ -S server echo \$not_copied_var ::: error=OK;
+    env_parallel --env _ -S server echo \${not_copied_array[@]} ::: error=OK;
 
     echo myvar >> ~/.parallel/ignored_vars;
     env_parallel --env _ myfunc ::: work;
@@ -416,6 +451,10 @@ _disabled_pdksh_underscore() {
   myscript=$(cat <<'_EOF'
     echo "### Testing of --env _"
 
+    alias not_copied_alias="echo BAD"
+    not_copied_func() { echo BAD; };
+    not_copied_var=BAD
+    not_copied_array=(BAD BAD BAD); 
     . `which env_parallel.pdksh`;
     env_parallel --record-env;
     alias myecho="echo \$myvar aliases in";
@@ -428,6 +467,11 @@ _disabled_pdksh_underscore() {
     env_parallel --env myfunc,myvar,myarray,myecho -S server myfunc ::: work;
     env_parallel --env _ myfunc ::: work;
     env_parallel --env _ -S server myfunc ::: work;
+
+    env_parallel --env _ -S server not_copied_alias ::: error=OK;
+    env_parallel --env _ -S server not_copied_func ::: error=OK;
+    env_parallel --env _ -S server echo \$not_copied_var ::: error=OK;
+    env_parallel --env _ -S server echo \${not_copied_array[@]} ::: error=OK;
 
     echo myvar >> ~/.parallel/ignored_vars;
     env_parallel --env _ myfunc ::: work;
@@ -526,6 +570,13 @@ par_fish_underscore() {
     echo "### Testing of --env _"
 
 #    . `which env_parallel.fish`;
+
+    alias not_copied_alias="echo BAD"
+    function not_copied_func
+      echo BAD
+    end
+    set not_copied_var "BAD";
+    set not_copied_array BAD BAD BAD;
     env_parallel --record-env;
     alias myecho="echo \$myvar aliases";
     function myfunc
@@ -539,6 +590,11 @@ par_fish_underscore() {
     env_parallel --env myfunc,myvar,myarray,myecho -S server myfunc ::: work;
     env_parallel --env _ myfunc ::: work;
     env_parallel --env _ -S server myfunc ::: work;
+
+    env_parallel --env _ -S server not_copied_alias ::: error=OK;
+    env_parallel --env _ -S server not_copied_func ::: error=OK;
+    env_parallel --env _ -S server echo \$not_copied_var ::: error=OK;
+    env_parallel --env _ -S server echo \$not_copied_array ::: error=OK;
 
     echo myvar >> ~/.parallel/ignored_vars;
     env_parallel --env _ myfunc ::: work;

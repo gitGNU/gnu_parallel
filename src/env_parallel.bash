@@ -65,7 +65,9 @@ env_parallel() {
 
     # --record-env
     if ! perl -e 'exit grep { /^--record-env$/ } @ARGV' -- "$@"; then
-	(compgen -a; compgen -A function; compgen -A variable) |
+	(compgen -a;
+	 compgen -A function;
+	 compgen -A variable) |
 	    cat > $HOME/.parallel/ignored_vars
 	return 0
     fi
