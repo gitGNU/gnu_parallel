@@ -1765,11 +1765,29 @@ echo '### bug #48658: --linebuffer --files'
 10
 echo '**'
 **
+echo 'bug #49538: --header and {= =}'
 bug #49538: --header and {= =}
-/bin/bash: bug: command not found
   parallel --header : echo '{=v2=}{=v1 $_=Q($_)=}' ::: v1 K ::: v2 O
 OK
   parallel --header : echo '{2}{=1 $_=Q($_)=}' ::: v2 K ::: v1 O
+OK
+  parallel --header : echo {var/.} ::: var sub/dir/file.ext
+file
+  parallel --header : echo {var//} ::: var sub/dir/file.ext
+sub/dir
+  parallel --header : echo {var/.} ::: var sub/dir/file.ext
+file
+  parallel --header : echo {var/} ::: var sub/dir/file.ext
+file.ext
+  parallel --header : echo {var.} ::: var sub/dir/file.ext
+sub/dir/file
+echo '**'
+**
+echo 'bug --colsep 0'
+bug --colsep 0
+  parallel --colsep 0 echo {2} ::: a0OK0c
+OK
+  parallel --header : --colsep 0 echo {ok} ::: A0ok0B a0OK0b
 OK
 echo '**'
 **

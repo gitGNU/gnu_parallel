@@ -28,15 +28,10 @@ bug #40135: FreeBSD: sem --fg does not finish under /bin/sh
 The job finished
 echo 'bug #40133: FreeBSD: --round-robin gives no output'
 bug #40133: FreeBSD: --round-robin gives no output
-  jot 1000000 | parallel --round-robin --pipe -kj3 wc | sort
-  299592  299592 2097144
-  299592  299592 2097144
-  400816  400816 2694608
-  jot 1000000 | parallel --round-robin --pipe -kj4 wc | sort
-  149796  149796 1048572
-  235148  235148 1646037
-  299592  299592 2097144
-  315464  315464 2097143
+  jot 1000000 | parallel --round-robin --pipe -kj3 cat | wc
+ 1000000 1000000 6888896
+  jot 1000000 | parallel --round-robin --pipe -kj4 cat | wc
+ 1000000 1000000 6888896
 echo 'bug #40134: FreeBSD: --shebang not working'
 bug #40134: FreeBSD: --shebang not working
   (echo '#!/usr/bin/env -S parallel --shebang -rk echo'; echo It; echo worked) > shebang;   chmod 755 ./shebang; ./shebang

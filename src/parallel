@@ -74,39 +74,43 @@ if($opt::skip_first_line) {
     my $fh = $input_source_fh[0];
     <$fh>;
 }
-if($opt::header and not $opt::pipe) {
-    # split with colsep or \t
-    # $header force $colsep = \t if undef?
-    my $delimiter = $opt::colsep;
-    $delimiter ||= "\t";
-    # regexp for {=
-    my $left = "\Q$Global::parensleft\E";
-    my $l = $Global::parensleft;
-    # regexp for =}
-    my $right = "\Q$Global::parensright\E";
-    my $r = $Global::parensright;
-    my $id = 1;
-    for my $fh (@input_source_fh) {
-	my $line = <$fh>;
-	chomp($line);
-	::debug("init", "Delimiter: '$delimiter'");
-	for my $s (split /$delimiter/o, $line) {
-	    ::debug("init", "Colname: '$s'");
-	    # Replace {colname} with {2}
-	    for(@command,@Global::ret_files,@Global::transfer_files) {
-	      s:\{$s(|/|//|\.|/\.)\}:\{$id$1\}:g;
-		# {=header1 ... =}  =>  {=1 ... =}
-	      s:$left $s (.*?) $right:$l$id$1$r:gx;
+
+set_input_source_header();
+
+sub set_input_source_header {
+    if($opt::header and not $opt::pipe) {
+	# split with colsep or \t
+	# $header force $colsep = \t if undef?
+	my $delimiter = defined $opt::colsep ? $opt::colsep : "\t";
+	# regexp for {=
+	my $left = "\Q$Global::parensleft\E";
+	my $l = $Global::parensleft;
+	# regexp for =}
+	my $right = "\Q$Global::parensright\E";
+	my $r = $Global::parensright;
+	my $id = 1;
+	for my $fh (@input_source_fh) {
+	    my $line = <$fh>;
+	    chomp($line);
+	    ::debug("init", "Delimiter: '$delimiter'");
+	    for my $s (split /$delimiter/o, $line) {
+		::debug("init", "Colname: '$s'");
+		# Replace {colname} with {2}
+		for(@command,@Global::ret_files,@Global::transfer_files) {
+		  s:\{$s(|/|//|\.|/\.)\}:\{$id$1\}:g;
+		    # {=header1 ... =}  =>  {=1 ... =}
+		  s:$left $s (.*?) $right:$l$id$1$r:gx;
+		}
+		$Global::input_source_header{$id} = $s;
+		$id++;
 	    }
-	    $Global::input_source_header{$id} = $s;
+	}
+    } else {
+	my $id = 1;
+	for my $fh (@input_source_fh) {
+	    $Global::input_source_header{$id} = $id;
 	    $id++;
 	}
-    }
-} else {
-    my $id = 1;
-    for my $fh (@input_source_fh) {
-	$Global::input_source_header{$id} = $id;
-	$id++;
     }
 }
 
@@ -187,10 +191,8 @@ if($Global::semaphore) {
 }
 $SIG{TERM} = \&start_no_new_jobs;
 start_more_jobs();
-if(not $opt::pipepart) {
-    if($opt::pipe) {
-	spreadstdin();
-    }
+if($opt::pipe and not $opt::pipepart) {
+    spreadstdin();
 }
 ::debug("init", "Start draining\n");
 drain_job_queue();
@@ -206,14 +208,10 @@ if($opt::pipe and @opt::a) {
     }
 }
 ::debug("init", "Cleaning\n");
-cleanup();
 if($Global::semaphore) {
     $sem->release();
 }
-for(keys %Global::sshmaster) {
-    # If 'ssh -M's are running: kill them
-    kill "TERM", $_;
-}
+cleanup();
 ::debug("init", "Halt\n");
 if($opt::halt and $Global::halt_when ne "never") {
     if(not defined $Global::halt_exitstatus) {
@@ -1820,6 +1818,10 @@ sub cleanup {
     unlink keys %Global::unlink;
     map { rmdir $_ } keys %Global::unlink;
     if(@opt::basefile and $opt::cleanup) { cleanup_basefile(); }
+    for(keys %Global::sshmaster) {
+	# If 'ssh -M's are running: kill them
+	kill "TERM", $_;
+    }
 }
 
 sub __QUOTING_ARGUMENTS_FOR_SHELL__ {}
@@ -9459,7 +9461,7 @@ sub new {
     if($opt::sqlworker) {
 	# Open SQL table
 	$arg_sub_queue = SQLRecordQueue->new();
-    } elsif($colsep) {
+    } elsif(defined $colsep) {
 	# Open one file with colsep
 	$arg_sub_queue = RecordColQueue->new($fhs);
     } else {

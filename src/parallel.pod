@@ -807,7 +807,9 @@ soon,fail=1-99%
 Use regexp as header. For normal usage the matched header (typically
 the first line: B<--header '.*\n'>) will be split using B<--colsep>
 (which will default to '\t') and column names can be used as
-replacement variables: B<{column name}>.
+replacement variables: B<{column name}>, B<{column name/}>, B<{column
+name//}>, B<{column name/.}>, B<{column name.}>, B<{=column name perl
+expression =}>, ..
 
 For B<--pipe> the matched header will be prepended to each output.
 

@@ -647,10 +647,22 @@ echo '### bug #48658: --linebuffer --files'
 
 echo '**'
 
-bug #49538: --header and {= =}
+echo 'bug #49538: --header and {= =}'
 
   parallel --header : echo '{=v2=}{=v1 $_=Q($_)=}' ::: v1 K ::: v2 O
   parallel --header : echo '{2}{=1 $_=Q($_)=}' ::: v2 K ::: v1 O
+  parallel --header : echo {var/.} ::: var sub/dir/file.ext
+  parallel --header : echo {var//} ::: var sub/dir/file.ext
+  parallel --header : echo {var/.} ::: var sub/dir/file.ext
+  parallel --header : echo {var/} ::: var sub/dir/file.ext
+  parallel --header : echo {var.} ::: var sub/dir/file.ext
+
+echo '**'
+
+echo 'bug --colsep 0'
+
+  parallel --colsep 0 echo {2} ::: a0OK0c
+  parallel --header : --colsep 0 echo {ok} ::: A0ok0B a0OK0b
 
 echo '**'
 

@@ -63,6 +63,13 @@ env_parallel() {
             ' -- "$@"
     )"
 
+    # --record-env
+    if ! perl -e 'exit grep { /^--record-env$/ } @ARGV' -- "$@"; then
+	(compgen -a; compgen -A function; compgen -A variable) |
+	    cat > $HOME/.parallel/ignored_vars
+	return 0
+    fi
+    
     # Grep alias names
     _alias_NAMES="$(alias | perl -pe 's/=.*//' |
         grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ )"

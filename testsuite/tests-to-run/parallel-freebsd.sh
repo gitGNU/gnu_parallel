@@ -27,8 +27,8 @@ echo 'bug #40135: FreeBSD: sem --fg does not finish under /bin/sh'
   sem --fg 'sleep 1; echo The job finished'
 
 echo 'bug #40133: FreeBSD: --round-robin gives no output'
-  jot 1000000 | parallel --round-robin --pipe -kj3 wc | sort
-  jot 1000000 | parallel --round-robin --pipe -kj4 wc | sort
+  jot 1000000 | parallel --round-robin --pipe -kj3 cat | wc
+  jot 1000000 | parallel --round-robin --pipe -kj4 cat | wc
 
 echo 'bug #40134: FreeBSD: --shebang not working'
   (echo '#!/usr/bin/env -S parallel --shebang -rk echo'; echo It; echo worked) > shebang; 

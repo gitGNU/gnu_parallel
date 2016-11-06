@@ -26,7 +26,7 @@ p_wrapper() {
   $DEBUG && sort -u $T1 $T2; 
   rm $T1 $T2
   p_showsqlresult $SERVERURL $TABLE
-  $DEBUG || sql $SERVERURL "drop table $TABLE;" >/dev/null
+  $DEBUG || sql $SERVERURL "drop table $TABLE;" >/dev/null 2>/dev/null
 }
 
 p_template() {
