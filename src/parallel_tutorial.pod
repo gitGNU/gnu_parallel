@@ -17,8 +17,8 @@ To run this tutorial you must have the following:
 
 =item parallel >= version 20160822
 
-Install the newest version using your package manager or with this
-command:
+Install the newest version using your package manager (recommended for
+security reasons) or with this command:
 
   (wget -O - pi.dk/3 || curl pi.dk/3/ || fetch -o - http://pi.dk/3) | bash
 
@@ -531,9 +531,9 @@ Output:
 
   */!#$ shell quoted is \*/\!\#\$
 
-B<$job->>B<skip()> skips the job:
+B<skip()> skips the job:
 
-  parallel echo {= 'if($_==3) { $job->skip() }' =} ::: {1..5}
+  parallel echo {= 'if($_==3) { skip() }' =} ::: {1..5}
 
 Output:
 
@@ -544,7 +544,7 @@ Output:
 
 B<@arg> contains the input source variables:
 
-  parallel echo {= 'if($arg[1]==$arg[2]) { $job->skip() }' =} ::: {1..3} ::: {1..3}
+  parallel echo {= 'if($arg[1]==$arg[2]) { skip() }' =} ::: {1..3} ::: {1..3}
 
 Output:
 

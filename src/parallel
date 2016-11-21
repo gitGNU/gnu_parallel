@@ -1216,7 +1216,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20161023;
+    $Global::version = 20161122;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -3751,7 +3751,7 @@ sub citation_notice {
 	     "This helps funding further development; AND IT WON'T COST YOU A CENT.",
 	     "If you pay 10000 EUR you should feel free to use GNU Parallel without citing.",
 	     "",
-	     "To silence the citation notice: run 'parallel --citation'.",
+	     "To silence this citation notice: run 'parallel --citation'.",
 	     ""
 	    );
     }
@@ -9910,13 +9910,28 @@ sub Q {
     return $a;
 }
 
+sub pQ {
+    # pQ alias for ::perl_quote_scalar
+    *pQ = \&::perl_quote_scalar;
+    return pQ(@_);
+}
+
 sub total_jobs {
     return $Global::JobQueue->total_jobs()
 }
 
 {
     my %perleval;
-
+    my $job;
+    sub skip {
+	# shorthand for $job->skip();
+	$job->skip();
+    }
+    sub slot {
+	# shorthand for $job->slot();
+	$job->slot();
+    }
+    
     sub replace {
 	# Calculates the corresponding value for a given perl expression
 	# Returns:
@@ -9926,7 +9941,7 @@ sub total_jobs {
 	my $quote = (shift) ? 1 : 0; # should the string be quoted?
 	# This is actually a CommandLine-object,
 	# but it looks nice to be able to say {= $job->slot() =}
-	my $job = shift;
+	$job = shift;
 	$perlexpr =~ s/^(-?\d+)? *//; # Positional replace treated as normal replace
 	if(not $self->{'cache'}{$perlexpr}) {
 	    # Only compute the value once

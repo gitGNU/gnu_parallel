@@ -218,12 +218,12 @@ Job 4 of 5
 Job 5 of 5
   parallel echo {} shell quoted is {= '$_=Q($_)' =} ::: '*/!#$'
 */!#$ shell quoted is \*/\!\#\$
-  parallel echo {= 'if($_==3) { $job->skip() }' =} ::: {1..5}
+  parallel echo {= 'if($_==3) { skip() }' =} ::: {1..5}
 9
 9
 9
 9
-  parallel echo {= 'if($arg[1]==$arg[2]) { $job->skip() }' =} ::: {1..3} ::: {1..3}
+  parallel echo {= 'if($arg[1]==$arg[2]) { skip() }' =} ::: {1..3} ::: {1..3}
 1 2
 1 3
 2 1

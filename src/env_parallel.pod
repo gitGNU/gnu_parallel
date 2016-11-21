@@ -25,6 +25,33 @@ B<env_parallel> is beta quality and not production ready.
 B<env_parallel> is 0.1 sec slower at startup than pure GNU
 B<parallel>, and takes up to 15 ms to start a job.
 
+Due to the problem with environment space (see below) the recommended
+usage is:
+
+  # Run once to record the "empty" environment
+  env_parallel --record-env
+
+  # Define whatever you want to use
+  alias myalias=echo
+  myvar=it
+  myfunc() { myalias $1 $myvar works.; }
+
+  # Use --env _ to only transfer the names not in the "empty" environment
+  env_parallel --env _ -S localhost myfunc ::: Yay,
+
+In B<csh>:
+
+  # Run once to record the "empty" environment
+  env_parallel --record-env
+
+  # Define whatever you want to use
+  alias myalias 'echo \!* $myvar works.'
+  set myvar=it
+
+  # Use --env _ to only transfer the names not in the "empty" environment
+  env_parallel --env _ -S localhost myalias ::: Yay,
+
+
 =head2 Environment space
 
 By default B<env_parallel> will export all environment variables,

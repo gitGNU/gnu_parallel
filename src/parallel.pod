@@ -260,6 +260,10 @@ made:
 
 shell quote a string
 
+=item Z<> B<pQ(>I<string>B<)>
+
+perl quote a string
+
 =item Z<> B<total_jobs()>
 
 number of jobs in total

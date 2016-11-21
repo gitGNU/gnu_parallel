@@ -26,6 +26,10 @@ possible to use output from GNU Parallel as input for other programs.
 
 = 10 seconds installation =
 
+For security reasons it is recommended you use your package manager to
+install. But if you cannot do that then you can use this 10 seconds
+installation.
+
 The 10 seconds installation will try do to a full installation; if
 that fails, a personal installation; if that fails, a minimal
 installation.
@@ -40,9 +44,9 @@ document.
 
 Full installation of GNU Parallel is as simple as:
 
-    wget http://ftpmirror.gnu.org/parallel/parallel-20161022.tar.bz2
-    bzip2 -dc parallel-20161022.tar.bz2 | tar xvf -
-    cd parallel-20161022
+    wget http://ftpmirror.gnu.org/parallel/parallel-20161122.tar.bz2
+    bzip2 -dc parallel-20161122.tar.bz2 | tar xvf -
+    cd parallel-20161122
     ./configure && make && sudo make install
 
 
@@ -51,9 +55,9 @@ Full installation of GNU Parallel is as simple as:
 If you are not root you can add ~/bin to your path and install in
 ~/bin and ~/share:
 
-    wget http://ftpmirror.gnu.org/parallel/parallel-20161022.tar.bz2
-    bzip2 -dc parallel-20161022.tar.bz2 | tar xvf -
-    cd parallel-20161022
+    wget http://ftpmirror.gnu.org/parallel/parallel-20161122.tar.bz2
+    bzip2 -dc parallel-20161122.tar.bz2 | tar xvf -
+    cd parallel-20161122
     ./configure --prefix=$HOME && make && make install
 
 Or if your system lacks 'make' you can simply copy src/parallel
