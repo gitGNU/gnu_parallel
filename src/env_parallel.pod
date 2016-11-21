@@ -20,7 +20,8 @@ environment to GNU B<parallel>.
 If the shell function is not loaded, a dummy script will be run
 instead that explains how to install the function.
 
-B<env_parallel> is beta quality and not production ready.
+B<env_parallel> is beta quality and not production ready, but please
+use it for everyday use and report bugs.
 
 B<env_parallel> is 0.1 sec slower at startup than pure GNU
 B<parallel>, and takes up to 15 ms to start a job.

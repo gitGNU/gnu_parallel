@@ -1,14 +1,22 @@
 20161122
 
-* --record-env can now be used with env_parallel for bash, ksh, pdksh, and zsh.
+* --record-env can now be used with env_parallel for bash, ksh, pdksh,
+  and zsh.
 
-* GNU Parallel was cited in: An improved implementation of Conditional Reciprocal Best Hits with LAST and Python https://pypi.python.org/pypi/shmlast/1.0.3
+* GNU Parallel was cited in: An improved implementation of Conditional
+  Reciprocal Best Hits with LAST and Python
+  https://pypi.python.org/pypi/shmlast/1.0.3
 
-* GNU Parallel was cited in: miRPathDB: a new dictionary on microRNAs and target pathways http://nar.oxfordjournals.org/content/early/2016/10/13/nar.gkw926.full
+* GNU Parallel was cited in: miRPathDB: a new dictionary on microRNAs
+  and target pathways
+  http://nar.oxfordjournals.org/content/early/2016/10/13/nar.gkw926.full
 
-* GNU/Parallel – Run multiple commands simultaneously https://vinusumi.wordpress.com/2016/11/08/gnuparallel-run-multiple-commands-simultaneously/
+* GNU/Parallel – Run multiple commands simultaneously
+  https://vinusumi.wordpress.com/2016/11/08/gnuparallel-run-multiple-commands-simultaneously/
 
-* Tutorial: Parallel web scraping with CasperJS and GNU Parallel http://g-liu.com/blog/2016/10/tutorial-parallel-web-scraping-with-casperjs-and-gnu-parallel/
+* Tutorial: Parallel web scraping with CasperJS and GNU Parallel
+  http://g-liu.com/blog/2016/10/tutorial-parallel-web-scraping-with-casperjs-and-gnu-parallel/
+* Bug fixes and man page updates.
 
 
 20161022

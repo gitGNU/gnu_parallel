@@ -219,27 +219,17 @@ cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
    Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
    Jesse Alama <jesse.alama@gmail.com>
 
-Subject: GNU Parallel 20161122 ('Trump') released <<[stable]>>
+Subject: GNU Parallel 20161222 ('') released <<[stable]>>
 
-GNU Parallel 20161122 ('Trump') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
+GNU Parallel 20161222 ('') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
 Haiku of the month:
-
+  <<>>
     -- Ole Tange
 
 New in this release:
-
-* --record-env can now be used with env_parallel for bash, ksh, pdksh, and zsh.
-
-* GNU Parallel was cited in: An improved implementation of Conditional Reciprocal Best Hits with LAST and Python https://pypi.python.org/pypi/shmlast/1.0.3
-
-* GNU Parallel was cited in: miRPathDB: a new dictionary on microRNAs and target pathways http://nar.oxfordjournals.org/content/early/2016/10/13/nar.gkw926.full
-
-* GNU/Parallel – Run multiple commands simultaneously https://vinusumi.wordpress.com/2016/11/08/gnuparallel-run-multiple-commands-simultaneously/
-
-* Tutorial: Parallel web scraping with CasperJS and GNU Parallel http://g-liu.com/blog/2016/10/tutorial-parallel-web-scraping-with-casperjs-and-gnu-parallel/
 
 
 * <<Possibly http://link.springer.com/chapter/10.1007%2F978-3-319-22053-6_46>>
