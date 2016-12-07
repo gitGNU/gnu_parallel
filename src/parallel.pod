@@ -1869,19 +1869,26 @@ when called with B<--shebang>).
 Use B<--sqlmaster> instead.
 
 
-=item B<--sqlmaster> I<DBURL>
+=item B<--sqlmaster> I<DBURL> (alpha testing)
 
 Submit jobs via SQL server. I<DBURL> must point to a table, which will
 contain the same information as B<--joblog>, the values from the input
 sources (stored in columns V1 .. Vn), and the output (stored in
 columns Stdout and Stderr).
 
-The table will be dropped and created with the correct amount of
-V-columns.
+
+If I<DBURL> is prepended with '+' GNU B<parallel> assumes the table is
+already made with the correct columns and appends the jobs to it.
+
+If I<DBURL> is not prepended with '+' the table will be dropped and
+created with the correct amount of V-columns unless
 
 B<--sqlmaster> does not run any jobs, but it creates the values for
-the jobs to be run and wait for them to complete. One or more
-B<--sqlworker> must be run to actually execute the jobs.
+the jobs to be run. One or more B<--sqlworker> must be run to actually
+execute the jobs.
+
+If B<--wait> is set, GNU B<parallel> will wait for the jobs to
+complete.
 
 The format of a DBURL is:
 
@@ -1901,12 +1908,12 @@ It can also be an alias from ~/.sql/aliases:
   :myalias mysql:///mydb/paralleljobs
 
 
-=item B<--sqlandworker> I<DBURL>
+=item B<--sqlandworker> I<DBURL> (alpha testing)
 
 Shorthand for: B<--sqlmaster> I<DBURL> B<--sqlworker> I<DBURL>.
 
 
-=item B<--sqlworker> I<DBURL>
+=item B<--sqlworker> I<DBURL> (alpha testing)
 
 Execute jobs via SQL server. Read the input sources variables from the
 table pointed to by I<DBURL>. The I<command> on the command line
@@ -2303,11 +2310,11 @@ To see the difference try:
 I<mydir> can contain GNU B<parallel>'s replacement strings.
 
 
-=item B<--wait>
+=item B<--wait> (alpha testing)
 
 Wait for all commands to complete.
 
-Implies B<--semaphore>.
+Used with B<--semaphore> or B<--sqlmaster>.
 
 See also B<man sem>.
 

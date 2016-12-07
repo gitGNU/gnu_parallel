@@ -1402,7 +1402,9 @@ sub parse_semaphore {
     if(defined $opt::semaphorename) { $Global::semaphore = 1; }
     if(defined $opt::fg) { $Global::semaphore = 1; }
     if(defined $opt::bg) { $Global::semaphore = 1; }
-    if(defined $opt::wait) { $Global::semaphore = 1; @ARGV = "true"; }
+    if(defined $opt::wait and not $opt::sqlmaster) {
+	$Global::semaphore = 1; @ARGV = "true";
+    }
     if($Global::semaphore) {
 	if(@opt::a) {
 	    # A semaphore does not take input from neither stdin nor file
@@ -9060,6 +9062,7 @@ sub new {
     my ($replacecount_ref, $len_ref);
     my @command = @$commandref;
     my $dummy = '';
+    my $seq = 1;
     # If the first command start with '-' it is probably an option
     if($command[0] =~ /^\s*(-\S+)/) {
 	# Is this really a command in $PATH starting with '-'?
@@ -9126,6 +9129,10 @@ sub new {
 	$Global::noquote = 1;
     }
 
+    if($opt::sqlmaster and $Global::sql->append()) {
+	$seq = $Global::sql->max_seq() + 1;
+    }
+
     return bless {
 	'unget' => \@unget,
 	'command' => \@command,
@@ -9137,7 +9144,7 @@ sub new {
 	'size' => undef,
 	'transfer_files' => $transfer_files,
 	'return_files' => $return_files,
-	'seq' => 1,
+	'seq' => $seq,
     }, ref($class) || $class;
 }
 
@@ -9276,11 +9283,11 @@ sub get {
 					$self->{'replacecount'},
 					$self->{'len'},
 	    );
-	$cmd_line->populate();
 	if($opt::sqlworker) {
 	    # Get the sequence number from the SQL table
 	    $cmd_line->set_seq($SQL::next_seq);
 	}
+	$cmd_line->populate();
 	::debug("init","cmd_line->number_of_args ",
 		$cmd_line->number_of_args(), "\n");
 	if(not $Global::no_more_input and ($opt::pipe or $opt::pipepart)) {
@@ -10117,6 +10124,8 @@ sub new {
     my $class = shift;
     my $dburl = shift;
     $Global::use{"DBI"} ||= eval "use DBI; 1;";
+    # +DBURL = append to this DBURL
+    my $append = $dburl=~s/^\+//;
     my %options = parse_dburl(get_alias($dburl));
     my %driveralias = ("sqlite" => "SQLite",
 		       "sqlite3" => "SQLite",
@@ -10149,6 +10158,7 @@ sub new {
 	'driver' => $driver,
 	'max_number_of_args' => undef,
 	'table' => $options{'table'},
+	'append' => $append,
     }, ref($class) || $class;
 }
 
@@ -10375,6 +10385,11 @@ sub table {
     return $self->{'table'};
 }
 
+sub append {
+    my $self = shift;
+    return $self->{'append'};
+}
+
 sub update {
     my $self = shift;
     my $stmt = shift;
@@ -10407,6 +10422,7 @@ sub set_max_number_of_args {
 
 sub create_table {
     my $self = shift;
+    if($self->append()) { return; }
     my $max_number_of_args = shift;
     $self->set_max_number_of_args($max_number_of_args);
     my $table = $self->table();
@@ -10477,7 +10493,6 @@ sub get_record {
 
 sub total_jobs {
     my $self = shift;
-    my @retval;
     my $table = $self->table();
     my $v = $self->get("SELECT count(*) FROM $table;");
     if($v->[0]) {
@@ -10487,13 +10502,28 @@ sub total_jobs {
     }
 }
 
+sub max_seq {
+    my $self = shift;
+    my $table = $self->table();
+    my $v = $self->get("SELECT max(Seq) FROM $table;");
+    if($v->[0]) {
+	return $v->[0]->[0];
+    } else {
+	::die_bug("SQL::max_seq");
+    }
+}
+
 sub finished {
     # Check if there are any jobs left in the SQL table that do not
     # have a "real" exitval
     my $self = shift;
-    my $table = $self->table();
-    my $rv = $self->get("select Seq,Exitval from $table where Exitval <= -1000 limit 1");
-    return not $rv->[0];
+    if($opt::wait) {
+	my $table = $self->table();
+	my $rv = $self->get("select Seq,Exitval from $table where Exitval <= -1000 limit 1");
+	return not $rv->[0];
+    } else {
+	return 1;
+    }
 }
 
 package Semaphore;

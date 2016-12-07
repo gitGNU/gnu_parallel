@@ -72,6 +72,11 @@ par_sqlandworker_total_jobs() {
   p_template echo {#} of '{=1 $_=total_jobs(); =};'
 }
 
+par_append() {
+  parallel --sqlmaster  $DBURL "$@" sleep .3\;echo ::: {1..5} ::: {a..e} >$T2; 
+  parallel --sqlmaster +$DBURL "$@" sleep .3\;echo ::: {11..15} ::: {A..E} >>$T2; 
+  parallel --sqlworker  $DBURL "$@" sleep .3\;echo >$T1
+}
 
 export -f $(compgen -A function | egrep 'p_|par_')
 # Tested that -j0 in parallel is fastest (up to 15 jobs)
