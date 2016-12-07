@@ -30,8 +30,9 @@ p_wrapper() {
 }
 
 p_template() {
-  (sleep 2; parallel "$@" --sqlworker $DBURL sleep .3\;echo >$T1) &
-  parallel "$@" --sqlandworker $DBURL sleep .3\;echo ::: {1..5} ::: {a..e} >$T2; 
+  (sleep 2;
+   parallel --sqlworker $DBURL    "$@" sleep .3\;echo >$T1) &
+  parallel  --sqlandworker $DBURL "$@" sleep .3\;echo ::: {1..5} ::: {a..e} >$T2; 
 }
 export -f p_template
 
@@ -65,6 +66,10 @@ par_sqlandworker_compress_linebuffer_tag() {
 
 par_sqlandworker_unbuffer() {
   p_template -u
+}
+
+par_sqlandworker_total_jobs() {
+  p_template echo {#} of '{=1 $_=total_jobs(); =};'
 }
 
 

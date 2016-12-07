@@ -3174,7 +3174,7 @@ sub parse_host_filtering {
 	    } elsif($col[6] eq "127") {
 		# signal == 127: parallel not installed remote
 		# Set ncpus and ncores = 1
-		::warning("Could not figure out ",
+		::warning("Could not figure out ".
 			  "number of cpus on $host. Using 1.");
 		$ncores{$host} = 1;
 		$ncpus{$host} = 1;
@@ -6244,37 +6244,41 @@ sub total_jobs {
 	    ::error("--pipe is incompatible with --eta/--bar/--shuf");
 	    ::wait_and_exit(255);
 	}
-	my $record;
-	my @arg_records;
-	my $record_queue = $self->{'commandlinequeue'}{'arg_queue'};
-	my $start = time;
-        while($record = $record_queue->get()) {
-	    if(time - $start > 10) {
-		::warning("Reading ".scalar(@arg_records).
-			  " arguments took longer than 10 seconds.");
-		$opt::eta && ::warning("Consider removing --eta.");
-		$opt::bar && ::warning("Consider removing --bar.");
-		$opt::shuf && ::warning("Consider removing --shuf.");
-		last;
+	if($opt::sqlworker) {
+	    $self->{'total_jobs'} = $Global::sql->total_jobs();
+	} else {
+	    my $record;
+	    my @arg_records;
+	    my $record_queue = $self->{'commandlinequeue'}{'arg_queue'};
+	    my $start = time;
+	    while($record = $record_queue->get()) {
+		if(time - $start > 10) {
+		    ::warning("Reading ".scalar(@arg_records).
+			      " arguments took longer than 10 seconds.");
+		    $opt::eta && ::warning("Consider removing --eta.");
+		    $opt::bar && ::warning("Consider removing --bar.");
+		    $opt::shuf && ::warning("Consider removing --shuf.");
+		    last;
+		}
+		push @arg_records, $record;
 	    }
-            push @arg_records, $record;
-        }
-        while($record = $record_queue->get()) {
-            push @arg_records, $record;
-        }
-	if($opt::shuf) {
-	    my $i = @arg_records;
-	    while (--$i) {
-		my $j = int rand($i+1);
-		@arg_records[$i,$j] = @arg_records[$j,$i];
+	    while($record = $record_queue->get()) {
+		push @arg_records, $record;
 	    }
+	    if($opt::shuf) {
+		my $i = @arg_records;
+		while (--$i) {
+		    my $j = int rand($i+1);
+		    @arg_records[$i,$j] = @arg_records[$j,$i];
+		}
+	    }
+	    $record_queue->unget(@arg_records);
+	    $self->{'total_jobs'} =
+		::ceil((1+$#arg_records+$self->{'this_job_no'})
+		       / ::max($Global::max_number_of_args,1));
+	    ::debug("init","Total jobs: ".$self->{'total_jobs'}.
+		    " (".(1+$#arg_records)."+".$self->{'this_job_no'}.")\n");
 	}
-	$record_queue->unget(@arg_records);
-	$self->{'total_jobs'} =
-	    ::ceil((1+$#arg_records+$self->{'this_job_no'})
-		   / ::max($Global::max_number_of_args,1));
-	::debug("init","Total jobs: ".$self->{'total_jobs'}.
-		" (".(1+$#arg_records)."+".$self->{'this_job_no'}.")\n");
     }
     return $self->{'total_jobs'};
 }
@@ -10468,6 +10472,18 @@ sub get_record {
 	return \@retval;
     } else {
 	return undef;
+    }
+}
+
+sub total_jobs {
+    my $self = shift;
+    my @retval;
+    my $table = $self->table();
+    my $v = $self->get("SELECT count(*) FROM $table;");
+    if($v->[0]) {
+	return $v->[0]->[0];
+    } else {
+	::die_bug("SQL::total_jobs");
     }
 }
 
