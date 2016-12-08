@@ -73,7 +73,7 @@ echo '### bug #42892: parallel -a nonexiting --pipepart'
 
 echo '### bug #42913: Dont use $SHELL but the shell currently running'
   echo '## Unknown shell => $SHELL (bash)'
-  parallel -kj1 "cp \`which {}\` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;" 
+  parallel -kj1 "rm -f /tmp/SHELL; cp \`which {}\` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;" 
   ::: ash bash csh dash fish fizsh ksh ksh93 mksh posh rbash rush rzsh sash sh static-sh tcsh yash zsh; 
   rm -f /tmp/SHELL /tmp/par*.par
 

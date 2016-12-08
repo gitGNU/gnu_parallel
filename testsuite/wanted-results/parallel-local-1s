@@ -4,7 +4,7 @@ echo "### BUG: The length for -X is not close to max (131072)";   seq 1 60000 | 
   seq 1 60000 | parallel -X echo a{}b{}c |head -n 1 |wc
       1    5644   65514
   seq 1 60000 | parallel -X echo |head -n 1 |wc
-      1   12771   65520
+      1   12770   65514
   seq 1 60000 | parallel -X echo a{}b{}c {} |head -n 1 |wc
       1    8098   65512
   seq 1 60000 | parallel -X echo {}aa{} |head -n 1 |wc
@@ -227,65 +227,67 @@ bug #44250: pxz complains File format not recognized but decompresses anyway
   stdout parallel --compress --compress-program pxz ls /{} ::: OK-if-missing-file
 ls: cannot access '/OK-if-missing-file': No such file or directory
   stdout parallel --compress --compress-program pixz --decompress-program 'pixz -d' ls /{}  ::: OK-if-missing-file
-can not seek in input: Illegal seek
-ls: cannot access '/OK-if-missing-file': No such file or directory
+ls: cannot access /OK-if-missing-file: No such file or directory
   stdout parallel --compress --compress-program pixz --decompress-program 'pixz -d' true ::: OK-if-no-output
   stdout parallel --compress --compress-program pxz true ::: OK-if-no-output
 echo 'bug #41613: --compress --line-buffer no newline';   perl -e 'print "It worked"'| parallel --pipe --compress --line-buffer cat; echo
 bug #41613: --compress --line-buffer no newline
 It worked
-echo 'bug #48658: --linebuffer --files';   doit() { parallel --files --linebuffer --compress-program $1 seq ::: 100000 | wc -l ; };   export -f doit;   parallel -k doit ::: zstd pzstd clzip lz4 lzop pigz pxz gzip plzip pbzip2 lzma xz lzip bzip2 lbzip2 lrz
+echo 'bug #48658: --linebuffer --files';   doit() { parallel --files --linebuffer --compress-program $1 seq ::: 100000 | wc -l ; };   export -f doit;   parallel --tag -k doit ::: zstd pzstd clzip lz4 lzop pigz pxz gzip plzip pbzip2 lzma xz lzip bzip2 lbzip2 lrz
 bug #48658: --linebuffer --files
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-  doit() { parallel --results /tmp/par48658$1 --linebuffer --compress-program $1 seq ::: 100000 | wc -l ; rm -rf "/tmp/par48658$1"; };   export -f doit;   parallel -k doit ::: zstd pzstd clzip lz4 lzop pigz pxz gzip plzip pbzip2 lzma xz lzip bzip2 lbzip2 lrz
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-1
-  doit() { parallel --linebuffer --compress-program $1 seq ::: 100000 | wc -l ; };   export -f doit;   parallel -k doit ::: zstd pzstd clzip lz4 lzop pigz pxz gzip plzip pbzip2 lzma xz lzip bzip2 lbzip2 lrz
-100000
-100000
-100000
-100000
-100000
-100000
-100000
-100000
-100000
-100000
-100000
-100000
-100000
-100000
-100000
-100000
+zstd	1
+pzstd	1
+clzip	1
+lz4	1
+lzop	1
+pigz	1
+pxz	1
+gzip	1
+plzip	1
+pbzip2	1
+lzma	1
+xz	1
+lzip	1
+bzip2	1
+lbzip2	1
+lrz	1
+pxz	1
+  doit() { parallel --results /tmp/par48658$1 --linebuffer --compress-program $1 seq ::: 100000 | wc -l ; rm -rf "/tmp/par48658$1"; };   export -f doit;   parallel --tag -k doit ::: zstd pzstd clzip lz4 lzop pigz pxz gzip plzip pbzip2 lzma xz lzip bzip2 lbzip2 lrz
+zstd	1
+pzstd	1
+clzip	1
+lz4	1
+lzop	1
+pigz	1
+pxz	1
+gzip	1
+plzip	1
+pbzip2	1
+lzma	1
+xz	1
+lzip	1
+bzip2	1
+lbzip2	1
+lrz	1
+pxz	1
+pbzip2	1
+  doit() { parallel --linebuffer --compress-program $1 seq ::: 100000 | wc -l ; };   export -f doit;   parallel --tag -k doit ::: zstd pzstd clzip lz4 lzop pigz pxz gzip plzip pbzip2 lzma xz lzip bzip2 lbzip2 lrz
+zstd	100000
+pzstd	100000
+clzip	100000
+lz4	100000
+lzop	100000
+pigz	100000
+pxz	100000
+gzip	100000
+plzip	100000
+pbzip2	100000
+lzma	100000
+xz	100000
+lzip	100000
+bzip2	100000
+lbzip2	100000
+lrz	100000
 echo '**'
 **
 echo "### Test -I";   seq 1 10 | parallel -k 'seq 1 {} | parallel -k -I :: echo {} ::'

@@ -1,15 +1,17 @@
 #!/bin/bash
 
 echo 'bug #46120: Suspend should suspend (at least local) children'
+  echo 'it should burn 1.9 CPU seconds, but no more than that'
+  echo 'The 5 second sleep will make it be killed by timeout when it fgs'
   stdout bash -i -c 'stdout /usr/bin/time -f CPUTIME=%U parallel --timeout 5 burnP6 ::: 1 | grep -q CPUTIME=1 & 
-  sleep 1.1; 
+  sleep 1.9; 
   kill -TSTP -$!; 
   sleep 5; 
   fg; 
   echo Zero=OK $?' | grep -v '\[1\]'
 
   stdout bash -i -c 'echo 1 | stdout /usr/bin/time -f CPUTIME=%U parallel --timeout 5 burnP6 | grep -q CPUTIME=1 & 
-  sleep 1.1; 
+  sleep 1.9; 
   kill -TSTP -$!; 
   sleep 5; 
   fg; 

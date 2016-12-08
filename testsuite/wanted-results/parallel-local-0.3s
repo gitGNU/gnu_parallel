@@ -115,7 +115,6 @@ cat /dev/zero >$SMALLDISK/out;   parallel --tmpdir $SMALLDISK echo ::: OK;   rm 
 cat: write error: No space left on device
 parallel: Error: Output is incomplete. Cannot append to buffer file in /mnt/ram. Is the disk full?
 parallel: Error: Change $TMPDIR with --tmpdir or use --compress.
-Warning: unable to close filehandle properly: No space left on device during global destruction.
 echo '**'
 **
 echo '### bug #44614: --pipepart --header off by one'
@@ -297,23 +296,23 @@ bug #45993: --wd ... should also work when run locally
 parallel: Error: Cannot change into non-executable dir /bi: No such file or directory
   parallel --wd /bin 'pwd; echo $OLDPWD; echo' ::: OK
 /bin
-/mnt/4tb/home/tange/privat/parallel/testsuite
+/home/tange/privat/parallel/testsuite
 OK
   parallel --wd / 'pwd; echo $OLDPWD; echo' ::: OK
 /
-/mnt/4tb/home/tange/privat/parallel/testsuite
+/home/tange/privat/parallel/testsuite
 OK
   parallel --wd /tmp 'pwd; echo $OLDPWD; echo' ::: OK
 /tmp
-/mnt/4tb/home/tange/privat/parallel/testsuite
+/home/tange/privat/parallel/testsuite
 OK
   parallel --wd ... 'pwd; echo $OLDPWD; echo' ::: OK | perl -pe 's/\d+/0/g'
-/mnt/0tb/home/tange/.parallel/tmp/aspire-0-0
-/mnt/0tb/home/tange/privat/parallel/testsuite
+/home/tange/.parallel/tmp/hp-0-0
+/home/tange/privat/parallel/testsuite
 OK
   parallel --wd . 'pwd; echo $OLDPWD; echo' ::: OK
-/mnt/4tb/home/tange/privat/parallel/testsuite
-/mnt/4tb/home/tange/privat/parallel/testsuite
+/home/tange/privat/parallel/testsuite
+/home/tange/privat/parallel/testsuite
 OK
 echo '**'
 **
@@ -462,6 +461,8 @@ mksh	\\\\\\\\	'
 mksh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
 posh	\\\\\\\\	'
 posh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
+rzsh	\\\\\\\\	'
+rzsh	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
 sash	\\\\\\\\	'
 sash	'\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
 sh	\\\\\\\\	'
@@ -478,7 +479,6 @@ csh	\\\\\\\\	"\
 csh	"\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
 tcsh	\\\\\\\\	"\
 tcsh	"\\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
-rzsh	zsh:1: /bin/echo: restricted
 echo '**'
 **
 echo xargs compatibility
@@ -594,7 +594,7 @@ e
   echo '### test too long args'
 ### test too long args
   perl -e 'print "z"x1000000' | parallel echo 2>&1
-parallel: Error: Command line too long (1000005 >= 65528) at input 0: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz...
+parallel: Error: Command line too long (1000005 >= 65524) at input 0: zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz...
   perl -e 'print "z"x1000000' | xargs echo 2>&1
 xargs: argument line too long
   (seq 1 10; perl -e 'print "z"x1000000'; seq 12 15) | stdsort parallel -j1 -km -s 10 echo
@@ -861,7 +861,7 @@ echo far
 ### Test --show-limits
   (echo b; echo c; echo f) | parallel -k --show-limits echo {}ar
 Maximal size of command: 131049
-Maximal used size of command: 65528
+Maximal used size of command: 65524
 
 Execution of  will continue now, and it will try to read its input
 and run commands; if this is not what you wanted to happen, please
@@ -1242,26 +1242,17 @@ a b
   seq 1 92 | parallel -j+0 -kX -s 100 echo
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34
 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65
-66 67 68 69
-70 71 72 73
-74 75 76 77
-78 79 80 81
-82 83 84 85
-86 87 88 89
-90 91 92
+66 67 68 69 70 71 72 73 74 75 76 77 78 79
+80 81 82 83 84 85 86 87 88 89 90 91 92
   echo '### Test distribute arguments at EOF to 5 jobslots'
 ### Test distribute arguments at EOF to 5 jobslots
   seq 1 92 | parallel -j+3 -kX -s 100 echo
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34
 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65
-66 67 68
-69 70 71
-72 73 74
-75 76 77
-78 79 80
-81 82 83
-84 85 86
-87 88 89
+66 67 68 69 70 71
+72 73 74 75 76 77
+78 79 80 81 82 83
+84 85 86 87 88 89
 90 91 92
   echo '### Test distribute arguments at EOF to infinity jobslots'
 ### Test distribute arguments at EOF to infinity jobslots
@@ -1634,34 +1625,9 @@ echo '### bug #34422: parallel -X --eta crashes with div by zero'
   seq 2 | stdout parallel -X --eta echo | grep -E -v 'ETA:.*AVG'
 
 Computers / CPU cores / Max jobs to run
-1:local / 8 / 2
+1:local / 2 / 2
 
 Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
-echo '**'
-**
-echo '### --pipepart autoset --block => 10*joblots'
-### --pipepart autoset --block => 10*joblots
-  seq 1000 > /run/shm/parallel$$;     parallel -j2 -k --pipepart echo {#} :::: /run/shm/parallel$$;     rm /run/shm/parallel$$
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
 echo '**'
 **
 echo '### bug #48295: --results should be dynamic like --wd'

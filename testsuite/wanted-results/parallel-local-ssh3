@@ -130,24 +130,14 @@ should give 12 running jobs
 1:lo / 16 / 12
 bug #47695: How to set $PATH on remote?
 
- * Documentation:  https://help.ubuntu.com
- * Management:     https://landscape.canonical.com
- * Support:        https://ubuntu.com/advantage
-
-0 updates are security updates.
-
+ * Documentation:  http://www.linuxmint.com
 BASH Path before: /bin:/usr/bin with no parallel
 -bash: line 2: parallel: command not found
 ^^^^^^^^ Not found is OK
 /bin:/usr/bin:/tmp OK
 
 
- * Documentation:  https://help.ubuntu.com
- * Management:     https://landscape.canonical.com
- * Support:        https://ubuntu.com/advantage
-
-0 updates are security updates.
-
+ * Documentation:  http://www.linuxmint.com
 Warning: no access to tty (Bad file descriptor).
 Thus no job control in this shell.
 CSH Path before: /bin:/usr/bin with no parallel

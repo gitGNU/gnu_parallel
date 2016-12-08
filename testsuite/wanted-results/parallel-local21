@@ -95,8 +95,56 @@ par_shebang_wrap_lua	Arguments arg3
 par_shebang_wrap_nodejs	Arguments  [ 'arg1' ]
 par_shebang_wrap_nodejs	Arguments  [ 'arg2' ]
 par_shebang_wrap_nodejs	Arguments  [ 'arg3' ]
+par_shebang_wrap_octave	GNU Octave, version 3.8.1
+par_shebang_wrap_octave	Copyright (C) 2014 John W. Eaton and others.
+par_shebang_wrap_octave	This is free software; see the source code for copying conditions.
+par_shebang_wrap_octave	There is ABSOLUTELY NO WARRANTY; not even for MERCHANTABILITY or
+par_shebang_wrap_octave	FITNESS FOR A PARTICULAR PURPOSE.  For details, type 'warranty'.
+par_shebang_wrap_octave	
+par_shebang_wrap_octave	Octave was configured for "x86_64-pc-linux-gnu".
+par_shebang_wrap_octave	
+par_shebang_wrap_octave	Additional information about Octave is available at http://www.octave.org.
+par_shebang_wrap_octave	
+par_shebang_wrap_octave	Please contribute if you find this software useful.
+par_shebang_wrap_octave	For more information, visit http://www.octave.org/get-involved.html
+par_shebang_wrap_octave	
+par_shebang_wrap_octave	Read http://www.octave.org/bugs.html to learn how to submit bug reports.
+par_shebang_wrap_octave	For information about changes from previous versions, type 'news'.
+par_shebang_wrap_octave	
 par_shebang_wrap_octave	Arguments arg1
+par_shebang_wrap_octave	GNU Octave, version 3.8.1
+par_shebang_wrap_octave	Copyright (C) 2014 John W. Eaton and others.
+par_shebang_wrap_octave	This is free software; see the source code for copying conditions.
+par_shebang_wrap_octave	There is ABSOLUTELY NO WARRANTY; not even for MERCHANTABILITY or
+par_shebang_wrap_octave	FITNESS FOR A PARTICULAR PURPOSE.  For details, type 'warranty'.
+par_shebang_wrap_octave	
+par_shebang_wrap_octave	Octave was configured for "x86_64-pc-linux-gnu".
+par_shebang_wrap_octave	
+par_shebang_wrap_octave	Additional information about Octave is available at http://www.octave.org.
+par_shebang_wrap_octave	
+par_shebang_wrap_octave	Please contribute if you find this software useful.
+par_shebang_wrap_octave	For more information, visit http://www.octave.org/get-involved.html
+par_shebang_wrap_octave	
+par_shebang_wrap_octave	Read http://www.octave.org/bugs.html to learn how to submit bug reports.
+par_shebang_wrap_octave	For information about changes from previous versions, type 'news'.
+par_shebang_wrap_octave	
 par_shebang_wrap_octave	Arguments arg2
+par_shebang_wrap_octave	GNU Octave, version 3.8.1
+par_shebang_wrap_octave	Copyright (C) 2014 John W. Eaton and others.
+par_shebang_wrap_octave	This is free software; see the source code for copying conditions.
+par_shebang_wrap_octave	There is ABSOLUTELY NO WARRANTY; not even for MERCHANTABILITY or
+par_shebang_wrap_octave	FITNESS FOR A PARTICULAR PURPOSE.  For details, type 'warranty'.
+par_shebang_wrap_octave	
+par_shebang_wrap_octave	Octave was configured for "x86_64-pc-linux-gnu".
+par_shebang_wrap_octave	
+par_shebang_wrap_octave	Additional information about Octave is available at http://www.octave.org.
+par_shebang_wrap_octave	
+par_shebang_wrap_octave	Please contribute if you find this software useful.
+par_shebang_wrap_octave	For more information, visit http://www.octave.org/get-involved.html
+par_shebang_wrap_octave	
+par_shebang_wrap_octave	Read http://www.octave.org/bugs.html to learn how to submit bug reports.
+par_shebang_wrap_octave	For information about changes from previous versions, type 'news'.
+par_shebang_wrap_octave	
 par_shebang_wrap_octave	Arguments arg3
 par_shebang_wrap_perl	Arguments arg1
 par_shebang_wrap_perl	Arguments arg2

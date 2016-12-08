@@ -505,7 +505,9 @@ this will run 10*5 = 50 jobs in total:
 
   parallel --pipepart -a myfile --block -10 -j5 wc
 
-This is an efficient alternative to B<--round-robin>.
+This is an efficient alternative to B<--round-robin> because data is
+never read by GNU B<parallel>, but you can still have very few
+jobslots process a large amount of data.
 
 See B<--pipe> and B<--pipepart> for use of this.
 

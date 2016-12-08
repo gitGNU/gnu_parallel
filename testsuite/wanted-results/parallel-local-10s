@@ -1,7 +1,7 @@
 echo '### bug #46214: Using --pipepart doesnt spawn multiple jobs in version 20150922'
 ### bug #46214: Using --pipepart doesnt spawn multiple jobs in version 20150922
   seq 1000000 > /tmp/num1000000;   stdout parallel --pipepart --progress -a /tmp/num1000000 --block 10k -j0 true |     grep 1:local | perl -pe 's/\d\d\d/999/g'
-1:local / 8 / 999
+1:local / 2 / 999
 echo '**'
 **
 testhalt() {   echo '### testhalt --halt '$1;   (yes 0 | head -n 10; seq 10) | stdout parallel -kj4 --halt $1 'sleep {= $_=$_*0.3+1 =}; exit {}'; echo $?;   (seq 10; yes 0 | head -n 10) | stdout parallel -kj4 --halt $1 'sleep {= $_=$_*0.3+1 =}; exit {}'; echo $?; }; export -f testhalt;   parallel -kj0 testhalt ::: now,fail=0 now,fail=1 now,fail=2 now,fail=30%  now,fail=70%     soon,fail=0 soon,fail=1 soon,fail=2 soon,fail=30% soon,fail=70%     now,success=0 now,success=1 now,success=2 now,success=30% now,success=70%     soon,success=0 soon,success=1 soon,success=2 soon,success=30% now,success=70%
@@ -863,12 +863,12 @@ echo '**'
 echo "### Test max line length -m -I"
 ### Test max line length -m -I
   seq 1 60000 | parallel -I :: -km -j1 echo a::b::c | sort >/tmp/114-a$$;   md5sum </tmp/114-a$$;   export CHAR=$(cat /tmp/114-a$$ | wc -c);   export LINES=$(cat /tmp/114-a$$ | wc -l);   echo "Chars per line ($CHAR/$LINES): "$(echo "$CHAR/$LINES" | bc);   rm /tmp/114-a$$
-14bacad229d8b0d32be0a2339c2a6af7  -
+d10d5c84fc4716b21d90afa92cf44d73  -
 Chars per line (697810/11): 63437
 echo "### Test max line length -X -I"
 ### Test max line length -X -I
   seq 1 60000 | parallel -I :: -kX -j1 echo a::b::c | sort >/tmp/114-b$$;   md5sum </tmp/114-b$$;   export CHAR=$(cat /tmp/114-b$$ | wc -c);   export LINES=$(cat /tmp/114-b$$ | wc -l);   echo "Chars per line ($CHAR/$LINES): "$(echo "$CHAR/$LINES" | bc);   rm /tmp/114-b$$
-81c0a85162c989c07f666b827a30ce52  -
+47ec7550232044dc1e7a504705a45184  -
 Chars per line (817788/13): 62906
 echo '**'
 **

@@ -1,16 +1,16 @@
 echo '### Test of xargs -m command lines > 130k';   seq 1 60000 | parallel -m -j1 echo a{}b{}c | tee >(wc >/tmp/awc$$) >(sort | md5sum) >/tmp/a$$;   wait;   CHAR=$(cat /tmp/a$$ | wc -c);   LINES=$(cat /tmp/a$$ | wc -l);   echo "Chars per line:" $(echo "$CHAR/$LINES" | bc);   cat /tmp/awc$$;   rm /tmp/a$$ /tmp/awc$$
 ### Test of xargs -m command lines > 130k
-14bacad229d8b0d32be0a2339c2a6af7  -
+d10d5c84fc4716b21d90afa92cf44d73  -
 Chars per line: 63437
      11  119989  697810
 echo '### Test of xargs -X command lines > 130k';   seq 1 60000 | parallel -X -j1 echo a{}b{}c | tee >(wc >/tmp/bwc$$) >(sort | (sleep 1; md5sum)) >/tmp/b$$;   wait;   CHAR=$(cat /tmp/b$$ | wc -c);   LINES=$(cat /tmp/b$$ | wc -l);   echo "Chars per line:" $(echo "$CHAR/$LINES" | bc);   cat /tmp/bwc$$;   rm /tmp/b$$ /tmp/bwc$$
 ### Test of xargs -X command lines > 130k
-81c0a85162c989c07f666b827a30ce52  -
+47ec7550232044dc1e7a504705a45184  -
 Chars per line: 62906
      13   60000  817788
 echo '### Test of xargs -m command lines > 130k';   seq 1 60000 | parallel -k -j1 -m echo | md5sum
 ### Test of xargs -m command lines > 130k
-4c821f9aa0e42e53b4b5ff8cc809490b  -
+4d3752b433dc963c466adc859e8d793f  -
 echo '### This causes problems if we kill child processes'; # 2>/dev/null to avoid parallel: Warning: Starting 45 processes took > 2 sec.
 ### This causes problems if we kill child processes
   seq 2 40 | parallel -j 0 seq 1 10 2>/dev/null | sort | md5sum
@@ -88,7 +88,7 @@ echo '### bug #42902: profiles containing arguments with space'
 echo /bin/bash\=/bin/bash
 /bin/bash=/bin/bash
   PARALLEL="--rpl 'FULLPATH chomp(\$_=\"/bin/bash=\".\`readlink -f \$_\`);' perl -e \'print \\\"@ARGV\\\n\\\"\' " parallel With script in \\\$PARALLEL FULLPATH ::: .
-With script in $PARALLEL /bin/bash=/mnt/4tb/home/tange/privat/parallel/testsuite
+With script in $PARALLEL /bin/bash=/home/tange/privat/parallel/testsuite
 echo '### bug #42892: parallel -a nonexiting --pipepart'
 ### bug #42892: parallel -a nonexiting --pipepart
   parallel --pipepart -a nonexisting wc
@@ -97,39 +97,39 @@ echo '### bug #42913: Dont use $SHELL but the shell currently running'
 ### bug #42913: Dont use $SHELL but the shell currently running
   echo '## Unknown shell => $SHELL (bash)'
 ## Unknown shell => $SHELL (bash)
-  parallel -kj1 "cp \`which {}\` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;"   ::: ash bash csh dash fish fizsh ksh ksh93 mksh posh rbash rush rzsh sash sh static-sh tcsh yash zsh;   rm -f /tmp/SHELL /tmp/par*.par
-shell? /bin/bash -c cp `which ash` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
+  parallel -kj1 "rm -f /tmp/SHELL; cp \`which {}\` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;"   ::: ash bash csh dash fish fizsh ksh ksh93 mksh posh rbash rush rzsh sash sh static-sh tcsh yash zsh;   rm -f /tmp/SHELL /tmp/par*.par
+shell? /bin/bash -c rm -f /tmp/SHELL; cp `which ash` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
-shell? /bin/bash -c cp `which bash` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
+shell? /bin/bash -c rm -f /tmp/SHELL; cp `which bash` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
-shell? /bin/bash -c cp `which csh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
+shell? /bin/bash -c rm -f /tmp/SHELL; cp `which csh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
-shell? /bin/bash -c cp `which dash` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
+shell? /bin/bash -c rm -f /tmp/SHELL; cp `which dash` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
-shell? /bin/bash -c cp `which fish` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
+shell? /bin/bash -c rm -f /tmp/SHELL; cp `which fish` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
 which zsh => shell path /usr/bin/zsh
-shell? /bin/bash -c cp `which ksh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
+shell? /bin/bash -c rm -f /tmp/SHELL; cp `which ksh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
-shell? /bin/bash -c cp `which ksh93` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
+shell? /bin/bash -c rm -f /tmp/SHELL; cp `which ksh93` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
-shell? /bin/bash -c cp `which mksh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
+shell? /bin/bash -c rm -f /tmp/SHELL; cp `which mksh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
-shell? /bin/bash -c cp `which posh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
+shell? /bin/bash -c rm -f /tmp/SHELL; cp `which posh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
-shell? /bin/bash -c cp `which rbash` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
+shell? /bin/bash -c rm -f /tmp/SHELL; cp `which rbash` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
-shell? /bin/bash -c cp `which rzsh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
+shell? /bin/bash -c rm -f /tmp/SHELL; cp `which rzsh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
-shell? /bin/bash -c cp `which sash` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
+shell? /bin/bash -c rm -f /tmp/SHELL; cp `which sash` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
-shell? /bin/bash -c cp `which sh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
+shell? /bin/bash -c rm -f /tmp/SHELL; cp `which sh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
-shell? /bin/bash -c cp `which tcsh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
+shell? /bin/bash -c rm -f /tmp/SHELL; cp `which tcsh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
-shell? /bin/bash -c cp `which yash` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
+shell? /bin/bash -c rm -f /tmp/SHELL; cp `which yash` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
-shell? /bin/bash -c cp `which zsh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
+shell? /bin/bash -c rm -f /tmp/SHELL; cp `which zsh` /tmp/SHELL; /tmp/SHELL -c 'parallel -Dinit echo ::: 1' | grep which;
 which bash => shell path /bin/bash
 Local configuration error occurred.
 Contact the systems administrator for further assistance.
