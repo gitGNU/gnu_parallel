@@ -169,9 +169,7 @@ par_csh_underscore	myecho: Command not found.
 par_csh_underscore	OK      ^^^^^^^^^^^^^^^^^ if no myecho
 par_csh_underscore	Connection to lo closed.
 par_fish_funky	env_parallel: Warning: ASCII value 1 in variables is not supported
-par_fish_funky	env_parallel: Warning: ASCII value 1 in variables is not supported
 par_fish_funky	3 arg alias_works
-par_fish_funky	env_parallel: Warning: ASCII value 1 in variables is not supported
 par_fish_funky	env_parallel: Warning: ASCII value 1 in variables is not supported
 par_fish_funky	function_works
 par_fish_funky	myvar  works
@@ -186,9 +184,7 @@ par_fish_funky
 par_fish_funky	
 par_fish_funky	
 par_fish_funky	env_parallel: Warning: ASCII value 1 in variables is not supported
-par_fish_funky	env_parallel: Warning: ASCII value 1 in variables is not supported
 par_fish_funky	3 arg alias_works_over_ssh
-par_fish_funky	env_parallel: Warning: ASCII value 1 in variables is not supported
 par_fish_funky	env_parallel: Warning: ASCII value 1 in variables is not supported
 par_fish_funky	function_works_over_ssh
 par_fish_funky	myvar  works
@@ -241,41 +237,41 @@ par_fish_underscore	variables in aliases and arrays in functions work
 par_fish_underscore	variables in aliases and arrays in functions work
 par_fish_underscore	variables in aliases and arrays in functions work
 par_fish_underscore	variables in aliases and arrays in functions work
-par_fish_underscore	fish: Unknown command 'not_copied_alias error=OK'
-par_fish_underscore	fish: not_copied_alias error\=OK
-par_fish_underscore	      ^
-par_fish_underscore	fish: Unknown command 'not_copied_func error=OK'
-par_fish_underscore	fish: not_copied_func error\=OK
-par_fish_underscore	      ^
+par_fish_underscore	fish: Unknown command “not_copied_alias”
+par_fish_underscore	Standard input: not_copied_alias error\=OK
+par_fish_underscore	                ^
+par_fish_underscore	fish: Unknown command “not_copied_func”
+par_fish_underscore	Standard input: not_copied_func error\=OK
+par_fish_underscore	                ^
 par_fish_underscore	error=OK
 par_fish_underscore	error=OK
 par_fish_underscore	aliases and arrays in functions work
 par_fish_underscore	aliases and arrays in functions work
 par_fish_underscore	aliases functions work
 par_fish_underscore	aliases functions work
-par_fish_underscore	fish: Unknown command 'myecho functions work'
-par_fish_underscore	fish: myecho $myarray functions $argv
-par_fish_underscore	      ^
-par_fish_underscore	in function “myfunc”
-par_fish_underscore		called on standard input
+par_fish_underscore	fish: Unknown command “myecho”
+par_fish_underscore	Standard input: myecho $myarray functions $argv
+par_fish_underscore	                ^
+par_fish_underscore	in function “myfunc”,
+par_fish_underscore		called on standard input,
 par_fish_underscore		with parameter list “work”
 par_fish_underscore	
 par_fish_underscore	OK if   ^^^^^^^^^^^^^^^^^ no myecho
-par_fish_underscore	fish: Unknown command 'myecho functions work'
-par_fish_underscore	fish: myecho $myarray functions $argv
-par_fish_underscore	      ^
-par_fish_underscore	in function “myfunc”
-par_fish_underscore		called on standard input
+par_fish_underscore	fish: Unknown command “myecho”
+par_fish_underscore	Standard input: myecho $myarray functions $argv
+par_fish_underscore	                ^
+par_fish_underscore	in function “myfunc”,
+par_fish_underscore		called on standard input,
 par_fish_underscore		with parameter list “work”
 par_fish_underscore	
 par_fish_underscore	OK if   ^^^^^^^^^^^^^^^^^ no myecho
-par_fish_underscore	fish: Unknown command 'myfunc work'
-par_fish_underscore	fish: myfunc work
-par_fish_underscore	      ^
+par_fish_underscore	fish: Unknown command “myfunc”
+par_fish_underscore	Standard input: myfunc work
+par_fish_underscore	                ^
 par_fish_underscore	OK if   ^^^^^^^^^^^^^^^^^ no myfunc
-par_fish_underscore	fish: Unknown command 'myfunc work'
-par_fish_underscore	fish: myfunc work
-par_fish_underscore	      ^
+par_fish_underscore	fish: Unknown command “myfunc”
+par_fish_underscore	Standard input: myfunc work
+par_fish_underscore	                ^
 par_fish_underscore	OK if   ^^^^^^^^^^^^^^^^^ no myfunc
 par_ksh_funky	
 par_ksh_funky	\\\\\\\\	
