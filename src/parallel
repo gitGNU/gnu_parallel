@@ -1067,6 +1067,10 @@ sub parse_options {
 	my ($compress, $decompress) = find_compression_program();
 	$opt::compress_program ||= $compress;
 	$opt::decompress_program ||= $decompress;
+	if($opt::results or $opt::files) {
+	    # No need for decompressing
+	    $opt::decompress_program = "cat >/dev/null";
+	}
     }
     if(defined $opt::nonall) {
 	# Append a dummy empty argument if there are no arguments
@@ -2073,7 +2077,7 @@ sub set_fh_blocking {
     $Global::use{"Fcntl"} ||= eval "use Fcntl qw(:DEFAULT :flock); 1;";
     my $flags;
     fcntl($fh, &F_GETFL, $flags) || die $!; # Get the current flags on the filehandle
-    $flags &= ~&O_NONBLOCK; # Remove non-blocking to the flags
+    $flags &= ~&O_NONBLOCK; # Remove non-blocking from the flags
     fcntl($fh, &F_SETFL, $flags) || die $!; # Set the flags on the filehandle
 }
 
@@ -6413,7 +6417,8 @@ sub free_slot {
 			$sleep /= 2;
 		    } else {
 			if(eof(IN) and not $writer_running) {
-			    # Writer dead: There will never be more to read => exit
+			    # Writer dead: There will never be sent more to the decompressor
+			    close OUT;
 			    exit;
 			}
 			# TODO This could probably be done more efficiently using select(2)
@@ -8196,6 +8201,7 @@ sub linebuffer_print {
 	    print $out_fd $self->tag(),$self->fh($fdno,"name"),"\n";
 	    $self->set_fh($fdno,"printed",1);
 	}
+	# No need for reading $in_fh, as it it from "cat >/dev/null"
     } else {
 	# This seek will clear EOF
 	seek $in_fh, tell($in_fh), 0;
