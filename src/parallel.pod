@@ -499,6 +499,14 @@ If you use B<-N>, B<--block-size> should be bigger than N+1 records.
 
 I<size> defaults to 1M.
 
+When using B<--pipepart> negative a block size is not interpreted as a
+blocksize but as the number of blocks each jobslot should have. So
+this will run 10*5 = 50 jobs in total:
+
+  parallel --pipepart -a myfile --block -10 -j5 wc
+
+This is an efficient alternative to B<--round-robin>.
+
 See B<--pipe> and B<--pipepart> for use of this.
 
 
@@ -1181,10 +1189,6 @@ B<--pipepart>, B<--files>.
 
 Pipe parts of a physical file. B<--pipepart> works similar to
 B<--pipe>, but is much faster.
-
-If B<--block> is left out, B<--pipepart> will use a block size that
-will result in 10 jobs per jobslot, except if run with
-B<--round-robin> in which case it will result in 1 job per jobslot.
 
 B<--pipepart> has a few limitations:
 

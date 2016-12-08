@@ -59,4 +59,17 @@ echo '### bug #47644: Wrong slot number replacement when resuming'
   seq 0 20 | parallel -kj 4 --delay 0.2 --joblog /tmp/parallel-bug-47558 'sleep 1; echo {%} {=$_==10 and exit =}'; 
   seq 0 20 | parallel -kj 4 --resume --delay 0.2 --joblog /tmp/parallel-bug-47558 'sleep 1; echo {%} {=$_==110 and exit =}'
 
+echo '**'
+
+echo '### --pipepart --block -# (# < 0)'
+
+  seq 1000 > /run/shm/parallel$$; 
+    parallel -j2 -k --pipepart echo {#} :::: /run/shm/parallel$$; 
+    parallel -j2 -k --block -1 --pipepart echo {#}-2 :::: /run/shm/parallel$$; 
+    parallel -j2 -k --block -2 --pipepart echo {#}-4 :::: /run/shm/parallel$$; 
+    parallel -j2 -k --block -10 --pipepart echo {#}-20 :::: /run/shm/parallel$$; 
+    rm /run/shm/parallel$$
+
+echo '**'
+
 EOF

@@ -605,14 +605,6 @@ echo '### bug #34422: parallel -X --eta crashes with div by zero'
 
 echo '**'
 
-echo '### --pipepart autoset --block => 10*joblots'
-
-  seq 1000 > /run/shm/parallel$$; 
-    parallel -j2 -k --pipepart echo {#} :::: /run/shm/parallel$$; 
-    rm /run/shm/parallel$$
-
-echo '**'
-
 echo '### bug #48295: --results should be dynamic like --wd'
 
   rm -rf /tmp/parallel-48295; 

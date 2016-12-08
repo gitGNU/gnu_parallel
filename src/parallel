@@ -132,10 +132,15 @@ $Global::JobQueue = JobQueue->new(
     $number_of_args,\@Global::transfer_files,\@Global::ret_files);
 
 if($opt::pipepart) {
-    if(not $opt::blocksize or $opt::roundrobin) {
-	# --block not set =>
-	#   compute reasonable value giving 10 jobs per jobslot
-	# --roundrobin => divide equally between jobslots
+    if(not $opt::blocksize) {
+	# --blocksize with 10 jobs per jobslot
+	$opt::blocksize = -10;
+    }
+    if($opt::roundrobin) {
+	# --blocksize with 1 job per jobslot
+	$opt::blocksize = -1;
+    }
+    if($opt::blocksize < 0) {
 	my $size = 0;
 	# Compute size of -a
 	for(@opt::a) {
@@ -155,16 +160,10 @@ if($opt::pipepart) {
 	}
 	$Global::max_jobs_running or
 	    ::die_bug("Global::max_jobs_running not set");
-	if($opt::roundrobin) {
-	    # Run in total $job_slots jobs
-	    # Set --blocksize = size / no of proc
-	    $Global::blocksize = 1 + int($size / $Global::max_jobs_running);
-	} else {
-	    # Run in total $job_slots*10 jobs
-	    # Set --blocksize = size / no of proc / 10
-	    $Global::blocksize = 1 +
-		int($size / $Global::max_jobs_running / 10);
-	}
+	# Run in total $job_slots*(- $blocksize) jobs
+	# Set --blocksize = size / no of proc / 10
+	$Global::blocksize = 1 +
+	    int($size / $Global::max_jobs_running / -$opt::blocksize);
     }
     @Global::cat_partials = map { pipe_part_files($_) } @opt::a;
     # Unget the empty arg as many times as there are parts
@@ -304,24 +303,28 @@ sub find_split_positions {
     push(@pos,$headerlen);
     for(my $pos = $block+$headerlen; $pos < $size; $pos += $block) {
 	my $buf;
-	seek($fh, $pos, 0) || die;
-	while(read($fh,substr($buf,length $buf,0),$dd_block_size)) {
-	    if($opt::regexp) {
-		# If match /$recend$recstart/ => Record position
-		if($buf =~ /^(.*$recend)$recstart/os) {
-		    # Start looking for next record _after_ this match
-		    $pos += length($1);
-		    push(@pos,$pos);
-		    last;
-		}
-	    } else {
-		# If match $recend$recstart => Record position
-		my $i = index64(\$buf,$recendrecstart);
-		if($i != -1) {
-		    # Start looking for next record _after_ this match
-		    $pos += $i + length($recendrecstart);
-		    push(@pos,$pos);
-		    last;
+	if($recendrecstart eq "") {
+	    push(@pos,$pos);
+	} else {
+	    seek($fh, $pos, 0) || die;
+	    while(read($fh,substr($buf,length $buf,0),$dd_block_size)) {
+		if($opt::regexp) {
+		    # If match /$recend$recstart/ => Record position
+		    if($buf =~ /^(.*$recend)$recstart/os) {
+			# Start looking for next record _after_ this match
+			$pos += length($1);
+			push(@pos,$pos);
+			last;
+		    }
+		} else {
+		    # If match $recend$recstart => Record position
+		    my $i = index64(\$buf,$recendrecstart);
+		    if($i != -1) {
+			# Start looking for next record _after_ this match
+			$pos += $i + length($recendrecstart);
+			push(@pos,$pos);
+			last;
+		    }
 		}
 	    }
 	}
