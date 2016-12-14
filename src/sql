@@ -538,7 +538,7 @@ if($dburl{'query'}) {
 }
 
 do {
-    if(@ARGV) {
+    if(@ARGV or $dburl{'query'}) {
 	$::opt_debug and print "$batch_command\n";
 	$::opt_verbose and print "$batch_command\n";
 	open(M,"| $batch_command") || die("mysql/psql/sqlplus not in path");
