@@ -1,120 +1,95 @@
-echo '### bug #42089: --results with arg > 256 chars (should be 1 char shorter)'
-### bug #42089: --results with arg > 256 chars (should be 1 char shorter)
-  parallel --results parallel_test_dir echo ::: 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456;   ls parallel_test_dir/1/
-1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456
-123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345
-  rm -rf parallel_test_dir
-echo '**'
-**
-echo '### Test slow arguments generation - https://savannah.gnu.org/bugs/?32834';   seq 1 3 | parallel -j1 "sleep 2; echo {}" | parallel -kj2 echo
-### Test slow arguments generation - https://savannah.gnu.org/bugs/?32834
-1
-2
-3
-echo '**'
-**
-echo '### Are children killed if GNU Parallel receives TERM twice? There should be no sleep at the end'
-### Are children killed if GNU Parallel receives TERM twice? There should be no sleep at the end
-  parallel -q bash -c 'sleep 120 & pid=$!; wait $pid' ::: 1 &     T=$!;     sleep 5;     pstree $$;     kill -TERM $T;     sleep 1;     pstree $$;     kill -TERM $T;     sleep 1;     pstree $$; echo '**'
-bash-+-perl---bash---sleep
-     `-pstree
-bash-+-perl---bash---sleep
-     `-pstree
-bash---pstree
-**
-parallel: SIGTERM received. No new jobs will be started.
-parallel: Waiting for these 1 jobs to finish. Send SIGTERM again to stop now.
-parallel: bash -c sleep\ 120\ \&\ pid\=\$\!\;\ wait\ \$pid 1
-echo '### Are children killed if GNU Parallel receives INT twice? There should be no sleep at the end'
-### Are children killed if GNU Parallel receives INT twice? There should be no sleep at the end
-  parallel -q bash -c 'sleep 120 & pid=$!; wait $pid' ::: 1 &     T=$!;     sleep 5;     pstree $$;     kill -INT $T;     sleep 1;     pstree $$; echo '**'
-bash-+-perl---bash---sleep
-     `-pstree
-bash---pstree
-**
-echo '### Do children receive --termseq signals'
-### Do children receive --termseq signals
-  show_signals() {     perl -e 'for(keys %SIG) { $SIG{$_} = eval "sub { print STDERR \"Got $_\\n\"; }";} while(1){sleep 1}';   };   export -f show_signals;   echo | stdout parallel --termseq TERM,200,TERM,100,TERM,50,KILL,25 -u --timeout 1 show_signals;   echo | stdout parallel --termseq INT,200,TERM,100,KILL,25 -u --timeout 1 show_signals;   sleep 3; echo '**'
-Got TERM
-Got TERM
-Got TERM
-Got INT
-Got TERM
-**
-echo '### bug #47644: Wrong slot number replacement when resuming'
-### bug #47644: Wrong slot number replacement when resuming
-  seq 0 20 | parallel -kj 4 --delay 0.2 --joblog /tmp/parallel-bug-47558 'sleep 1; echo {%} {=$_==10 and exit =}';   seq 0 20 | parallel -kj 4 --resume --delay 0.2 --joblog /tmp/parallel-bug-47558 'sleep 1; echo {%} {=$_==110 and exit =}'
-1 0
-2 1
-3 2
-4 3
-1 4
-2 5
-3 6
-4 7
-1 8
-2 9
-3 10
-4 11
-1 12
-2 13
-3 14
-4 15
-1 16
-2 17
-3 18
-4 19
-1 20
-echo '**'
-**
-echo '### --pipepart --block -# (# < 0)'
-### --pipepart --block -# (# < 0)
-  seq 1000 > /run/shm/parallel$$;     parallel -j2 -k --pipepart echo {#} :::: /run/shm/parallel$$;     parallel -j2 -k --block -1 --pipepart echo {#}-2 :::: /run/shm/parallel$$;     parallel -j2 -k --block -2 --pipepart echo {#}-4 :::: /run/shm/parallel$$;     parallel -j2 -k --block -10 --pipepart echo {#}-20 :::: /run/shm/parallel$$;     rm /run/shm/parallel$$
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-1-2
-2-2
-1-4
-2-4
-3-4
-4-4
-1-20
-2-20
-3-20
-4-20
-5-20
-6-20
-7-20
-8-20
-9-20
-10-20
-11-20
-12-20
-13-20
-14-20
-15-20
-16-20
-17-20
-18-20
-19-20
-20-20
-echo '**'
-**
+par_children_receive_sig	### Do children receive --termseq signals
+par_children_receive_sig	Got TERM
+par_children_receive_sig	Got TERM
+par_children_receive_sig	Got TERM
+par_children_receive_sig	Got INT
+par_children_receive_sig	Got TERM
+par_kill_int_twice	### Are children killed if GNU Parallel receives INT twice? There should be no sleep at the end
+par_kill_int_twice	bash-+-perl---bash---sleep
+par_kill_int_twice	     `-pstree
+par_kill_int_twice	bash---pstree
+par_kill_term_twice	### Are children killed if GNU Parallel receives TERM twice? There should be no sleep at the end
+par_kill_term_twice	bash-+-perl---bash---sleep
+par_kill_term_twice	     `-pstree
+par_kill_term_twice	parallel: SIGTERM received. No new jobs will be started.
+par_kill_term_twice	parallel: Waiting for these 1 jobs to finish. Send SIGTERM again to stop now.
+par_kill_term_twice	parallel: bash -c sleep\ 120\ \&\ pid\=\$\!\;\ wait\ \$pid 1
+par_kill_term_twice	bash-+-perl---bash---sleep
+par_kill_term_twice	     `-pstree
+par_kill_term_twice	bash---pstree
+par_pipepart_block	### --pipepart --block -# (# < 0)
+par_pipepart_block	1
+par_pipepart_block	2
+par_pipepart_block	3
+par_pipepart_block	4
+par_pipepart_block	5
+par_pipepart_block	6
+par_pipepart_block	7
+par_pipepart_block	8
+par_pipepart_block	9
+par_pipepart_block	10
+par_pipepart_block	11
+par_pipepart_block	12
+par_pipepart_block	13
+par_pipepart_block	14
+par_pipepart_block	15
+par_pipepart_block	16
+par_pipepart_block	17
+par_pipepart_block	18
+par_pipepart_block	19
+par_pipepart_block	20
+par_pipepart_block	1-2
+par_pipepart_block	2-2
+par_pipepart_block	1-4
+par_pipepart_block	2-4
+par_pipepart_block	3-4
+par_pipepart_block	4-4
+par_pipepart_block	1-20
+par_pipepart_block	2-20
+par_pipepart_block	3-20
+par_pipepart_block	4-20
+par_pipepart_block	5-20
+par_pipepart_block	6-20
+par_pipepart_block	7-20
+par_pipepart_block	8-20
+par_pipepart_block	9-20
+par_pipepart_block	10-20
+par_pipepart_block	11-20
+par_pipepart_block	12-20
+par_pipepart_block	13-20
+par_pipepart_block	14-20
+par_pipepart_block	15-20
+par_pipepart_block	16-20
+par_pipepart_block	17-20
+par_pipepart_block	18-20
+par_pipepart_block	19-20
+par_pipepart_block	20-20
+par_results_arg_256	### bug #42089: --results with arg > 256 chars (should be 1 char shorter)
+par_results_arg_256	1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456
+par_results_arg_256	123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345
+par_slow_args_generation	### Test slow arguments generation - https://savannah.gnu.org/bugs/?32834
+par_slow_args_generation	1
+par_slow_args_generation	2
+par_slow_args_generation	3
+par_wrong_slot_rpl_resume	### bug #47644: Wrong slot number replacement when resuming
+par_wrong_slot_rpl_resume	1 0
+par_wrong_slot_rpl_resume	2 1
+par_wrong_slot_rpl_resume	3 2
+par_wrong_slot_rpl_resume	4 3
+par_wrong_slot_rpl_resume	1 4
+par_wrong_slot_rpl_resume	2 5
+par_wrong_slot_rpl_resume	3 6
+par_wrong_slot_rpl_resume	4 7
+par_wrong_slot_rpl_resume	1 8
+par_wrong_slot_rpl_resume	2 9
+par_wrong_slot_rpl_resume	3 10
+par_wrong_slot_rpl_resume	4 11
+par_wrong_slot_rpl_resume	1 12
+par_wrong_slot_rpl_resume	2 13
+par_wrong_slot_rpl_resume	3 14
+par_wrong_slot_rpl_resume	4 15
+par_wrong_slot_rpl_resume	1 16
+par_wrong_slot_rpl_resume	2 17
+par_wrong_slot_rpl_resume	3 18
+par_wrong_slot_rpl_resume	4 19
+par_wrong_slot_rpl_resume	1 20

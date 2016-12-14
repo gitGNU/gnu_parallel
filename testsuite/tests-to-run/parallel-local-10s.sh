@@ -132,5 +132,21 @@ par_compress_fail() {
     seq 12 | parallel --compress -k seq {} 1000000 | md5sum
 }
 
+par_distribute_input_by_ability() {
+    echo "### Distribute input to jobs that are ready"
+    echo "Job-slot n is 50% slower than n+1, so the order should be 1..7"
+    seq 20000000 |
+    parallel --tagstring {#} -j7 --block 300k --round-robin --pipe \
+	'pv -qL{=$_=$job->seq()**3+9=}0000 |wc -c' |
+    sort -nk2 | field 1
+}
+
+par_round_robin_blocks() {
+    echo "bug #49664: --round-robin does not complete"
+
+    seq 20000000 | parallel --block 10M --round-robin --pipe wc -c | wc -l
+}
+
+
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort | parallel -j6 --tag -k '{} 2>&1'
