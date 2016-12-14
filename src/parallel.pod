@@ -1925,6 +1925,9 @@ Execute jobs via SQL server. Read the input sources variables from the
 table pointed to by I<DBURL>. The I<command> on the command line
 should be the same as given by B<--sqlmaster>.
 
+If you have more than one B<--sqlworker> jobs may be run more than
+once.
+
 
 =item B<--ssh> I<sshcommand>
 

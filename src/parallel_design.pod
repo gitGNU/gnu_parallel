@@ -76,6 +76,23 @@ where there is no easy way to convert an environment into commands
 that generate the environment.
 
 
+=head3 env_parallel.*
+
+These are the files that implements the alias or function
+B<env_parallel> for a given shell. It could be argued that these
+should be put in some obscure place under /usr/lib, but by putting
+them in your path it becomes trivial to find the path to them and
+B<source> them:
+
+  source `which env_parallel.foo`
+
+The beauty is that they can be put anywhere in the path without the
+user having to know the location. So if the user's path includes
+/afs/bin/i386_fc5 or /usr/pkg/parallel/bin or
+/usr/local/parallel/20161222/sunos5.6/bin the files can be put in the
+dir that makes most sense for the sysadmin.
+
+
 =head3 env_parallel.bash / env_parallel.zsh / env_parallel.ksh / env_parallel.pdksh
 
 B<env_parallel.(bash|ksh|pdksh|zsh)> sets the function B<env_parallel>. It uses
@@ -729,6 +746,14 @@ GNU B<parallel> lets B<--jobs> represent the number of servers to run
 on in parallel. This is to make it possible to run a sequence of
 commands (that cannot be parallelized) on each server, but run the
 same sequence on multiple servers.
+
+
+=head2 --shuf
+
+When using B<--shuf> to shuffle the jobs, all jobs are read, then they
+are shuffled, and finally executed. When using SQL this makes the
+B<--sqlmaster> be the part that shuffles the jobs. The B<--sqlworker>s
+simply executes according to Seq number.
 
 
 =head2 Buffering on disk
