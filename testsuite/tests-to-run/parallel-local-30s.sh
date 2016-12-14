@@ -91,7 +91,11 @@ par_linebuffer_matters_compress() {
     fi
 }
 
-
+par_memfree() {
+    echo '### test memfree'
+    parallel --memfree 1k echo Free mem: ::: 1k
+    stdout parallel --timeout 20 --argsep II parallel --memfree 1t echo Free mem: ::: II 1t
+}
 
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort | parallel -j6 --tag -k '{} 2>&1'

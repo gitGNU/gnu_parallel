@@ -614,7 +614,11 @@ par_fish_underscore() {
     echo "OK if   ^^^^^^^^^^^^^^^^^ no myfunc" >&2;
 _EOF
   )
-  ssh fish@lo "$myscript"
+
+  # Old versions of fish sometimes throw up bugs all over,
+  # but seem to work OK otherwise. So ignore these errors.
+  ssh fish@lo "$myscript" 2>&1 |
+  perl -ne '/fish:|fish\(/ and next; print'
 }
 
 # Test env_parallel:

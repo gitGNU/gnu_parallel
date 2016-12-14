@@ -124,24 +124,7 @@ CSH/TCSH DO NOT SUPPORT newlines IN VARIABLES/FUNCTIONS. Unset doit
 OK
 echo '### bug #49404: "Max jobs to run" does not equal the number of jobs specified when using GNU Parallel on remote server?'
 ### bug #49404: "Max jobs to run" does not equal the number of jobs specified when using GNU Parallel on remote server?
-  echo should give 12 running jobs
-should give 12 running jobs
-  stdout parallel -S 16/lo --progress true ::: {1..12} | grep /.12
-1:lo / 16 / 12
-bug #47695: How to set $PATH on remote?
-
- * Documentation:  http://www.linuxmint.com
-BASH Path before: /bin:/usr/bin with no parallel
--bash: line 2: parallel: command not found
-^^^^^^^^ Not found is OK
-/bin:/usr/bin:/tmp OK
-
-
- * Documentation:  http://www.linuxmint.com
-Warning: no access to tty (Bad file descriptor).
-Thus no job control in this shell.
-CSH Path before: /bin:/usr/bin with no parallel
-parallel: Command not found.
-^^^^^^^^ Not found is OK
-parallel: Warning: Removed lo.
-parallel: Error: There are no hosts left to run on.
+  echo should give 10 running jobs
+should give 10 running jobs
+  stdout parallel -S 16/lo --progress true ::: {1..10} | grep /.10
+1:lo / 16 / 10

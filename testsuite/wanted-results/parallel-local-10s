@@ -1,880 +1,995 @@
-echo '### bug #46214: Using --pipepart doesnt spawn multiple jobs in version 20150922'
-### bug #46214: Using --pipepart doesnt spawn multiple jobs in version 20150922
-  seq 1000000 > /tmp/num1000000;   stdout parallel --pipepart --progress -a /tmp/num1000000 --block 10k -j0 true |     grep 1:local | perl -pe 's/\d\d\d/999/g'
-1:local / 2 / 999
-echo '**'
-**
-testhalt() {   echo '### testhalt --halt '$1;   (yes 0 | head -n 10; seq 10) | stdout parallel -kj4 --halt $1 'sleep {= $_=$_*0.3+1 =}; exit {}'; echo $?;   (seq 10; yes 0 | head -n 10) | stdout parallel -kj4 --halt $1 'sleep {= $_=$_*0.3+1 =}; exit {}'; echo $?; }; export -f testhalt;   parallel -kj0 testhalt ::: now,fail=0 now,fail=1 now,fail=2 now,fail=30%  now,fail=70%     soon,fail=0 soon,fail=1 soon,fail=2 soon,fail=30% soon,fail=70%     now,success=0 now,success=1 now,success=2 now,success=30% now,success=70%     soon,success=0 soon,success=1 soon,success=2 soon,success=30% now,success=70%
-### testhalt --halt now,fail=0
-parallel: This job failed:
-sleep 1.3; exit 1
-0
-parallel: This job failed:
-sleep 1.3; exit 1
-0
-### testhalt --halt now,fail=1
-parallel: This job failed:
-sleep 1.3; exit 1
-1
-parallel: This job failed:
-sleep 1.3; exit 1
-1
-### testhalt --halt now,fail=2
-parallel: This job failed:
-sleep 1.3; exit 1
-parallel: This job failed:
-sleep 1.6; exit 2
-2
-parallel: This job failed:
-sleep 1.3; exit 1
-parallel: This job failed:
-sleep 1.6; exit 2
-2
-### testhalt --halt now,fail=30%
-parallel: This job failed:
-sleep 1.3; exit 1
-parallel: This job failed:
-sleep 1.6; exit 2
-parallel: This job failed:
-sleep 1.9; exit 3
-parallel: This job failed:
-sleep 2.2; exit 4
-parallel: This job failed:
-sleep 2.5; exit 5
-parallel: This job failed:
-sleep 2.8; exit 6
-30
-parallel: This job failed:
-sleep 1.3; exit 1
-parallel: This job failed:
-sleep 1.6; exit 2
-parallel: This job failed:
-sleep 1.9; exit 3
-parallel: This job failed:
-sleep 2.2; exit 4
-parallel: This job failed:
-sleep 2.5; exit 5
-parallel: This job failed:
-sleep 2.8; exit 6
-30
-### testhalt --halt now,fail=70%
-parallel: This job failed:
-sleep 1.3; exit 1
-parallel: This job failed:
-sleep 1.6; exit 2
-parallel: This job failed:
-sleep 1.9; exit 3
-parallel: This job failed:
-sleep 2.2; exit 4
-parallel: This job failed:
-sleep 2.5; exit 5
-parallel: This job failed:
-sleep 2.8; exit 6
-parallel: This job failed:
-sleep 3.1; exit 7
-parallel: This job failed:
-sleep 3.4; exit 8
-parallel: This job failed:
-sleep 3.7; exit 9
-parallel: This job failed:
-sleep 4; exit 10
-50
-parallel: This job failed:
-sleep 1.3; exit 1
-parallel: This job failed:
-sleep 1.6; exit 2
-parallel: This job failed:
-sleep 1.9; exit 3
-parallel: This job failed:
-sleep 2.2; exit 4
-parallel: This job failed:
-sleep 2.5; exit 5
-parallel: This job failed:
-sleep 2.8; exit 6
-parallel: This job failed:
-sleep 3.1; exit 7
-parallel: This job failed:
-sleep 3.4; exit 8
-parallel: This job failed:
-sleep 3.7; exit 9
-parallel: This job failed:
-sleep 4; exit 10
-50
-### testhalt --halt soon,fail=0
-parallel: This job failed:
-sleep 1.3; exit 1
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-parallel: This job failed:
-sleep 1.6; exit 2
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-parallel: This job failed:
-sleep 1.9; exit 3
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-parallel: This job failed:
-sleep 2.2; exit 4
-0
-parallel: This job failed:
-sleep 1.3; exit 1
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-parallel: This job failed:
-sleep 1.6; exit 2
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-parallel: This job failed:
-sleep 1.9; exit 3
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-parallel: This job failed:
-sleep 2.2; exit 4
-0
-### testhalt --halt soon,fail=1
-parallel: This job failed:
-sleep 1.3; exit 1
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-parallel: This job failed:
-sleep 1.6; exit 2
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-parallel: This job failed:
-sleep 1.9; exit 3
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-parallel: This job failed:
-sleep 2.2; exit 4
-1
-parallel: This job failed:
-sleep 1.3; exit 1
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-parallel: This job failed:
-sleep 1.6; exit 2
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-parallel: This job failed:
-sleep 1.9; exit 3
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-parallel: This job failed:
-sleep 2.2; exit 4
-1
-### testhalt --halt soon,fail=2
-parallel: This job failed:
-sleep 1.3; exit 1
-parallel: This job failed:
-sleep 1.6; exit 2
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-parallel: This job failed:
-sleep 1.9; exit 3
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-parallel: This job failed:
-sleep 2.2; exit 4
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-parallel: This job failed:
-sleep 2.5; exit 5
-2
-parallel: This job failed:
-sleep 1.3; exit 1
-parallel: This job failed:
-sleep 1.6; exit 2
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-parallel: This job failed:
-sleep 1.9; exit 3
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-parallel: This job failed:
-sleep 2.2; exit 4
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-parallel: This job failed:
-sleep 2.5; exit 5
-2
-### testhalt --halt soon,fail=30%
-parallel: This job failed:
-sleep 1.3; exit 1
-parallel: This job failed:
-sleep 1.6; exit 2
-parallel: This job failed:
-sleep 1.9; exit 3
-parallel: This job failed:
-sleep 2.2; exit 4
-parallel: This job failed:
-sleep 2.5; exit 5
-parallel: This job failed:
-sleep 2.8; exit 6
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-parallel: This job failed:
-sleep 3.1; exit 7
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-parallel: This job failed:
-sleep 3.4; exit 8
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-parallel: This job failed:
-sleep 3.7; exit 9
-30
-parallel: This job failed:
-sleep 1.3; exit 1
-parallel: This job failed:
-sleep 1.6; exit 2
-parallel: This job failed:
-sleep 1.9; exit 3
-parallel: This job failed:
-sleep 2.2; exit 4
-parallel: This job failed:
-sleep 2.5; exit 5
-parallel: This job failed:
-sleep 2.8; exit 6
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-parallel: This job failed:
-sleep 3.1; exit 7
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-parallel: This job failed:
-sleep 3.4; exit 8
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-parallel: This job failed:
-sleep 3.7; exit 9
-30
-### testhalt --halt soon,fail=70%
-parallel: This job failed:
-sleep 1.3; exit 1
-parallel: This job failed:
-sleep 1.6; exit 2
-parallel: This job failed:
-sleep 1.9; exit 3
-parallel: This job failed:
-sleep 2.2; exit 4
-parallel: This job failed:
-sleep 2.5; exit 5
-parallel: This job failed:
-sleep 2.8; exit 6
-parallel: This job failed:
-sleep 3.1; exit 7
-parallel: This job failed:
-sleep 3.4; exit 8
-parallel: This job failed:
-sleep 3.7; exit 9
-parallel: This job failed:
-sleep 4; exit 10
-50
-parallel: This job failed:
-sleep 1.3; exit 1
-parallel: This job failed:
-sleep 1.6; exit 2
-parallel: This job failed:
-sleep 1.9; exit 3
-parallel: This job failed:
-sleep 2.2; exit 4
-parallel: This job failed:
-sleep 2.5; exit 5
-parallel: This job failed:
-sleep 2.8; exit 6
-parallel: This job failed:
-sleep 3.1; exit 7
-parallel: This job failed:
-sleep 3.4; exit 8
-parallel: This job failed:
-sleep 3.7; exit 9
-parallel: This job failed:
-sleep 4; exit 10
-50
-### testhalt --halt now,success=0
-parallel: This job succeeded:
-sleep 1; exit 0
-0
-parallel: This job succeeded:
-sleep 1; exit 0
-0
-### testhalt --halt now,success=1
-parallel: This job succeeded:
-sleep 1; exit 0
-0
-parallel: This job succeeded:
-sleep 1; exit 0
-0
-### testhalt --halt now,success=2
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-0
-### testhalt --halt now,success=30%
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-0
-### testhalt --halt now,success=70%
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-50
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-50
-### testhalt --halt soon,success=0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-0
-### testhalt --halt soon,success=1
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-0
-### testhalt --halt soon,success=2
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-0
-### testhalt --halt soon,success=30%
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-parallel: This job succeeded:
-sleep 1; exit 0
-0
-### testhalt --halt now,success=70%
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-50
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-parallel: This job succeeded:
-sleep 1; exit 0
-50
-echo '**'
-**
-echo '### Test --halt-on-error 0';   (echo "sleep 1;true"; echo "sleep 2;false";echo "sleep 3;true") | parallel -j10 --halt-on-error 0;   echo $?;   (echo "sleep 1;true"; echo "sleep 2;false";echo "sleep 3;true";echo "sleep 4; non_exist") | parallel -j10 --halt 0;   echo $?
-### Test --halt-on-error 0
-1
-2
-/bin/bash: non_exist: command not found
-echo '**'
-**
-echo '### Test --halt-on-error 1';   (echo "sleep 1;true"; echo "sleep 2;false";echo "sleep 3;true") | parallel -j10 --halt-on-error 1;   echo $?;   (echo "sleep 1;true"; echo "sleep 2; non_exist";echo "sleep 3;true";echo "sleep 4; false") | parallel -j10 --halt 1;   echo $?
-### Test --halt-on-error 1
-1
-127
-parallel: This job failed:
-sleep 2;false
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-/bin/bash: non_exist: command not found
-parallel: This job failed:
-sleep 2; non_exist
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-parallel: This job failed:
-sleep 4; false
-echo '**'
-**
-echo '### Test --halt-on-error 2';   (echo "sleep 1;true"; echo "sleep 2;false";echo "sleep 3;true") | parallel -j10 --halt-on-error 2;   echo $?;   (echo "sleep 1;true"; echo "sleep 2;false";echo "sleep 3;true";echo "sleep 4; non_exist") | parallel -j10 --halt 2;   echo $?
-### Test --halt-on-error 2
-1
-1
-parallel: This job failed:
-sleep 2;false
-parallel: This job failed:
-sleep 2;false
-echo '**'
-**
-echo '### Test --halt -1';   (echo "sleep 1;false"; echo "sleep 2;true";echo "sleep 3;false") | parallel -j10 --halt-on-error -1;   echo $?;   (echo "sleep 1;false"; echo "sleep 2;true";echo "sleep 3;false";echo "sleep 4; non_exist") | parallel -j10 --halt -1;   echo $?
-### Test --halt -1
-0
-0
-parallel: This job succeeded:
-sleep 2;true
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-parallel: This job succeeded:
-sleep 2;true
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-/bin/bash: non_exist: command not found
-echo '**'
-**
-echo '### Test --halt -2';   (echo "sleep 1;false"; echo "sleep 2;true";echo "sleep 3;false") | parallel -j10 --halt-on-error -2;   echo $?;   (echo "sleep 1;false"; echo "sleep 2;true";echo "sleep 3;false";echo "sleep 4; non_exist") | parallel -j10 --halt -2;   echo $?
-### Test --halt -2
-0
-0
-parallel: This job succeeded:
-sleep 2;true
-parallel: This job succeeded:
-sleep 2;true
-echo '**'
-**
-echo '### Test first dying print --halt-on-error 1';   (echo 0; echo 3; seq 0 7;echo 0; echo 8) | parallel -j10 -kq --halt 1 perl -e 'sleep $ARGV[0];print STDERR @ARGV,"\n"; exit shift';   echo exit code $?
-### Test first dying print --halt-on-error 1
-exit code 1
-0
-parallel: This job failed:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 1
-parallel: Starting no more jobs. Waiting for 8 jobs to finish.
-parallel: This job failed:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 2
-parallel: Starting no more jobs. Waiting for 7 jobs to finish.
-3
-0
-1
-2
-parallel: This job failed:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 3
-parallel: Starting no more jobs. Waiting for 6 jobs to finish.
-3
-parallel: This job failed:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 3
-parallel: Starting no more jobs. Waiting for 5 jobs to finish.
-4
-parallel: This job failed:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 4
-parallel: Starting no more jobs. Waiting for 4 jobs to finish.
-5
-parallel: This job failed:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 5
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-6
-parallel: This job failed:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 6
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-7
-0
-parallel: This job failed:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 7
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-8
-parallel: This job failed:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 8
-echo '### Test last dying print --halt-on-error 2';   (echo 0; echo 3; seq 0 7;echo 0; echo 8) | parallel -j10 -kq --halt 2 perl -e 'sleep $ARGV[0];print STDERR @ARGV,"\n"; exit shift';   echo exit code $?
-### Test last dying print --halt-on-error 2
-exit code 1
-0
-parallel: This job failed:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 1
-echo '### Test last dying print --halt-on-error -1';   (echo 0; echo 3; seq 0 7;echo 0; echo 8) | parallel -j10 -kq --halt -1 perl -e 'sleep $ARGV[0];print STDERR @ARGV,"\n"; exit not shift';   echo exit code $?
-### Test last dying print --halt-on-error -1
-exit code 0
-0
-parallel: This job succeeded:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 1
-parallel: Starting no more jobs. Waiting for 8 jobs to finish.
-parallel: This job succeeded:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 2
-parallel: Starting no more jobs. Waiting for 7 jobs to finish.
-3
-0
-1
-2
-parallel: This job succeeded:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 3
-parallel: Starting no more jobs. Waiting for 6 jobs to finish.
-3
-parallel: This job succeeded:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 3
-parallel: Starting no more jobs. Waiting for 5 jobs to finish.
-4
-parallel: This job succeeded:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 4
-parallel: Starting no more jobs. Waiting for 4 jobs to finish.
-5
-parallel: This job succeeded:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 5
-parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-6
-parallel: This job succeeded:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 6
-parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-7
-0
-parallel: This job succeeded:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 7
-parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-8
-parallel: This job succeeded:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 8
-echo '### Test last dying print --halt-on-error -2';   (echo 0; echo 3; seq 0 7;echo 0; echo 8) | parallel -j10 -kq --halt -2 perl -e 'sleep $ARGV[0];print STDERR @ARGV,"\n"; exit not shift';   echo exit code $?
-### Test last dying print --halt-on-error -2
-exit code 0
-0
-parallel: This job succeeded:
-perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 1
-echo '**'
-**
-echo '### test memfree'
-### test memfree
-  parallel --memfree 1k echo Free mem: ::: 1k
-Free mem: 1k
-  stdout parallel --timeout 3 --argsep II parallel --memfree 1t echo Free mem: ::: II 1t
-parallel: SIGTERM received. No new jobs will be started.
-parallel: Waiting for these 0 jobs to finish. Send SIGTERM again to stop now.
-echo '**'
-**
-echo '### bug #47750: -k --line-buffer should give current job up to now'
-### bug #47750: -k --line-buffer should give current job up to now
-  parallel --line-buffer --tag -k 'seq {} | pv -qL 10' ::: {10..20}
-10	1
-10	2
-10	3
-10	4
-10	5
-10	6
-10	7
-10	8
-10	9
-10	10
-11	1
-11	2
-11	3
-11	4
-11	5
-11	6
-11	7
-11	8
-11	9
-11	10
-11	11
-12	1
-12	2
-12	3
-12	4
-12	5
-12	6
-12	7
-12	8
-12	9
-12	10
-12	11
-12	12
-13	1
-13	2
-13	3
-13	4
-13	5
-13	6
-13	7
-13	8
-13	9
-13	10
-13	11
-13	12
-13	13
-14	1
-14	2
-14	3
-14	4
-14	5
-14	6
-14	7
-14	8
-14	9
-14	10
-14	11
-14	12
-14	13
-14	14
-15	1
-15	2
-15	3
-15	4
-15	5
-15	6
-15	7
-15	8
-15	9
-15	10
-15	11
-15	12
-15	13
-15	14
-15	15
-16	1
-16	2
-16	3
-16	4
-16	5
-16	6
-16	7
-16	8
-16	9
-16	10
-16	11
-16	12
-16	13
-16	14
-16	15
-16	16
-17	1
-17	2
-17	3
-17	4
-17	5
-17	6
-17	7
-17	8
-17	9
-17	10
-17	11
-17	12
-17	13
-17	14
-17	15
-17	16
-17	17
-18	1
-18	2
-18	3
-18	4
-18	5
-18	6
-18	7
-18	8
-18	9
-18	10
-18	11
-18	12
-18	13
-18	14
-18	15
-18	16
-18	17
-18	18
-19	1
-19	2
-19	3
-19	4
-19	5
-19	6
-19	7
-19	8
-19	9
-19	10
-19	11
-19	12
-19	13
-19	14
-19	15
-19	16
-19	17
-19	18
-19	19
-20	1
-20	2
-20	3
-20	4
-20	5
-20	6
-20	7
-20	8
-20	9
-20	10
-20	11
-20	12
-20	13
-20	14
-20	15
-20	16
-20	17
-20	18
-20	19
-20	20
-  parallel --line-buffer -k 'echo stdout top;sleep 1;echo stderr in the middle >&2; sleep 1;echo stdout' ::: end 2>&1
-stdout top
-stderr in the middle
-stdout end
-echo '**'
-**
-echo "### Test memory consumption stays (almost) the same for 30 and 300 jobs"
-### Test memory consumption stays (almost) the same for 30 and 300 jobs
-echo "should give 1 == true"
-should give 1 == true
-  mem30=$( stdout time -f %M parallel -j2 true :::: <(perl -e '$a="x"x60000;for(1..30){print $a,"\n"}') );   mem300=$( stdout time -f %M parallel -j2 true :::: <(perl -e '$a="x"x60000;for(1..300){print $a,"\n"}') );   echo "Memory use should not depend very much on the total number of jobs run\n";   echo "Test if memory consumption(300 jobs) < memory consumption(30 jobs) * 110% ";   echo $(($mem300*100 < $mem30 * 110))
-Memory use should not depend very much on the total number of jobs run\n
-Test if memory consumption(300 jobs) < memory consumption(30 jobs) * 110% 
-1
-echo '**'
-**
-echo "### Test max line length -m -I"
-### Test max line length -m -I
-  seq 1 60000 | parallel -I :: -km -j1 echo a::b::c | sort >/tmp/114-a$$;   md5sum </tmp/114-a$$;   export CHAR=$(cat /tmp/114-a$$ | wc -c);   export LINES=$(cat /tmp/114-a$$ | wc -l);   echo "Chars per line ($CHAR/$LINES): "$(echo "$CHAR/$LINES" | bc);   rm /tmp/114-a$$
-d10d5c84fc4716b21d90afa92cf44d73  -
-Chars per line (697810/11): 63437
-echo "### Test max line length -X -I"
-### Test max line length -X -I
-  seq 1 60000 | parallel -I :: -kX -j1 echo a::b::c | sort >/tmp/114-b$$;   md5sum </tmp/114-b$$;   export CHAR=$(cat /tmp/114-b$$ | wc -c);   export LINES=$(cat /tmp/114-b$$ | wc -l);   echo "Chars per line ($CHAR/$LINES): "$(echo "$CHAR/$LINES" | bc);   rm /tmp/114-b$$
-47ec7550232044dc1e7a504705a45184  -
-Chars per line (817788/13): 62906
-echo '**'
-**
-echo "### bug #41609: --compress fails"
-### bug #41609: --compress fails
-  seq 12 | parallel --compress --compress-program bzip2 -k seq {} 1000000 | md5sum
-24812dd0f24a26d08a780f988b9d5ad2  -
-  seq 12 | parallel --compress -k seq {} 1000000 | md5sum
-24812dd0f24a26d08a780f988b9d5ad2  -
+par_compress_fail	### bug #41609: --compress fails
+par_compress_fail	24812dd0f24a26d08a780f988b9d5ad2  -
+par_compress_fail	24812dd0f24a26d08a780f988b9d5ad2  -
+par_first_print_halt_on_error_1	### Test first dying print --halt-on-error 1
+par_first_print_halt_on_error_1	0
+par_first_print_halt_on_error_1	parallel: This job failed:
+par_first_print_halt_on_error_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 1
+par_first_print_halt_on_error_1	parallel: Starting no more jobs. Waiting for 8 jobs to finish.
+par_first_print_halt_on_error_1	parallel: This job failed:
+par_first_print_halt_on_error_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 2
+par_first_print_halt_on_error_1	parallel: Starting no more jobs. Waiting for 7 jobs to finish.
+par_first_print_halt_on_error_1	3
+par_first_print_halt_on_error_1	0
+par_first_print_halt_on_error_1	1
+par_first_print_halt_on_error_1	2
+par_first_print_halt_on_error_1	parallel: This job failed:
+par_first_print_halt_on_error_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 3
+par_first_print_halt_on_error_1	parallel: Starting no more jobs. Waiting for 6 jobs to finish.
+par_first_print_halt_on_error_1	3
+par_first_print_halt_on_error_1	parallel: This job failed:
+par_first_print_halt_on_error_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 3
+par_first_print_halt_on_error_1	parallel: Starting no more jobs. Waiting for 5 jobs to finish.
+par_first_print_halt_on_error_1	4
+par_first_print_halt_on_error_1	parallel: This job failed:
+par_first_print_halt_on_error_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 4
+par_first_print_halt_on_error_1	parallel: Starting no more jobs. Waiting for 4 jobs to finish.
+par_first_print_halt_on_error_1	5
+par_first_print_halt_on_error_1	parallel: This job failed:
+par_first_print_halt_on_error_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 5
+par_first_print_halt_on_error_1	parallel: Starting no more jobs. Waiting for 3 jobs to finish.
+par_first_print_halt_on_error_1	6
+par_first_print_halt_on_error_1	parallel: This job failed:
+par_first_print_halt_on_error_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 6
+par_first_print_halt_on_error_1	parallel: Starting no more jobs. Waiting for 2 jobs to finish.
+par_first_print_halt_on_error_1	7
+par_first_print_halt_on_error_1	0
+par_first_print_halt_on_error_1	parallel: This job failed:
+par_first_print_halt_on_error_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 7
+par_first_print_halt_on_error_1	parallel: Starting no more jobs. Waiting for 1 jobs to finish.
+par_first_print_halt_on_error_1	8
+par_first_print_halt_on_error_1	parallel: This job failed:
+par_first_print_halt_on_error_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 8
+par_first_print_halt_on_error_1	exit code 1
+par_first_print_halt_on_error_2	### Test last dying print --halt-on-error 2
+par_first_print_halt_on_error_2	0
+par_first_print_halt_on_error_2	parallel: This job failed:
+par_first_print_halt_on_error_2	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ shift 1
+par_first_print_halt_on_error_2	exit code 1
+par_first_print_halt_on_error_minus_1	### Test last dying print --halt-on-error -1
+par_first_print_halt_on_error_minus_1	0
+par_first_print_halt_on_error_minus_1	parallel: This job succeeded:
+par_first_print_halt_on_error_minus_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 1
+par_first_print_halt_on_error_minus_1	parallel: Starting no more jobs. Waiting for 8 jobs to finish.
+par_first_print_halt_on_error_minus_1	parallel: This job succeeded:
+par_first_print_halt_on_error_minus_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 2
+par_first_print_halt_on_error_minus_1	parallel: Starting no more jobs. Waiting for 7 jobs to finish.
+par_first_print_halt_on_error_minus_1	3
+par_first_print_halt_on_error_minus_1	0
+par_first_print_halt_on_error_minus_1	1
+par_first_print_halt_on_error_minus_1	2
+par_first_print_halt_on_error_minus_1	parallel: This job succeeded:
+par_first_print_halt_on_error_minus_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 3
+par_first_print_halt_on_error_minus_1	parallel: Starting no more jobs. Waiting for 6 jobs to finish.
+par_first_print_halt_on_error_minus_1	3
+par_first_print_halt_on_error_minus_1	parallel: This job succeeded:
+par_first_print_halt_on_error_minus_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 3
+par_first_print_halt_on_error_minus_1	parallel: Starting no more jobs. Waiting for 5 jobs to finish.
+par_first_print_halt_on_error_minus_1	4
+par_first_print_halt_on_error_minus_1	parallel: This job succeeded:
+par_first_print_halt_on_error_minus_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 4
+par_first_print_halt_on_error_minus_1	parallel: Starting no more jobs. Waiting for 4 jobs to finish.
+par_first_print_halt_on_error_minus_1	5
+par_first_print_halt_on_error_minus_1	parallel: This job succeeded:
+par_first_print_halt_on_error_minus_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 5
+par_first_print_halt_on_error_minus_1	parallel: Starting no more jobs. Waiting for 3 jobs to finish.
+par_first_print_halt_on_error_minus_1	6
+par_first_print_halt_on_error_minus_1	parallel: This job succeeded:
+par_first_print_halt_on_error_minus_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 6
+par_first_print_halt_on_error_minus_1	parallel: Starting no more jobs. Waiting for 2 jobs to finish.
+par_first_print_halt_on_error_minus_1	7
+par_first_print_halt_on_error_minus_1	0
+par_first_print_halt_on_error_minus_1	parallel: This job succeeded:
+par_first_print_halt_on_error_minus_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 7
+par_first_print_halt_on_error_minus_1	parallel: Starting no more jobs. Waiting for 1 jobs to finish.
+par_first_print_halt_on_error_minus_1	8
+par_first_print_halt_on_error_minus_1	parallel: This job succeeded:
+par_first_print_halt_on_error_minus_1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 8
+par_first_print_halt_on_error_minus_1	exit code 0
+par_first_print_halt_on_error_minus_2	### Test last dying print --halt-on-error -2
+par_first_print_halt_on_error_minus_2	0
+par_first_print_halt_on_error_minus_2	parallel: This job succeeded:
+par_first_print_halt_on_error_minus_2	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ exit\ not\ shift 1
+par_first_print_halt_on_error_minus_2	exit code 0
+par_halt_on_error	-2 true true	0
+par_halt_on_error	-2 true true	0
+par_halt_on_error	-2 true true	parallel: This job succeeded:
+par_halt_on_error	-2 true true	sleep 1;true
+par_halt_on_error	-2 true true	parallel: This job succeeded:
+par_halt_on_error	-2 true true	sleep 1;true
+par_halt_on_error	-2 true false	0
+par_halt_on_error	-2 true false	0
+par_halt_on_error	-2 true false	parallel: This job succeeded:
+par_halt_on_error	-2 true false	sleep 1;true
+par_halt_on_error	-2 true false	parallel: This job succeeded:
+par_halt_on_error	-2 true false	sleep 1;true
+par_halt_on_error	-2 false true	0
+par_halt_on_error	-2 false true	0
+par_halt_on_error	-2 false true	parallel: This job succeeded:
+par_halt_on_error	-2 false true	sleep 2;true
+par_halt_on_error	-2 false true	parallel: This job succeeded:
+par_halt_on_error	-2 false true	sleep 2;true
+par_halt_on_error	-2 false false	3
+par_halt_on_error	-2 false false	4
+par_halt_on_error	-2 false false	/bin/bash: non_exist: command not found
+par_halt_on_error	-1 true true	0
+par_halt_on_error	-1 true true	0
+par_halt_on_error	-1 true true	parallel: This job succeeded:
+par_halt_on_error	-1 true true	sleep 1;true
+par_halt_on_error	-1 true true	parallel: Starting no more jobs. Waiting for 2 jobs to finish.
+par_halt_on_error	-1 true true	parallel: This job succeeded:
+par_halt_on_error	-1 true true	sleep 2;true
+par_halt_on_error	-1 true true	parallel: Starting no more jobs. Waiting for 1 jobs to finish.
+par_halt_on_error	-1 true true	parallel: This job succeeded:
+par_halt_on_error	-1 true true	sleep 3;true
+par_halt_on_error	-1 true true	parallel: This job succeeded:
+par_halt_on_error	-1 true true	sleep 1;true
+par_halt_on_error	-1 true true	parallel: Starting no more jobs. Waiting for 3 jobs to finish.
+par_halt_on_error	-1 true true	parallel: This job succeeded:
+par_halt_on_error	-1 true true	sleep 2;true
+par_halt_on_error	-1 true true	parallel: Starting no more jobs. Waiting for 2 jobs to finish.
+par_halt_on_error	-1 true true	parallel: This job succeeded:
+par_halt_on_error	-1 true true	sleep 3;true
+par_halt_on_error	-1 true true	parallel: Starting no more jobs. Waiting for 1 jobs to finish.
+par_halt_on_error	-1 true true	/bin/bash: non_exist: command not found
+par_halt_on_error	-1 true false	0
+par_halt_on_error	-1 true false	0
+par_halt_on_error	-1 true false	parallel: This job succeeded:
+par_halt_on_error	-1 true false	sleep 1;true
+par_halt_on_error	-1 true false	parallel: Starting no more jobs. Waiting for 2 jobs to finish.
+par_halt_on_error	-1 true false	parallel: This job succeeded:
+par_halt_on_error	-1 true false	sleep 3;true
+par_halt_on_error	-1 true false	parallel: This job succeeded:
+par_halt_on_error	-1 true false	sleep 1;true
+par_halt_on_error	-1 true false	parallel: Starting no more jobs. Waiting for 3 jobs to finish.
+par_halt_on_error	-1 true false	parallel: This job succeeded:
+par_halt_on_error	-1 true false	sleep 3;true
+par_halt_on_error	-1 true false	parallel: Starting no more jobs. Waiting for 1 jobs to finish.
+par_halt_on_error	-1 true false	/bin/bash: non_exist: command not found
+par_halt_on_error	-1 false true	0
+par_halt_on_error	-1 false true	0
+par_halt_on_error	-1 false true	parallel: This job succeeded:
+par_halt_on_error	-1 false true	sleep 2;true
+par_halt_on_error	-1 false true	parallel: Starting no more jobs. Waiting for 1 jobs to finish.
+par_halt_on_error	-1 false true	parallel: This job succeeded:
+par_halt_on_error	-1 false true	sleep 2;true
+par_halt_on_error	-1 false true	parallel: Starting no more jobs. Waiting for 2 jobs to finish.
+par_halt_on_error	-1 false true	/bin/bash: non_exist: command not found
+par_halt_on_error	-1 false false	3
+par_halt_on_error	-1 false false	4
+par_halt_on_error	-1 false false	/bin/bash: non_exist: command not found
+par_halt_on_error	0 true true	0
+par_halt_on_error	0 true true	1
+par_halt_on_error	0 true true	/bin/bash: non_exist: command not found
+par_halt_on_error	0 true false	1
+par_halt_on_error	0 true false	2
+par_halt_on_error	0 true false	/bin/bash: non_exist: command not found
+par_halt_on_error	0 false true	2
+par_halt_on_error	0 false true	3
+par_halt_on_error	0 false true	/bin/bash: non_exist: command not found
+par_halt_on_error	0 false false	3
+par_halt_on_error	0 false false	4
+par_halt_on_error	0 false false	/bin/bash: non_exist: command not found
+par_halt_on_error	1 true true	0
+par_halt_on_error	1 true true	127
+par_halt_on_error	1 true true	/bin/bash: non_exist: command not found
+par_halt_on_error	1 true true	parallel: This job failed:
+par_halt_on_error	1 true true	sleep 4;non_exist
+par_halt_on_error	1 true false	1
+par_halt_on_error	1 true false	1
+par_halt_on_error	1 true false	parallel: This job failed:
+par_halt_on_error	1 true false	sleep 2;false
+par_halt_on_error	1 true false	parallel: Starting no more jobs. Waiting for 1 jobs to finish.
+par_halt_on_error	1 true false	parallel: This job failed:
+par_halt_on_error	1 true false	sleep 2;false
+par_halt_on_error	1 true false	parallel: Starting no more jobs. Waiting for 2 jobs to finish.
+par_halt_on_error	1 true false	/bin/bash: non_exist: command not found
+par_halt_on_error	1 true false	parallel: This job failed:
+par_halt_on_error	1 true false	sleep 4;non_exist
+par_halt_on_error	1 false true	1
+par_halt_on_error	1 false true	1
+par_halt_on_error	1 false true	parallel: This job failed:
+par_halt_on_error	1 false true	sleep 1;false
+par_halt_on_error	1 false true	parallel: Starting no more jobs. Waiting for 2 jobs to finish.
+par_halt_on_error	1 false true	parallel: This job failed:
+par_halt_on_error	1 false true	sleep 3;false
+par_halt_on_error	1 false true	parallel: This job failed:
+par_halt_on_error	1 false true	sleep 1;false
+par_halt_on_error	1 false true	parallel: Starting no more jobs. Waiting for 3 jobs to finish.
+par_halt_on_error	1 false true	parallel: This job failed:
+par_halt_on_error	1 false true	sleep 3;false
+par_halt_on_error	1 false true	parallel: Starting no more jobs. Waiting for 1 jobs to finish.
+par_halt_on_error	1 false true	/bin/bash: non_exist: command not found
+par_halt_on_error	1 false true	parallel: This job failed:
+par_halt_on_error	1 false true	sleep 4;non_exist
+par_halt_on_error	1 false false	1
+par_halt_on_error	1 false false	1
+par_halt_on_error	1 false false	parallel: This job failed:
+par_halt_on_error	1 false false	sleep 1;false
+par_halt_on_error	1 false false	parallel: Starting no more jobs. Waiting for 2 jobs to finish.
+par_halt_on_error	1 false false	parallel: This job failed:
+par_halt_on_error	1 false false	sleep 2;false
+par_halt_on_error	1 false false	parallel: Starting no more jobs. Waiting for 1 jobs to finish.
+par_halt_on_error	1 false false	parallel: This job failed:
+par_halt_on_error	1 false false	sleep 3;false
+par_halt_on_error	1 false false	parallel: This job failed:
+par_halt_on_error	1 false false	sleep 1;false
+par_halt_on_error	1 false false	parallel: Starting no more jobs. Waiting for 3 jobs to finish.
+par_halt_on_error	1 false false	parallel: This job failed:
+par_halt_on_error	1 false false	sleep 2;false
+par_halt_on_error	1 false false	parallel: Starting no more jobs. Waiting for 2 jobs to finish.
+par_halt_on_error	1 false false	parallel: This job failed:
+par_halt_on_error	1 false false	sleep 3;false
+par_halt_on_error	1 false false	parallel: Starting no more jobs. Waiting for 1 jobs to finish.
+par_halt_on_error	1 false false	/bin/bash: non_exist: command not found
+par_halt_on_error	1 false false	parallel: This job failed:
+par_halt_on_error	1 false false	sleep 4;non_exist
+par_halt_on_error	2 true true	0
+par_halt_on_error	2 true true	127
+par_halt_on_error	2 true true	/bin/bash: non_exist: command not found
+par_halt_on_error	2 true true	parallel: This job failed:
+par_halt_on_error	2 true true	sleep 4;non_exist
+par_halt_on_error	2 true false	1
+par_halt_on_error	2 true false	1
+par_halt_on_error	2 true false	parallel: This job failed:
+par_halt_on_error	2 true false	sleep 2;false
+par_halt_on_error	2 true false	parallel: This job failed:
+par_halt_on_error	2 true false	sleep 2;false
+par_halt_on_error	2 false true	1
+par_halt_on_error	2 false true	1
+par_halt_on_error	2 false true	parallel: This job failed:
+par_halt_on_error	2 false true	sleep 1;false
+par_halt_on_error	2 false true	parallel: This job failed:
+par_halt_on_error	2 false true	sleep 1;false
+par_halt_on_error	2 false false	1
+par_halt_on_error	2 false false	1
+par_halt_on_error	2 false false	parallel: This job failed:
+par_halt_on_error	2 false false	sleep 1;false
+par_halt_on_error	2 false false	parallel: This job failed:
+par_halt_on_error	2 false false	sleep 1;false
+par_k_linebuffer	### bug #47750: -k --line-buffer should give current job up to now
+par_k_linebuffer	10	1
+par_k_linebuffer	10	2
+par_k_linebuffer	10	3
+par_k_linebuffer	10	4
+par_k_linebuffer	10	5
+par_k_linebuffer	10	6
+par_k_linebuffer	10	7
+par_k_linebuffer	10	8
+par_k_linebuffer	10	9
+par_k_linebuffer	10	10
+par_k_linebuffer	11	1
+par_k_linebuffer	11	2
+par_k_linebuffer	11	3
+par_k_linebuffer	11	4
+par_k_linebuffer	11	5
+par_k_linebuffer	11	6
+par_k_linebuffer	11	7
+par_k_linebuffer	11	8
+par_k_linebuffer	11	9
+par_k_linebuffer	11	10
+par_k_linebuffer	11	11
+par_k_linebuffer	12	1
+par_k_linebuffer	12	2
+par_k_linebuffer	12	3
+par_k_linebuffer	12	4
+par_k_linebuffer	12	5
+par_k_linebuffer	12	6
+par_k_linebuffer	12	7
+par_k_linebuffer	12	8
+par_k_linebuffer	12	9
+par_k_linebuffer	12	10
+par_k_linebuffer	12	11
+par_k_linebuffer	12	12
+par_k_linebuffer	13	1
+par_k_linebuffer	13	2
+par_k_linebuffer	13	3
+par_k_linebuffer	13	4
+par_k_linebuffer	13	5
+par_k_linebuffer	13	6
+par_k_linebuffer	13	7
+par_k_linebuffer	13	8
+par_k_linebuffer	13	9
+par_k_linebuffer	13	10
+par_k_linebuffer	13	11
+par_k_linebuffer	13	12
+par_k_linebuffer	13	13
+par_k_linebuffer	14	1
+par_k_linebuffer	14	2
+par_k_linebuffer	14	3
+par_k_linebuffer	14	4
+par_k_linebuffer	14	5
+par_k_linebuffer	14	6
+par_k_linebuffer	14	7
+par_k_linebuffer	14	8
+par_k_linebuffer	14	9
+par_k_linebuffer	14	10
+par_k_linebuffer	14	11
+par_k_linebuffer	14	12
+par_k_linebuffer	14	13
+par_k_linebuffer	14	14
+par_k_linebuffer	15	1
+par_k_linebuffer	15	2
+par_k_linebuffer	15	3
+par_k_linebuffer	15	4
+par_k_linebuffer	15	5
+par_k_linebuffer	15	6
+par_k_linebuffer	15	7
+par_k_linebuffer	15	8
+par_k_linebuffer	15	9
+par_k_linebuffer	15	10
+par_k_linebuffer	15	11
+par_k_linebuffer	15	12
+par_k_linebuffer	15	13
+par_k_linebuffer	15	14
+par_k_linebuffer	15	15
+par_k_linebuffer	16	1
+par_k_linebuffer	16	2
+par_k_linebuffer	16	3
+par_k_linebuffer	16	4
+par_k_linebuffer	16	5
+par_k_linebuffer	16	6
+par_k_linebuffer	16	7
+par_k_linebuffer	16	8
+par_k_linebuffer	16	9
+par_k_linebuffer	16	10
+par_k_linebuffer	16	11
+par_k_linebuffer	16	12
+par_k_linebuffer	16	13
+par_k_linebuffer	16	14
+par_k_linebuffer	16	15
+par_k_linebuffer	16	16
+par_k_linebuffer	17	1
+par_k_linebuffer	17	2
+par_k_linebuffer	17	3
+par_k_linebuffer	17	4
+par_k_linebuffer	17	5
+par_k_linebuffer	17	6
+par_k_linebuffer	17	7
+par_k_linebuffer	17	8
+par_k_linebuffer	17	9
+par_k_linebuffer	17	10
+par_k_linebuffer	17	11
+par_k_linebuffer	17	12
+par_k_linebuffer	17	13
+par_k_linebuffer	17	14
+par_k_linebuffer	17	15
+par_k_linebuffer	17	16
+par_k_linebuffer	17	17
+par_k_linebuffer	18	1
+par_k_linebuffer	18	2
+par_k_linebuffer	18	3
+par_k_linebuffer	18	4
+par_k_linebuffer	18	5
+par_k_linebuffer	18	6
+par_k_linebuffer	18	7
+par_k_linebuffer	18	8
+par_k_linebuffer	18	9
+par_k_linebuffer	18	10
+par_k_linebuffer	18	11
+par_k_linebuffer	18	12
+par_k_linebuffer	18	13
+par_k_linebuffer	18	14
+par_k_linebuffer	18	15
+par_k_linebuffer	18	16
+par_k_linebuffer	18	17
+par_k_linebuffer	18	18
+par_k_linebuffer	19	1
+par_k_linebuffer	19	2
+par_k_linebuffer	19	3
+par_k_linebuffer	19	4
+par_k_linebuffer	19	5
+par_k_linebuffer	19	6
+par_k_linebuffer	19	7
+par_k_linebuffer	19	8
+par_k_linebuffer	19	9
+par_k_linebuffer	19	10
+par_k_linebuffer	19	11
+par_k_linebuffer	19	12
+par_k_linebuffer	19	13
+par_k_linebuffer	19	14
+par_k_linebuffer	19	15
+par_k_linebuffer	19	16
+par_k_linebuffer	19	17
+par_k_linebuffer	19	18
+par_k_linebuffer	19	19
+par_k_linebuffer	20	1
+par_k_linebuffer	20	2
+par_k_linebuffer	20	3
+par_k_linebuffer	20	4
+par_k_linebuffer	20	5
+par_k_linebuffer	20	6
+par_k_linebuffer	20	7
+par_k_linebuffer	20	8
+par_k_linebuffer	20	9
+par_k_linebuffer	20	10
+par_k_linebuffer	20	11
+par_k_linebuffer	20	12
+par_k_linebuffer	20	13
+par_k_linebuffer	20	14
+par_k_linebuffer	20	15
+par_k_linebuffer	20	16
+par_k_linebuffer	20	17
+par_k_linebuffer	20	18
+par_k_linebuffer	20	19
+par_k_linebuffer	20	20
+par_k_linebuffer	stdout top
+par_k_linebuffer	stderr in the middle
+par_k_linebuffer	stdout end
+par_maxlinelen_X_I	### Test max line length -X -I
+par_maxlinelen_X_I	47ec7550232044dc1e7a504705a45184  -
+par_maxlinelen_X_I	Chars per line (817788/13): 62906
+par_maxlinelen_m_I	### Test max line length -m -I
+par_maxlinelen_m_I	d10d5c84fc4716b21d90afa92cf44d73  -
+par_maxlinelen_m_I	Chars per line (697810/11): 63437
+par_memleak	### Test memory consumption stays (almost) the same for 30 and 300 jobs
+par_memleak	should give 1 == true
+par_memleak	Memory use should not depend very much on the total number of jobs run\n
+par_memleak	Test if memory consumption(300 jobs) < memory consumption(30 jobs) * 110% 
+par_memleak	1
+par_pipepart_spawn	### bug #46214: Using --pipepart doesnt spawn multiple jobs in version 20150922
+par_pipepart_spawn	1:local / 2 / 999
+par_print_before_halt_on_error	### What is printed before the jobs are killed
+par_print_before_halt_on_error	-2	exit code 0
+par_print_before_halt_on_error	-2	0	0
+par_print_before_halt_on_error	-2	parallel: This job succeeded:
+par_print_before_halt_on_error	-2	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -2\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 1
+par_print_before_halt_on_error	-1	exit code 0
+par_print_before_halt_on_error	-1	0	0
+par_print_before_halt_on_error	-1	parallel: This job succeeded:
+par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 1
+par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 8 jobs to finish.
+par_print_before_halt_on_error	-1	parallel: This job succeeded:
+par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 2
+par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 7 jobs to finish.
+par_print_before_halt_on_error	-1	3	3
+par_print_before_halt_on_error	-1	0	0
+par_print_before_halt_on_error	-1	1	1
+par_print_before_halt_on_error	-1	2	2
+par_print_before_halt_on_error	-1	parallel: This job succeeded:
+par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 3
+par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 6 jobs to finish.
+par_print_before_halt_on_error	-1	3	3
+par_print_before_halt_on_error	-1	parallel: This job succeeded:
+par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 3
+par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 5 jobs to finish.
+par_print_before_halt_on_error	-1	4	4
+par_print_before_halt_on_error	-1	parallel: This job succeeded:
+par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 4
+par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 4 jobs to finish.
+par_print_before_halt_on_error	-1	5	5
+par_print_before_halt_on_error	-1	parallel: This job succeeded:
+par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 5
+par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 3 jobs to finish.
+par_print_before_halt_on_error	-1	6	6
+par_print_before_halt_on_error	-1	parallel: This job succeeded:
+par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 6
+par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 2 jobs to finish.
+par_print_before_halt_on_error	-1	7	7
+par_print_before_halt_on_error	-1	0	0
+par_print_before_halt_on_error	-1	parallel: This job succeeded:
+par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 7
+par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 1 jobs to finish.
+par_print_before_halt_on_error	-1	8	8
+par_print_before_halt_on_error	-1	parallel: This job succeeded:
+par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 8
+par_print_before_halt_on_error	0	exit code 3
+par_print_before_halt_on_error	0	0	0
+par_print_before_halt_on_error	0	3	3
+par_print_before_halt_on_error	0	0	0
+par_print_before_halt_on_error	0	1	1
+par_print_before_halt_on_error	0	2	2
+par_print_before_halt_on_error	0	3	3
+par_print_before_halt_on_error	0	4	4
+par_print_before_halt_on_error	0	5	5
+par_print_before_halt_on_error	0	6	6
+par_print_before_halt_on_error	0	7	7
+par_print_before_halt_on_error	0	0	0
+par_print_before_halt_on_error	0	8	8
+par_print_before_halt_on_error	1	exit code 1
+par_print_before_halt_on_error	1	0	0
+par_print_before_halt_on_error	1	parallel: This job failed:
+par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 1
+par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 8 jobs to finish.
+par_print_before_halt_on_error	1	parallel: This job failed:
+par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 2
+par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 7 jobs to finish.
+par_print_before_halt_on_error	1	3	3
+par_print_before_halt_on_error	1	0	0
+par_print_before_halt_on_error	1	1	1
+par_print_before_halt_on_error	1	2	2
+par_print_before_halt_on_error	1	parallel: This job failed:
+par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 3
+par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 6 jobs to finish.
+par_print_before_halt_on_error	1	3	3
+par_print_before_halt_on_error	1	parallel: This job failed:
+par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 3
+par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 5 jobs to finish.
+par_print_before_halt_on_error	1	4	4
+par_print_before_halt_on_error	1	parallel: This job failed:
+par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 4
+par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 4 jobs to finish.
+par_print_before_halt_on_error	1	5	5
+par_print_before_halt_on_error	1	parallel: This job failed:
+par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 5
+par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 3 jobs to finish.
+par_print_before_halt_on_error	1	6	6
+par_print_before_halt_on_error	1	parallel: This job failed:
+par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 6
+par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 2 jobs to finish.
+par_print_before_halt_on_error	1	7	7
+par_print_before_halt_on_error	1	0	0
+par_print_before_halt_on_error	1	parallel: This job failed:
+par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 7
+par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 1 jobs to finish.
+par_print_before_halt_on_error	1	8	8
+par_print_before_halt_on_error	1	parallel: This job failed:
+par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 8
+par_print_before_halt_on_error	2	exit code 1
+par_print_before_halt_on_error	2	0	0
+par_print_before_halt_on_error	2	parallel: This job failed:
+par_print_before_halt_on_error	2	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 2\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 1
+par_testhalt	### testhalt --halt now,fail=0
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	0
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	0
+par_testhalt	### testhalt --halt now,fail=1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	1
+par_testhalt	### testhalt --halt now,fail=2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.6; exit 2
+par_testhalt	2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.6; exit 2
+par_testhalt	2
+par_testhalt	### testhalt --halt now,fail=30%
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.6; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.9; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.5; exit 5
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.8; exit 6
+par_testhalt	30
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.6; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.9; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.5; exit 5
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.8; exit 6
+par_testhalt	30
+par_testhalt	### testhalt --halt now,fail=70%
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.6; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.9; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.5; exit 5
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.8; exit 6
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.1; exit 7
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.4; exit 8
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.7; exit 9
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 4; exit 10
+par_testhalt	50
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.6; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.9; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.5; exit 5
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.8; exit 6
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.1; exit 7
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.4; exit 8
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.7; exit 9
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 4; exit 10
+par_testhalt	50
+par_testhalt	### testhalt --halt now,success=0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	### testhalt --halt now,success=1
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	### testhalt --halt now,success=2
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	### testhalt --halt now,success=30%
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	### testhalt --halt now,success=70%
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	50
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	50
+par_testhalt	### testhalt --halt soon,fail=0
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.6; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.9; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 4
+par_testhalt	0
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.6; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.9; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 4
+par_testhalt	0
+par_testhalt	### testhalt --halt soon,fail=1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.6; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.9; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 4
+par_testhalt	1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.6; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.9; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 4
+par_testhalt	1
+par_testhalt	### testhalt --halt soon,fail=2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.6; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.9; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.5; exit 5
+par_testhalt	2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.6; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.9; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.5; exit 5
+par_testhalt	2
+par_testhalt	### testhalt --halt soon,fail=30%
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.6; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.9; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.5; exit 5
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.8; exit 6
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.1; exit 7
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.4; exit 8
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.7; exit 9
+par_testhalt	30
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.6; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.9; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.5; exit 5
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.8; exit 6
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.1; exit 7
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.4; exit 8
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.7; exit 9
+par_testhalt	30
+par_testhalt	### testhalt --halt soon,fail=70%
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.6; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.9; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.5; exit 5
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.8; exit 6
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.1; exit 7
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.4; exit 8
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.7; exit 9
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 4; exit 10
+par_testhalt	50
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.3; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.6; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.9; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.5; exit 5
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.8; exit 6
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.1; exit 7
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.4; exit 8
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.7; exit 9
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 4; exit 10
+par_testhalt	50
+par_testhalt	### testhalt --halt soon,success=0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	### testhalt --halt soon,success=1
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	### testhalt --halt soon,success=2
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	### testhalt --halt soon,success=30%
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	### testhalt --halt soon,success=70%
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	50
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	50

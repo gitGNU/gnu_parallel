@@ -225,7 +225,7 @@ echo 'bug #44250: pxz complains File format not recognized but decompresses anyw
 bug #44250: pxz complains File format not recognized but decompresses anyway
   # The first line dumps core if run from make file. Why?!
   stdout parallel --compress --compress-program pxz ls /{} ::: OK-if-missing-file
-ls: cannot access '/OK-if-missing-file': No such file or directory
+ls: cannot access /OK-if-missing-file: No such file or directory
   stdout parallel --compress --compress-program pixz --decompress-program 'pixz -d' ls /{}  ::: OK-if-missing-file
 ls: cannot access /OK-if-missing-file: No such file or directory
   stdout parallel --compress --compress-program pixz --decompress-program 'pixz -d' true ::: OK-if-no-output
@@ -251,7 +251,6 @@ lzip	1
 bzip2	1
 lbzip2	1
 lrz	1
-pxz	1
   doit() { parallel --results /tmp/par48658$1 --linebuffer --compress-program $1 seq ::: 100000 | wc -l ; rm -rf "/tmp/par48658$1"; };   export -f doit;   parallel --tag -k doit ::: zstd pzstd clzip lz4 lzop pigz pxz gzip plzip pbzip2 lzma xz lzip bzip2 lbzip2 lrz
 zstd	1
 pzstd	1
@@ -269,8 +268,6 @@ lzip	1
 bzip2	1
 lbzip2	1
 lrz	1
-pxz	1
-pbzip2	1
   doit() { parallel --linebuffer --compress-program $1 seq ::: 100000 | wc -l ; };   export -f doit;   parallel --tag -k doit ::: zstd pzstd clzip lz4 lzop pigz pxz gzip plzip pbzip2 lzma xz lzip bzip2 lbzip2 lrz
 zstd	100000
 pzstd	100000

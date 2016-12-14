@@ -263,6 +263,174 @@ par_append $SQLITE	:|sleep .3;echo 15 D|15|D|15 D
 par_append $SQLITE	|
 par_append $SQLITE	:|sleep .3;echo 15 E|15|E|15 E
 par_append $SQLITE	|
+p_wrapper par_shuf \$MYSQL
+par_shuf $MYSQL	1 a
+par_shuf $MYSQL	1 b
+par_shuf $MYSQL	1 c
+par_shuf $MYSQL	1 d
+par_shuf $MYSQL	1 e
+par_shuf $MYSQL	2 a
+par_shuf $MYSQL	2 b
+par_shuf $MYSQL	2 c
+par_shuf $MYSQL	2 d
+par_shuf $MYSQL	2 e
+par_shuf $MYSQL	3 a
+par_shuf $MYSQL	3 b
+par_shuf $MYSQL	3 c
+par_shuf $MYSQL	3 d
+par_shuf $MYSQL	3 e
+par_shuf $MYSQL	4 a
+par_shuf $MYSQL	4 b
+par_shuf $MYSQL	4 c
+par_shuf $MYSQL	4 d
+par_shuf $MYSQL	4 e
+par_shuf $MYSQL	5 a
+par_shuf $MYSQL	5 b
+par_shuf $MYSQL	5 c
+par_shuf $MYSQL	5 d
+par_shuf $MYSQL	5 e
+par_shuf $MYSQL	OK: Diff bigger than 2500 char
+par_shuf $MYSQL	Exit=0
+par_shuf $MYSQL	Exit=0
+par_shuf $MYSQL	Host	Command	V1	V2	Stdout	Stderr
+par_shuf $MYSQL	:	sleep .3;echo 1 a	1	a	/tmp/parallel-bug49791-c20/1/1/2/a/stdout	/tmp/parallel-bug49791-c20/1/1/2/a/stderr
+par_shuf $MYSQL	:	sleep .3;echo 1 b	1	b	/tmp/parallel-bug49791-c20/1/1/2/b/stdout	/tmp/parallel-bug49791-c20/1/1/2/b/stderr
+par_shuf $MYSQL	:	sleep .3;echo 1 c	1	c	/tmp/parallel-bug49791-c20/1/1/2/c/stdout	/tmp/parallel-bug49791-c20/1/1/2/c/stderr
+par_shuf $MYSQL	:	sleep .3;echo 1 d	1	d	/tmp/parallel-bug49791-c20/1/1/2/d/stdout	/tmp/parallel-bug49791-c20/1/1/2/d/stderr
+par_shuf $MYSQL	:	sleep .3;echo 1 e	1	e	/tmp/parallel-bug49791-c20/1/1/2/e/stdout	/tmp/parallel-bug49791-c20/1/1/2/e/stderr
+par_shuf $MYSQL	:	sleep .3;echo 2 a	2	a	/tmp/parallel-bug49791-c20/1/2/2/a/stdout	/tmp/parallel-bug49791-c20/1/2/2/a/stderr
+par_shuf $MYSQL	:	sleep .3;echo 2 b	2	b	/tmp/parallel-bug49791-c20/1/2/2/b/stdout	/tmp/parallel-bug49791-c20/1/2/2/b/stderr
+par_shuf $MYSQL	:	sleep .3;echo 2 c	2	c	/tmp/parallel-bug49791-c20/1/2/2/c/stdout	/tmp/parallel-bug49791-c20/1/2/2/c/stderr
+par_shuf $MYSQL	:	sleep .3;echo 2 d	2	d	/tmp/parallel-bug49791-c20/1/2/2/d/stdout	/tmp/parallel-bug49791-c20/1/2/2/d/stderr
+par_shuf $MYSQL	:	sleep .3;echo 2 e	2	e	/tmp/parallel-bug49791-c20/1/2/2/e/stdout	/tmp/parallel-bug49791-c20/1/2/2/e/stderr
+par_shuf $MYSQL	:	sleep .3;echo 3 a	3	a	/tmp/parallel-bug49791-c20/1/3/2/a/stdout	/tmp/parallel-bug49791-c20/1/3/2/a/stderr
+par_shuf $MYSQL	:	sleep .3;echo 3 b	3	b	/tmp/parallel-bug49791-c20/1/3/2/b/stdout	/tmp/parallel-bug49791-c20/1/3/2/b/stderr
+par_shuf $MYSQL	:	sleep .3;echo 3 c	3	c	/tmp/parallel-bug49791-c20/1/3/2/c/stdout	/tmp/parallel-bug49791-c20/1/3/2/c/stderr
+par_shuf $MYSQL	:	sleep .3;echo 3 d	3	d	/tmp/parallel-bug49791-c20/1/3/2/d/stdout	/tmp/parallel-bug49791-c20/1/3/2/d/stderr
+par_shuf $MYSQL	:	sleep .3;echo 3 e	3	e	/tmp/parallel-bug49791-c20/1/3/2/e/stdout	/tmp/parallel-bug49791-c20/1/3/2/e/stderr
+par_shuf $MYSQL	:	sleep .3;echo 4 a	4	a	/tmp/parallel-bug49791-c20/1/4/2/a/stdout	/tmp/parallel-bug49791-c20/1/4/2/a/stderr
+par_shuf $MYSQL	:	sleep .3;echo 4 b	4	b	/tmp/parallel-bug49791-c20/1/4/2/b/stdout	/tmp/parallel-bug49791-c20/1/4/2/b/stderr
+par_shuf $MYSQL	:	sleep .3;echo 4 c	4	c	/tmp/parallel-bug49791-c20/1/4/2/c/stdout	/tmp/parallel-bug49791-c20/1/4/2/c/stderr
+par_shuf $MYSQL	:	sleep .3;echo 4 d	4	d	/tmp/parallel-bug49791-c20/1/4/2/d/stdout	/tmp/parallel-bug49791-c20/1/4/2/d/stderr
+par_shuf $MYSQL	:	sleep .3;echo 4 e	4	e	/tmp/parallel-bug49791-c20/1/4/2/e/stdout	/tmp/parallel-bug49791-c20/1/4/2/e/stderr
+par_shuf $MYSQL	:	sleep .3;echo 5 a	5	a	/tmp/parallel-bug49791-c20/1/5/2/a/stdout	/tmp/parallel-bug49791-c20/1/5/2/a/stderr
+par_shuf $MYSQL	:	sleep .3;echo 5 b	5	b	/tmp/parallel-bug49791-c20/1/5/2/b/stdout	/tmp/parallel-bug49791-c20/1/5/2/b/stderr
+par_shuf $MYSQL	:	sleep .3;echo 5 c	5	c	/tmp/parallel-bug49791-c20/1/5/2/c/stdout	/tmp/parallel-bug49791-c20/1/5/2/c/stderr
+par_shuf $MYSQL	:	sleep .3;echo 5 d	5	d	/tmp/parallel-bug49791-c20/1/5/2/d/stdout	/tmp/parallel-bug49791-c20/1/5/2/d/stderr
+par_shuf $MYSQL	:	sleep .3;echo 5 e	5	e	/tmp/parallel-bug49791-c20/1/5/2/e/stdout	/tmp/parallel-bug49791-c20/1/5/2/e/stderr
+p_wrapper par_shuf \$PG
+par_shuf $PG	1 a
+par_shuf $PG	1 b
+par_shuf $PG	1 c
+par_shuf $PG	1 d
+par_shuf $PG	1 e
+par_shuf $PG	2 a
+par_shuf $PG	2 b
+par_shuf $PG	2 c
+par_shuf $PG	2 d
+par_shuf $PG	2 e
+par_shuf $PG	3 a
+par_shuf $PG	3 b
+par_shuf $PG	3 c
+par_shuf $PG	3 d
+par_shuf $PG	3 e
+par_shuf $PG	4 a
+par_shuf $PG	4 b
+par_shuf $PG	4 c
+par_shuf $PG	4 d
+par_shuf $PG	4 e
+par_shuf $PG	5 a
+par_shuf $PG	5 b
+par_shuf $PG	5 c
+par_shuf $PG	5 d
+par_shuf $PG	5 e
+par_shuf $PG	OK: Diff bigger than 2500 char
+par_shuf $PG	Exit=0
+par_shuf $PG	Exit=0
+par_shuf $PG	 host |      command      | v1 | v2 |                  stdout                   |                  stderr                   
+par_shuf $PG	------+-------------------+----+----+-------------------------------------------+-------------------------------------------
+par_shuf $PG	 :    | sleep .3;echo 1 a | 1  | a  | /tmp/parallel-bug49791-792/1/1/2/a/stdout | /tmp/parallel-bug49791-792/1/1/2/a/stderr
+par_shuf $PG	 :    | sleep .3;echo 1 b | 1  | b  | /tmp/parallel-bug49791-792/1/1/2/b/stdout | /tmp/parallel-bug49791-792/1/1/2/b/stderr
+par_shuf $PG	 :    | sleep .3;echo 1 c | 1  | c  | /tmp/parallel-bug49791-792/1/1/2/c/stdout | /tmp/parallel-bug49791-792/1/1/2/c/stderr
+par_shuf $PG	 :    | sleep .3;echo 1 d | 1  | d  | /tmp/parallel-bug49791-792/1/1/2/d/stdout | /tmp/parallel-bug49791-792/1/1/2/d/stderr
+par_shuf $PG	 :    | sleep .3;echo 1 e | 1  | e  | /tmp/parallel-bug49791-792/1/1/2/e/stdout | /tmp/parallel-bug49791-792/1/1/2/e/stderr
+par_shuf $PG	 :    | sleep .3;echo 2 a | 2  | a  | /tmp/parallel-bug49791-792/1/2/2/a/stdout | /tmp/parallel-bug49791-792/1/2/2/a/stderr
+par_shuf $PG	 :    | sleep .3;echo 2 b | 2  | b  | /tmp/parallel-bug49791-792/1/2/2/b/stdout | /tmp/parallel-bug49791-792/1/2/2/b/stderr
+par_shuf $PG	 :    | sleep .3;echo 2 c | 2  | c  | /tmp/parallel-bug49791-792/1/2/2/c/stdout | /tmp/parallel-bug49791-792/1/2/2/c/stderr
+par_shuf $PG	 :    | sleep .3;echo 2 d | 2  | d  | /tmp/parallel-bug49791-792/1/2/2/d/stdout | /tmp/parallel-bug49791-792/1/2/2/d/stderr
+par_shuf $PG	 :    | sleep .3;echo 2 e | 2  | e  | /tmp/parallel-bug49791-792/1/2/2/e/stdout | /tmp/parallel-bug49791-792/1/2/2/e/stderr
+par_shuf $PG	 :    | sleep .3;echo 3 a | 3  | a  | /tmp/parallel-bug49791-792/1/3/2/a/stdout | /tmp/parallel-bug49791-792/1/3/2/a/stderr
+par_shuf $PG	 :    | sleep .3;echo 3 b | 3  | b  | /tmp/parallel-bug49791-792/1/3/2/b/stdout | /tmp/parallel-bug49791-792/1/3/2/b/stderr
+par_shuf $PG	 :    | sleep .3;echo 3 c | 3  | c  | /tmp/parallel-bug49791-792/1/3/2/c/stdout | /tmp/parallel-bug49791-792/1/3/2/c/stderr
+par_shuf $PG	 :    | sleep .3;echo 3 d | 3  | d  | /tmp/parallel-bug49791-792/1/3/2/d/stdout | /tmp/parallel-bug49791-792/1/3/2/d/stderr
+par_shuf $PG	 :    | sleep .3;echo 3 e | 3  | e  | /tmp/parallel-bug49791-792/1/3/2/e/stdout | /tmp/parallel-bug49791-792/1/3/2/e/stderr
+par_shuf $PG	 :    | sleep .3;echo 4 a | 4  | a  | /tmp/parallel-bug49791-792/1/4/2/a/stdout | /tmp/parallel-bug49791-792/1/4/2/a/stderr
+par_shuf $PG	 :    | sleep .3;echo 4 b | 4  | b  | /tmp/parallel-bug49791-792/1/4/2/b/stdout | /tmp/parallel-bug49791-792/1/4/2/b/stderr
+par_shuf $PG	 :    | sleep .3;echo 4 c | 4  | c  | /tmp/parallel-bug49791-792/1/4/2/c/stdout | /tmp/parallel-bug49791-792/1/4/2/c/stderr
+par_shuf $PG	 :    | sleep .3;echo 4 d | 4  | d  | /tmp/parallel-bug49791-792/1/4/2/d/stdout | /tmp/parallel-bug49791-792/1/4/2/d/stderr
+par_shuf $PG	 :    | sleep .3;echo 4 e | 4  | e  | /tmp/parallel-bug49791-792/1/4/2/e/stdout | /tmp/parallel-bug49791-792/1/4/2/e/stderr
+par_shuf $PG	 :    | sleep .3;echo 5 a | 5  | a  | /tmp/parallel-bug49791-792/1/5/2/a/stdout | /tmp/parallel-bug49791-792/1/5/2/a/stderr
+par_shuf $PG	 :    | sleep .3;echo 5 b | 5  | b  | /tmp/parallel-bug49791-792/1/5/2/b/stdout | /tmp/parallel-bug49791-792/1/5/2/b/stderr
+par_shuf $PG	 :    | sleep .3;echo 5 c | 5  | c  | /tmp/parallel-bug49791-792/1/5/2/c/stdout | /tmp/parallel-bug49791-792/1/5/2/c/stderr
+par_shuf $PG	 :    | sleep .3;echo 5 d | 5  | d  | /tmp/parallel-bug49791-792/1/5/2/d/stdout | /tmp/parallel-bug49791-792/1/5/2/d/stderr
+par_shuf $PG	 :    | sleep .3;echo 5 e | 5  | e  | /tmp/parallel-bug49791-792/1/5/2/e/stdout | /tmp/parallel-bug49791-792/1/5/2/e/stderr
+par_shuf $PG	(25 rows)
+par_shuf $PG	
+p_wrapper par_shuf \$SQLITE
+par_shuf $SQLITE	1 a
+par_shuf $SQLITE	1 b
+par_shuf $SQLITE	1 c
+par_shuf $SQLITE	1 d
+par_shuf $SQLITE	1 e
+par_shuf $SQLITE	2 a
+par_shuf $SQLITE	2 b
+par_shuf $SQLITE	2 c
+par_shuf $SQLITE	2 d
+par_shuf $SQLITE	2 e
+par_shuf $SQLITE	3 a
+par_shuf $SQLITE	3 b
+par_shuf $SQLITE	3 c
+par_shuf $SQLITE	3 d
+par_shuf $SQLITE	3 e
+par_shuf $SQLITE	4 a
+par_shuf $SQLITE	4 b
+par_shuf $SQLITE	4 c
+par_shuf $SQLITE	4 d
+par_shuf $SQLITE	4 e
+par_shuf $SQLITE	5 a
+par_shuf $SQLITE	5 b
+par_shuf $SQLITE	5 c
+par_shuf $SQLITE	5 d
+par_shuf $SQLITE	5 e
+par_shuf $SQLITE	OK: Diff bigger than 2500 char
+par_shuf $SQLITE	Exit=0
+par_shuf $SQLITE	Exit=0
+par_shuf $SQLITE	Host|Command|V1|V2|Stdout|Stderr
+par_shuf $SQLITE	:|sleep .3;echo 1 a|1|a|/tmp/parallel-bug49791-932/1/1/2/a/stdout|/tmp/parallel-bug49791-932/1/1/2/a/stderr
+par_shuf $SQLITE	:|sleep .3;echo 1 b|1|b|/tmp/parallel-bug49791-932/1/1/2/b/stdout|/tmp/parallel-bug49791-932/1/1/2/b/stderr
+par_shuf $SQLITE	:|sleep .3;echo 1 c|1|c|/tmp/parallel-bug49791-932/1/1/2/c/stdout|/tmp/parallel-bug49791-932/1/1/2/c/stderr
+par_shuf $SQLITE	:|sleep .3;echo 1 d|1|d|/tmp/parallel-bug49791-932/1/1/2/d/stdout|/tmp/parallel-bug49791-932/1/1/2/d/stderr
+par_shuf $SQLITE	:|sleep .3;echo 1 e|1|e|/tmp/parallel-bug49791-932/1/1/2/e/stdout|/tmp/parallel-bug49791-932/1/1/2/e/stderr
+par_shuf $SQLITE	:|sleep .3;echo 2 a|2|a|/tmp/parallel-bug49791-932/1/2/2/a/stdout|/tmp/parallel-bug49791-932/1/2/2/a/stderr
+par_shuf $SQLITE	:|sleep .3;echo 2 b|2|b|/tmp/parallel-bug49791-932/1/2/2/b/stdout|/tmp/parallel-bug49791-932/1/2/2/b/stderr
+par_shuf $SQLITE	:|sleep .3;echo 2 c|2|c|/tmp/parallel-bug49791-932/1/2/2/c/stdout|/tmp/parallel-bug49791-932/1/2/2/c/stderr
+par_shuf $SQLITE	:|sleep .3;echo 2 d|2|d|/tmp/parallel-bug49791-932/1/2/2/d/stdout|/tmp/parallel-bug49791-932/1/2/2/d/stderr
+par_shuf $SQLITE	:|sleep .3;echo 2 e|2|e|/tmp/parallel-bug49791-932/1/2/2/e/stdout|/tmp/parallel-bug49791-932/1/2/2/e/stderr
+par_shuf $SQLITE	:|sleep .3;echo 3 a|3|a|/tmp/parallel-bug49791-932/1/3/2/a/stdout|/tmp/parallel-bug49791-932/1/3/2/a/stderr
+par_shuf $SQLITE	:|sleep .3;echo 3 b|3|b|/tmp/parallel-bug49791-932/1/3/2/b/stdout|/tmp/parallel-bug49791-932/1/3/2/b/stderr
+par_shuf $SQLITE	:|sleep .3;echo 3 c|3|c|/tmp/parallel-bug49791-932/1/3/2/c/stdout|/tmp/parallel-bug49791-932/1/3/2/c/stderr
+par_shuf $SQLITE	:|sleep .3;echo 3 d|3|d|/tmp/parallel-bug49791-932/1/3/2/d/stdout|/tmp/parallel-bug49791-932/1/3/2/d/stderr
+par_shuf $SQLITE	:|sleep .3;echo 3 e|3|e|/tmp/parallel-bug49791-932/1/3/2/e/stdout|/tmp/parallel-bug49791-932/1/3/2/e/stderr
+par_shuf $SQLITE	:|sleep .3;echo 4 a|4|a|/tmp/parallel-bug49791-932/1/4/2/a/stdout|/tmp/parallel-bug49791-932/1/4/2/a/stderr
+par_shuf $SQLITE	:|sleep .3;echo 4 b|4|b|/tmp/parallel-bug49791-932/1/4/2/b/stdout|/tmp/parallel-bug49791-932/1/4/2/b/stderr
+par_shuf $SQLITE	:|sleep .3;echo 4 c|4|c|/tmp/parallel-bug49791-932/1/4/2/c/stdout|/tmp/parallel-bug49791-932/1/4/2/c/stderr
+par_shuf $SQLITE	:|sleep .3;echo 4 d|4|d|/tmp/parallel-bug49791-932/1/4/2/d/stdout|/tmp/parallel-bug49791-932/1/4/2/d/stderr
+par_shuf $SQLITE	:|sleep .3;echo 4 e|4|e|/tmp/parallel-bug49791-932/1/4/2/e/stdout|/tmp/parallel-bug49791-932/1/4/2/e/stderr
+par_shuf $SQLITE	:|sleep .3;echo 5 a|5|a|/tmp/parallel-bug49791-932/1/5/2/a/stdout|/tmp/parallel-bug49791-932/1/5/2/a/stderr
+par_shuf $SQLITE	:|sleep .3;echo 5 b|5|b|/tmp/parallel-bug49791-932/1/5/2/b/stdout|/tmp/parallel-bug49791-932/1/5/2/b/stderr
+par_shuf $SQLITE	:|sleep .3;echo 5 c|5|c|/tmp/parallel-bug49791-932/1/5/2/c/stdout|/tmp/parallel-bug49791-932/1/5/2/c/stderr
+par_shuf $SQLITE	:|sleep .3;echo 5 d|5|d|/tmp/parallel-bug49791-932/1/5/2/d/stdout|/tmp/parallel-bug49791-932/1/5/2/d/stderr
+par_shuf $SQLITE	:|sleep .3;echo 5 e|5|e|/tmp/parallel-bug49791-932/1/5/2/e/stdout|/tmp/parallel-bug49791-932/1/5/2/e/stderr
 p_wrapper par_sqlandworker \$MYSQL
 par_sqlandworker $MYSQL	Exit=0
 par_sqlandworker $MYSQL	Exit=0

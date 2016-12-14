@@ -8,6 +8,10 @@ par_linebuffer_matters_compress	### (--linebuffer) --compress --tag should give 
 par_linebuffer_matters_compress	OK: --linebuffer makes a difference
 par_linebuffer_matters_compress_tag	### (--linebuffer) --compress --tag should give different output
 par_linebuffer_matters_compress_tag	OK: --linebuffer makes a difference
+par_memfree	### test memfree
+par_memfree	Free mem: 1k
+par_memfree	parallel: SIGTERM received. No new jobs will be started.
+par_memfree	parallel: Waiting for these 0 jobs to finish. Send SIGTERM again to stop now.
 par_memory_leak	### Test for memory leaks
 par_memory_leak	Of 30 runs of 1 job at least one should be bigger than a 3000 job run
 par_memory_leak	Good: No memleak detected.

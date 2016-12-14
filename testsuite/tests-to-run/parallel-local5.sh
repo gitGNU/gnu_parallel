@@ -115,9 +115,9 @@ echo '### Test --pipe default settings';
   cat /tmp/blocktest | parallel --pipe sort | sort -n | md5sum
 
 echo '### bug #44350: --tagstring should support \t'; 
-  parallel --tagstring 'a\tb' echo ::: c
-  parallel -d '\t' echo ::: 'a	b'
-  parallel -d '"' echo ::: 'a"b'
+  parallel -k --tagstring 'a\tb' echo ::: c
+  parallel -k -d '\t' echo ::: 'a	b'
+  parallel -k -d '"' echo ::: 'a"b'
 EOF
 
 rm /tmp/parallel-seq /tmp/blocktest
