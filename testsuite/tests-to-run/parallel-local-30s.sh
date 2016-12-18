@@ -22,15 +22,6 @@ par_tmp_full() {
     stdout parallel -j1 --tmpdir $SHM cat /dev/zero ::: dummy
 }
 
-par_bug_48290() {
-    echo "### bug #48290: round-robin does not distribute data based on business"
-    echo "Jobslot 1 is 256 times slower than jobslot 4 and should get much less data"
-    yes "$(seq 1000|xargs)" | head -c 30M |
-    parallel --tagstring {%} --linebuffer --compress -j4 --roundrobin --pipe --block 10k \
-      pv -qL '{= $_=int( $job->slot()**4/2+1) =}'0000 |
-      perl -ne '/^\d+/ and $s{$&}++; END { print map { "$_\n" } sort { $s{$b} <=> $s{$a} } keys %s}'
-}
-
 par_memory_leak() {
     a_run() {
 	seq $1 |time -v parallel true 2>&1 |

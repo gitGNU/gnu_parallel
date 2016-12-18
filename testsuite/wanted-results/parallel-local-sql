@@ -431,6 +431,461 @@ par_shuf $SQLITE	:|sleep .3;echo 5 b|5|b|/tmp/parallel-bug49791-932/1/5/2/b/stdo
 par_shuf $SQLITE	:|sleep .3;echo 5 c|5|c|/tmp/parallel-bug49791-932/1/5/2/c/stdout|/tmp/parallel-bug49791-932/1/5/2/c/stderr
 par_shuf $SQLITE	:|sleep .3;echo 5 d|5|d|/tmp/parallel-bug49791-932/1/5/2/d/stdout|/tmp/parallel-bug49791-932/1/5/2/d/stderr
 par_shuf $SQLITE	:|sleep .3;echo 5 e|5|e|/tmp/parallel-bug49791-932/1/5/2/e/stdout|/tmp/parallel-bug49791-932/1/5/2/e/stderr
+p_wrapper par_sql_joblog \$MYSQL
+par_sql_joblog $MYSQL	### should only give a single --joblog heading
+par_sql_joblog $MYSQL	### --sqlmaster/--sqlworker
+par_sql_joblog $MYSQL	1 a
+par_sql_joblog $MYSQL	1 b
+par_sql_joblog $MYSQL	1 c
+par_sql_joblog $MYSQL	1 d
+par_sql_joblog $MYSQL	1 e
+par_sql_joblog $MYSQL	2 a
+par_sql_joblog $MYSQL	2 b
+par_sql_joblog $MYSQL	2 c
+par_sql_joblog $MYSQL	2 d
+par_sql_joblog $MYSQL	2 e
+par_sql_joblog $MYSQL	3 a
+par_sql_joblog $MYSQL	3 b
+par_sql_joblog $MYSQL	3 c
+par_sql_joblog $MYSQL	3 d
+par_sql_joblog $MYSQL	3 e
+par_sql_joblog $MYSQL	4 a
+par_sql_joblog $MYSQL	4 b
+par_sql_joblog $MYSQL	4 c
+par_sql_joblog $MYSQL	4 d
+par_sql_joblog $MYSQL	4 e
+par_sql_joblog $MYSQL	5 a
+par_sql_joblog $MYSQL	5 b
+par_sql_joblog $MYSQL	5 c
+par_sql_joblog $MYSQL	5 d
+par_sql_joblog $MYSQL	5 e
+par_sql_joblog $MYSQL	Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
+par_sql_joblog $MYSQL	1	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 a
+par_sql_joblog $MYSQL	2	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 b
+par_sql_joblog $MYSQL	3	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 c
+par_sql_joblog $MYSQL	4	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 d
+par_sql_joblog $MYSQL	5	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 e
+par_sql_joblog $MYSQL	6	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 a
+par_sql_joblog $MYSQL	7	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 b
+par_sql_joblog $MYSQL	8	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 c
+par_sql_joblog $MYSQL	9	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 d
+par_sql_joblog $MYSQL	10	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 e
+par_sql_joblog $MYSQL	11	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 a
+par_sql_joblog $MYSQL	12	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 b
+par_sql_joblog $MYSQL	13	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 c
+par_sql_joblog $MYSQL	14	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 d
+par_sql_joblog $MYSQL	15	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 e
+par_sql_joblog $MYSQL	16	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 a
+par_sql_joblog $MYSQL	17	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 b
+par_sql_joblog $MYSQL	18	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 c
+par_sql_joblog $MYSQL	19	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 d
+par_sql_joblog $MYSQL	20	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 e
+par_sql_joblog $MYSQL	21	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 a
+par_sql_joblog $MYSQL	22	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 b
+par_sql_joblog $MYSQL	23	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 c
+par_sql_joblog $MYSQL	24	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 d
+par_sql_joblog $MYSQL	25	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 e
+par_sql_joblog $MYSQL	### --sqlandworker
+par_sql_joblog $MYSQL	Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
+par_sql_joblog $MYSQL	1	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 a
+par_sql_joblog $MYSQL	1 a
+par_sql_joblog $MYSQL	1 b
+par_sql_joblog $MYSQL	1 c
+par_sql_joblog $MYSQL	1 d
+par_sql_joblog $MYSQL	1 e
+par_sql_joblog $MYSQL	2	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 b
+par_sql_joblog $MYSQL	2 a
+par_sql_joblog $MYSQL	2 b
+par_sql_joblog $MYSQL	2 c
+par_sql_joblog $MYSQL	2 d
+par_sql_joblog $MYSQL	2 e
+par_sql_joblog $MYSQL	3	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 c
+par_sql_joblog $MYSQL	3 a
+par_sql_joblog $MYSQL	3 b
+par_sql_joblog $MYSQL	3 c
+par_sql_joblog $MYSQL	3 d
+par_sql_joblog $MYSQL	3 e
+par_sql_joblog $MYSQL	4	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 d
+par_sql_joblog $MYSQL	4 a
+par_sql_joblog $MYSQL	4 b
+par_sql_joblog $MYSQL	4 c
+par_sql_joblog $MYSQL	4 d
+par_sql_joblog $MYSQL	4 e
+par_sql_joblog $MYSQL	5	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 e
+par_sql_joblog $MYSQL	5 a
+par_sql_joblog $MYSQL	5 b
+par_sql_joblog $MYSQL	5 c
+par_sql_joblog $MYSQL	5 d
+par_sql_joblog $MYSQL	5 e
+par_sql_joblog $MYSQL	6	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 a
+par_sql_joblog $MYSQL	7	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 b
+par_sql_joblog $MYSQL	8	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 c
+par_sql_joblog $MYSQL	9	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 d
+par_sql_joblog $MYSQL	10	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 e
+par_sql_joblog $MYSQL	11	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 a
+par_sql_joblog $MYSQL	12	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 b
+par_sql_joblog $MYSQL	13	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 c
+par_sql_joblog $MYSQL	14	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 d
+par_sql_joblog $MYSQL	15	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 e
+par_sql_joblog $MYSQL	16	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 a
+par_sql_joblog $MYSQL	17	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 b
+par_sql_joblog $MYSQL	18	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 c
+par_sql_joblog $MYSQL	19	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 d
+par_sql_joblog $MYSQL	20	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 e
+par_sql_joblog $MYSQL	21	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 a
+par_sql_joblog $MYSQL	22	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 b
+par_sql_joblog $MYSQL	23	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 c
+par_sql_joblog $MYSQL	24	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 d
+par_sql_joblog $MYSQL	25	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 e
+par_sql_joblog $MYSQL	Exit=0
+par_sql_joblog $MYSQL	Exit=0
+par_sql_joblog $MYSQL	Host	Command	V1	V2	Stdout	Stderr
+par_sql_joblog $MYSQL	:	sleep .3;echo 1 a	1	a	1 a\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 1 b	1	b	1 b\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 1 c	1	c	1 c\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 1 d	1	d	1 d\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 1 e	1	e	1 e\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 2 a	2	a	2 a\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 2 b	2	b	2 b\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 2 c	2	c	2 c\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 2 d	2	d	2 d\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 2 e	2	e	2 e\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 3 a	3	a	3 a\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 3 b	3	b	3 b\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 3 c	3	c	3 c\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 3 d	3	d	3 d\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 3 e	3	e	3 e\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 4 a	4	a	4 a\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 4 b	4	b	4 b\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 4 c	4	c	4 c\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 4 d	4	d	4 d\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 4 e	4	e	4 e\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 5 a	5	a	5 a\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 5 b	5	b	5 b\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 5 c	5	c	5 c\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 5 d	5	d	5 d\n	
+par_sql_joblog $MYSQL	:	sleep .3;echo 5 e	5	e	5 e\n	
+p_wrapper par_sql_joblog \$PG
+par_sql_joblog $PG	### should only give a single --joblog heading
+par_sql_joblog $PG	### --sqlmaster/--sqlworker
+par_sql_joblog $PG	1 a
+par_sql_joblog $PG	1 b
+par_sql_joblog $PG	1 c
+par_sql_joblog $PG	1 d
+par_sql_joblog $PG	1 e
+par_sql_joblog $PG	2 a
+par_sql_joblog $PG	2 b
+par_sql_joblog $PG	2 c
+par_sql_joblog $PG	2 d
+par_sql_joblog $PG	2 e
+par_sql_joblog $PG	3 a
+par_sql_joblog $PG	3 b
+par_sql_joblog $PG	3 c
+par_sql_joblog $PG	3 d
+par_sql_joblog $PG	3 e
+par_sql_joblog $PG	4 a
+par_sql_joblog $PG	4 b
+par_sql_joblog $PG	4 c
+par_sql_joblog $PG	4 d
+par_sql_joblog $PG	4 e
+par_sql_joblog $PG	5 a
+par_sql_joblog $PG	5 b
+par_sql_joblog $PG	5 c
+par_sql_joblog $PG	5 d
+par_sql_joblog $PG	5 e
+par_sql_joblog $PG	Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
+par_sql_joblog $PG	1	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 a
+par_sql_joblog $PG	2	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 b
+par_sql_joblog $PG	3	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 c
+par_sql_joblog $PG	4	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 d
+par_sql_joblog $PG	5	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 e
+par_sql_joblog $PG	6	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 a
+par_sql_joblog $PG	7	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 b
+par_sql_joblog $PG	8	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 c
+par_sql_joblog $PG	9	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 d
+par_sql_joblog $PG	10	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 e
+par_sql_joblog $PG	11	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 a
+par_sql_joblog $PG	12	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 b
+par_sql_joblog $PG	13	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 c
+par_sql_joblog $PG	14	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 d
+par_sql_joblog $PG	15	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 e
+par_sql_joblog $PG	16	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 a
+par_sql_joblog $PG	17	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 b
+par_sql_joblog $PG	18	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 c
+par_sql_joblog $PG	19	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 d
+par_sql_joblog $PG	20	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 e
+par_sql_joblog $PG	21	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 a
+par_sql_joblog $PG	22	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 b
+par_sql_joblog $PG	23	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 c
+par_sql_joblog $PG	24	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 d
+par_sql_joblog $PG	25	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 e
+par_sql_joblog $PG	### --sqlandworker
+par_sql_joblog $PG	Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
+par_sql_joblog $PG	1	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 a
+par_sql_joblog $PG	1 a
+par_sql_joblog $PG	1 b
+par_sql_joblog $PG	1 c
+par_sql_joblog $PG	1 d
+par_sql_joblog $PG	1 e
+par_sql_joblog $PG	2	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 b
+par_sql_joblog $PG	2 a
+par_sql_joblog $PG	2 b
+par_sql_joblog $PG	2 c
+par_sql_joblog $PG	2 d
+par_sql_joblog $PG	2 e
+par_sql_joblog $PG	3	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 c
+par_sql_joblog $PG	3 a
+par_sql_joblog $PG	3 b
+par_sql_joblog $PG	3 c
+par_sql_joblog $PG	3 d
+par_sql_joblog $PG	3 e
+par_sql_joblog $PG	4	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 d
+par_sql_joblog $PG	4 a
+par_sql_joblog $PG	4 b
+par_sql_joblog $PG	4 c
+par_sql_joblog $PG	4 d
+par_sql_joblog $PG	4 e
+par_sql_joblog $PG	5	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 e
+par_sql_joblog $PG	5 a
+par_sql_joblog $PG	5 b
+par_sql_joblog $PG	5 c
+par_sql_joblog $PG	5 d
+par_sql_joblog $PG	5 e
+par_sql_joblog $PG	6	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 a
+par_sql_joblog $PG	7	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 b
+par_sql_joblog $PG	8	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 c
+par_sql_joblog $PG	9	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 d
+par_sql_joblog $PG	10	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 e
+par_sql_joblog $PG	11	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 a
+par_sql_joblog $PG	12	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 b
+par_sql_joblog $PG	13	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 c
+par_sql_joblog $PG	14	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 d
+par_sql_joblog $PG	15	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 e
+par_sql_joblog $PG	16	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 a
+par_sql_joblog $PG	17	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 b
+par_sql_joblog $PG	18	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 c
+par_sql_joblog $PG	19	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 d
+par_sql_joblog $PG	20	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 e
+par_sql_joblog $PG	21	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 a
+par_sql_joblog $PG	22	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 b
+par_sql_joblog $PG	23	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 c
+par_sql_joblog $PG	24	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 d
+par_sql_joblog $PG	25	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 e
+par_sql_joblog $PG	Exit=0
+par_sql_joblog $PG	Exit=0
+par_sql_joblog $PG	 host |      command      | v1 | v2 | stdout | stderr 
+par_sql_joblog $PG	------+-------------------+----+----+--------+--------
+par_sql_joblog $PG	 :    | sleep .3;echo 1 a | 1  | a  | 1 a   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 1 b | 1  | b  | 1 b   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 1 c | 1  | c  | 1 c   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 1 d | 1  | d  | 1 d   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 1 e | 1  | e  | 1 e   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 2 a | 2  | a  | 2 a   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 2 b | 2  | b  | 2 b   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 2 c | 2  | c  | 2 c   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 2 d | 2  | d  | 2 d   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 2 e | 2  | e  | 2 e   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 3 a | 3  | a  | 3 a   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 3 b | 3  | b  | 3 b   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 3 c | 3  | c  | 3 c   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 3 d | 3  | d  | 3 d   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 3 e | 3  | e  | 3 e   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 4 a | 4  | a  | 4 a   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 4 b | 4  | b  | 4 b   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 4 c | 4  | c  | 4 c   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 4 d | 4  | d  | 4 d   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 4 e | 4  | e  | 4 e   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 5 a | 5  | a  | 5 a   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 5 b | 5  | b  | 5 b   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 5 c | 5  | c  | 5 c   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 5 d | 5  | d  | 5 d   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	 :    | sleep .3;echo 5 e | 5  | e  | 5 e   +| 
+par_sql_joblog $PG	      |                   |    |    |        | 
+par_sql_joblog $PG	(25 rows)
+par_sql_joblog $PG	
+p_wrapper par_sql_joblog \$SQLITE
+par_sql_joblog $SQLITE	### should only give a single --joblog heading
+par_sql_joblog $SQLITE	### --sqlmaster/--sqlworker
+par_sql_joblog $SQLITE	1 a
+par_sql_joblog $SQLITE	1 b
+par_sql_joblog $SQLITE	1 c
+par_sql_joblog $SQLITE	1 d
+par_sql_joblog $SQLITE	1 e
+par_sql_joblog $SQLITE	2 a
+par_sql_joblog $SQLITE	2 b
+par_sql_joblog $SQLITE	2 c
+par_sql_joblog $SQLITE	2 d
+par_sql_joblog $SQLITE	2 e
+par_sql_joblog $SQLITE	3 a
+par_sql_joblog $SQLITE	3 b
+par_sql_joblog $SQLITE	3 c
+par_sql_joblog $SQLITE	3 d
+par_sql_joblog $SQLITE	3 e
+par_sql_joblog $SQLITE	4 a
+par_sql_joblog $SQLITE	4 b
+par_sql_joblog $SQLITE	4 c
+par_sql_joblog $SQLITE	4 d
+par_sql_joblog $SQLITE	4 e
+par_sql_joblog $SQLITE	5 a
+par_sql_joblog $SQLITE	5 b
+par_sql_joblog $SQLITE	5 c
+par_sql_joblog $SQLITE	5 d
+par_sql_joblog $SQLITE	5 e
+par_sql_joblog $SQLITE	Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
+par_sql_joblog $SQLITE	1	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 a
+par_sql_joblog $SQLITE	2	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 b
+par_sql_joblog $SQLITE	3	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 c
+par_sql_joblog $SQLITE	4	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 d
+par_sql_joblog $SQLITE	5	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 e
+par_sql_joblog $SQLITE	6	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 a
+par_sql_joblog $SQLITE	7	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 b
+par_sql_joblog $SQLITE	8	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 c
+par_sql_joblog $SQLITE	9	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 d
+par_sql_joblog $SQLITE	10	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 e
+par_sql_joblog $SQLITE	11	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 a
+par_sql_joblog $SQLITE	12	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 b
+par_sql_joblog $SQLITE	13	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 c
+par_sql_joblog $SQLITE	14	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 d
+par_sql_joblog $SQLITE	15	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 e
+par_sql_joblog $SQLITE	16	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 a
+par_sql_joblog $SQLITE	17	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 b
+par_sql_joblog $SQLITE	18	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 c
+par_sql_joblog $SQLITE	19	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 d
+par_sql_joblog $SQLITE	20	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 e
+par_sql_joblog $SQLITE	21	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 a
+par_sql_joblog $SQLITE	22	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 b
+par_sql_joblog $SQLITE	23	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 c
+par_sql_joblog $SQLITE	24	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 d
+par_sql_joblog $SQLITE	25	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 e
+par_sql_joblog $SQLITE	### --sqlandworker
+par_sql_joblog $SQLITE	Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
+par_sql_joblog $SQLITE	1	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 a
+par_sql_joblog $SQLITE	1 a
+par_sql_joblog $SQLITE	1 b
+par_sql_joblog $SQLITE	1 c
+par_sql_joblog $SQLITE	1 d
+par_sql_joblog $SQLITE	1 e
+par_sql_joblog $SQLITE	2	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 b
+par_sql_joblog $SQLITE	2 a
+par_sql_joblog $SQLITE	2 b
+par_sql_joblog $SQLITE	2 c
+par_sql_joblog $SQLITE	2 d
+par_sql_joblog $SQLITE	2 e
+par_sql_joblog $SQLITE	3	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 c
+par_sql_joblog $SQLITE	3 a
+par_sql_joblog $SQLITE	3 b
+par_sql_joblog $SQLITE	3 c
+par_sql_joblog $SQLITE	3 d
+par_sql_joblog $SQLITE	3 e
+par_sql_joblog $SQLITE	4	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 d
+par_sql_joblog $SQLITE	4 a
+par_sql_joblog $SQLITE	4 b
+par_sql_joblog $SQLITE	4 c
+par_sql_joblog $SQLITE	4 d
+par_sql_joblog $SQLITE	4 e
+par_sql_joblog $SQLITE	5	:	999.999	     999.999	0	0	0	0	sleep .3;echo 1 e
+par_sql_joblog $SQLITE	5 a
+par_sql_joblog $SQLITE	5 b
+par_sql_joblog $SQLITE	5 c
+par_sql_joblog $SQLITE	5 d
+par_sql_joblog $SQLITE	5 e
+par_sql_joblog $SQLITE	6	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 a
+par_sql_joblog $SQLITE	7	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 b
+par_sql_joblog $SQLITE	8	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 c
+par_sql_joblog $SQLITE	9	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 d
+par_sql_joblog $SQLITE	10	:	999.999	     999.999	0	0	0	0	sleep .3;echo 2 e
+par_sql_joblog $SQLITE	11	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 a
+par_sql_joblog $SQLITE	12	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 b
+par_sql_joblog $SQLITE	13	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 c
+par_sql_joblog $SQLITE	14	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 d
+par_sql_joblog $SQLITE	15	:	999.999	     999.999	0	0	0	0	sleep .3;echo 3 e
+par_sql_joblog $SQLITE	16	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 a
+par_sql_joblog $SQLITE	17	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 b
+par_sql_joblog $SQLITE	18	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 c
+par_sql_joblog $SQLITE	19	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 d
+par_sql_joblog $SQLITE	20	:	999.999	     999.999	0	0	0	0	sleep .3;echo 4 e
+par_sql_joblog $SQLITE	21	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 a
+par_sql_joblog $SQLITE	22	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 b
+par_sql_joblog $SQLITE	23	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 c
+par_sql_joblog $SQLITE	24	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 d
+par_sql_joblog $SQLITE	25	:	999.999	     999.999	0	0	0	0	sleep .3;echo 5 e
+par_sql_joblog $SQLITE	Exit=0
+par_sql_joblog $SQLITE	Exit=0
+par_sql_joblog $SQLITE	Host|Command|V1|V2|Stdout|Stderr
+par_sql_joblog $SQLITE	:|sleep .3;echo 1 a|1|a|1 a
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 1 b|1|b|1 b
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 1 c|1|c|1 c
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 1 d|1|d|1 d
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 1 e|1|e|1 e
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 2 a|2|a|2 a
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 2 b|2|b|2 b
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 2 c|2|c|2 c
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 2 d|2|d|2 d
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 2 e|2|e|2 e
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 3 a|3|a|3 a
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 3 b|3|b|3 b
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 3 c|3|c|3 c
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 3 d|3|d|3 d
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 3 e|3|e|3 e
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 4 a|4|a|4 a
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 4 b|4|b|4 b
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 4 c|4|c|4 c
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 4 d|4|d|4 d
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 4 e|4|e|4 e
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 5 a|5|a|5 a
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 5 b|5|b|5 b
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 5 c|5|c|5 c
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 5 d|5|d|5 d
+par_sql_joblog $SQLITE	|
+par_sql_joblog $SQLITE	:|sleep .3;echo 5 e|5|e|5 e
+par_sql_joblog $SQLITE	|
 p_wrapper par_sqlandworker \$MYSQL
 par_sqlandworker $MYSQL	Exit=0
 par_sqlandworker $MYSQL	Exit=0
@@ -575,92 +1030,142 @@ p_wrapper par_sqlandworker_compress_linebuffer_tag \$MYSQL
 par_sqlandworker_compress_linebuffer_tag $MYSQL	Exit=0
 par_sqlandworker_compress_linebuffer_tag $MYSQL	Exit=0
 par_sqlandworker_compress_linebuffer_tag $MYSQL	Host	Command	V1	V2	Stdout	Stderr
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 1 a	1	a	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 1 b	1	b	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 1 c	1	c	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 1 d	1	d	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 1 e	1	e	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 2 a	2	a	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 2 b	2	b	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 2 c	2	c	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 2 d	2	d	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 2 e	2	e	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 3 a	3	a	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 3 b	3	b	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 3 c	3	c	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 3 d	3	d	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 3 e	3	e	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 4 a	4	a	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 4 b	4	b	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 4 c	4	c	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 4 d	4	d	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 4 e	4	e	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 5 a	5	a	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 5 b	5	b	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 5 c	5	c	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 5 d	5	d	NULL	NULL
-par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 5 e	5	e	NULL	NULL
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 1 a	1	a	1 a\t1 a\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 1 b	1	b	1 b\t1 b\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 1 c	1	c	1 c\t1 c\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 1 d	1	d	1 d\t1 d\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 1 e	1	e	1 e\t1 e\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 2 a	2	a	2 a\t2 a\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 2 b	2	b	2 b\t2 b\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 2 c	2	c	2 c\t2 c\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 2 d	2	d	2 d\t2 d\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 2 e	2	e	2 e\t2 e\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 3 a	3	a	3 a\t3 a\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 3 b	3	b	3 b\t3 b\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 3 c	3	c	3 c\t3 c\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 3 d	3	d	3 d\t3 d\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 3 e	3	e	3 e\t3 e\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 4 a	4	a	4 a\t4 a\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 4 b	4	b	4 b\t4 b\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 4 c	4	c	4 c\t4 c\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 4 d	4	d	4 d\t4 d\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 4 e	4	e	4 e\t4 e\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 5 a	5	a	5 a\t5 a\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 5 b	5	b	5 b\t5 b\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 5 c	5	c	5 c\t5 c\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 5 d	5	d	5 d\t5 d\n	
+par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 5 e	5	e	5 e\t5 e\n	
 p_wrapper par_sqlandworker_compress_linebuffer_tag \$PG
 par_sqlandworker_compress_linebuffer_tag $PG	Exit=0
 par_sqlandworker_compress_linebuffer_tag $PG	Exit=0
-par_sqlandworker_compress_linebuffer_tag $PG	 host |      command      | v1 | v2 | stdout | stderr 
-par_sqlandworker_compress_linebuffer_tag $PG	------+-------------------+----+----+--------+--------
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 1 a | 1  | a  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 1 b | 1  | b  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 1 c | 1  | c  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 1 d | 1  | d  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 1 e | 1  | e  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 2 a | 2  | a  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 2 b | 2  | b  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 2 c | 2  | c  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 2 d | 2  | d  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 2 e | 2  | e  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 3 a | 3  | a  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 3 b | 3  | b  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 3 c | 3  | c  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 3 d | 3  | d  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 3 e | 3  | e  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 4 a | 4  | a  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 4 b | 4  | b  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 4 c | 4  | c  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 4 d | 4  | d  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 4 e | 4  | e  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 5 a | 5  | a  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 5 b | 5  | b  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 5 c | 5  | c  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 5 d | 5  | d  |        | 
-par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 5 e | 5  | e  |        | 
+par_sqlandworker_compress_linebuffer_tag $PG	 host |      command      | v1 | v2 |   stdout    | stderr 
+par_sqlandworker_compress_linebuffer_tag $PG	------+-------------------+----+----+-------------+--------
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 1 a | 1  | a  | 1 a     1 a+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 1 b | 1  | b  | 1 b     1 b+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 1 c | 1  | c  | 1 c     1 c+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 1 d | 1  | d  | 1 d     1 d+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 1 e | 1  | e  | 1 e     1 e+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 2 a | 2  | a  | 2 a     2 a+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 2 b | 2  | b  | 2 b     2 b+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 2 c | 2  | c  | 2 c     2 c+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 2 d | 2  | d  | 2 d     2 d+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 2 e | 2  | e  | 2 e     2 e+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 3 a | 3  | a  | 3 a     3 a+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 3 b | 3  | b  | 3 b     3 b+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 3 c | 3  | c  | 3 c     3 c+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 3 d | 3  | d  | 3 d     3 d+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 3 e | 3  | e  | 3 e     3 e+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 4 a | 4  | a  | 4 a     4 a+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 4 b | 4  | b  | 4 b     4 b+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 4 c | 4  | c  | 4 c     4 c+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 4 d | 4  | d  | 4 d     4 d+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 4 e | 4  | e  | 4 e     4 e+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 5 a | 5  | a  | 5 a     5 a+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 5 b | 5  | b  | 5 b     5 b+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 5 c | 5  | c  | 5 c     5 c+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 5 d | 5  | d  | 5 d     5 d+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
+par_sqlandworker_compress_linebuffer_tag $PG	 :    | sleep .3;echo 5 e | 5  | e  | 5 e     5 e+| 
+par_sqlandworker_compress_linebuffer_tag $PG	      |                   |    |    |             | 
 par_sqlandworker_compress_linebuffer_tag $PG	(25 rows)
 par_sqlandworker_compress_linebuffer_tag $PG	
 p_wrapper par_sqlandworker_compress_linebuffer_tag \$SQLITE
 par_sqlandworker_compress_linebuffer_tag $SQLITE	Exit=0
 par_sqlandworker_compress_linebuffer_tag $SQLITE	Exit=0
 par_sqlandworker_compress_linebuffer_tag $SQLITE	Host|Command|V1|V2|Stdout|Stderr
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 1 a|1|a||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 1 b|1|b||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 1 c|1|c||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 1 d|1|d||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 1 e|1|e||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 2 a|2|a||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 2 b|2|b||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 2 c|2|c||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 2 d|2|d||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 2 e|2|e||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 3 a|3|a||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 3 b|3|b||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 3 c|3|c||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 3 d|3|d||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 3 e|3|e||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 4 a|4|a||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 4 b|4|b||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 4 c|4|c||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 4 d|4|d||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 4 e|4|e||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 5 a|5|a||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 5 b|5|b||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 5 c|5|c||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 5 d|5|d||
-par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 5 e|5|e||
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 1 a|1|a|1 a	1 a
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 1 b|1|b|1 b	1 b
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 1 c|1|c|1 c	1 c
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 1 d|1|d|1 d	1 d
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 1 e|1|e|1 e	1 e
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 2 a|2|a|2 a	2 a
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 2 b|2|b|2 b	2 b
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 2 c|2|c|2 c	2 c
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 2 d|2|d|2 d	2 d
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 2 e|2|e|2 e	2 e
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 3 a|3|a|3 a	3 a
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 3 b|3|b|3 b	3 b
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 3 c|3|c|3 c	3 c
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 3 d|3|d|3 d	3 d
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 3 e|3|e|3 e	3 e
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 4 a|4|a|4 a	4 a
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 4 b|4|b|4 b	4 b
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 4 c|4|c|4 c	4 c
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 4 d|4|d|4 d	4 d
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 4 e|4|e|4 e	4 e
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 5 a|5|a|5 a	5 a
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 5 b|5|b|5 b	5 b
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 5 c|5|c|5 c	5 c
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 5 d|5|d|5 d	5 d
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
+par_sqlandworker_compress_linebuffer_tag $SQLITE	:|sleep .3;echo 5 e|5|e|5 e	5 e
+par_sqlandworker_compress_linebuffer_tag $SQLITE	|
 p_wrapper par_sqlandworker_linebuffer \$MYSQL
 par_sqlandworker_linebuffer $MYSQL	Exit=0
 par_sqlandworker_linebuffer $MYSQL	Exit=0
@@ -1505,31 +2010,31 @@ p_wrapper par_sqlandworker_unbuffer \$MYSQL
 par_sqlandworker_unbuffer $MYSQL	Exit=0
 par_sqlandworker_unbuffer $MYSQL	Exit=0
 par_sqlandworker_unbuffer $MYSQL	Host	Command	V1	V2	Stdout	Stderr
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 1 a	1	a	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 1 b	1	b	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 1 c	1	c	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 1 d	1	d	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 1 e	1	e	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 2 a	2	a	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 2 b	2	b	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 2 c	2	c	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 2 d	2	d	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 2 e	2	e	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 3 a	3	a	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 3 b	3	b	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 3 c	3	c	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 3 d	3	d	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 3 e	3	e	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 4 a	4	a	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 4 b	4	b	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 4 c	4	c	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 4 d	4	d	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 4 e	4	e	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 a	5	a	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 b	5	b	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 c	5	c	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 d	5	d	NULL	NULL
-par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 e	5	e	NULL	NULL
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 1 a	1	a		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 1 b	1	b		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 1 c	1	c		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 1 d	1	d		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 1 e	1	e		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 2 a	2	a		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 2 b	2	b		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 2 c	2	c		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 2 d	2	d		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 2 e	2	e		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 3 a	3	a		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 3 b	3	b		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 3 c	3	c		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 3 d	3	d		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 3 e	3	e		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 4 a	4	a		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 4 b	4	b		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 4 c	4	c		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 4 d	4	d		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 4 e	4	e		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 a	5	a		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 b	5	b		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 c	5	c		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 d	5	d		
+par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 e	5	e		
 p_wrapper par_sqlandworker_unbuffer \$PG
 par_sqlandworker_unbuffer $PG	Exit=0
 par_sqlandworker_unbuffer $PG	Exit=0

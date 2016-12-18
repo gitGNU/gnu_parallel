@@ -664,3 +664,13 @@ find /tmp{/*,}/*.{par,tms,tmx} 2>/dev/null -mmin -10 | wc -l
 find /tmp{/*,}/*.{par,tms,tmx} 2>/dev/null -mmin -10 | parallel rm
 
 sudo umount -l /tmp/smalldisk.img
+
+par_empty() {
+    echo "bug #:"
+
+    parallel echo ::: true
+}
+
+
+export -f $(compgen -A function | grep par_)
+compgen -A function | grep par_ | sort | parallel -j6 --tag -k '{} 2>&1'

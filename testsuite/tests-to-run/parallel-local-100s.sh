@@ -1,5 +1,4 @@
 #!/bin/bash
-exit 0
 
 # Simple jobs that never fails
 # Each should be taking >100s and be possible to run in parallel

@@ -30,7 +30,7 @@ p_wrapper() {
 }
 
 p_template() {
-  (sleep 2;
+  (sleep 3;
    parallel --sqlworker $DBURL    "$@" sleep .3\;echo >$T1) &
   parallel  --sqlandworker $DBURL "$@" sleep .3\;echo ::: {1..5} ::: {a..e} >$T2;
 }
@@ -112,9 +112,27 @@ par_shuf() {
   touch $T1
 }
 
+par_sqlandworker_lo() {
+  p_template -S lo
+}
+
+par_sql_joblog() {
+  echo '### should only give a single --joblog heading'
+  echo '### --sqlmaster/--sqlworker'
+  parallel -k --joblog - --sqlmaster $DBURL --wait sleep .3\;echo ::: {1..5} ::: {a..e} |
+    perl -pe 's/\d+\.\d+/999.999/g' | sort -n &
+  sleep 0.5
+  parallel -k --joblog - --sqlworker $DBURL sleep .3\;echo 
+  wait
+  echo '### --sqlandworker'
+  parallel -k --joblog - --sqlandworker $DBURL sleep .3\;echo ::: {1..5} ::: {a..e} |
+    perl -pe 's/\d+\.\d+/999.999/g' | sort -n
+  # TODO --sqlandworker --wait
+}
+
 
 export -f $(compgen -A function | egrep 'p_|par_')
 # Tested that -j0 in parallel is fastest (up to 15 jobs)
 compgen -A function | grep par_ | sort |
-  stdout parallel -vj5 -k --tag --joblog /tmp/jl-`basename $0` p_wrapper \
+  stdout parallel -vj3 -k --tag --joblog /tmp/jl-`basename $0` p_wrapper \
     :::: - ::: \$MYSQL \$PG \$SQLITE

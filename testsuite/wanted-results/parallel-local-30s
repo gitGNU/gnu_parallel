@@ -1,9 +1,3 @@
-par_bug_48290	### bug #48290: round-robin does not distribute data based on business
-par_bug_48290	Jobslot 1 is 256 times slower than jobslot 4 and should get much less data
-par_bug_48290	4
-par_bug_48290	3
-par_bug_48290	2
-par_bug_48290	1
 par_linebuffer_matters_compress	### (--linebuffer) --compress --tag should give different output
 par_linebuffer_matters_compress	OK: --linebuffer makes a difference
 par_linebuffer_matters_compress_tag	### (--linebuffer) --compress --tag should give different output

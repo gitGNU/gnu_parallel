@@ -133,6 +133,7 @@ par_compress_fail() {
 }
 
 par_distribute_input_by_ability() {
+    echo "### bug #48290: round-robin does not distribute data based on business"
     echo "### Distribute input to jobs that are ready"
     echo "Job-slot n is 50% slower than n+1, so the order should be 1..7"
     seq 20000000 |
@@ -147,6 +148,22 @@ par_round_robin_blocks() {
     seq 20000000 | parallel --block 10M --round-robin --pipe wc -c | wc -l
 }
 
+par_results_csv() {
+    echo "bug #: --results csv"
+
+    doit() {
+	parallel -k $@ --results -.csv echo ::: H2 22 23 ::: H1 11 12;
+    }
+    export -f doit
+    parallel -k --tag doit ::: '--header :' '' \
+	::: --tag '' ::: --lb '' ::: --files '' ::: --compress '' |
+    perl -pe 's:/par......par:/tmpfile:g;s/\d+\.\d+/999.999/g'
+}
+
+par_results_compress() {
+    parallel --results /tmp/ged --compress echo ::: 1 | wc -l
+    parallel --results /tmp/ged echo ::: 1 | wc -l
+}
 
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort | parallel -j6 --tag -k '{} 2>&1'

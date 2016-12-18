@@ -1759,3 +1759,5 @@ echo '**'
 **
 ### 1 .par file from --files expected
 10
+par_empty	bug #:
+par_empty	true

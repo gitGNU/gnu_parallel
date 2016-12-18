@@ -565,9 +565,10 @@ Compress temporary files. If the output is big and very compressible
 this will take up less disk space in $TMPDIR and possibly be faster
 due to less disk I/O.
 
-GNU B<parallel> will try B<lz4>, B<lzop>, B<pbzip2>, B<pigz>,
-B<plzip>, B<lzip> B<gzip>, B<pxz>, B<lzma>, B<xz>, B<bzip2>, in that
-order, and use the first available.
+GNU B<parallel> will try B<pzstd>, B<lbzip2>, B<pbzip2>, B<zstd>,
+B<pigz>, B<lz4>, B<lzop>, B<plzip>, B<lzip>, B<lrz>, B<gzip>, B<pxz>,
+B<lzma>, B<bzip2>, B<xz>, B<clzip>, in that order, and use the first
+available.
 
 
 =item B<--compress-program> I<prg>
@@ -1441,18 +1442,36 @@ it to the command.
 Only used with B<--pipe>.
 
 
-=item B<--results> I<prefix>
+=item B<--results> I<name> (alpha testing)
 
-=item B<--res> I<prefix>
+=item B<--res> I<name> (alpha testing)
 
-Save the output into files. The files will be stored in a directory tree
-rooted at I<prefix>.  Within this directory tree, each command will result
-in two files: I<prefix>/<ARGS>/stdout and I<prefix>/<ARGS>/stderr, where
-<ARGS> is a sequence of directories representing the header of the input
-source (if using B<--header :>) or the number of the input source and
+Save the output into files.
+
+B<CSV file output>
+
+If I<name> ends in B<.csv>/B<.tsv> the output will be a CSV-file
+named I<name>.
+
+B<.csv> gives a comma separated value file. B<.tsv> gives a TAB
+separated value file.
+
+B<-.csv>/B<-.tsv> are special: It will give the file on stdout
+(standard output).
+
+
+B<Dir structure output>
+
+If I<name> does not end in B<.csv>/B<.tsv> will be treated as a dir.
+
+The files will be stored in a directory tree rooted at I<name>.
+Within this directory tree, each command will result in two files:
+I<name>/<ARGS>/stdout and I<name>/<ARGS>/stderr, where <ARGS> is a
+sequence of directories representing the header of the input source
+(if using B<--header :>) or the number of the input source and
 corresponding values.
 
-I<prefix> can contain replacement strings.
+I<name> can contain replacement strings.
 
 E.g:
 
@@ -3408,6 +3427,43 @@ Note: The default for GNU B<parallel> is to remove the spaces around the columns
   parallel -a table_file.tsv --trim n --colsep '\t' cmd -o {2} -i {1}
 
 
+=head1 EXAMPLE: Output as CSV-file
+
+GNU B<parallel> can output to a database table and a CSV-file:
+
+  DBURL=csv:///%2Ftmp%2Fmy.csv
+  DBTABLEURL=$DBURL/mytable
+  parallel --sqlandworker $DBTABLEURL seq ::: {1..10}
+
+It is rather slow and takes up a lot of CPU time because GNU
+B<parallel> parses the whole CSV file for each update.
+
+A better approach is to use an SQLite-base and then convert that to CSV:
+
+  DBURL=sqlite3:///%2Ftmp%2Fmy.sqlite
+  DBTABLEURL=$DBURL/mytable
+  parallel --sqlandworker $DBTABLEURL seq ::: {1..10}
+  sql $DBURL '.headers on' '.mode csv' 'SELECT * FROM mytable;'
+
+This takes around a second per job.
+
+If you have access to a real database system, such as PostgreSQL, it
+is even faster:
+
+  DBURL=pg://user:pass@host/mydb
+  DBTABLEURL=$DBURL/mytable
+  parallel --sqlandworker $DBTABLEURL seq ::: {1..10}
+  sql $DBURL "COPY (SELECT * FROM mytable) TO stdout DELIMITER ',' CSV HEADER;"
+
+Or MySQL:
+
+  DBURL=mysql://user:pass@host/mydb
+  DBTABLEURL=$DBURL/mytable
+  parallel --sqlandworker $DBTABLEURL seq ::: {1..10}
+  sql -p -B $DBURL "SELECT * FROM mytable;" > mytable.tsv
+  perl -pe 's/"/""/g;s/\t/","/g;s/^/"/;s/$/"/;s/\\\\/\\/g;s/\\t/\t/g;s/\\n/\n/g;' mytable.tsv
+
+
 =head1 EXAMPLE: Run the same command 10 times
 
 If you want to run the same command with the same arguments 10 times
@@ -4722,7 +4778,7 @@ B<3> parallel mkdir -p thumbs/RELDIR\; convert FULLPATH -thumbnail 100x100^ -gra
 
 B<4> ladon "~/Music/*.wav" -- lame -V 2 FULLPATH DIRNAME/BASENAME.mp3
 
-B<4> parallel lame -V 2 FULLPATH DIRNAME/BASENAME.mp3 ::: ~/Music/*.wav 
+B<4> parallel lame -V 2 FULLPATH DIRNAME/BASENAME.mp3 ::: ~/Music/*.wav
 
 
 =head2 DIFFERENCES BETWEEN jobflow AND GNU Parallel

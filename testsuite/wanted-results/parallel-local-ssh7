@@ -89,67 +89,67 @@ par_csh_funky	Funky-	  !"#$%&'()*+,-./0123456789:;<=
 par_csh_funky	func_echo: Command not found.
 par_csh_funky	\\\\\\\\	\ \\\\\\\\\\\\\\\\\ \!\"\#\$%\&\'\(\)\*+,-./0123456789:\;\<\=\>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\\\]\^_\`abcdefghijklmnopqrstuvwxyz\{\|\}\~€\‚\ƒ\„\…\†\‡\ˆ\‰\Š\‹\Œ\\\\\‘\’\“\”\•\–\—\˜\™\š\›\œ\\\Ÿ\ \¡\¢\£\¤\¥\¦\§\¨\©\ª\«\¬\­\®\¯\°\±\²\³\´\µ\¶\·\¸\¹\º\»\¼\½\¾\¿\À\Á\Â\Ã\Ä\Å\Æ\Ç\È\É\Ê\Ë\Ì\Í\Î\Ï\Ğ\Ñ\Ò\Ó\Ô\Õ\Ö\×\Ø\Ù\Ú\Û\Ü\İ\Ş\ß\à\á\â\ã\ä\å\æ\ç\è\é\ê\ë\ì\í\î\ï\ğ\ñ\ò\ó\ô\õ\ö\÷\ø\ù\ú\û\ü\ı\ş\ÿ
 par_csh_man	### csh
-par_csh_man	### From man env_parallel
-par_csh_man	aliases work
-par_csh_man	aliases work
-par_csh_man	aliases work
-par_csh_man	aliases work
-par_csh_man	variables work
-par_csh_man	variables work
-par_csh_man	variables work
-par_csh_man	variables work
-par_csh_man	arrays
-par_csh_man	work,
-par_csh_man	too
-par_csh_man	arrays
-par_csh_man	work,
-par_csh_man	too
-par_csh_man	arrays
-par_csh_man	work,
-par_csh_man	too
-par_csh_man	arrays
-par_csh_man	work,
-par_csh_man	too
-par_csh_man	exit value 2 should be 2
-par_csh_man	Unknown option: no-such-option
-par_csh_man	Usage:
 par_csh_man	
-par_csh_man	parallel [options] [command [arguments]] < list_of_arguments
-par_csh_man	parallel [options] [command [arguments]] (::: arguments|:::: argfile(s))...
-par_csh_man	cat ... | parallel --pipe [options] [command [arguments]]
 par_csh_man	
-par_csh_man	-j n            Run n jobs in parallel
-par_csh_man	-k              Keep same order
-par_csh_man	-X              Multiple arguments with context replace
-par_csh_man	--colsep regexp Split input on regexp for positional replacements
-par_csh_man	{} {.} {/} {/.} {#} {%} {= perl code =} Replacement strings
-par_csh_man	{3} {3.} {3/} {3/.} {=3 perl code =}    Positional replacement strings
-par_csh_man	With --plus:    {} = {+/}/{/} = {.}.{+.} = {+/}/{/.}.{+.} = {..}.{+..} =
+par_csh_man	
+par_csh_man	
+par_csh_man	
+par_csh_man	
+par_csh_man	
+par_csh_man	
+par_csh_man	
 par_csh_man	                {+/}/{/..}.{+..} = {...}.{+...} = {+/}/{/...}.{+...}
-par_csh_man	
-par_csh_man	-S sshlogin     Example: foo@server.example.com
-par_csh_man	--slf ..        Use ~/.parallel/sshloginfile as the list of sshlogins
-par_csh_man	--trc {}.bar    Shorthand for --transfer --return {}.bar --cleanup
-par_csh_man	--onall         Run the given command with argument on all sshlogins
+par_csh_man	  ;login: The USENIX Magazine, February 2011:42-47.
+par_csh_man	  O. Tange (2011): GNU Parallel - The Command-Line Power Tool,
+par_csh_man	### From man env_parallel
+par_csh_man	--colsep regexp Split input on regexp for positional replacements
 par_csh_man	--nonall        Run the given command with no arguments on all sshlogins
-par_csh_man	
+par_csh_man	--onall         Run the given command with argument on all sshlogins
 par_csh_man	--pipe          Split stdin (standard input) to multiple jobs.
 par_csh_man	--recend str    Record end separator for --pipe.
 par_csh_man	--recstart str  Record start separator for --pipe.
-par_csh_man	
-par_csh_man	See 'man parallel' for details
-par_csh_man	
+par_csh_man	--slf ..        Use ~/.parallel/sshloginfile as the list of sshlogins
+par_csh_man	--trc {}.bar    Shorthand for --transfer --return {}.bar --cleanup
+par_csh_man	-S sshlogin     Example: foo@server.example.com
+par_csh_man	-X              Multiple arguments with context replace
+par_csh_man	-j n            Run n jobs in parallel
+par_csh_man	-k              Keep same order
 par_csh_man	Academic tradition requires you to cite works you base your article on.
-par_csh_man	When using programs that use GNU Parallel to process data for publication
-par_csh_man	please cite:
-par_csh_man	
-par_csh_man	  O. Tange (2011): GNU Parallel - The Command-Line Power Tool,
-par_csh_man	  ;login: The USENIX Magazine, February 2011:42-47.
-par_csh_man	
-par_csh_man	This helps funding further development; AND IT WON'T COST YOU A CENT.
 par_csh_man	If you pay 10000 EUR you should feel free to use GNU Parallel without citing.
-par_csh_man	
+par_csh_man	See 'man parallel' for details
+par_csh_man	This helps funding further development; AND IT WON'T COST YOU A CENT.
+par_csh_man	Unknown option: no-such-option
+par_csh_man	Usage:
+par_csh_man	When using programs that use GNU Parallel to process data for publication
+par_csh_man	With --plus:    {} = {+/}/{/} = {.}.{+.} = {+/}/{/.}.{+.} = {..}.{+..} =
+par_csh_man	aliases work
+par_csh_man	aliases work
+par_csh_man	aliases work
+par_csh_man	aliases work
+par_csh_man	arrays
+par_csh_man	arrays
+par_csh_man	arrays
+par_csh_man	arrays
+par_csh_man	cat ... | parallel --pipe [options] [command [arguments]]
 par_csh_man	exit value -1 should be 255
+par_csh_man	exit value 2 should be 2
+par_csh_man	parallel [options] [command [arguments]] (::: arguments|:::: argfile(s))...
+par_csh_man	parallel [options] [command [arguments]] < list_of_arguments
+par_csh_man	please cite:
+par_csh_man	too
+par_csh_man	too
+par_csh_man	too
+par_csh_man	too
+par_csh_man	variables work
+par_csh_man	variables work
+par_csh_man	variables work
+par_csh_man	variables work
+par_csh_man	work,
+par_csh_man	work,
+par_csh_man	work,
+par_csh_man	work,
+par_csh_man	{3} {3.} {3/} {3/.} {=3 perl code =}    Positional replacement strings
+par_csh_man	{} {.} {/} {/.} {#} {%} {= perl code =} Replacement strings
 par_csh_underscore	### csh
 par_csh_underscore	### Testing of --env _
 par_csh_underscore	#: Command not found.

@@ -768,6 +768,19 @@ not need to sync them to disk.
 It gives the odd situation that a disk can be fully used, but there
 are no visible files on it.
 
+
+=head3 Partly buffering in memory
+
+When using output formats SQL and CSV then GNU Parallel has to read
+the whole output into memory. When run normally it will only read the
+output from a single job. But when using B<--linebuffer> every line
+printed will also be buffered in memory - for all jobs currently
+running.
+
+If memory is tight, then do not use the output format SQL/CSV with
+B<--linebuffer>.
+
+
 =head3 Comparing to buffering in memory
 
 B<gargs> is a parallelizing tool that buffers in memory. It is

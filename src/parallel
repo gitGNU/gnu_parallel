@@ -1076,11 +1076,21 @@ sub parse_options {
 	$opt::compress = 1;
 	$opt::decompress_program ||= $opt::compress_program." -dc";
     }
+
+    if(defined $opt::results) {
+	if($opt::results =~ /\.csv$/i) {
+	    $Global::csv = ",";
+	    $Global::membuffer ||= 1;
+	} elsif($opt::results =~ /\.tsv$/i) {
+	    $Global::csv = "\t";
+	    $Global::membuffer ||= 1;
+	}
+    }
     if($opt::compress) {
 	my ($compress, $decompress) = find_compression_program();
 	$opt::compress_program ||= $compress;
 	$opt::decompress_program ||= $decompress;
-	if($opt::results or $opt::files) {
+	if(($opt::results and not $Global::csv) or $opt::files) {
 	    # No need for decompressing
 	    $opt::decompress_program = "cat >/dev/null";
 	}
@@ -1178,8 +1188,12 @@ sub parse_options {
         $opt::jobs = "100%";
     }
     open_joblog();
+    open_csv();
     if($opt::sqlmaster or $opt::sqlworker) {
 	$Global::sql = SQL->new($opt::sqlmaster || $opt::sqlworker);
+    }
+    if($opt::sqlworker) {
+	$Global::membuffer ||= 1;
     }
 }
 
@@ -1484,7 +1498,11 @@ sub open_joblog {
         ::error("--resume and --resume-failed require --joblog or --results.");
 	::wait_and_exit(255);
     }
-    if($opt::joblog) {
+    if($opt::joblog
+       and
+       ($opt::sqlmaster
+	or
+	not $opt::sqlworker)) {
 	if($opt::resume || $opt::resume_failed || $opt::retry_failed) {
 	    if(open(my $joblog_fh, "<", $opt::joblog)) {
 		# Read the joblog
@@ -1570,6 +1588,31 @@ sub open_joblog {
 		join("\t", "Seq", "Host", "Starttime", "JobRuntime",
 		     "Send", "Receive", "Exitval", "Signal", "Command"
 		). "\n";
+	}
+    }
+}
+
+sub open_csv {
+    if($opt::results) {
+	# Output as CSV/TSV
+	if($opt::results eq "-.csv"
+	   or
+	   $opt::results eq "-.tsv") {
+	    # Output as CSV/TSV on stdout
+	    open $Global::csv_fh, ">&", "STDOUT" or
+		::die_bug("Can't dup STDOUT in csv: $!");
+	    # Do not print any other output to STDOUT
+	    # by forcing all other output to /dev/null
+	    open my $fd, ">", "/dev/null"  or
+		::die_bug("Can't >/dev/null in csv: $!");
+	    $Global::fd{1} = $fd;
+	    $Global::fd{2} = $fd;
+	} elsif($Global::csv) {
+	    if(not open($Global::csv_fh,">",$opt::results)) {
+		::error("Cannot open results file `$opt::results': ".
+			"$!.");
+		wait_and_exit(255);
+	    }
 	}
     }
 }
@@ -6344,6 +6387,8 @@ sub new {
 	# Timestamp for timeout if any
 	'timeout' => undef,
 	'virgin' => 1,
+	# Output used for SQL and CSV-output
+	'output' => { 1 => [], 2 => [] },
     }, ref($class) || $class;
 }
 
@@ -6460,12 +6505,14 @@ sub openoutputfiles {
     # Set file handles in $self->fh
     my $self = shift;
     my ($outfhw, $errfhw, $outname, $errname);
-    if($opt::results) {
+
+    if($opt::results and not $Global::csv) {
+	# Results as dir
 	my $args_as_dirname = $self->{'commandline'}->args_as_dirname();
 	# Output in: prefix/name1/val1/name2/val2/stdout
 	my $dir = $self->{'commandline'}->
-		    replace_placeholders([$opt::results],0,0) .
-		    "/".$args_as_dirname;
+	    replace_placeholders([$opt::results],0,0) .
+	    "/".$args_as_dirname;
 	if(eval{ File::Path::mkpath($dir); }) {
 	    # OK
 	} else {
@@ -6503,10 +6550,9 @@ sub openoutputfiles {
 	$self->set_fh(2,"unlink","");
 	if($opt::sqlworker) {
 	    # Save the filenames in SQL table
-	    $Global::sql->update("SET Stdout = ? WHERE Seq = ".$self->seq(),
-				 $outname);
-	    $Global::sql->update("SET Stderr = ? WHERE Seq = ".$self->seq(),
-				 $errname);
+	    $Global::sql->update("SET Stdout = ?, Stderr = ? ".
+				 "WHERE Seq = ". $self->seq(),
+				 $outname, $errname);
 	}
     } elsif(not $opt::ungroup) {
 	# To group we create temporary files for STDOUT and STDERR
@@ -8133,25 +8179,174 @@ sub print {
 	::debug("print", "File descriptor $fdno (", $self->fh($fdno,"name"), "):\n");
 	if($opt::linebuffer) {
 	    # Line buffered print out
-	    $self->linebuffer_print($fdno,$in_fh,$out_fd);
+	    $self->print_linebuffer($fdno,$in_fh,$out_fd);
 	} elsif($opt::files) {
-	    $self->files_print($fdno,$in_fh,$out_fd);
+	    $self->print_files($fdno,$in_fh,$out_fd);
 	} elsif($opt::tag or defined $opt::tagstring) {
-	    $self->tag_print($fdno,$in_fh,$out_fd);
+	    $self->print_tag($fdno,$in_fh,$out_fd);
 	} else {
-	    $self->normal_print($fdno,$in_fh,$out_fd);
+	    $self->print_normal($fdno,$in_fh,$out_fd);
 	}
 	flush $out_fd;
     }
     ::debug("print", "<<joboutput @command\n");
-    if($Global::joblog and defined $self->{'exitstatus'}
+    if(defined $self->{'exitstatus'}
        and not ($self->virgin() and $opt::pipe)) {
-	# Add to joblog when finished
-	$self->print_joblog();
+	if($Global::joblog and not $opt::sqlworker) {
+	    # Add to joblog when finished
+	    $self->print_joblog();
+	}
+	if($opt::sqlworker and not $opt::results) {
+	    $Global::sql->output($self);
+	}
+	if($Global::csv) {
+	    # Add output to CSV when finished
+	    $self->print_csv();
+	}
     }
 }
 
-sub files_print {
+{
+    my $header_printed;
+
+    sub print_csv {
+	my $self = shift;
+	my $cmd;
+	if($Global::verbose <= 1) {
+	    $cmd = $self->replaced();
+	} else {
+	    # Verbose level > 1: Print the rsync and stuff
+	    $cmd = "@command";
+	}
+	my $record_ref = $self->{'commandline'}{'arg_list_flat_orig'};
+
+	if(not $header_printed) {
+	    # Variable headers
+	    # Normal => V1..Vn
+	    # --header : => first value from column
+	    my @V;
+	    if($opt::header) {
+		my $i = 1;
+		@V = (map { $Global::input_source_header{$i++} }
+		      @$record_ref[1..$#$record_ref]);
+	    } else {
+		my $V = "V1";
+		@V = (map { $V++ } @$record_ref[1..$#$record_ref]);
+	    }
+	    print $Global::csv_fh
+		(map { $$_ }
+		 combine_ref("Seq", "Host", "Starttime", "JobRuntime",
+			     "Send", "Receive", "Exitval", "Signal", "Command",
+			     @V,
+			     "Stdout","Stderr"
+		 )),"\n";
+	    $header_printed++;
+	}
+	# Memory optimization: Overwrite with the joined output
+	$self->{'output'}{1} = join("", @{$self->{'output'}{1}});
+	$self->{'output'}{2} = join("", @{$self->{'output'}{2}});
+	print $Global::csv_fh 
+	    (map { $$_ }
+	     combine_ref
+	     ($self->seq(),
+	      $self->sshlogin()->string(),
+	      $self->starttime(), sprintf("%0.3f",$self->runtime()),
+	      $self->transfersize(), $self->returnsize(),
+	      $self->exitstatus(), $self->exitsignal(), \$cmd,
+	      \@$record_ref[1..$#$record_ref],
+	      \$self->{'output'}{1},
+	      \$self->{'output'}{2})),"\n";
+    }
+}
+
+sub combine_ref {
+    # Inspired by Text::CSV_PP::_combine (by Makamaka Hannyaharamitu)
+    my @part = @_;
+    my $sep = $Global::csv;
+    my $quot = '"';
+    my @out = ();
+
+    my $must_be_quoted;
+    for my $column (@part) {
+	# Memory optimization: Content transferred as reference
+	if(ref $column ne "SCALAR") {
+	    # Convert all columns to scalar references
+	    my $v = $column;
+	    $column = \$v;
+	}
+        if(not defined $$column) {
+            $$column = '';
+            next;
+        }
+
+        $must_be_quoted = 0;
+
+        if($$column =~ s/$quot/$quot$quot/go){
+	    # Replace " => ""
+            $must_be_quoted ||=1;
+        }
+        if($$column =~ /[\s\Q$sep\E]/o){
+	    # Put quotes around if the column contains ,
+            $must_be_quoted ||=1;
+        }
+
+	$Global::use{"bytes"} ||= eval "use bytes; 1;";
+	if ($$column =~ /\0/) {
+	    # Contains \0 => put quotes around
+	    $must_be_quoted ||=1;
+        }
+        if($must_be_quoted){
+	    push \@out, \$sep, \$quot, $column, \$quot;
+        } else {
+	    push @out, \$sep, $column;
+	}
+    }
+    # Pop off a $sep
+    shift @out;
+    return @out;
+}
+
+sub combine {
+    # Inspired by Text::CSV_PP::_combine (by Makamaka Hannyaharamitu)
+    my @part = @_;
+    my $sep = $Global::csv;
+    my $quot = '"';
+
+    my $must_be_quoted;
+    for my $column (@part) {
+	# Memory optimization: Content transferred as reference
+	if(ref $column ne "SCALAR") {
+	    ($column,$$column) = ($$column,"");
+	}
+        if(not defined $column) {
+            $column = '';
+            next;
+        }
+
+        $must_be_quoted = 0;
+
+        if($column =~ s/$quot/$quot$quot/go){
+	    # Replace " => ""
+            $must_be_quoted ||=1;
+        }
+        if($column =~ /[\s\Q$sep\E]/o){
+	    # Put quotes around if the column contains ,
+            $must_be_quoted ||=1;
+        }
+
+	$Global::use{"bytes"} ||= eval "use bytes; 1;";
+	if ($column =~ /\0/) {
+	    # Contains \0 => put quotes around
+	    $must_be_quoted ||=1;
+        }
+        if($must_be_quoted){
+            $column = $quot . $column . $quot;
+        }
+    }
+    return join($sep, @part) . "\n";
+}
+
+sub print_files {
     # Print the name of the file containing stdout on stdout
     # Uses:
     #   $opt::pipe
@@ -8182,9 +8377,8 @@ sub files_print {
 	}
     } elsif($fdno == 1 and $self->fh($fdno,"name")) {
 	print $out_fd $self->tag(),$self->fh($fdno,"name"),"\n";
-	if($opt::sqlworker) {
-	    $Global::sql->update("SET Stdout = ? WHERE Seq = ".$self->seq(),
-				 $self->tag().$self->fh($fdno,"name"));
+	if($Global::membuffer) {
+	    push @{$self->{'output'}{$fdno}}, $self->tag(), $self->fh($fdno,"name");
 	}
 	$self->add_returnsize(-s $self->fh($fdno,"name"));
 	# Mark as printed - do not print again
@@ -8192,7 +8386,7 @@ sub files_print {
     }
 }
 
-sub linebuffer_print {
+sub print_linebuffer {
     my $self = shift;
     my ($fdno,$in_fh,$out_fd) = @_;
     my $partial = \$self->{'partial_line',$fdno};
@@ -8211,9 +8405,12 @@ sub linebuffer_print {
 	    }
 	}
     }
-    if($opt::files or $opt::results) {
+    if($opt::files or ($opt::results and not $Global::csv)) {
 	if($fdno == 1 and not $self->fh($fdno,"printed")) {
 	    print $out_fd $self->tag(),$self->fh($fdno,"name"),"\n";
+	    if($Global::membuffer) {
+		push @{$self->{'output'}{$fdno}}, $self->tag(), $self->fh($fdno,"name");
+	    }
 	    $self->set_fh($fdno,"printed",1);
 	}
 	# No need for reading $in_fh, as it it from "cat >/dev/null"
@@ -8244,9 +8441,9 @@ sub linebuffer_print {
 		}
 		# Print up to and including the last \n
 		print $out_fd substr($$partial,0,$i);
-		if($opt::sqlworker) {
-		    push (@{$self->{'sqlworker'}{$fdno}},
-			  substr($$partial,0,$i));
+		# Buffer in memory for SQL and CSV-output
+		if($Global::membuffer) {
+		    push @{$self->{'output'}{$fdno}}, substr($$partial,0,$i);
 		}
 		# Remove the printed part
 		substr($$partial,0,$i) = "";
@@ -8255,7 +8452,7 @@ sub linebuffer_print {
 	$self->add_returnsize($outputlength);
     }
     if(defined $self->{'exitstatus'}) {
-	if($opt::files or $opt::results) {
+	if($opt::files or ($opt::results and not $Global::csv)) {
 	    $self->add_returnsize(-s $self->fh($fdno,"name"));
 	} else {
 	    # If the job is dead: print the remaining partial line
@@ -8266,8 +8463,8 @@ sub linebuffer_print {
 		$$partial =~ s/^/$tag/gm;
 	    }
 	    print $out_fd $$partial;
-	    if($opt::sqlworker) {
-		push (@{$self->{'sqlworker'}{$fdno}},$$partial);
+	    if($Global::membuffer) {
+		push @{$self->{'output'}{$fdno}}, $$partial;
 	    }
 	}
 	# Release the memory
@@ -8275,13 +8472,7 @@ sub linebuffer_print {
 	if($self->fh($fdno,"rpid") and CORE::kill 0, $self->fh($fdno,"rpid")) {
 	    # decompress still running
 	} else {
-	    # decompress done:
-	    #   copy to sql (if needed)
-	    #   then close fh
-	    if($opt::sqlworker and not $opt::results) {
-		$Global::sql->output($fdno, $self->seq(),
-				     join("",@{$self->{'sqlworker'}{$fdno}}));
-	    }
+	    # decompress done: close fh
 	    close $in_fh;
 	    if($? and $opt::compress) {
 		::error($opt::decompress_program." failed.");
@@ -8291,7 +8482,7 @@ sub linebuffer_print {
     }
 }
 
-sub tag_print {
+sub print_tag {
     my $self = shift;
     my ($fdno,$in_fh,$out_fd) = @_;
     my $buf;
@@ -8309,15 +8500,12 @@ sub tag_print {
     while(<$in_fh>) {
 	print $out_fd $tag,$_;
 	$outputlength += length $_;
-	if($opt::sqlworker) {
-	    push @output, $tag,$_;
+	if($Global::membuffer) {
+	    push @{$self->{'output'}{$fdno}}, $tag, $_;
 	}
     }
     if($fdno == 1) {
 	$self->add_returnsize($outputlength);
-    }
-    if($opt::sqlworker and not $opt::results) {
-	$Global::sql->output($fdno, $self->seq(), join("",@output));
     }
     close $in_fh;
     if($? and $opt::compress) {
@@ -8326,7 +8514,7 @@ sub tag_print {
     }
 }
 
-sub normal_print {
+sub print_normal {
     my $self = shift;
     my ($fdno,$in_fh,$out_fd) = @_;
     my $buf;
@@ -8342,16 +8530,12 @@ sub normal_print {
     while(sysread($in_fh,$buf,131072)) {
 	print $out_fd $buf;
 	$outputlength += length $buf;
-	if($opt::sqlworker) {
-	    push @output, $buf;
+	if($Global::membuffer) {
+	    push @{$self->{'output'}{$fdno}}, $buf;
 	}
     }
     if($fdno == 1) {
 	$self->add_returnsize($outputlength);
-    }
-    if($opt::sqlworker and not $opt::results) {
-	$Global::sql->output($fdno, $self->seq(),
-			     join("",@output));
     }
     close $in_fh;
     if($? and $opt::compress) {
@@ -8597,7 +8781,8 @@ sub populate {
     # Returns: N/A
     my $self = shift;
     my $next_arg;
-    my $max_len = $Global::minimal_command_line_length || Limits::Command::max_length();
+    my $max_len = $Global::minimal_command_line_length
+	|| Limits::Command::max_length();
 
     if($opt::cat or $opt::fifo) {
 	# Get the empty arg added by --pipepart (if any)
@@ -8659,6 +8844,7 @@ sub populate {
 	    }
 	}
     }
+
     if($opt::sqlmaster) {
 	# Insert the V1..Vn for this $seq in SQL table instead of generating one
 	$Global::sql->insert_records($self->seq(),$self->{'arg_list_flat_orig'});
@@ -9027,7 +9213,7 @@ sub replaced {
 		$normal_replace or last;
 	    }
 	}
-	@Arg::arg = ();
+	*Arg::arg = [];
 	if($quote) {
 	    @target = ::shell_quote(@target);
 	}
@@ -10404,13 +10590,11 @@ sub update {
 
 sub output {
     my $self = shift;
-    my $fdno = shift;
-    my $seq = shift;
-    my @output = @_;
+    my $commandline = shift;
 
-    my %column_of_fdno = ( 1 => "Stdout", 2 => "Stderr" );
-    my $column = $column_of_fdno{$fdno};
-    $self->update("SET $column = ? WHERE Seq = ".$seq, join("",@output));
+    $self->update("SET Stdout = ?, Stderr = ? WHERE Seq = ".$commandline->seq(),
+		  join("",@{$commandline->{'output'}{1}}),
+		  join("",@{$commandline->{'output'}{2}}));
 }
 
 sub max_number_of_args {
