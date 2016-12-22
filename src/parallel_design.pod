@@ -69,12 +69,6 @@ The only way to have access to the environment is directly from the
 shell, so the program must be written in a shell script that will be
 sourced and there has to deal with the dialect of the relevant shell.
 
-Dumping the environment into a format that can be activated again is
-easy in Bash: B<typeset> and B<alias> basically give you the commands
-you must run to re-create the environment. It is much harder in B<csh>
-where there is no easy way to convert an environment into commands
-that generate the environment.
-
 
 =head3 env_parallel.*
 
@@ -183,10 +177,10 @@ compresses the buffered data.  This is a bit tricky because there
 should be no files to clean up if GNU B<parallel> is killed by a power
 outage.
 
-GNU B<parallel> first selects a compression program. If the user has not
-selected one, the first of these that is in $PATH is used: B<lz4 pigz
-lzop plzip pbzip2 pxz gzip lzma xz bzip2 lzip>. They are sorted by
-speed on a 16 core machine.
+GNU B<parallel> first selects a compression program. If the user has
+not selected one, the first of these that is in $PATH is used: B<pzstd
+lbzip2 pbzip2 zstd pigz lz4 lzop plzip lzip lrz gzip pxz lzma bzip2 xz
+clzip>. They are sorted by speed on a 32 core machine.
 
 Schematically the setup is as follows:
 
@@ -447,23 +441,6 @@ up the tmpfile and keep the exit code of the command.
 The real killer comes when you try to combine several of these: Doing
 that correctly for all corner cases is next to impossible to do by
 hand.
-
-
-=head2 --block-size adjustment
-
-Every time GNU B<parallel> detects a record bigger than
-B<--block-size> it increases the block size by 30%. A small
-B<--block-size> gives very poor performance; by exponentially
-increasing the block size performance will not suffer.
-
-GNU B<parallel> will waste CPU power if B<--block-size> does not
-contain a full record, because it tries to find a full record and will
-fail to do so. The recommendation is therefore to use a
-B<--block-size> > 2 records, so you always get at least one full
-record when you read one block.
-
-If you use B<-N> then B<--block-size> should be big enough to contain
-N+1 records.
 
 
 =head2 Shell shock
@@ -736,6 +713,36 @@ data. See this for a surprising example:
 
   yes | dd bs=1024k count=10 | wc
 
+
+=head2 --block-size adjustment
+
+Every time GNU B<parallel> detects a record bigger than
+B<--block-size> it increases the block size by 30%. A small
+B<--block-size> gives very poor performance; by exponentially
+increasing the block size performance will not suffer.
+
+GNU B<parallel> will waste CPU power if B<--block-size> does not
+contain a full record, because it tries to find a full record and will
+fail to do so. The recommendation is therefore to use a
+B<--block-size> > 2 records, so you always get at least one full
+record when you read one block.
+
+If you use B<-N> then B<--block-size> should be big enough to contain
+N+1 records.
+
+
+=head2 Automatic --block-size computation
+
+With B<--pipepart> GNU B<parallel> can compute the B<--block-size>
+automatically. A B<--block-size> of B<-1> will use a block size so
+that each jobslot will receive approximately 1 block. B<--block -2>
+will pass 2 blocks to each jobslot and B<-I<n>> will pass I<n> blocks
+to each jobslot.
+
+This can be done because B<--pipepart> reads from files, and we can
+compute the total size of the input.
+
+
 =head2 --jobs and --onall
 
 When running the same commands on many servers what should B<--jobs>
@@ -968,11 +975,12 @@ single string.
 The DBURL must point to a table name. The table will be dropped and
 created. The reason for not reusing an exising table is that the user
 may have added more input sources which would require more columns in
-the table.
+the table. By prepending '+' to the DBURL the table will not be
+dropped.
 
 The table columns are similar to joblog with the addition of B<V1>
-.. B<Vn> which are values from the input sources, and stdout and
-stderr which are the output from standard output and standard error,
+.. B<Vn> which are values from the input sources, and Stdout and
+Stderr which are the output from standard output and standard error,
 respectively.
 
 The Signal column has been renamed to _Signal due to Signal being a

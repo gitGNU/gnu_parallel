@@ -1,3 +1,68 @@
+20161222
+
+* --results foo.csv will save output as a CSV-file. Can be directly
+  imported into R or LibreCalc.
+
+* When using --pipepart a negative --block-size is not interpreted as
+  a block size but as the number of blocks each jobslot should have.
+
+* --sqlmaster/--sqlandworker will append jobs to the DBURL if the
+  DBURL is prepended with +.
+
+* GNU Parallel was cited in: A cloud-based workflow to quantify
+  transcript-expression levels in public cancer compendia
+  http://www.nature.com/articles/srep39259
+
+* GNU Parallel was cited in: Learning string distance with smoothing
+  for OCR spelling correction
+  http://paperity.org/p/78557440/learning-string-distance-with-smoothing-for-ocr-spelling-correction
+
+* GNU Parallel was cited in: Transient compute clustering with GNU
+  Parallel and sshfs
+  https://gist.github.com/Brainiarc7/24c966c8a001061ee86cc4bc05826bf4
+
+* GNU Parallel was cited in: Determination of crystal structures of
+  proteins of unknown identity using a marathon molecular replacement
+  procedure: Structure of Stenotrophomonas maltophilia
+  phosphate-binding protein
+  https://www.researchgate.net/publication/308186413_Determination_of_crystal_structures_of_proteins_of_unknown_identity_using_a_marathon_molecular_replacement_procedure_Structure_of_Stenotrophomonas_maltophilia_phosphate-binding_protein
+
+* GNU Parallel was cited in: The Outer Solar System Origins Survey:
+  I. Design and First-Quarter Discoveries
+  https://arxiv.org/pdf/1511.02895v2.pdf
+
+* GNU Parallel was cited in: Large-scale benchmarking reveals false
+  discoveries and count transformation sensitivity in 16S rRNA gene
+  amplicon data analysis methods used in microbiome studies
+  http://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-016-0208-8
+
+* GNU Parallel was cited in: Decomposing Images into Layers via
+  RGB-space Geometry
+  https://cs.gmu.edu/~ygingold/singleimage/Decomposing%20Images%20into%20Layers%20via%20RGB-space%20Geometry%20(Tan%20et%20al%202016%20TOG)%20small.pdf
+
+* 4 Ways to Batch Convert Your PNG to JPG and Vice-Versa
+  http://www.tecmint.com/linux-image-conversion-tools/
+
+* All's Fair in Love and Distributed Storage
+  http://cohesity.com/blog/alls-fair-love-distributed-storage/
+
+* How can I use GNU Parallel to run a lot of commands in parallel
+  https://www.msi.umn.edu/support/faq/how-can-i-use-gnu-parallel-run-lot-commands-parallel
+
+* 정해영의 블로그 - JEONG Haeyoung's blog
+  http://blog.genoglobe.com/2016/11/gnu-parallel.html
+
+* 在Linux下将PNG和JPG批量互转的四种方法
+  http://os.51cto.com/art/201612/524182.htm
+
+* Running in parallel http://tomkimpson.com/howto/gnuparallel/
+
+* Taco Bell Parallel Programming
+  https://giorgos.sealabs.net/taco-bell-parallel-programming.html
+
+* Bug fixes and man page updates.
+
+
 20161122
 
 * --record-env can now be used with env_parallel for bash, ksh, pdksh,
@@ -16,6 +81,7 @@
 
 * Tutorial: Parallel web scraping with CasperJS and GNU Parallel
   http://g-liu.com/blog/2016/10/tutorial-parallel-web-scraping-with-casperjs-and-gnu-parallel/
+
 * Bug fixes and man page updates.
 
 

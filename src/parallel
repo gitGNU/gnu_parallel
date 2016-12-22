@@ -227,7 +227,9 @@ if($opt::halt and $Global::halt_when ne "never") {
     wait_and_exit(min(undef_as_zero($Global::exitstatus),101));
 }
 
+
 sub __PIPE_MODE__ {}
+
 
 sub pipe_part_files {
     # Input:
@@ -769,7 +771,9 @@ sub write_record_to_pipe {
     return 1;
 }
 
+
 sub __SEM_MODE__ {}
+
 
 sub acquire_semaphore {
     # Acquires semaphore. If needed: spawns to the background
@@ -793,7 +797,9 @@ sub acquire_semaphore {
     return $sem;
 }
 
+
 sub __PARSE_OPTIONS__ {}
+
 
 sub options_hash {
     # Returns:
@@ -1078,10 +1084,13 @@ sub parse_options {
     }
 
     if(defined $opt::results) {
+	# Is the output a dir or CSV-file?
 	if($opt::results =~ /\.csv$/i) {
+	    # CSV with , as separator
 	    $Global::csv = ",";
 	    $Global::membuffer ||= 1;
 	} elsif($opt::results =~ /\.tsv$/i) {
+	    # CSV with TAB as separator
 	    $Global::csv = "\t";
 	    $Global::membuffer ||= 1;
 	}
@@ -1250,7 +1259,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20161208;
+    $Global::version = 20161222;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1636,7 +1645,7 @@ sub find_compression_program {
     # parallel --shuf -j1  --joblog jl-m --arg-sep ,  parallel --compress-program \'{3}" "-{2}\' cat ::: 1gb '>'/dev/null , 1 2 3 ,  {1..3} , $multithread
     # sort -nk4 jl-?
     # 1-core:
-    # 2-cores:
+    # 2-cores: lz4 lzop zstd gzip bzip2 lzma xz clzip pigz  lbzip2 pbzip2  lzip lrz plzip pxz pzstd
     # 4-cores:
     # 8-cores: pzstd lz4 zstd pigz lzop lbzip2 pbzip2 gzip lzip lrz plzip pxz bzip2 lzma xz clzip
     # 16-cores: pzstd lz4 pigz lzop lbzip2 pbzip2 plzip lzip lrz pxz gzip lzma xz bzip2
@@ -1652,7 +1661,6 @@ sub find_compression_program {
     # Fall back to cat
     return ("cat","cat");
 }
-
 
 sub read_options {
     # Read options from command line, profile and $PARALLEL
@@ -1889,7 +1897,9 @@ sub cleanup {
     }
 }
 
+
 sub __QUOTING_ARGUMENTS_FOR_SHELL__ {}
+
 
 sub shell_quote {
     # Input:
@@ -2038,6 +2048,7 @@ sub unquote_printf {
     return $_;
 }
 
+
 sub __FILEHANDLES__ {}
 
 
@@ -2153,6 +2164,7 @@ sub set_fh_non_blocking {
 
 
 sub __RUNNING_THE_JOBS_AND_PRINTING_PROGRESS__ {}
+
 
 # Variable structure:
 #
@@ -2870,7 +2882,9 @@ sub get_job_with_sshlogin {
     return $job;
 }
 
+
 sub __REMOTE_SSH__ {}
+
 
 sub read_sshloginfiles {
     # Read a list of --slf's
@@ -3106,7 +3120,7 @@ sub cleanup_basefile {
 sub run_parallel {
     my ($stdin,@args) = @_;
     my $cmd = join "",map { " $_ & " } split /\n/, $stdin;
-print $Global::original_stderr    ` $cmd wait` ;
+    print $Global::original_stderr ` $cmd wait` ;
     return 0
 }
 
@@ -3507,7 +3521,9 @@ sub onall {
     }
 }
 
+
 sub __SIGNAL_HANDLING__ {}
+
 
 sub tstp {
     # Send TSTP signal (Ctrl-Z) to all children process groups
@@ -3519,7 +3535,6 @@ sub tstp {
     $SIG{TSTP} = undef;
     kill "TSTP", $$;
 }
-
 
 sub save_original_signal_handler {
     # Remember the original signal handler
@@ -3662,7 +3677,9 @@ sub reaper {
     return wantarray ? @pids_reaped : $children_reaped;
 }
 
+
 sub __USAGE__ {}
+
 
 sub killall {
     # Kill all jobs by killing their process groups
@@ -3789,7 +3806,6 @@ sub usage {
 	 "",
 	 "",);
 }
-
 
 sub citation_notice {
     # if --will-cite or --plain: do nothing
@@ -3953,7 +3969,9 @@ sub show_limits {
           "press CTRL-D or CTRL-C\n");
 }
 
+
 sub __GENERIC_COMMON_FUNCTION__ {}
+
 
 sub mkdir_or_die {
     # If dir is not executable: die
@@ -4003,13 +4021,13 @@ sub tmpname {
     return $tmpname;
 }
 
-sub tmpfifo {
-    # Find an unused name and mkfifo on it
-    use POSIX qw(mkfifo);
-    my $tmpfifo = tmpname("fif",@_);
-    mkfifo($tmpfifo,0600);
-    return $tmpfifo;
-}
+#sub tmpfifo {
+#    # Find an unused name and mkfifo on it
+#    use POSIX qw(mkfifo);
+#    my $tmpfifo = tmpname("fif",@_);
+#    mkfifo($tmpfifo,0600);
+#    return $tmpfifo;
+#}
 
 sub rm {
     # Remove file and remove it from %Global::unlink
@@ -4484,7 +4502,9 @@ sub kill_youngster_if_not_enough_mem {
     }
 }
 
+
 sub __DEBUGGING__ {}
+
 
 sub debug {
     # Uses:
@@ -4578,7 +4598,9 @@ sub my_carp {
     carp(@_);
 }
 
+
 sub __OBJECT_ORIENTED_PARTS__ {}
+
 
 package SSHLogin;
 
@@ -7382,7 +7404,9 @@ sub sshlogin_wrap {
 	my @vars = vars_to_export();
 	my $csh_friendly = not grep { /\n/ } @ENV{@vars};
 	my @bash_functions = grep { substr($ENV{$_},0,4) eq "() {" } @vars;
-	my @non_functions = grep { substr($ENV{$_},0,4) ne "() {" } @vars;
+	my @non_functions = (grep { !/PARALLEL_ENV/ }
+			     grep { substr($ENV{$_},0,4) ne "() {" } @vars);
+
 	# eval of @envset will set %ENV
 	my $envset = join"", map {
 	    '$ENV{"'.::perl_quote_scalar($_).'"}="'.
@@ -8245,7 +8269,7 @@ sub print {
 	# Memory optimization: Overwrite with the joined output
 	$self->{'output'}{1} = join("", @{$self->{'output'}{1}});
 	$self->{'output'}{2} = join("", @{$self->{'output'}{2}});
-	print $Global::csv_fh 
+	print $Global::csv_fh
 	    (map { $$_ }
 	     combine_ref
 	     ($self->seq(),
@@ -8296,7 +8320,7 @@ sub combine_ref {
 	    $must_be_quoted ||=1;
         }
         if($must_be_quoted){
-	    push \@out, \$sep, \$quot, $column, \$quot;
+	    push @out, \$sep, \$quot, $column, \$quot;
         } else {
 	    push @out, \$sep, $column;
 	}
@@ -8304,46 +8328,6 @@ sub combine_ref {
     # Pop off a $sep
     shift @out;
     return @out;
-}
-
-sub combine {
-    # Inspired by Text::CSV_PP::_combine (by Makamaka Hannyaharamitu)
-    my @part = @_;
-    my $sep = $Global::csv;
-    my $quot = '"';
-
-    my $must_be_quoted;
-    for my $column (@part) {
-	# Memory optimization: Content transferred as reference
-	if(ref $column ne "SCALAR") {
-	    ($column,$$column) = ($$column,"");
-	}
-        if(not defined $column) {
-            $column = '';
-            next;
-        }
-
-        $must_be_quoted = 0;
-
-        if($column =~ s/$quot/$quot$quot/go){
-	    # Replace " => ""
-            $must_be_quoted ||=1;
-        }
-        if($column =~ /[\s\Q$sep\E]/o){
-	    # Put quotes around if the column contains ,
-            $must_be_quoted ||=1;
-        }
-
-	$Global::use{"bytes"} ||= eval "use bytes; 1;";
-	if ($column =~ /\0/) {
-	    # Contains \0 => put quotes around
-	    $must_be_quoted ||=1;
-        }
-        if($must_be_quoted){
-            $column = $quot . $column . $quot;
-        }
-    }
-    return join($sep, @part) . "\n";
 }
 
 sub print_files {
@@ -8701,6 +8685,7 @@ sub set_exitsignal {
 	return "";
     }
 }
+
 
 package CommandLine;
 

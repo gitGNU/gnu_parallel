@@ -499,7 +499,7 @@ If you use B<-N>, B<--block-size> should be bigger than N+1 records.
 
 I<size> defaults to 1M.
 
-When using B<--pipepart> negative a block size is not interpreted as a
+When using B<--pipepart> a negative block size is not interpreted as a
 blocksize but as the number of blocks each jobslot should have. So
 this will run 10*5 = 50 jobs in total:
 
@@ -1670,9 +1670,9 @@ B<--return> is ignored when used with B<--sshlogin :> or when not used
 with B<--sshlogin>.
 
 
-=item B<--round-robin>
+=item B<--round-robin> (alpha testing)
 
-=item B<--round>
+=item B<--round> (alpha testing)
 
 Normally B<--pipe> will give a single block to each instance of the
 command. With B<--round-robin> all blocks will at random be written to
@@ -3427,7 +3427,7 @@ Note: The default for GNU B<parallel> is to remove the spaces around the columns
   parallel -a table_file.tsv --trim n --colsep '\t' cmd -o {2} -i {1}
 
 
-=head1 EXAMPLE: Output as CSV-file
+=head1 EXAMPLE: Output to database
 
 GNU B<parallel> can output to a database table and a CSV-file:
 
@@ -3463,6 +3463,18 @@ Or MySQL:
   sql -p -B $DBURL "SELECT * FROM mytable;" > mytable.tsv
   perl -pe 's/"/""/g;s/\t/","/g;s/^/"/;s/$/"/;s/\\\\/\\/g;s/\\t/\t/g;s/\\n/\n/g;' mytable.tsv
 
+
+=head1 EXAMPLE: Output to CSV-file for R
+
+If you have no need for the advanced job distribution control that a
+database provides, but you simply want output into a CSV file that you
+can read into R or LibreCalc, then you can use B<--results>:
+
+  parallel --results my.csv seq ::: 10 20 30
+  R
+  > mydf <- read.csv("my.csv");
+  > print(mydf[2,])
+  > write(as.character(mydf[2,c("Stdout")]),'')
 
 =head1 EXAMPLE: Run the same command 10 times
 
