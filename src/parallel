@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015,2016
+# Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017
 # Ole Tange and Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -1259,7 +1259,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20161223;
+    $Global::version = 20170101;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -3887,7 +3887,7 @@ sub version {
     # Returns: N/A
     print join("\n",
                "GNU $Global::progname $Global::version",
-               "Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015,2016",
+               "Copyright (C) 2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017",
 	       "Ole Tange and Free Software Foundation, Inc.",
                "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>",
                "This is free software: you are free to change and redistribute it.",
@@ -7246,10 +7246,10 @@ sub base64_zip_eval {
     # Returns:
     #   $script = 1-liner for perl -e
     my $script = ::spacefree(0,q{
-        @GNU_Parallel=split /_/,"use_IPC::Open3;_use_MIME::Base64";
+        @GNU_Parallel = split /_/, "use_IPC::Open3;_use_MIME::Base64";
         eval"@GNU_Parallel";
-
-	$SIG{CHLD}="IGNORE";
+        $chld = $SIG{CHLD};
+	$SIG{CHLD} = "IGNORE";
 	# Search for bzip2. Not found => use default path
 	my $zip = (grep { -x $_ } "/usr/local/bin/bzip2")[0] || "bzip2";
 	# $in = stdin on $zip, $out = stdout from $zip
@@ -7268,6 +7268,7 @@ sub base64_zip_eval {
 	    exit;
 	}
 	wait;
+	$SIG{CHLD} = $chld;
 	eval $eval;
 			     });
     ::debug("base64",$script,"\n");
