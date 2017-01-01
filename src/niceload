@@ -24,7 +24,7 @@
 use strict;
 use Getopt::Long;
 $Global::progname="niceload";
-$Global::version = 20161222;
+$Global::version = 20161223;
 Getopt::Long::Configure("bundling","require_order");
 get_options_from_array(\@ARGV) || die_usage();
 if($opt::version) {
@@ -61,6 +61,7 @@ if(not defined $opt::start_noswap) { $opt::start_noswap = $opt::noswap; }
 if(not defined $opt::run_noswap) { $opt::run_noswap = $opt::noswap; }
 
 if(defined $opt::load) { multiply_binary_prefix($opt::load); }
+if(defined $opt::baseline) { collect_net_baseline(); }
 
 my $limit = Limit->new();
 my $process = Process->new($opt::nice,@ARGV);
@@ -299,6 +300,7 @@ sub get_options_from_array {
 	 "battery|B" => \$opt::battery,
 	 "net" => \$opt::net,
 	 "nethops=i" => \$opt::nethops,
+	 "baseline" => \$opt::baseline,
 
 	 "nice|n=i" => \$opt::nice,
 	 "program|prg=s" => \@opt::prg,
@@ -492,6 +494,11 @@ sub min {
     return $min;
 }
 
+sub collect_net_baseline {
+    # Collect what a normal (unloaded) net connection looks line
+}
+
+
 sub netsensor_script {
     # Script for --sensor when using --net
     my $hops = shift;
@@ -500,14 +507,17 @@ sub netsensor_script {
 	use Net::Ping;
 
 	my $medtrc = MedianTraceroute->new(shift);
-	$medtrc->ping();
-	$medtrc->ping();
+	$medtrc->set_remedian($medtrc->ping());
+	$medtrc->set_remedian($medtrc->ping());
 	while(1) {
 	    my $ms = $medtrc->ping();
 	    my $m = $medtrc->remedian();
-	    # printf("%.2f %.2f med*1.5 %f\n",$m*1000,$ms*1000,$m*1.5 < $ms);
-	    # 1 = median*1.5 < current latency
-	    # 0 = median*1.5 > current latency
+	    if($m*1.5 < $ms) {
+		# Bad 1 = median*1.5 < current latency
+	    } else {
+		# OK 0 = median*1.5 > current latency
+		$medtrc->set_remedian($ms);
+	    }
 	    printf("%d\n",$m*1.5 < $ms);
 	    sleep(1);
 	}
@@ -532,7 +542,7 @@ sub netsensor_script {
 		    die("Cannot traceroute to 8.8.8.8 and 89.233.43.71");
 		}
 	    }
-	    my $p = Net::Ping->new("external");
+	    my $p = Net::Ping->new();
 	    $p->hires();
 
 	    return bless {
@@ -552,7 +562,6 @@ sub netsensor_script {
 		my ($ret, $duration, $ip) =
 		    $self->{'pinger'}->ping($self->{'host'}, 5.5);
 		if($ret) {
-		    $self->set_remedian($duration);
 		    return $duration;
 		}
 	    }

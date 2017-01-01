@@ -93,7 +93,7 @@ else
   else
     mkdir -p $HOME/bin/;
     chmod 755 src/*;
-    cp src/parallel src/sem src/sql src/niceload $HOME/bin;
+    cp src/parallel src/env_parallel* src/sem src/sql src/niceload $HOME/bin;
     echo
     echo GNU $LATEST copied to $HOME/bin
   fi

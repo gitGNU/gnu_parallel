@@ -1,0 +1,5 @@
+version: 1.2
+replace: true
+directory: parallel
+filename: parallel-latest.tar.bz2
+comment: New release

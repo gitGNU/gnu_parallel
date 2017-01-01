@@ -1,0 +1,54 @@
+<package name="parallel" project="home:tange">
+  <title>GNU Parallel</title>
+  <description>= About GNU Parallel =&#13;
+&#13;
+GNU Parallel is a shell tool for executing jobs in parallel using one or more computers. A job is can be a single command or a small script that has to be run for each of the lines in the input. The typical input is a list of files, a list of hosts, a list of users, a list of URLs, or a list of tables. A job can also be a command that reads from a pipe. GNU Parallel can then split the input and pipe it into commands in parallel.&#13;
+&#13;
+If you use xargs and tee today you will find GNU Parallel very easy to use as GNU Parallel is written to have the same options as xargs. If you write loops in shell, you will find GNU Parallel may be able to replace most of the loops and make them run faster by running several jobs in parallel. GNU Parallel can even replace nested loops.&#13;
+&#13;
+GNU Parallel makes sure output from the commands is the same output as you would get had you run the commands sequentially. This makes it&#13;
+possible to use output from GNU Parallel as input for other programs.&#13;
+&#13;
+You can find more about GNU Parallel at: http://www.gnu.org/s/parallel/&#13;
+&#13;
+Watch the intro video on http://www.youtube.com/playlist?list=PL284C9FF2488BC6D1 or walk through the tutorial http://www.gnu.org/software/parallel/parallel_tutorial.html&#13;
+&#13;
+When using GNU Parallel for a publication please cite:&#13;
+&#13;
+O. Tange (2011): GNU Parallel - The Command-Line Power Tool, ;login: The USENIX Magazine, February 2011:42-47.&#13;
+&#13;
+&#13;
+= About GNU SQL =&#13;
+&#13;
+GNU sql aims to give a simple, unified interface for accessing databases through all the different databases' command line clients. So far the focus has been on giving a common way to specify login information (protocol, username, password, hostname, and port number), size (database and table size), and running queries.&#13;
+&#13;
+The database is addressed using a DBURL. If commands are left out you will get that database's interactive shell.&#13;
+&#13;
+When using GNU SQL for a publication please cite:&#13;
+&#13;
+O. Tange (2011): GNU SQL - A Command Line Tool for Accessing Different Databases Using DBURLs, ;login: The USENIX Magazine, April 2011:29-32.&#13;
+&#13;
+&#13;
+= About GNU Niceload =&#13;
+&#13;
+GNU niceload slows down a program when the computer load average (or other system activity) is above a certain limit. When the limit is reached the program will be suspended for some time. If the limit is a soft limit the program will be allowed to run for short amounts of time before being suspended again. If the limit is a hard limit the program will only be allowed to run when the system is below the limit.&#13;
+</description>
+  <person userid="tange" role="bugowner"/>
+  <person userid="tange" role="maintainer"/>
+  <build>
+    <enable repository="CentOS_CentOS-5"/>
+    <enable repository="Debian_5.0"/>
+    <enable repository="Debian_Etch"/>
+    <enable repository="Fedora_12"/>
+    <enable/>
+    <disable arch="ppc64"/>
+    <disable arch="ppc" repository="CentOS_CentOS-5"/>
+    <disable arch="ppc64" repository="Debian_5.0"/>
+    <disable arch="ppc" repository="images"/>
+  </build>
+  <debuginfo>
+    <disable/>
+  </debuginfo>
+  <url>http://www.gnu.org/software/parallel/</url>
+</package>
+

@@ -1259,7 +1259,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20161222;
+    $Global::version = 20161223;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1443,7 +1443,9 @@ sub parse_semaphore {
     if(defined $opt::semaphore) { $Global::semaphore = 1; }
     if(defined $opt::semaphoretimeout) { $Global::semaphore = 1; }
     if(defined $opt::semaphorename) { $Global::semaphore = 1; }
-    if(defined $opt::fg) { $Global::semaphore = 1; }
+    if(defined $opt::fg and not $opt::tmux and not $opt::tmuxpane) {
+	$Global::semaphore = 1;
+    }
     if(defined $opt::bg) { $Global::semaphore = 1; }
     if(defined $opt::wait and not $opt::sqlmaster) {
 	$Global::semaphore = 1; @ARGV = "true";
@@ -1506,6 +1508,9 @@ sub open_joblog {
        not ($opt::joblog or $opt::results)) {
         ::error("--resume and --resume-failed require --joblog or --results.");
 	::wait_and_exit(255);
+    }
+    if(defined $opt::joblog and $opt::joblog =~ s/^\+//) {
+	$append = 1;
     }
     if($opt::joblog
        and
@@ -1645,7 +1650,7 @@ sub find_compression_program {
     # parallel --shuf -j1  --joblog jl-m --arg-sep ,  parallel --compress-program \'{3}" "-{2}\' cat ::: 1gb '>'/dev/null , 1 2 3 ,  {1..3} , $multithread
     # sort -nk4 jl-?
     # 1-core:
-    # 2-cores: lz4 lzop zstd gzip bzip2 lzma xz clzip pigz  lbzip2 pbzip2  lzip lrz plzip pxz pzstd
+    # 2-cores: pzstd zstd lz4 lzop pigz gzip lbzip2 pbzip2 lrz bzip2 lzma pxz plzip xz lzip clzip
     # 4-cores:
     # 8-cores: pzstd lz4 zstd pigz lzop lbzip2 pbzip2 gzip lzip lrz plzip pxz bzip2 lzma xz clzip
     # 16-cores: pzstd lz4 pigz lzop lbzip2 pbzip2 plzip lzip lrz pxz gzip lzma xz bzip2
@@ -8034,7 +8039,16 @@ sub print_dryrun_and_verbose {
 	$ENV{'PARALLEL_TMUX'} ||= "tmux";
 	if(not $tmuxsocket) {
 	    $tmuxsocket = ::tmpname("tms");
-	    ::status("See output with: $ENV{'PARALLEL_TMUX'} -S $tmuxsocket attach");
+	    if($opt::fg) {
+		if(not fork) {
+		    # Run tmux in the foreground
+		    # Give it 1 second to get started
+		    `sleep 1;$ENV{'PARALLEL_TMUX'} -S $tmuxsocket attach`;
+		    exit;
+		}
+	    } else {
+		::status("See output with: $ENV{'PARALLEL_TMUX'} -S $tmuxsocket attach");
+	    }
 	}
 	$tmux = "sh -c '".
 	    $ENV{'PARALLEL_TMUX'}." -S $tmuxsocket new-session -s p$$ -d \"sleep .2\" >/dev/null 2>&1';" .

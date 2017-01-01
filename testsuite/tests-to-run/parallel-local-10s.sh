@@ -3,6 +3,57 @@
 # Simple jobs that never fails
 # Each should be taking 10-30s and be possible to run in parallel
 # I.e.: No race conditions, no logins
+
+par_interactive() {
+    echo '### Test -p --interactive'
+    cat >/tmp/parallel-script-for-expect <<_EOF
+#!/bin/bash
+
+seq 1 3 | parallel -k -p "sleep 0.1; echo opt-p"
+seq 1 3 | parallel -k --interactive "sleep 0.1; echo opt--interactive"
+_EOF
+    chmod 755 /tmp/parallel-script-for-expect
+
+    expect -b - <<_EOF
+spawn /tmp/parallel-script-for-expect
+expect "echo opt-p 1"
+send "y\n"
+expect "echo opt-p 2"
+send "n\n"
+expect "echo opt-p 3"
+send "y\n"
+expect "opt-p 1"
+expect "opt-p 3"
+expect "echo opt--interactive 1"
+send "y\n"
+expect "echo opt--interactive 2"
+send "n\n"
+expect "opt--interactive 1"
+expect "echo opt--interactive 3"
+send "y\n"
+expect "opt--interactive 3"
+_EOF
+    echo
+}
+
+par_k() {
+    echo '### Test -k'
+    ulimit -n 50
+    (echo "sleep 3; echo begin"; seq 1 30 |
+	parallel -kq echo "sleep 1; echo {}";
+	echo "echo end") | stdout parallel -k -j0
+}
+
+par_sigterm() {
+    echo '### Test SIGTERM'
+    parallel -k -j20 sleep 3';' echo ::: {1..99} >/tmp/parallel$$ 2>&1 &
+    A=$!
+    sleep 5; kill -TERM $A
+    wait
+    sort /tmp/parallel$$
+    rm /tmp/parallel$$
+}
+
 par_pipepart_spawn() {
     echo '### bug #46214: Using --pipepart doesnt spawn multiple jobs in version 20150922'
     seq 1000000 > /tmp/num1000000;
@@ -164,6 +215,25 @@ par_results_compress() {
     parallel --results /tmp/ged --compress echo ::: 1 | wc -l
     parallel --results /tmp/ged echo ::: 1 | wc -l
 }
+
+par_kill_children_timeout() {
+    echo '### Test killing children with --timeout and exit value (failed if timed out)'
+    pstree $$ | grep sleep | grep -v anacron | grep -v screensave | wc; 
+    doit() {
+	for i in `seq 100 120`; do
+	    bash -c "(sleep $i)" &
+	    sleep $i &
+	done;
+	wait;
+	echo No good;
+    }
+    export -f doit
+    parallel --timeout 3 doit ::: 1000000000 1000000001; 
+    echo $?;
+    sleep 2;
+    pstree $$ | grep sleep | grep -v anacron | grep -v screensave | wc
+}
+
 
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort | parallel -j6 --tag -k '{} 2>&1'

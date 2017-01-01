@@ -671,6 +671,27 @@ par_empty() {
     parallel echo ::: true
 }
 
+par_empty_line() {
+    echo '### Test bug: empty line for | sh with -k'
+    (echo echo a ; echo ; echo echo b) | parallel -k
+}
+
+par_append_joblog() {
+    echo '### can you append to a joblog using +'
+    parallel --joblog /tmp/parallel_append_joblog echo ::: 1
+    parallel --joblog +/tmp/parallel_append_joblog echo ::: 1
+    wc -l /tmp/parallel_append_joblog
+}
+
+par_file_ending_in_newline() {
+    echo '### Hans found a bug giving unitialized variable'
+    echo >/tmp/parallel_f1
+    echo >/tmp/parallel_f2'
+'
+    echo /tmp/parallel_f1 /tmp/parallel_f2 |
+    stdout parallel -kv --delimiter ' ' gzip
+    rm /tmp/parallel_f*
+}
 
 export -f $(compgen -A function | grep par_)
-compgen -A function | grep par_ | sort | parallel -j6 --tag -k '{} 2>&1'
+compgen -A function | grep par_ | sort | parallel -j6 --tag -k --joblog +/tmp/jl-`basename $0` '{} 2>&1'

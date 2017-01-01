@@ -1759,5 +1759,16 @@ echo '**'
 **
 ### 1 .par file from --files expected
 10
+par_append_joblog	### can you append to a joblog using +
+par_append_joblog	1
+par_append_joblog	1
+par_append_joblog	3 /tmp/parallel_append_joblog
 par_empty	bug #:
 par_empty	true
+par_empty_line	### Test bug: empty line for | sh with -k
+par_empty_line	a
+par_empty_line	b
+par_file_ending_in_newline	### Hans found a bug giving unitialized variable
+par_file_ending_in_newline	gzip /tmp/parallel_f1
+par_file_ending_in_newline	gzip /tmp/parallel_f2'
+par_file_ending_in_newline	'
