@@ -46,7 +46,7 @@ par_k() {
 
 par_sigterm() {
     echo '### Test SIGTERM'
-    parallel -k -j20 sleep 3';' echo ::: {1..99} >/tmp/parallel$$ 2>&1 &
+    parallel -k -j5 sleep 3';' echo ::: {1..99} >/tmp/parallel$$ 2>&1 &
     A=$!
     sleep 5; kill -TERM $A
     wait

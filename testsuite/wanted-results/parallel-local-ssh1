@@ -20,22 +20,22 @@ echo '### bug #41805: Idea: propagate --env for parallel --number-of-cores'
 ** test_zsh
   FOO=test_zsh parallel --env FOO,HOME -S zsh@lo -N0 env ::: "" |sort|egrep 'FOO|^HOME'
 FOO=test_zsh
-HOME=/home/tange
+HOME=/mnt/4tb/home/tange
   echo '** test_zsh_filter'
 ** test_zsh_filter
   FOO=test_zsh_filter parallel --filter-hosts --env FOO,HOME -S zsh@lo -N0 env ::: "" |sort|egrep 'FOO|^HOME'
 FOO=test_zsh_filter
-HOME=/home/tange
+HOME=/mnt/4tb/home/tange
   echo '** test_csh'
 ** test_csh
   FOO=test_csh parallel --env FOO,HOME -S csh@lo -N0 env ::: "" |sort|egrep 'FOO|^HOME'
 FOO=test_csh
-HOME=/home/tange
+HOME=/mnt/4tb/home/tange
   echo '** test_csh_filter'
 ** test_csh_filter
   FOO=test_csh_filter parallel --filter-hosts --env FOO,HOME -S csh@lo -N0 env ::: "" |sort|egrep 'FOO|^HOME'
 FOO=test_csh_filter
-HOME=/home/tange
+HOME=/mnt/4tb/home/tange
   echo '** bug #41805 done'
 ** bug #41805 done
 echo '### Deal with long command lines on remote servers'
@@ -64,7 +64,7 @@ echo '### bug #40001: --joblog and --nonall seem not to work together:'
 echo '### bug #40132: FreeBSD: --workdir . gives warning if . == $HOME'
 ### bug #40132: FreeBSD: --workdir . gives warning if . == $HOME
   cd && parallel --workdir . -S lo pwd ::: ""
-/home/tange
+/mnt/4tb/home/tange
 echo '### use function as $PARALLEL_SSH'
 ### use function as $PARALLEL_SSH
   foossh() { echo "FOOSSH" >&2; ssh "$@"; };   export -f foossh;   PARALLEL_SSH=foossh parallel -S 1/lo echo ::: 'Run through FOOSSH?'
@@ -146,13 +146,13 @@ OK
 OK
 OK
 ls: No match.
-ls: cannot access ./?--: No such file or directory
+ls: cannot access './?--': No such file or directory
 ls: No match.
-ls: cannot access ./--?: No such file or directory
+ls: cannot access './--?': No such file or directory
 ls: No match.
-ls: cannot access ./?--.a: No such file or directory
+ls: cannot access './?--.a': No such file or directory
 ls: No match.
-ls: cannot access ./--?.a: No such file or directory
+ls: cannot access './--?.a': No such file or directory
 echo '### Test --trc "/tmp/./--- /A" "/tmp/./ ---/B"'
 ### Test --trc "/tmp/./--- /A" "/tmp/./ ---/B"
   mkdir -p '/tmp/./--- '   '/tmp/ ---';   touch -- '/tmp/./--- /A' '/tmp/ ---/B';   rm -f ./---?/A.a ./?---/B.a;   parallel --trc {=s:.*/./::=}.a -S csh@lo,sh@lo touch ./{=s:.*/./::=}.a ::: '/tmp/./--- /A' '/tmp/./ ---/B';   ls ./---?/A.a ./?---/B.a;   parallel --nonall -k -S csh@lo,sh@lo 'ls ./?--- ./---? || echo OK'; echo '### bug #46519: --onall ignores --transfer'
@@ -162,8 +162,8 @@ OK
 OK
 ### bug #46519: --onall ignores --transfer
 ls: No match.
-ls: cannot access ./?---: No such file or directory
-ls: cannot access ./---?: No such file or directory
+ls: cannot access './?---': No such file or directory
+ls: cannot access './---?': No such file or directory
   touch bug46519.{a,b,c}; rm -f bug46519.?? bug46519.???;   parallel --onall --tf bug46519.{} --trc bug46519.{}{} --trc bug46519.{}{}{} -S csh@lo,sh@lo     'ls bug46519.{}; touch bug46519.{}{} bug46519.{}{}{}' ::: a b c;   ls bug46519.?? bug46519.???;   parallel --onall -S csh@lo,sh@lo ls bug46519.{}{} bug46519.{}{}{} ::: a b c && echo Cleanup failed
 bug46519.a
 bug46519.b
@@ -177,18 +177,18 @@ bug46519.bb
 bug46519.bbb
 bug46519.cc
 bug46519.ccc
-ls: cannot access bug46519.aa: No such file or directory
-ls: cannot access bug46519.aaa: No such file or directory
-ls: cannot access bug46519.bb: No such file or directory
-ls: cannot access bug46519.bbb: No such file or directory
-ls: cannot access bug46519.cc: No such file or directory
-ls: cannot access bug46519.ccc: No such file or directory
-ls: cannot access bug46519.aa: No such file or directory
-ls: cannot access bug46519.aaa: No such file or directory
-ls: cannot access bug46519.bb: No such file or directory
-ls: cannot access bug46519.bbb: No such file or directory
-ls: cannot access bug46519.cc: No such file or directory
-ls: cannot access bug46519.ccc: No such file or directory
+ls: cannot access 'bug46519.aa': No such file or directory
+ls: cannot access 'bug46519.aaa': No such file or directory
+ls: cannot access 'bug46519.bb': No such file or directory
+ls: cannot access 'bug46519.bbb': No such file or directory
+ls: cannot access 'bug46519.cc': No such file or directory
+ls: cannot access 'bug46519.ccc': No such file or directory
+ls: cannot access 'bug46519.aa': No such file or directory
+ls: cannot access 'bug46519.aaa': No such file or directory
+ls: cannot access 'bug46519.bb': No such file or directory
+ls: cannot access 'bug46519.bbb': No such file or directory
+ls: cannot access 'bug46519.cc': No such file or directory
+ls: cannot access 'bug46519.ccc': No such file or directory
 echo '### Test --nice remote'
 ### Test --nice remote
 stdout parallel --nice 1 -S lo -vv 'PAR=a bash -c "echo  \$PAR {}"' ::: b |   perl -pe 's/\S*parallel-server\S*/one-server/;s:[a-z/\\+=0-9]{500,}:base64:i;'

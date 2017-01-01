@@ -1,11 +1,15 @@
 bug #46120: Suspend should suspend (at least local) children
 it should burn 1.9 CPU seconds, but no more than that
 The 5 second sleep will make it be killed by timeout when it fgs
-2048 4b:d0:08:9c:88:c1:b9:20:ce:69:91:73:e0:07:5d:13 /home/tange/.ssh/id_rsa (RSA)
+1024 SHA256:SXgag2Z2L91JsrT5WjNBcARD1EpyCCj4JctVJ6Zpzm0 /mnt/4tb/home/tange/.ssh/id_dsa (DSA)
+8192 SHA256:lYn04AefJq/5r0e4FftceviJ7JVnq9NGKY3CW9XMpO8 /mnt/4tb/home/tange/.ssh/id_rsa (RSA)
+4096 SHA256:jUQ9ysfprs7UOckttjjVb+j3qikUmKWDEWC+eEJkbDQ /mnt/4tb/home/tange/.ssh/id_rsa_openindiana (RSA)
 
 stdout /usr/bin/time -f CPUTIME=%U parallel --timeout 5 burnP6 ::: 1 | grep -q CPUTIME=1
 Zero=OK 0
-2048 4b:d0:08:9c:88:c1:b9:20:ce:69:91:73:e0:07:5d:13 /home/tange/.ssh/id_rsa (RSA)
+1024 SHA256:SXgag2Z2L91JsrT5WjNBcARD1EpyCCj4JctVJ6Zpzm0 /mnt/4tb/home/tange/.ssh/id_dsa (DSA)
+8192 SHA256:lYn04AefJq/5r0e4FftceviJ7JVnq9NGKY3CW9XMpO8 /mnt/4tb/home/tange/.ssh/id_rsa (RSA)
+4096 SHA256:jUQ9ysfprs7UOckttjjVb+j3qikUmKWDEWC+eEJkbDQ /mnt/4tb/home/tange/.ssh/id_rsa_openindiana (RSA)
 
 echo 1 | stdout /usr/bin/time -f CPUTIME=%U parallel --timeout 5 burnP6 | grep -q CPUTIME=1
 Zero=OK 0

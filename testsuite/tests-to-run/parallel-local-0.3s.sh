@@ -456,11 +456,11 @@ echo '### Test --nice locally'
   
 echo '### Test distribute arguments at EOF to 2 jobslots'
 
-  seq 1 92 | parallel -j+0 -kX -s 100 echo
+  seq 1 92 | parallel -j2 -kX -s 100 echo
   
 echo '### Test distribute arguments at EOF to 5 jobslots'
 
-  seq 1 92 | parallel -j+3 -kX -s 100 echo
+  seq 1 92 | parallel -j5 -kX -s 100 echo
   
 echo '### Test distribute arguments at EOF to infinity jobslots'
 
@@ -691,6 +691,13 @@ par_file_ending_in_newline() {
     echo /tmp/parallel_f1 /tmp/parallel_f2 |
     stdout parallel -kv --delimiter ' ' gzip
     rm /tmp/parallel_f*
+}
+
+par_python_children() {
+    echo '### bug #49970: Python child process dies if --env is used'
+    fu() { echo joe; }
+    export -f fu
+    stdout parallel --env fu python -c \""import os;f = os.popen('uname -p');output = f.read();rc = f.close()"\" ::: 1
 }
 
 export -f $(compgen -A function | grep par_)

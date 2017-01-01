@@ -32,8 +32,8 @@ GNU B<parcat> is part of GNU B<parallel>. Report bugs to <bug-parallel@gnu.org>.
 
 =head1 AUTHOR
 
-Copyright (C) 2016 Ole Tange, http://ole.tange.dk and Free Software
-Foundation, Inc.
+Copyright (C) 2016,2017 Ole Tange, http://ole.tange.dk and Free
+Software Foundation, Inc.
 
 =head1 LICENSE
 

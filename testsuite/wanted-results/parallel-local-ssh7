@@ -237,35 +237,29 @@ par_fish_underscore	variables in aliases and arrays in functions work
 par_fish_underscore	variables in aliases and arrays in functions work
 par_fish_underscore	variables in aliases and arrays in functions work
 par_fish_underscore	variables in aliases and arrays in functions work
-par_fish_underscore	Standard input: not_copied_alias error\=OK
-par_fish_underscore	                ^
-par_fish_underscore	Standard input: not_copied_func error\=OK
-par_fish_underscore	                ^
+par_fish_underscore	      ^
+par_fish_underscore	      ^
 par_fish_underscore	error=OK
 par_fish_underscore	error=OK
 par_fish_underscore	aliases and arrays in functions work
 par_fish_underscore	aliases and arrays in functions work
 par_fish_underscore	aliases functions work
 par_fish_underscore	aliases functions work
-par_fish_underscore	Standard input: myecho $myarray functions $argv
-par_fish_underscore	                ^
-par_fish_underscore	in function “myfunc”,
-par_fish_underscore		called on standard input,
+par_fish_underscore	      ^
+par_fish_underscore	in function “myfunc”
+par_fish_underscore		called on standard input
 par_fish_underscore		with parameter list “work”
 par_fish_underscore	
 par_fish_underscore	OK if   ^^^^^^^^^^^^^^^^^ no myecho
-par_fish_underscore	Standard input: myecho $myarray functions $argv
-par_fish_underscore	                ^
-par_fish_underscore	in function “myfunc”,
-par_fish_underscore		called on standard input,
+par_fish_underscore	      ^
+par_fish_underscore	in function “myfunc”
+par_fish_underscore		called on standard input
 par_fish_underscore		with parameter list “work”
 par_fish_underscore	
 par_fish_underscore	OK if   ^^^^^^^^^^^^^^^^^ no myecho
-par_fish_underscore	Standard input: myfunc work
-par_fish_underscore	                ^
+par_fish_underscore	      ^
 par_fish_underscore	OK if   ^^^^^^^^^^^^^^^^^ no myfunc
-par_fish_underscore	Standard input: myfunc work
-par_fish_underscore	                ^
+par_fish_underscore	      ^
 par_fish_underscore	OK if   ^^^^^^^^^^^^^^^^^ no myfunc
 par_ksh_funky	
 par_ksh_funky	\\\\\\\\	

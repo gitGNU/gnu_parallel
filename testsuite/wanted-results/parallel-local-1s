@@ -4,7 +4,7 @@ echo "### BUG: The length for -X is not close to max (131072)";   seq 1 60000 | 
   seq 1 60000 | parallel -X echo a{}b{}c |head -n 1 |wc
       1    5644   65514
   seq 1 60000 | parallel -X echo |head -n 1 |wc
-      1   12770   65514
+      1   12771   65520
   seq 1 60000 | parallel -X echo a{}b{}c {} |head -n 1 |wc
       1    8098   65512
   seq 1 60000 | parallel -X echo {}aa{} |head -n 1 |wc
@@ -225,9 +225,10 @@ echo 'bug #44250: pxz complains File format not recognized but decompresses anyw
 bug #44250: pxz complains File format not recognized but decompresses anyway
   # The first line dumps core if run from make file. Why?!
   stdout parallel --compress --compress-program pxz ls /{} ::: OK-if-missing-file
-ls: cannot access /OK-if-missing-file: No such file or directory
+ls: cannot access '/OK-if-missing-file': No such file or directory
   stdout parallel --compress --compress-program pixz --decompress-program 'pixz -d' ls /{}  ::: OK-if-missing-file
-ls: cannot access /OK-if-missing-file: No such file or directory
+can not seek in input: Illegal seek
+ls: cannot access '/OK-if-missing-file': No such file or directory
   stdout parallel --compress --compress-program pixz --decompress-program 'pixz -d' true ::: OK-if-no-output
   stdout parallel --compress --compress-program pxz true ::: OK-if-no-output
 echo 'bug #41613: --compress --line-buffer no newline';   perl -e 'print "It worked"'| parallel --pipe --compress --line-buffer cat; echo
