@@ -63,7 +63,7 @@ echo '### Test --number-of-cpus';   stdout $NICEPAR --number-of-cpus
 1
 echo '### Test --number-of-cores';   stdout $NICEPAR --number-of-cores
 ### Test --number-of-cores
-2
+8
 echo '### Test --use-cpus-instead-of-cores';   (seq 1 8 | stdout parallel --use-cpus-instead-of-cores -j100% sleep) && echo CPUs done &   (seq 1 8 | stdout parallel -j100% sleep) && echo cores done &   echo 'Cores should complete first on machines with less than 8 physical CPUs';   wait
 ### Test --use-cpus-instead-of-cores
 Cores should complete first on machines with less than 8 physical CPUs
@@ -400,7 +400,7 @@ echo "### BUG: empty lines with --show-limit"
 ### BUG: empty lines with --show-limit
 echo | $NICEPAR --show-limits
 Maximal size of command: 131049
-Maximal used size of command: 65524
+Maximal used size of command: 65528
 
 Execution of  will continue now, and it will try to read its input
 and run commands; if this is not what you wanted to happen, please

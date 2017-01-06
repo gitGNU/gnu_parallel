@@ -5,25 +5,25 @@
 centos3.tange.dk
 hostname; echo 1
 hostname; echo 1
-nlv
+redhat9.tange.dk
 ### Test $PARALLEL - multi line
 1
 1
 centos3.tange.dk
 hostname; echo 1
 hostname; echo 1
-nlv
+redhat9.tange.dk
 ### Test ~/.parallel/config - single line
 1
 1
 centos3.tange.dk
 hostname; echo 1
 hostname; echo 1
-nlv
+redhat9.tange.dk
 ### Test ~/.parallel/config - multi line
 1
 1
 centos3.tange.dk
 hostname; echo 1
 hostname; echo 1
-nlv
+redhat9.tange.dk

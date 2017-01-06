@@ -41,6 +41,3 @@ parallel: sleep 3; echo 14
 parallel: sleep 3; echo 15
 parallel: sleep 3; echo 16
 parallel: sleep 3; echo 9
-### Test bug: empty line for | sh with -k
-a
-b

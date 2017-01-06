@@ -77,8 +77,8 @@ mysql: [Warning] Using a password on the command line interface can be insecure.
 Test if --debug works
 Yes it does
 ### Test --version -V
-     12      74     500
-     12      74     500
+     13      74     535
+     13      74     535
 ### Test -r
 dburl pg://nongood@127.0.0.3:2227/
 databasedriver pg user nongood password  host 127.0.0.3 port 2227 database nongood query 

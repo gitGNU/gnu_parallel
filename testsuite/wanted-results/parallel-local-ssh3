@@ -128,3 +128,11 @@ echo '### bug #49404: "Max jobs to run" does not equal the number of jobs specif
 should give 10 running jobs
   stdout parallel -S 16/lo --progress true ::: {1..10} | grep /.10
 1:lo / 16 / 10
+par_quoting_for_onall	### bug #35427: quoting of {2} broken for --onall
+par_quoting_for_onall	/bin/ls
+par_return_with_fixedstring	### Test --return with fixed string (Gave undef warnings)
+par_return_with_fixedstring	OK
+par_trc_with_space	### Test --trc with space added in filename
+par_trc_with_space	original
+par_trc_with_special_chars	### Test --trc with >|< added in filename
+par_trc_with_special_chars	original

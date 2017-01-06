@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SERVER1=parallel-server3
+SERVER1=parallel-server1
 SERVER2=parallel-server2
 
 cat <<'EOF' | sed -e s/\$SERVER1/$SERVER1/\;s/\$SERVER2/$SERVER2/ | parallel -vj10 -k --joblog /tmp/jl-`basename $0` -L1

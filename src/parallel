@@ -6534,24 +6534,7 @@ sub openoutputfiles {
     my ($outfhw, $errfhw, $outname, $errname);
 
     if($opt::results and not $Global::csv) {
-	# Results as dir
-	my $args_as_dirname = $self->{'commandline'}->args_as_dirname();
-	# Output in: prefix/name1/val1/name2/val2/stdout
-	my $dir = $self->{'commandline'}->
-	    replace_placeholders([$opt::results],0,0) .
-	    "/".$args_as_dirname;
-	if(eval{ File::Path::mkpath($dir); }) {
-	    # OK
-	} else {
-	    # mkpath failed: Argument probably too long.
-	    # Set $Global::max_file_length, which will keep the individual
-	    # dir names shorter than the max length
-	    max_file_name_length($opt::results);
-	    $args_as_dirname = $self->{'commandline'}->args_as_dirname();
-	    # prefix/name1/val1/name2/val2/
-	    $dir = $opt::results."/".$args_as_dirname;
-	    File::Path::mkpath($dir);
-	}
+	my $dir = $self->{'commandline'}->resultsdir();
 	# prefix/name1/val1/name2/val2/seq
 	my $seqname = "$dir/seq";
 	my $seqfhw;
@@ -6722,43 +6705,7 @@ sub filter_through_compress {
     }
 }
 
-sub max_file_name_length {
-    # Figure out the max length of a subdir
-    # TODO and the max total length
-    # Ext4 = 255,130816
-    # Uses:
-    #   $Global::max_file_length is set
-    # Returns:
-    #   $Global::max_file_length
-    my $testdir = shift;
 
-    my $upper = 8_000_000;
-    # Dir length of 8 chars is supported everywhere
-    my $len = 8;
-    my $dir = "x"x$len;
-    do {
-	rmdir($testdir."/".$dir);
-	$len *= 16;
-	$dir = "x"x$len;
-    } while ($len < $upper and mkdir $testdir."/".$dir);
-    # Then search for the actual max length between $len/16 and $len
-    my $min = $len/16;
-    my $max = $len;
-    while($max-$min > 5) {
-	# If we are within 5 chars of the exact value:
-	# it is not worth the extra time to find the exact value
-	my $test = int(($min+$max)/2);
-	$dir = "x"x$test;
-	if(mkdir $testdir."/".$dir) {
-	    rmdir($testdir."/".$dir);
-	    $min = $test;
-	} else {
-	    $max = $test;
-	}
-    }
-    $Global::max_file_length = $min;
-    return $min;
-}
 
 sub set_fh {
     # Set file handle
@@ -8081,9 +8028,7 @@ sub is_already_in_results {
     # Returns:
     #   $job_already_run = bool whether there is output for this or not
     my $job = $_[0];
-    my $args_as_dirname = $job->{'commandline'}->args_as_dirname();
-    # prefix/name1/val1/name2/val2/
-    my $dir = $opt::results."/".$args_as_dirname;
+    my $dir = $job->{'commandline'}->resultsdir();
     ::debug("run", "Test $dir/stdout", -e "$dir/stdout", "\n");
     return -e "$dir/stdout";
 }
@@ -8949,6 +8894,75 @@ sub args_as_string {
     my $self = shift;
     return (join " ", map { $_->orig() }
 	    map { @$_ } @{$self->{'arg_list'}});
+}
+
+sub resultsdir {
+    sub max_file_name_length {
+	# Figure out the max length of a subdir
+	# TODO and the max total length
+	# Ext4 = 255,130816
+	# Uses:
+	#   $Global::max_file_length is set
+	# Returns:
+	#   $Global::max_file_length
+	my $testdir = shift;
+
+	my $upper = 8_000_000;
+	# Dir length of 8 chars is supported everywhere
+	my $len = 8;
+	my $dir = "x"x$len;
+	do {
+	    rmdir($testdir."/".$dir);
+	    $len *= 16;
+	    $dir = "x"x$len;
+	} while ($len < $upper and mkdir $testdir."/".$dir);
+	# Then search for the actual max length between $len/16 and $len
+	my $min = $len/16;
+	my $max = $len;
+	while($max-$min > 5) {
+	    # If we are within 5 chars of the exact value:
+	    # it is not worth the extra time to find the exact value
+	    my $test = int(($min+$max)/2);
+	    $dir = "x"x$test;
+	    if(mkdir $testdir."/".$dir) {
+		rmdir($testdir."/".$dir);
+		$min = $test;
+	    } else {
+		$max = $test;
+	    }
+	}
+	$Global::max_file_length = $min;
+	return $min;
+    }
+
+    my $self = shift;
+    my $dir = $self->replace_placeholders([$opt::results],0,0);
+    if($dir eq $opt::results) {
+	# $opt::results simple string: Append args_as_dirname
+	my $args_as_dirname = $self->args_as_dirname();
+	# Output in: prefix/name1/val1/name2/val2/stdout
+	$dir = $opt::results."/".$args_as_dirname;
+	if(-d $dir or eval{ File::Path::mkpath($dir); }) {
+	    # OK
+	} else {
+	    # mkpath failed: Argument probably too long.
+	    # Set $Global::max_file_length, which will keep the individual
+	    # dir names shorter than the max length
+	    max_file_name_length($opt::results);
+	    $args_as_dirname = $self->args_as_dirname();
+	    # prefix/name1/val1/name2/val2/
+	    $dir = $opt::results."/".$args_as_dirname;
+	    File::Path::mkpath($dir);
+	}
+    } else {
+	if(-d $dir or eval{ File::Path::mkpath($dir); }) {
+	    # OK
+	} else {
+	    ::error("Cannot make dir '$dir'.");
+	    ::wait_and_exit(255);
+	}
+    }
+    return $dir;
 }
 
 sub args_as_dirname {

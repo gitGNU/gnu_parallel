@@ -1,8 +1,8 @@
 #!/bin/bash
 
-SERVER1=parallel-server3
+SERVER1=parallel-server1
 SERVER2=lo
-SSHLOGIN1=parallel@parallel-server3
+SSHLOGIN1=parallel@parallel-server1
 SSHLOGIN2=parallel@lo
 SSHLOGIN3=parallel@parallel-server2
 

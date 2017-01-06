@@ -482,10 +482,10 @@ par_kill_children_timeout	      0       0       0
 par_kill_children_timeout	2
 par_kill_children_timeout	      0       0       0
 par_maxlinelen_X_I	### Test max line length -X -I
-par_maxlinelen_X_I	47ec7550232044dc1e7a504705a45184  -
+par_maxlinelen_X_I	81c0a85162c989c07f666b827a30ce52  -
 par_maxlinelen_X_I	Chars per line (817788/13): 62906
 par_maxlinelen_m_I	### Test max line length -m -I
-par_maxlinelen_m_I	d10d5c84fc4716b21d90afa92cf44d73  -
+par_maxlinelen_m_I	14bacad229d8b0d32be0a2339c2a6af7  -
 par_maxlinelen_m_I	Chars per line (697810/11): 63437
 par_memleak	### Test memory consumption stays (almost) the same for 30 and 300 jobs
 par_memleak	should give 1 == true
@@ -946,17 +946,7 @@ par_round_robin_blocks	8
 par_sigterm	### Test SIGTERM
 par_sigterm	1
 par_sigterm	10
-par_sigterm	11
-par_sigterm	12
-par_sigterm	13
-par_sigterm	14
-par_sigterm	15
-par_sigterm	16
-par_sigterm	17
-par_sigterm	18
-par_sigterm	19
 par_sigterm	2
-par_sigterm	20
 par_sigterm	3
 par_sigterm	4
 par_sigterm	5
@@ -965,23 +955,8 @@ par_sigterm	7
 par_sigterm	8
 par_sigterm	9
 par_sigterm	parallel: SIGTERM received. No new jobs will be started.
-par_sigterm	parallel: Waiting for these 20 jobs to finish. Send SIGTERM again to stop now.
-par_sigterm	parallel: sleep 3; echo 1
+par_sigterm	parallel: Waiting for these 5 jobs to finish. Send SIGTERM again to stop now.
 par_sigterm	parallel: sleep 3; echo 10
-par_sigterm	parallel: sleep 3; echo 11
-par_sigterm	parallel: sleep 3; echo 12
-par_sigterm	parallel: sleep 3; echo 13
-par_sigterm	parallel: sleep 3; echo 14
-par_sigterm	parallel: sleep 3; echo 15
-par_sigterm	parallel: sleep 3; echo 16
-par_sigterm	parallel: sleep 3; echo 17
-par_sigterm	parallel: sleep 3; echo 18
-par_sigterm	parallel: sleep 3; echo 19
-par_sigterm	parallel: sleep 3; echo 2
-par_sigterm	parallel: sleep 3; echo 20
-par_sigterm	parallel: sleep 3; echo 3
-par_sigterm	parallel: sleep 3; echo 4
-par_sigterm	parallel: sleep 3; echo 5
 par_sigterm	parallel: sleep 3; echo 6
 par_sigterm	parallel: sleep 3; echo 7
 par_sigterm	parallel: sleep 3; echo 8

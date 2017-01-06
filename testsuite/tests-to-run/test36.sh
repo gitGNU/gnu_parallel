@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SERVER1=parallel-server3
+SERVER1=parallel-server1
 SERVER2=parallel-server2
 
 echo '### Test $PARALLEL_SEQ - local'

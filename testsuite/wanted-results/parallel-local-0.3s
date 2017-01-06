@@ -1630,27 +1630,6 @@ Computers / CPU cores / Max jobs to run
 Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
 echo '**'
 **
-echo '### bug #48295: --results should be dynamic like --wd'
-### bug #48295: --results should be dynamic like --wd
-  rm -rf /tmp/parallel-48295;     parallel --results /tmp/parallel-48295/{1} -k echo ::: A B ::: a b;     find /tmp/parallel-48295 -type f | sort
-A a
-A b
-B a
-B b
-/tmp/parallel-48295/A/1/A/2/a/seq
-/tmp/parallel-48295/A/1/A/2/a/stderr
-/tmp/parallel-48295/A/1/A/2/a/stdout
-/tmp/parallel-48295/A/1/A/2/b/seq
-/tmp/parallel-48295/A/1/A/2/b/stderr
-/tmp/parallel-48295/A/1/A/2/b/stdout
-/tmp/parallel-48295/B/1/B/2/a/seq
-/tmp/parallel-48295/B/1/B/2/a/stderr
-/tmp/parallel-48295/B/1/B/2/a/stdout
-/tmp/parallel-48295/B/1/B/2/b/seq
-/tmp/parallel-48295/B/1/B/2/b/stderr
-/tmp/parallel-48295/B/1/B/2/b/stdout
-echo '**'
-**
   bash -O extglob -c '. `which env_parallel.bash`;     _longopt () {       case "$prev" in         --+([-a-z0-9_]))           echo foo;;       esac;     };     env_parallel echo ::: env_parallel 2>&1   '
 env_parallel
 echo '**'
@@ -1773,3 +1752,188 @@ par_file_ending_in_newline	gzip /tmp/parallel_f1
 par_file_ending_in_newline	gzip /tmp/parallel_f2'
 par_file_ending_in_newline	'
 par_python_children	### bug #49970: Python child process dies if --env is used
+par_result_replace	### bug #49983: --results with {1}
+par_result_replace	foo
+par_result_replace	bar
+par_result_replace	baz
+par_result_replace	/tmp/par_bar_49983
+par_result_replace	/tmp/par_bar_49983/seq
+par_result_replace	/tmp/par_bar_49983/stderr
+par_result_replace	/tmp/par_bar_49983/stdout
+par_result_replace	/tmp/par_baz_49983
+par_result_replace	/tmp/par_baz_49983/seq
+par_result_replace	/tmp/par_baz_49983/stderr
+par_result_replace	/tmp/par_baz_49983/stdout
+par_result_replace	/tmp/par_foo_49983
+par_result_replace	/tmp/par_foo_49983/seq
+par_result_replace	/tmp/par_foo_49983/stderr
+par_result_replace	/tmp/par_foo_49983/stdout
+par_result_replace	foo A
+par_result_replace	foo B
+par_result_replace	foo C
+par_result_replace	bar A
+par_result_replace	bar B
+par_result_replace	bar C
+par_result_replace	baz A
+par_result_replace	baz B
+par_result_replace	baz C
+par_result_replace	/tmp/par_bar A_49983
+par_result_replace	/tmp/par_bar A_49983/seq
+par_result_replace	/tmp/par_bar A_49983/stderr
+par_result_replace	/tmp/par_bar A_49983/stdout
+par_result_replace	/tmp/par_bar B_49983
+par_result_replace	/tmp/par_bar B_49983/seq
+par_result_replace	/tmp/par_bar B_49983/stderr
+par_result_replace	/tmp/par_bar B_49983/stdout
+par_result_replace	/tmp/par_bar C_49983
+par_result_replace	/tmp/par_bar C_49983/seq
+par_result_replace	/tmp/par_bar C_49983/stderr
+par_result_replace	/tmp/par_bar C_49983/stdout
+par_result_replace	/tmp/par_baz A_49983
+par_result_replace	/tmp/par_baz A_49983/seq
+par_result_replace	/tmp/par_baz A_49983/stderr
+par_result_replace	/tmp/par_baz A_49983/stdout
+par_result_replace	/tmp/par_baz B_49983
+par_result_replace	/tmp/par_baz B_49983/seq
+par_result_replace	/tmp/par_baz B_49983/stderr
+par_result_replace	/tmp/par_baz B_49983/stdout
+par_result_replace	/tmp/par_baz C_49983
+par_result_replace	/tmp/par_baz C_49983/seq
+par_result_replace	/tmp/par_baz C_49983/stderr
+par_result_replace	/tmp/par_baz C_49983/stdout
+par_result_replace	/tmp/par_foo A_49983
+par_result_replace	/tmp/par_foo A_49983/seq
+par_result_replace	/tmp/par_foo A_49983/stderr
+par_result_replace	/tmp/par_foo A_49983/stdout
+par_result_replace	/tmp/par_foo B_49983
+par_result_replace	/tmp/par_foo B_49983/seq
+par_result_replace	/tmp/par_foo B_49983/stderr
+par_result_replace	/tmp/par_foo B_49983/stdout
+par_result_replace	/tmp/par_foo C_49983
+par_result_replace	/tmp/par_foo C_49983/seq
+par_result_replace	/tmp/par_foo C_49983/stderr
+par_result_replace	/tmp/par_foo C_49983/stdout
+par_result_replace	foo A
+par_result_replace	foo B
+par_result_replace	foo C
+par_result_replace	bar A
+par_result_replace	bar B
+par_result_replace	bar C
+par_result_replace	baz A
+par_result_replace	baz B
+par_result_replace	baz C
+par_result_replace	/tmp/par_bar-A_49983
+par_result_replace	/tmp/par_bar-A_49983/seq
+par_result_replace	/tmp/par_bar-A_49983/stderr
+par_result_replace	/tmp/par_bar-A_49983/stdout
+par_result_replace	/tmp/par_bar-B_49983
+par_result_replace	/tmp/par_bar-B_49983/seq
+par_result_replace	/tmp/par_bar-B_49983/stderr
+par_result_replace	/tmp/par_bar-B_49983/stdout
+par_result_replace	/tmp/par_bar-C_49983
+par_result_replace	/tmp/par_bar-C_49983/seq
+par_result_replace	/tmp/par_bar-C_49983/stderr
+par_result_replace	/tmp/par_bar-C_49983/stdout
+par_result_replace	/tmp/par_baz-A_49983
+par_result_replace	/tmp/par_baz-A_49983/seq
+par_result_replace	/tmp/par_baz-A_49983/stderr
+par_result_replace	/tmp/par_baz-A_49983/stdout
+par_result_replace	/tmp/par_baz-B_49983
+par_result_replace	/tmp/par_baz-B_49983/seq
+par_result_replace	/tmp/par_baz-B_49983/stderr
+par_result_replace	/tmp/par_baz-B_49983/stdout
+par_result_replace	/tmp/par_baz-C_49983
+par_result_replace	/tmp/par_baz-C_49983/seq
+par_result_replace	/tmp/par_baz-C_49983/stderr
+par_result_replace	/tmp/par_baz-C_49983/stdout
+par_result_replace	/tmp/par_foo-A_49983
+par_result_replace	/tmp/par_foo-A_49983/seq
+par_result_replace	/tmp/par_foo-A_49983/stderr
+par_result_replace	/tmp/par_foo-A_49983/stdout
+par_result_replace	/tmp/par_foo-B_49983
+par_result_replace	/tmp/par_foo-B_49983/seq
+par_result_replace	/tmp/par_foo-B_49983/stderr
+par_result_replace	/tmp/par_foo-B_49983/stdout
+par_result_replace	/tmp/par_foo-C_49983
+par_result_replace	/tmp/par_foo-C_49983/seq
+par_result_replace	/tmp/par_foo-C_49983/stderr
+par_result_replace	/tmp/par_foo-C_49983/stdout
+par_result_replace	foo A
+par_result_replace	foo B
+par_result_replace	foo C
+par_result_replace	bar A
+par_result_replace	bar B
+par_result_replace	bar C
+par_result_replace	baz A
+par_result_replace	baz B
+par_result_replace	baz C
+par_result_replace	/tmp/par__49983
+par_result_replace	/tmp/par__49983/1
+par_result_replace	/tmp/par__49983/1/bar
+par_result_replace	/tmp/par__49983/1/bar/2
+par_result_replace	/tmp/par__49983/1/bar/2/A
+par_result_replace	/tmp/par__49983/1/bar/2/A/seq
+par_result_replace	/tmp/par__49983/1/bar/2/A/stderr
+par_result_replace	/tmp/par__49983/1/bar/2/A/stdout
+par_result_replace	/tmp/par__49983/1/bar/2/B
+par_result_replace	/tmp/par__49983/1/bar/2/B/seq
+par_result_replace	/tmp/par__49983/1/bar/2/B/stderr
+par_result_replace	/tmp/par__49983/1/bar/2/B/stdout
+par_result_replace	/tmp/par__49983/1/bar/2/C
+par_result_replace	/tmp/par__49983/1/bar/2/C/seq
+par_result_replace	/tmp/par__49983/1/bar/2/C/stderr
+par_result_replace	/tmp/par__49983/1/bar/2/C/stdout
+par_result_replace	/tmp/par__49983/1/baz
+par_result_replace	/tmp/par__49983/1/baz/2
+par_result_replace	/tmp/par__49983/1/baz/2/A
+par_result_replace	/tmp/par__49983/1/baz/2/A/seq
+par_result_replace	/tmp/par__49983/1/baz/2/A/stderr
+par_result_replace	/tmp/par__49983/1/baz/2/A/stdout
+par_result_replace	/tmp/par__49983/1/baz/2/B
+par_result_replace	/tmp/par__49983/1/baz/2/B/seq
+par_result_replace	/tmp/par__49983/1/baz/2/B/stderr
+par_result_replace	/tmp/par__49983/1/baz/2/B/stdout
+par_result_replace	/tmp/par__49983/1/baz/2/C
+par_result_replace	/tmp/par__49983/1/baz/2/C/seq
+par_result_replace	/tmp/par__49983/1/baz/2/C/stderr
+par_result_replace	/tmp/par__49983/1/baz/2/C/stdout
+par_result_replace	/tmp/par__49983/1/foo
+par_result_replace	/tmp/par__49983/1/foo/2
+par_result_replace	/tmp/par__49983/1/foo/2/A
+par_result_replace	/tmp/par__49983/1/foo/2/A/seq
+par_result_replace	/tmp/par__49983/1/foo/2/A/stderr
+par_result_replace	/tmp/par__49983/1/foo/2/A/stdout
+par_result_replace	/tmp/par__49983/1/foo/2/B
+par_result_replace	/tmp/par__49983/1/foo/2/B/seq
+par_result_replace	/tmp/par__49983/1/foo/2/B/stderr
+par_result_replace	/tmp/par__49983/1/foo/2/B/stdout
+par_result_replace	/tmp/par__49983/1/foo/2/C
+par_result_replace	/tmp/par__49983/1/foo/2/C/seq
+par_result_replace	/tmp/par__49983/1/foo/2/C/stderr
+par_result_replace	/tmp/par__49983/1/foo/2/C/stdout
+par_result_replace	bar B
+par_result_replace	bar C
+par_result_replace	baz B
+par_result_replace	baz C
+par_result_replace	/tmp/par__49983
+par_result_replace	/tmp/par__49983/A
+par_result_replace	/tmp/par__49983/A/B
+par_result_replace	/tmp/par__49983/A/B/foo
+par_result_replace	/tmp/par__49983/A/B/foo/bar
+par_result_replace	/tmp/par__49983/A/B/foo/bar/seq
+par_result_replace	/tmp/par__49983/A/B/foo/bar/stderr
+par_result_replace	/tmp/par__49983/A/B/foo/bar/stdout
+par_result_replace	/tmp/par__49983/A/B/foo/baz
+par_result_replace	/tmp/par__49983/A/B/foo/baz/seq
+par_result_replace	/tmp/par__49983/A/B/foo/baz/stderr
+par_result_replace	/tmp/par__49983/A/B/foo/baz/stdout
+par_result_replace	/tmp/par__49983/A/C
+par_result_replace	/tmp/par__49983/A/C/foo
+par_result_replace	/tmp/par__49983/A/C/foo/bar
+par_result_replace	/tmp/par__49983/A/C/foo/bar/seq
+par_result_replace	/tmp/par__49983/A/C/foo/bar/stderr
+par_result_replace	/tmp/par__49983/A/C/foo/bar/stdout
+par_result_replace	/tmp/par__49983/A/C/foo/baz
+par_result_replace	/tmp/par__49983/A/C/foo/baz/seq
+par_result_replace	/tmp/par__49983/A/C/foo/baz/stderr
+par_result_replace	/tmp/par__49983/A/C/foo/baz/stdout

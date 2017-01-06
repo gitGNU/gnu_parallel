@@ -102,16 +102,16 @@ TODO test ssh with > 9 simultaneous
 100
 echo '### test --timeout --retries'
 ### test --timeout --retries
-  parallel -j0 --timeout 5 --retries 3 -k ssh {} echo {} ::: 192.168.1.197 8.8.8.8 parallel@parallel-server3 parallel@lo parallel@parallel-server2
-parallel@parallel-server3
+  parallel -j0 --timeout 5 --retries 3 -k ssh {} echo {} ::: 192.168.1.197 8.8.8.8 parallel@parallel-server1 parallel@lo parallel@parallel-server2
+parallel@parallel-server1
 parallel@lo
 parallel@parallel-server2
 echo '### test --filter-hosts with server w/o ssh, non-existing server'
 ### test --filter-hosts with server w/o ssh, non-existing server
-  parallel -S 192.168.1.197,8.8.8.8,parallel@parallel-server3,parallel@lo,parallel@parallel-server2 --filter-hosts --nonall -k --tag echo
+  parallel -S 192.168.1.197,8.8.8.8,parallel@parallel-server1,parallel@lo,parallel@parallel-server2 --filter-hosts --nonall -k --tag echo
 parallel@lo	
+parallel@parallel-server1	
 parallel@parallel-server2	
-parallel@parallel-server3	
 echo '### bug #41964: --controlmaster not seems to reuse OpenSSH connections to the same host'
 ### bug #41964: --controlmaster not seems to reuse OpenSSH connections to the same host
   (parallel -S redhat9.tange.dk true ::: {1..20}; echo No --controlmaster - finish last) &   (parallel -M -S redhat9.tange.dk true ::: {1..20}; echo With --controlmaster - finish first) &   wait
@@ -123,7 +123,7 @@ echo '### --filter-hosts - OK, non-such-user, connection refused, wrong host'
 aspire
 echo '### test --workdir . in $HOME'
 ### test --workdir . in $HOME
-  cd && mkdir -p parallel-test && cd parallel-test &&     echo OK > testfile && parallel --workdir . --transfer -S parallel@parallel-server3 cat {} ::: testfile
+  cd && mkdir -p parallel-test && cd parallel-test &&     echo OK > testfile && parallel --workdir . --transfer -S parallel@parallel-server1 cat {} ::: testfile
 OK
 echo '### TODO: test --filter-hosts proxied through the one host'
 ### TODO: test --filter-hosts proxied through the one host

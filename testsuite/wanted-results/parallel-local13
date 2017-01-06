@@ -32,6 +32,8 @@ rld
 echo '###  -E_ -0 echo < eof_-0.xi'
 ###  -E_ -0 echo < eof_-0.xi
 stdout xargs -E_ -0 echo < eof_-0.xi
+xargs: warning: the -E option has no effect if -0 or -d is used.
+
 one two _ three four
 stdout parallel -X -k -E_ -0 echo < eof_-0.xi
 one
@@ -456,7 +458,7 @@ echo '###  true < 32767-ys.xi'
 ###  true < 32767-ys.xi
 stdout xargs true < 32767-ys.xi
 stdout parallel -k true < 32767-ys.xi
-parallel: Error: Command line too long (98306 >= 65524) at input 0: y y y y y y y y y y y y y y y y y y y y y y y y y ...
+parallel: Error: Command line too long (98306 >= 65528) at input 0: y y y y y y y y y y y y y y y y y y y y y y y y y ...
 echo '###  true < 16383-ys.xi'
 ###  true < 16383-ys.xi
 stdout xargs true < 16383-ys.xi

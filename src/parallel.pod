@@ -1448,9 +1448,9 @@ it to the command.
 Only used with B<--pipe>.
 
 
-=item B<--results> I<name> (beta testing)
+=item B<--results> I<name> (prealpha testing)
 
-=item B<--res> I<name> (beta testing)
+=item B<--res> I<name> (prealpha testing)
 
 Save the output into files.
 
@@ -1470,14 +1470,32 @@ B<Dir structure output>
 
 If I<name> does not end in B<.csv>/B<.tsv> will be treated as a dir.
 
-The files will be stored in a directory tree rooted at I<name>.
-Within this directory tree, each command will result in two files:
-I<name>/<ARGS>/stdout and I<name>/<ARGS>/stderr, where <ARGS> is a
+If I<name> contains replacement strings output files will be stored in
+the resulting dir.
+
+E.g.
+
+  parallel --results my_{} echo ::: foo bar baz
+
+will generate the files:
+
+  my_bar/seq
+  my_bar/stderr
+  my_bar/stdout
+  my_baz/seq
+  my_baz/stderr
+  my_baz/stdout
+  my_foo/seq
+  my_foo/stderr
+  my_foo/stdout
+
+If I<name> does not contain replacement strings the files will be
+stored in a directory tree rooted at I<name>.  Within this directory
+tree, each command will result in three files: I<name>/<ARGS>/stdout
+and I<name>/<ARGS>/stderr, I<name>/<ARGS>/seq, where <ARGS> is a
 sequence of directories representing the header of the input source
 (if using B<--header :>) or the number of the input source and
 corresponding values.
-
-I<name> can contain replacement strings.
 
 E.g:
 
@@ -1486,14 +1504,18 @@ E.g:
 
 will generate the files:
 
-  foo/a/I/b/III/stderr
-  foo/a/I/b/III/stdout
-  foo/a/I/b/IIII/stderr
-  foo/a/I/b/IIII/stdout
+  foo/a/II/b/III/seq
   foo/a/II/b/III/stderr
   foo/a/II/b/III/stdout
+  foo/a/II/b/IIII/seq
   foo/a/II/b/IIII/stderr
   foo/a/II/b/IIII/stdout
+  foo/a/I/b/III/seq
+  foo/a/I/b/III/stderr
+  foo/a/I/b/III/stdout
+  foo/a/I/b/IIII/seq
+  foo/a/I/b/IIII/stderr
+  foo/a/I/b/IIII/stdout
 
 and
 
@@ -1501,14 +1523,18 @@ and
 
 will generate the files:
 
-  foo/1/I/2/III/stderr
-  foo/1/I/2/III/stdout
-  foo/1/I/2/IIII/stderr
-  foo/1/I/2/IIII/stdout
+  foo/1/II/2/III/seq
   foo/1/II/2/III/stderr
   foo/1/II/2/III/stdout
+  foo/1/II/2/IIII/seq
   foo/1/II/2/IIII/stderr
   foo/1/II/2/IIII/stdout
+  foo/1/I/2/III/seq
+  foo/1/I/2/III/stderr
+  foo/1/I/2/III/stdout
+  foo/1/I/2/IIII/seq
+  foo/1/I/2/IIII/stderr
+  foo/1/I/2/IIII/stdout
 
 and
 

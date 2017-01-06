@@ -2306,7 +2306,9 @@ Output: Same as above.
 B<--pipe> is not very efficient. It maxes out at around 500
 MB/s. B<--pipepart> can easily deliver 5 GB/s. But there are a few
 limitations. The input has to be a normal file (not a pipe) given by
-B<-a> or B<::::> and B<-L>/B<-l>/B<-N> do not work.
+B<-a> or B<::::> and B<-L>/B<-l>/B<-N> do not work. B<--recend> and
+B<--recstart>, however, I<do> work, and records can often be split on
+that alone.
 
   parallel --pipepart -a num1000000 --block 3m wc
 

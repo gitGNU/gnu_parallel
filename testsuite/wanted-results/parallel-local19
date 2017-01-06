@@ -111,7 +111,7 @@ echo '### Test -m with 60000 args';   seq 1 60000 | perl -pe 's/$/.gif/' |   par
      20  179960 1286702
 echo '### Test -X with 60000 args';   seq 1 60000 | perl -pe 's/$/.gif/' |   parallel -j1 -kX echo a{}b{.}c{.} |   tee >(wc; sleep 1) >(md5sum; sleep 1) >/dev/null;   wait;   sleep 1
 ### Test -X with 60000 args
-8646e0f7fd5f8795e4b1a831ede50e85  -
+97715240fa65309902932877d24273db  -
      21   60000 1346682
 echo '### Test -X with 60000 args and 5 expansions'
 ### Test -X with 60000 args and 5 expansions

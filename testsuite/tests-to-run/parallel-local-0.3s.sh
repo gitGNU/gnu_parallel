@@ -605,14 +605,6 @@ echo '### bug #34422: parallel -X --eta crashes with div by zero'
 
 echo '**'
 
-echo '### bug #48295: --results should be dynamic like --wd'
-
-  rm -rf /tmp/parallel-48295; 
-    parallel --results /tmp/parallel-48295/{1} -k echo ::: A B ::: a b; 
-    find /tmp/parallel-48295 -type f | sort
-
-echo '**'
-
   bash -O extglob -c '. `which env_parallel.bash`; 
     _longopt () { 
       case "$prev" in 
@@ -697,8 +689,29 @@ par_python_children() {
     echo '### bug #49970: Python child process dies if --env is used'
     fu() { echo joe; }
     export -f fu
-    stdout parallel --env fu python -c \""import os;f = os.popen('uname -p');output = f.read();rc = f.close()"\" ::: 1
+    echo foo | stdout parallel --env fu python -c \
+    \""import os; f = os.popen('uname -p'); output = f.read(); rc = f.close()"\"
+}
+
+par_result_replace() {
+    echo '### bug #49983: --results with {1}'
+    parallel --results /tmp/par_{}_49983 -k echo ::: foo bar baz
+    find /tmp/par_*_49983 | sort
+    rm -rf /tmp/par_*_49983
+    parallel --results /tmp/par_{}_49983 -k echo ::: foo bar baz ::: A B C
+    find /tmp/par_*_49983 | sort
+    rm -rf /tmp/par_*_49983
+    parallel --results /tmp/par_{1}-{2}_49983 -k echo ::: foo bar baz ::: A B C
+    find /tmp/par_*_49983 | sort
+    rm -rf /tmp/par_*_49983
+    parallel --results /tmp/par__49983 -k echo ::: foo bar baz ::: A B C
+    find /tmp/par_*_49983 | sort
+    rm -rf /tmp/par_*_49983
+    parallel --results /tmp/par__49983 --header : -k echo ::: foo bar baz ::: A B C
+    find /tmp/par_*_49983 | sort
+    rm -rf /tmp/par_*_49983
 }
 
 export -f $(compgen -A function | grep par_)
-compgen -A function | grep par_ | sort | parallel -j6 --tag -k --joblog +/tmp/jl-`basename $0` '{} 2>&1'
+compgen -A function | grep par_ | sort |
+    parallel -j6 --tag -k --joblog +/tmp/jl-`basename $0` '{} 2>&1'

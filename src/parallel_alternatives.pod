@@ -857,6 +857,12 @@ If /tmp/parallel runs full during the run, Rust parallel does not
 report this, but finishes with success - thereby risking data loss.
 
 
+=head2 DIFFERENCES BETWEEN Rush AND GNU Parallel
+
+Rush (https://github.com/shenwei356/rush) is written in Go and based
+on gargs.
+
+
 =head2 DIFFERENCES BETWEEN ClusterSSH AND GNU Parallel
 
 ClusterSSH solves a different problem than GNU B<parallel>.

@@ -87,3 +87,39 @@ echo '### bug #49404: "Max jobs to run" does not equal the number of jobs specif
   echo should give 10 running jobs
   stdout parallel -S 16/lo --progress true ::: {1..10} | grep /.10
 EOF
+
+par_trc_with_space() {
+    SERVER1=parallel-server1
+    echo '### Test --trc with space added in filename'
+    echo original > '/tmp/parallel space file'
+    echo '/tmp/parallel space file' | stdout parallel --trc "{} more space" -S parallel@$SERVER1 cat {} ">{}\\ more\\ space"
+    cat '/tmp/parallel space file more space'
+    rm '/tmp/parallel space file' '/tmp/parallel space file more space'
+}
+
+par_trc_with_special_chars() {
+    SERVER1=parallel-server1
+    echo '### Test --trc with >|< added in filename'
+    echo original > '/tmp/parallel space file2'
+    echo '/tmp/parallel space file2' | stdout parallel --trc "{} >|<" -S parallel@$SERVER1 cat {} ">{}\\ \\>\\|\\<"
+    cat '/tmp/parallel space file2 >|<'
+    rm '/tmp/parallel space file2' '/tmp/parallel space file2 >|<'
+}
+
+par_return_with_fixedstring() {
+    echo '### Test --return with fixed string (Gave undef warnings)'
+    touch a
+    echo a | stdout parallel --return b -S parallel@lo echo ">b" && echo OK
+    rm a b
+}
+
+par_quoting_for_onall() {
+    echo '### bug #35427: quoting of {2} broken for --onall'
+    echo foo: /bin/ls | parallel --colsep ' ' -S lo --onall ls {2}
+}
+
+export -f $(compgen -A function | grep par_)
+# Tested with -j1..8
+# -j6 was fastest
+#compgen -A function | grep par_ | sort | parallel --delay $D -j$P --tag -k '{} 2>&1'
+compgen -A function | grep par_ | sort | parallel --delay 0.1 -j2 --tag -k '{} 2>&1'
