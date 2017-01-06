@@ -1,0 +1,6 @@
+p_wrapper par_empty \$MYSQL
+par_empty $MYSQL	/bin/bash: p_wrapper: command not found
+p_wrapper par_empty \$PG
+par_empty $PG	/bin/bash: p_wrapper: command not found
+p_wrapper par_empty \$SQLITE
+par_empty $SQLITE	/bin/bash: p_wrapper: command not found
