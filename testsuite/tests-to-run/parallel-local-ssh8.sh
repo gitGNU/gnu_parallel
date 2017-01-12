@@ -62,4 +62,5 @@ par_keeporder() {
 
 export -f $(compgen -A function | grep par_)
 #compgen -A function | grep par_ | sort | parallel --delay $D -j$P --tag -k '{} 2>&1'
-compgen -A function | grep par_ | sort | parallel --delay 0.1 -j10 --tag -k '{} 2>&1'
+compgen -A function | grep par_ | sort |
+    parallel --joblog /tmp/jl-`basename $0` --delay 0.1 -j10 --tag -k '{} 2>&1'

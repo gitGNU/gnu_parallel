@@ -236,4 +236,5 @@ par_kill_children_timeout() {
 
 
 export -f $(compgen -A function | grep par_)
-compgen -A function | grep par_ | sort | parallel -j6 --tag -k '{} 2>&1'
+compgen -A function | grep par_ | sort |
+    parallel --joblog /tmp/jl-`basename $0` -j10 --tag -k '{} 2>&1'

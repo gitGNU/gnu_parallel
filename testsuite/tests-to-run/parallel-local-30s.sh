@@ -42,27 +42,40 @@ par_memory_leak() {
 
 par_linebuffer_matters_compress_tag() {
     echo "### (--linebuffer) --compress --tag should give different output"
-    random_data_with_id_prepended() {
-	perl -pe 's/^/'$1'/' /dev/urandom |
-	  pv -qL 300000 | head -c 10000000
-    }
-    export -f random_data_with_id_prepended
+    nolbfile=$(mktemp)
+    lbfile=$(mktemp)
+    controlfile=$(mktemp)
+    randomfile=$(mktemp)
+    # Random data because it does not compress well
+    # forcing the compress tool to spit out compressed blocks
+    head -c 10000000 /dev/urandom > $randomfile 
 
-    nolb=$(seq 10 |
-      parallel -j0 --compress --tag random_data_with_id_prepended {#} |
-      field 1 | uniq)
-    lb=$(seq 10 |
-      parallel -j0 --linebuffer --compress --tag random_data_with_id_prepended {#} |
-      field 1 | uniq)
-    if [ "$lb" == "$nolb" ] ; then
-	echo "BAD: --linebuffer makes no difference"
+    parallel -j0 --compress --tag --delay 1 "shuf $randomfile; sleep 1; shuf $randomfile; true" ::: {0..9} |
+	perl -ne '/^(\S+)\t/ and print "$1\n"' | uniq > $nolbfile &
+    parallel -j0 --compress --tag --delay 1 "shuf $randomfile; sleep 1; shuf $randomfile; true" ::: {0..9} |
+	perl -ne '/^(\S+)\t/ and print "$1\n"' | uniq > $controlfile &
+    parallel -j0 --line-buffer --compress --tag --delay 1 "shuf $randomfile; sleep 1; shuf $randomfile; true" ::: {0..9} |
+	perl -ne '/^(\S+)\t/ and print "$1\n"' | uniq > $lbfile &
+    wait
+
+    nolb="$(cat $nolbfile)"
+    control="$(cat $controlfile)"
+    lb="$(cat $lbfile)"
+    rm $nolbfile $lbfile $controlfile $randomfile
+
+    if [ "$nolb" == "$control" ] ; then
+	if [ "$lb" == "$nolb" ] ; then
+	    echo "BAD: --linebuffer makes no difference"
+	else
+	    echo "OK: --linebuffer makes a difference"
+	fi
     else
-	echo "OK: --linebuffer makes a difference"
+	echo "BAD: control and nolb are not the same"
     fi
 }
 
 par_linebuffer_matters_compress() {
-    echo "### (--linebuffer) --compress --tag should give different output"
+    echo "### (--linebuffer) --compress should give different output"
     random_data_with_id_prepended() {
 	perl -pe 's/^/'$1'/' /dev/urandom |
 	  pv -qL 300000 | head -c 1000000
@@ -89,4 +102,5 @@ par_memfree() {
 }
 
 export -f $(compgen -A function | grep par_)
-compgen -A function | grep par_ | sort | parallel -j6 --tag -k '{} 2>&1'
+compgen -A function | grep par_ | sort |
+    parallel -j0 --tag -k --joblog /tmp/jl-`basename $0` '{} 2>&1'

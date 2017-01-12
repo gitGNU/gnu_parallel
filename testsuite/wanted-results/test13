@@ -3,14 +3,6 @@ parallel: Warning: Running 'parallel -j0 -N 9 --pipe parallel -j0' or
 parallel: Warning: raising ulimit -n or /etc/security/limits.conf may help.
 parallel: Warning: No more file handles. 
 parallel: Warning: Raising ulimit -n or /etc/security/limits.conf may help.
-### Test --keep-order
-job0
-job1
-job2
-### Test --keeporder
-job0
-job1
-job2
 ### Test SIGTERM
 1
 10

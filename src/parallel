@@ -8792,7 +8792,7 @@ sub populate {
 
     if($opt::sqlmaster) {
 	# Insert the V1..Vn for this $seq in SQL table instead of generating one
-	$Global::sql->insert_records($self->seq(),$self->{'arg_list_flat_orig'});
+	$Global::sql->insert_records($self->seq(),$self->{'command'},$self->{'arg_list_flat_orig'});
     }
 }
 
@@ -9478,6 +9478,27 @@ sub get {
 	my $cmd_line = shift @{$self->{'unget'}};
 	return ($cmd_line);
     } else {
+	if($opt::sqlworker) {
+	    # Get the sequence number from the SQL table
+	    $self->set_seq($SQL::next_seq);
+	    # Get the command from the SQL table
+	    $self->{'command'} = $SQL::command_ref;
+	    my @command;
+	    # Recompute replace counts based on the read command
+	    ($self->{'replacecount'},
+	     $self->{'len'}, @command) =
+		replacement_counts_and_lengths($self->{'transfer_files'},
+					       $self->{'return_files'},
+					       @$SQL::command_ref);
+	    if("@command" =~ /^[^ \t\n=]*\257</) {
+		# Replacement string is (part of) the command (and not just
+		# argument or variable definition V1={})
+		# E.g. parallel {}, parallel my_{= s/_//=}, parallel {2}
+		# Do no quote (Otherwise it will fail if the input contains spaces)
+		$Global::noquote = 1;
+	    }
+	}
+
 	my $cmd_line = CommandLine->new($self->seq(),
 					$self->{'command'},
 					$self->{'arg_queue'},
@@ -9488,10 +9509,6 @@ sub get {
 					$self->{'replacecount'},
 					$self->{'len'},
 	    );
-	if($opt::sqlworker) {
-	    # Get the sequence number from the SQL table
-	    $cmd_line->set_seq($SQL::next_seq);
-	}
 	$cmd_line->populate();
 	::debug("init","cmd_line->number_of_args ",
 		$cmd_line->number_of_args(), "\n");
@@ -10671,13 +10688,17 @@ sub create_table {
 sub insert_records {
     my $self = shift;
     my $seq = shift;
+    my $command_ref = shift;
     my $record_ref = shift;
     my $table = $self->table();
+    # For SQL encode the command with \257 space as split points
+    my $command = join("\257 ",@$command_ref);
     my $v_cols = join ",", map { "V$_" } (1..$self->max_number_of_args());
     # Two extra value due to $seq, Exitval, Send
-    my $v_vals = join ",", map { "?" } (1..$self->max_number_of_args()+3);
-    $self->run("INSERT INTO $table (Seq,Exitval,Send,$v_cols) ".
-	       "VALUES ($v_vals);", $seq, -1000, 0, @$record_ref[1..$#$record_ref]);
+    my $v_vals = join ",", map { "?" } (1..$self->max_number_of_args()+4);
+    $self->run("INSERT INTO $table (Seq,Command,Exitval,Send,$v_cols) ".
+	       "VALUES ($v_vals);", $seq, $command, -1000,
+	       0, @$record_ref[1..$#$record_ref]);
 }
 
 sub get_record {
@@ -10685,7 +10706,7 @@ sub get_record {
     my @retval;
     my $table = $self->table();
     my $v_cols = join ",", map { "V$_" } (1..$self->max_number_of_args());
-    my $v = $self->get("SELECT Seq, $v_cols FROM $table ".
+    my $v = $self->get("SELECT Seq, Command, $v_cols FROM $table ".
 		       "WHERE Exitval = -1000 ORDER BY Seq LIMIT 1;");
     if($v->[0]) {
 	my $val_ref = $v->[0];
@@ -10694,6 +10715,8 @@ sub get_record {
 	# Save the sequence number to use when running the job
 	$SQL::next_seq = $seq;
 	$self->update("SET Exitval = ? WHERE Seq = ".$seq, -1220);
+	my @command = split /\257 /, shift @$val_ref;
+	$SQL::command_ref = \@command;
 	for (@$val_ref) {
 	    push @retval, Arg->new($_);
 	}

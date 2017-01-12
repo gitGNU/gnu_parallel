@@ -39,3 +39,4 @@ rm /tmp/parallel-script-for-script3
 stdout parallel --citation < /dev/null
 
 touch ~/.parallel/will-cite
+reset
