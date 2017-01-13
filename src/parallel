@@ -1259,7 +1259,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20170101;
+    $Global::version = 20170111;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -9187,6 +9187,8 @@ sub replaced {
 	# $self is actually a CommandLine-object,
 	# but it looks nice to be able to say {= $job->slot() =}
 	my $job = $self;
+	$perl_expressions_as_re =
+	    join("|", map {s/^-?\d+//; "\Q$_\E"} keys %{$self->{'replacecount'}});
 	# Fish out the words that have replacement strings in them
 	for my $word (
 	    fish_out_words_containing_replacement_strings()) {
@@ -9197,13 +9199,11 @@ sub replaced {
 	    # for each arg:
 	    #   replace replacement strings with replacement in the word value
 	    #   push to replace word value
-	    $perl_expressions_as_re ||=
-		join("|", map {s/^-?\d+//; "\Q$_\E"} keys %{$self->{'replacecount'}});
 	    for my $arg (@$argref) {
 		my $val = $word;
 		# Replace {= perl expr =} with value for each arg
 		$val =~ s{\257<(-?\d+)?($perl_expressions_as_re)\257>}
-		    {
+		{
 			if($1) {
 			    # Positional replace
 			    # Find the relevant arg and replace it
@@ -9216,7 +9216,7 @@ sub replaced {
 			    $normal_replace ||= 1;
 			    ($arg ? $arg->replace($2,$quote_arg,$self) : "");
 			}
-		    }goxe;
+		    }gxe;
 		if($quote) {
 		    CORE::push(@{$replace{::shell_quote_scalar($word)}},
 			       ::shell_quote_scalar($val));
