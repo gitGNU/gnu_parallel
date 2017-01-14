@@ -130,6 +130,17 @@ par_sql_joblog() {
   # TODO --sqlandworker --wait
 }
 
+par_no_table() {
+    echo 'bug #50018: --dburl without table dies'
+    parallel --sqlworker $SERVERURL
+    echo $?
+    parallel --sqlandworker $SERVERURL echo ::: no_output
+    echo $?
+    parallel --sqlmaster $SERVERURL echo ::: no_output
+    echo $?
+    # For p_wrapper to remove table
+    parallel --sqlandworker $DBURL true ::: dummy ::: dummy
+}
 
 export -f $(compgen -A function | egrep 'p_|par_')
 # Tested that -j0 in parallel is fastest (up to 15 jobs)

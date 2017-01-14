@@ -264,6 +264,46 @@ par_append_different_cmd $SQLITE	:|sleep .3;echo D-15|15|D|D-15
 par_append_different_cmd $SQLITE	|
 par_append_different_cmd $SQLITE	:|sleep .3;echo E-15|15|E|E-15
 par_append_different_cmd $SQLITE	|
+p_wrapper par_no_table \$MYSQL
+par_no_table $MYSQL	bug #50018: --dburl without table dies
+par_no_table $MYSQL	255
+par_no_table $MYSQL	255
+par_no_table $MYSQL	255
+par_no_table $MYSQL	Exit=0
+par_no_table $MYSQL	Exit=0
+par_no_table $MYSQL	Host	Command	V1	V2	Stdout	Stderr
+par_no_table $MYSQL	:	true dummy dummy	dummy	dummy		
+par_no_table $MYSQL	parallel: Error: The DBURL (mysql://tange:tange@lo/tange) must contain a table.
+par_no_table $MYSQL	parallel: Error: The DBURL (mysql://tange:tange@lo/tange) must contain a table.
+par_no_table $MYSQL	parallel: Error: The DBURL (mysql://tange:tange@lo/tange) must contain a table.
+par_no_table $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
+p_wrapper par_no_table \$PG
+par_no_table $PG	bug #50018: --dburl without table dies
+par_no_table $PG	255
+par_no_table $PG	255
+par_no_table $PG	255
+par_no_table $PG	Exit=0
+par_no_table $PG	Exit=0
+par_no_table $PG	 host |     command      |  v1   |  v2   | stdout | stderr 
+par_no_table $PG	------+------------------+-------+-------+--------+--------
+par_no_table $PG	 :    | true dummy dummy | dummy | dummy |        | 
+par_no_table $PG	(1 row)
+par_no_table $PG	
+par_no_table $PG	parallel: Error: The DBURL (pg://tange:tange@lo/tange) must contain a table.
+par_no_table $PG	parallel: Error: The DBURL (pg://tange:tange@lo/tange) must contain a table.
+par_no_table $PG	parallel: Error: The DBURL (pg://tange:tange@lo/tange) must contain a table.
+p_wrapper par_no_table \$SQLITE
+par_no_table $SQLITE	bug #50018: --dburl without table dies
+par_no_table $SQLITE	255
+par_no_table $SQLITE	255
+par_no_table $SQLITE	255
+par_no_table $SQLITE	Exit=0
+par_no_table $SQLITE	Exit=0
+par_no_table $SQLITE	Host|Command|V1|V2|Stdout|Stderr
+par_no_table $SQLITE	:|true dummy dummy|dummy|dummy||
+par_no_table $SQLITE	parallel: Error: The DBURL (sqlite3:///%2Frun%2Fshm%2Fparallel.db) must contain a table.
+par_no_table $SQLITE	parallel: Error: The DBURL (sqlite3:///%2Frun%2Fshm%2Fparallel.db) must contain a table.
+par_no_table $SQLITE	parallel: Error: The DBURL (sqlite3:///%2Frun%2Fshm%2Fparallel.db) must contain a table.
 p_wrapper par_shuf \$MYSQL
 par_shuf $MYSQL	1 a
 par_shuf $MYSQL	1 b

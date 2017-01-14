@@ -10384,6 +10384,10 @@ sub new {
     $dbh->{'ShowErrorStatement'} = 1;
     $dbh->{'HandleError'} = sub {};
 
+    if(not defined $options{'table'}) {
+	::error("The DBURL ($dburl) must contain a table.");
+	::wait_and_exit(255);
+    }
 
     return bless {
 	'dbh' => $dbh,
