@@ -534,28 +534,38 @@ if($dburl{'query'}) {
     ($fh,$queryfile) = tempfile(SUFFIX => ".sql");
     print $fh $dburl{'query'},"\n";
     close $fh;
-    $batch_command = "cat $queryfile - | $batch_command";
+    $batch_command = "(cat $queryfile;rm $queryfile; cat) | $batch_command";
 }
 
 do {
-    if(@ARGV or $dburl{'query'}) {
-	$::opt_debug and print "$batch_command\n";
-	$::opt_verbose and print "$batch_command\n";
-	open(M,"| $batch_command") || die("mysql/psql/sqlplus not in path");
-	for(@ARGV) {
-	    s/\\n/\n/g;
-	    s/\\x0a/\n/gi;
-	    print M "$_\n";
+    if (is_stdin_terminal()) {
+	if(@ARGV) {
+	    open(M,"| $batch_command") || die("mysql/psql/sqlplus not in path");
+	    for(@ARGV) {
+		s/\\n/\n/g;
+		s/\\x0a/\n/gi;
+		print M "$_\n";
+	    }
+	    close M;
+	} else {
+	    $::opt_debug and print "$interactive_command\n";
+	    $::opt_verbose and print "$interactive_command\n";
+	    system("$interactive_command");
 	}
-	close M;
-    } elsif (is_stdin_terminal()) {
-	$::opt_debug and print "$interactive_command\n";
-	$::opt_verbose and print "$interactive_command\n";
-	system("$interactive_command");
     } else {
-	$::opt_debug and print "$batch_command\n";
-	$::opt_verbose and print "$batch_command\n";
-	system("$batch_command");
+	if(@ARGV) {
+	    open(M,"| $batch_command") || die("mysql/psql/sqlplus not in path");
+	    for(@ARGV) {
+		s/\\n/\n/g;
+		s/\\x0a/\n/gi;
+		print M "$_\n";
+	    }
+	    close M;
+	} else {
+	    $::opt_debug and print "$batch_command\n";
+	    $::opt_verbose and print "$batch_command\n";
+	    system("$batch_command");
+	}
     }
     $err = $?>>8;
 } while (--$retries and $err);

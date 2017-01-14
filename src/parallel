@@ -346,9 +346,19 @@ sub cat_partial {
     my($start, $i);
     # Convert start_end to start_len
     my @start_len = map { if(++$i % 2) { $start = $_; } else { $_-$start } } @start_end;
+    my $script = spacefree(0,
+		  q{
+		      while(@ARGV) {
+			  sysseek(STDIN,shift,0) || die;
+			  $left = shift;
+			  while($read = sysread(STDIN,$buf, $left > 131072 ? 131072 : $left)){
+			      $left -= $read;
+			      syswrite(STDOUT,$buf);
+			  }
+		      }
+		  });
     return "<". shell_quote_scalar($file) .
-	q{ perl -e 'while(@ARGV) { sysseek(STDIN,shift,0) || die; $left = shift; while($read = sysread(STDIN,$buf, ($left > 131072 ? 131072 : $left))){ $left -= $read; syswrite(STDOUT,$buf); } }' } .
-	" @start_len";
+	" perl -e '$script' @start_len";
 }
 
 sub spreadstdin {

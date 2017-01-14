@@ -71,10 +71,10 @@ par_sqlandworker_total_jobs() {
   p_template echo {#} of '{=1 $_=total_jobs(); =};'
 }
 
-par_append() {
+par_append_different_cmd() {
   parallel --sqlmaster  $DBURL sleep .3\;echo ::: {1..5} ::: {a..e} >$T2;
-  parallel --sqlmaster +$DBURL sleep .3\;echo ::: {11..15} ::: {A..E} >>$T2;
-  parallel --sqlworker  $DBURL sleep .3\;echo >$T1
+  parallel --sqlmaster +$DBURL sleep .3\;echo {2}-{1} ::: {11..15} ::: {A..E} >>$T2;
+  parallel --sqlworker  $DBURL >$T1
 }
 
 par_shuf() {
@@ -84,10 +84,10 @@ par_shuf() {
   export PARALLEL="--shuf --result $T"
   parallel --sqlandworker $DBURL sleep .3\;echo \
     ::: {1..5} ::: {a..e} >$T2;
-  parallel --sqlworker    $DBURL sleep .3\;echo >$T2 &
-  parallel --sqlworker    $DBURL sleep .3\;echo >$T2 &
-  parallel --sqlworker    $DBURL sleep .3\;echo >$T2 &
-  parallel --sqlworker    $DBURL sleep .3\;echo >$T2 &
+  parallel --sqlworker    $DBURL >$T2 &
+  parallel --sqlworker    $DBURL >$T2 &
+  parallel --sqlworker    $DBURL >$T2 &
+  parallel --sqlworker    $DBURL >$T2 &
   unset PARALLEL
   wait;
   # Did it compute correctly?
@@ -97,10 +97,10 @@ par_shuf() {
   export PARALLEL="--result $T"
   parallel --sqlandworker $DBURL sleep .3\;echo \
     ::: {1..5} ::: {a..e} >$T2;
-  parallel --sqlworker    $DBURL sleep .3\;echo >$T2 &
-  parallel --sqlworker    $DBURL sleep .3\;echo >$T2 &
-  parallel --sqlworker    $DBURL sleep .3\;echo >$T2 &
-  parallel --sqlworker    $DBURL sleep .3\;echo >$T2 &
+  parallel --sqlworker    $DBURL >$T2 &
+  parallel --sqlworker    $DBURL >$T2 &
+  parallel --sqlworker    $DBURL >$T2 &
+  parallel --sqlworker    $DBURL >$T2 &
   unset PARALLEL
   wait;
   NOSHUF=$(sql $SERVERURL "select Host,Command,V1,V2,Stdout,Stderr from $TABLE order by seq;")
@@ -122,7 +122,7 @@ par_sql_joblog() {
   parallel -k --joblog - --sqlmaster $DBURL --wait sleep .3\;echo ::: {1..5} ::: {a..e} |
     perl -pe 's/\d+\.\d+/999.999/g' | sort -n &
   sleep 0.5
-  parallel -k --joblog - --sqlworker $DBURL sleep .3\;echo 
+  parallel -k --joblog - --sqlworker $DBURL
   wait
   echo '### --sqlandworker'
   parallel -k --joblog - --sqlandworker $DBURL sleep .3\;echo ::: {1..5} ::: {a..e} |
@@ -133,6 +133,7 @@ par_sql_joblog() {
 
 export -f $(compgen -A function | egrep 'p_|par_')
 # Tested that -j0 in parallel is fastest (up to 15 jobs)
+# more than 3 jobs: sqlite locks
 compgen -A function | grep par_ | sort |
   stdout parallel -vj3 -k --tag --joblog /tmp/jl-`basename $0` p_wrapper \
     :::: - ::: \$MYSQL \$PG \$SQLITE

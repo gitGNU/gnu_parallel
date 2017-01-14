@@ -956,11 +956,11 @@ par_sigterm	8
 par_sigterm	9
 par_sigterm	parallel: SIGTERM received. No new jobs will be started.
 par_sigterm	parallel: Waiting for these 5 jobs to finish. Send SIGTERM again to stop now.
-par_sigterm	parallel: sleep 3; echo 10
-par_sigterm	parallel: sleep 3; echo 6
-par_sigterm	parallel: sleep 3; echo 7
-par_sigterm	parallel: sleep 3; echo 8
-par_sigterm	parallel: sleep 3; echo 9
+par_sigterm	parallel: sleep 10; echo 10
+par_sigterm	parallel: sleep 10; echo 6
+par_sigterm	parallel: sleep 10; echo 7
+par_sigterm	parallel: sleep 10; echo 8
+par_sigterm	parallel: sleep 10; echo 9
 par_testhalt	### testhalt --halt now,fail=0
 par_testhalt	parallel: This job failed:
 par_testhalt	sleep 1.3; exit 1

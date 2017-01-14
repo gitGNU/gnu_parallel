@@ -1,4 +1,4 @@
-par_linebuffer_matters_compress	### (--linebuffer) --compress --tag should give different output
+par_linebuffer_matters_compress	### (--linebuffer) --compress should give different output
 par_linebuffer_matters_compress	OK: --linebuffer makes a difference
 par_linebuffer_matters_compress_tag	### (--linebuffer) --compress --tag should give different output
 par_linebuffer_matters_compress_tag	OK: --linebuffer makes a difference

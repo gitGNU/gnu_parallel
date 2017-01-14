@@ -1,0 +1,9 @@
+par_load_file_less_10s	### Test --load read from a file - less than 10s
+par_load_file_less_10s	# This will run 10 processes in parallel for 10s
+par_load_file_less_10s	OK
+par_load_file_more_10s	### Test --load read from a file - more than 10s
+par_load_file_more_10s	# This will run 10 processes in parallel for 10s
+par_load_file_more_10s	OK
+par_load_more_10s	### Test --load locally - should take >10s
+par_load_more_10s	# This will run 10 processes in parallel for 10s
+par_load_more_10s	OK

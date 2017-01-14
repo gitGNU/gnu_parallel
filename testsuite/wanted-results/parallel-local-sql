@@ -1,269 +1,269 @@
-p_wrapper par_append \$MYSQL
-par_append $MYSQL	Exit=0
-par_append $MYSQL	Exit=0
-par_append $MYSQL	Host	Command	V1	V2	Stdout	Stderr
-par_append $MYSQL	:	sleep .3;echo 1 a	1	a	1 a\n	
-par_append $MYSQL	:	sleep .3;echo 1 b	1	b	1 b\n	
-par_append $MYSQL	:	sleep .3;echo 1 c	1	c	1 c\n	
-par_append $MYSQL	:	sleep .3;echo 1 d	1	d	1 d\n	
-par_append $MYSQL	:	sleep .3;echo 1 e	1	e	1 e\n	
-par_append $MYSQL	:	sleep .3;echo 2 a	2	a	2 a\n	
-par_append $MYSQL	:	sleep .3;echo 2 b	2	b	2 b\n	
-par_append $MYSQL	:	sleep .3;echo 2 c	2	c	2 c\n	
-par_append $MYSQL	:	sleep .3;echo 2 d	2	d	2 d\n	
-par_append $MYSQL	:	sleep .3;echo 2 e	2	e	2 e\n	
-par_append $MYSQL	:	sleep .3;echo 3 a	3	a	3 a\n	
-par_append $MYSQL	:	sleep .3;echo 3 b	3	b	3 b\n	
-par_append $MYSQL	:	sleep .3;echo 3 c	3	c	3 c\n	
-par_append $MYSQL	:	sleep .3;echo 3 d	3	d	3 d\n	
-par_append $MYSQL	:	sleep .3;echo 3 e	3	e	3 e\n	
-par_append $MYSQL	:	sleep .3;echo 4 a	4	a	4 a\n	
-par_append $MYSQL	:	sleep .3;echo 4 b	4	b	4 b\n	
-par_append $MYSQL	:	sleep .3;echo 4 c	4	c	4 c\n	
-par_append $MYSQL	:	sleep .3;echo 4 d	4	d	4 d\n	
-par_append $MYSQL	:	sleep .3;echo 4 e	4	e	4 e\n	
-par_append $MYSQL	:	sleep .3;echo 5 a	5	a	5 a\n	
-par_append $MYSQL	:	sleep .3;echo 5 b	5	b	5 b\n	
-par_append $MYSQL	:	sleep .3;echo 5 c	5	c	5 c\n	
-par_append $MYSQL	:	sleep .3;echo 5 d	5	d	5 d\n	
-par_append $MYSQL	:	sleep .3;echo 5 e	5	e	5 e\n	
-par_append $MYSQL	:	sleep .3;echo 11 A	11	A	11 A\n	
-par_append $MYSQL	:	sleep .3;echo 11 B	11	B	11 B\n	
-par_append $MYSQL	:	sleep .3;echo 11 C	11	C	11 C\n	
-par_append $MYSQL	:	sleep .3;echo 11 D	11	D	11 D\n	
-par_append $MYSQL	:	sleep .3;echo 11 E	11	E	11 E\n	
-par_append $MYSQL	:	sleep .3;echo 12 A	12	A	12 A\n	
-par_append $MYSQL	:	sleep .3;echo 12 B	12	B	12 B\n	
-par_append $MYSQL	:	sleep .3;echo 12 C	12	C	12 C\n	
-par_append $MYSQL	:	sleep .3;echo 12 D	12	D	12 D\n	
-par_append $MYSQL	:	sleep .3;echo 12 E	12	E	12 E\n	
-par_append $MYSQL	:	sleep .3;echo 13 A	13	A	13 A\n	
-par_append $MYSQL	:	sleep .3;echo 13 B	13	B	13 B\n	
-par_append $MYSQL	:	sleep .3;echo 13 C	13	C	13 C\n	
-par_append $MYSQL	:	sleep .3;echo 13 D	13	D	13 D\n	
-par_append $MYSQL	:	sleep .3;echo 13 E	13	E	13 E\n	
-par_append $MYSQL	:	sleep .3;echo 14 A	14	A	14 A\n	
-par_append $MYSQL	:	sleep .3;echo 14 B	14	B	14 B\n	
-par_append $MYSQL	:	sleep .3;echo 14 C	14	C	14 C\n	
-par_append $MYSQL	:	sleep .3;echo 14 D	14	D	14 D\n	
-par_append $MYSQL	:	sleep .3;echo 14 E	14	E	14 E\n	
-par_append $MYSQL	:	sleep .3;echo 15 A	15	A	15 A\n	
-par_append $MYSQL	:	sleep .3;echo 15 B	15	B	15 B\n	
-par_append $MYSQL	:	sleep .3;echo 15 C	15	C	15 C\n	
-par_append $MYSQL	:	sleep .3;echo 15 D	15	D	15 D\n	
-par_append $MYSQL	:	sleep .3;echo 15 E	15	E	15 E\n	
-par_append $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
-p_wrapper par_append \$PG
-par_append $PG	Exit=0
-par_append $PG	Exit=0
-par_append $PG	 host |      command       | v1 | v2 | stdout | stderr 
-par_append $PG	------+--------------------+----+----+--------+--------
-par_append $PG	 :    | sleep .3;echo 1 a  | 1  | a  | 1 a   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 1 b  | 1  | b  | 1 b   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 1 c  | 1  | c  | 1 c   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 1 d  | 1  | d  | 1 d   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 1 e  | 1  | e  | 1 e   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 2 a  | 2  | a  | 2 a   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 2 b  | 2  | b  | 2 b   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 2 c  | 2  | c  | 2 c   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 2 d  | 2  | d  | 2 d   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 2 e  | 2  | e  | 2 e   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 3 a  | 3  | a  | 3 a   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 3 b  | 3  | b  | 3 b   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 3 c  | 3  | c  | 3 c   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 3 d  | 3  | d  | 3 d   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 3 e  | 3  | e  | 3 e   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 4 a  | 4  | a  | 4 a   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 4 b  | 4  | b  | 4 b   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 4 c  | 4  | c  | 4 c   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 4 d  | 4  | d  | 4 d   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 4 e  | 4  | e  | 4 e   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 5 a  | 5  | a  | 5 a   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 5 b  | 5  | b  | 5 b   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 5 c  | 5  | c  | 5 c   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 5 d  | 5  | d  | 5 d   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 5 e  | 5  | e  | 5 e   +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 11 A | 11 | A  | 11 A  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 11 B | 11 | B  | 11 B  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 11 C | 11 | C  | 11 C  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 11 D | 11 | D  | 11 D  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 11 E | 11 | E  | 11 E  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 12 A | 12 | A  | 12 A  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 12 B | 12 | B  | 12 B  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 12 C | 12 | C  | 12 C  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 12 D | 12 | D  | 12 D  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 12 E | 12 | E  | 12 E  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 13 A | 13 | A  | 13 A  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 13 B | 13 | B  | 13 B  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 13 C | 13 | C  | 13 C  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 13 D | 13 | D  | 13 D  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 13 E | 13 | E  | 13 E  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 14 A | 14 | A  | 14 A  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 14 B | 14 | B  | 14 B  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 14 C | 14 | C  | 14 C  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 14 D | 14 | D  | 14 D  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 14 E | 14 | E  | 14 E  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 15 A | 15 | A  | 15 A  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 15 B | 15 | B  | 15 B  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 15 C | 15 | C  | 15 C  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 15 D | 15 | D  | 15 D  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	 :    | sleep .3;echo 15 E | 15 | E  | 15 E  +| 
-par_append $PG	      |                    |    |    |        | 
-par_append $PG	(50 rows)
-par_append $PG	
-p_wrapper par_append \$SQLITE
-par_append $SQLITE	Exit=0
-par_append $SQLITE	Exit=0
-par_append $SQLITE	Host|Command|V1|V2|Stdout|Stderr
-par_append $SQLITE	:|sleep .3;echo 1 a|1|a|1 a
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 1 b|1|b|1 b
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 1 c|1|c|1 c
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 1 d|1|d|1 d
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 1 e|1|e|1 e
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 2 a|2|a|2 a
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 2 b|2|b|2 b
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 2 c|2|c|2 c
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 2 d|2|d|2 d
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 2 e|2|e|2 e
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 3 a|3|a|3 a
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 3 b|3|b|3 b
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 3 c|3|c|3 c
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 3 d|3|d|3 d
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 3 e|3|e|3 e
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 4 a|4|a|4 a
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 4 b|4|b|4 b
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 4 c|4|c|4 c
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 4 d|4|d|4 d
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 4 e|4|e|4 e
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 5 a|5|a|5 a
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 5 b|5|b|5 b
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 5 c|5|c|5 c
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 5 d|5|d|5 d
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 5 e|5|e|5 e
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 11 A|11|A|11 A
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 11 B|11|B|11 B
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 11 C|11|C|11 C
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 11 D|11|D|11 D
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 11 E|11|E|11 E
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 12 A|12|A|12 A
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 12 B|12|B|12 B
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 12 C|12|C|12 C
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 12 D|12|D|12 D
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 12 E|12|E|12 E
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 13 A|13|A|13 A
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 13 B|13|B|13 B
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 13 C|13|C|13 C
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 13 D|13|D|13 D
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 13 E|13|E|13 E
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 14 A|14|A|14 A
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 14 B|14|B|14 B
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 14 C|14|C|14 C
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 14 D|14|D|14 D
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 14 E|14|E|14 E
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 15 A|15|A|15 A
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 15 B|15|B|15 B
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 15 C|15|C|15 C
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 15 D|15|D|15 D
-par_append $SQLITE	|
-par_append $SQLITE	:|sleep .3;echo 15 E|15|E|15 E
-par_append $SQLITE	|
+p_wrapper par_append_different_cmd \$MYSQL
+par_append_different_cmd $MYSQL	Exit=0
+par_append_different_cmd $MYSQL	Exit=0
+par_append_different_cmd $MYSQL	Host	Command	V1	V2	Stdout	Stderr
+par_append_different_cmd $MYSQL	:	sleep .3;echo 1 a	1	a	1 a\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 1 b	1	b	1 b\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 1 c	1	c	1 c\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 1 d	1	d	1 d\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 1 e	1	e	1 e\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 2 a	2	a	2 a\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 2 b	2	b	2 b\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 2 c	2	c	2 c\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 2 d	2	d	2 d\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 2 e	2	e	2 e\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 3 a	3	a	3 a\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 3 b	3	b	3 b\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 3 c	3	c	3 c\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 3 d	3	d	3 d\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 3 e	3	e	3 e\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 4 a	4	a	4 a\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 4 b	4	b	4 b\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 4 c	4	c	4 c\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 4 d	4	d	4 d\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 4 e	4	e	4 e\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 5 a	5	a	5 a\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 5 b	5	b	5 b\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 5 c	5	c	5 c\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 5 d	5	d	5 d\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo 5 e	5	e	5 e\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo A-11	11	A	A-11\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo B-11	11	B	B-11\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo C-11	11	C	C-11\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo D-11	11	D	D-11\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo E-11	11	E	E-11\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo A-12	12	A	A-12\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo B-12	12	B	B-12\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo C-12	12	C	C-12\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo D-12	12	D	D-12\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo E-12	12	E	E-12\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo A-13	13	A	A-13\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo B-13	13	B	B-13\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo C-13	13	C	C-13\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo D-13	13	D	D-13\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo E-13	13	E	E-13\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo A-14	14	A	A-14\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo B-14	14	B	B-14\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo C-14	14	C	C-14\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo D-14	14	D	D-14\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo E-14	14	E	E-14\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo A-15	15	A	A-15\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo B-15	15	B	B-15\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo C-15	15	C	C-15\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo D-15	15	D	D-15\n	
+par_append_different_cmd $MYSQL	:	sleep .3;echo E-15	15	E	E-15\n	
+par_append_different_cmd $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
+p_wrapper par_append_different_cmd \$PG
+par_append_different_cmd $PG	Exit=0
+par_append_different_cmd $PG	Exit=0
+par_append_different_cmd $PG	 host |      command       | v1 | v2 | stdout | stderr 
+par_append_different_cmd $PG	------+--------------------+----+----+--------+--------
+par_append_different_cmd $PG	 :    | sleep .3;echo 1 a  | 1  | a  | 1 a   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 1 b  | 1  | b  | 1 b   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 1 c  | 1  | c  | 1 c   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 1 d  | 1  | d  | 1 d   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 1 e  | 1  | e  | 1 e   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 2 a  | 2  | a  | 2 a   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 2 b  | 2  | b  | 2 b   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 2 c  | 2  | c  | 2 c   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 2 d  | 2  | d  | 2 d   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 2 e  | 2  | e  | 2 e   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 3 a  | 3  | a  | 3 a   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 3 b  | 3  | b  | 3 b   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 3 c  | 3  | c  | 3 c   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 3 d  | 3  | d  | 3 d   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 3 e  | 3  | e  | 3 e   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 4 a  | 4  | a  | 4 a   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 4 b  | 4  | b  | 4 b   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 4 c  | 4  | c  | 4 c   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 4 d  | 4  | d  | 4 d   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 4 e  | 4  | e  | 4 e   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 5 a  | 5  | a  | 5 a   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 5 b  | 5  | b  | 5 b   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 5 c  | 5  | c  | 5 c   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 5 d  | 5  | d  | 5 d   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo 5 e  | 5  | e  | 5 e   +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo A-11 | 11 | A  | A-11  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo B-11 | 11 | B  | B-11  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo C-11 | 11 | C  | C-11  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo D-11 | 11 | D  | D-11  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo E-11 | 11 | E  | E-11  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo A-12 | 12 | A  | A-12  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo B-12 | 12 | B  | B-12  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo C-12 | 12 | C  | C-12  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo D-12 | 12 | D  | D-12  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo E-12 | 12 | E  | E-12  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo A-13 | 13 | A  | A-13  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo B-13 | 13 | B  | B-13  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo C-13 | 13 | C  | C-13  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo D-13 | 13 | D  | D-13  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo E-13 | 13 | E  | E-13  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo A-14 | 14 | A  | A-14  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo B-14 | 14 | B  | B-14  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo C-14 | 14 | C  | C-14  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo D-14 | 14 | D  | D-14  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo E-14 | 14 | E  | E-14  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo A-15 | 15 | A  | A-15  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo B-15 | 15 | B  | B-15  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo C-15 | 15 | C  | C-15  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo D-15 | 15 | D  | D-15  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	 :    | sleep .3;echo E-15 | 15 | E  | E-15  +| 
+par_append_different_cmd $PG	      |                    |    |    |        | 
+par_append_different_cmd $PG	(50 rows)
+par_append_different_cmd $PG	
+p_wrapper par_append_different_cmd \$SQLITE
+par_append_different_cmd $SQLITE	Exit=0
+par_append_different_cmd $SQLITE	Exit=0
+par_append_different_cmd $SQLITE	Host|Command|V1|V2|Stdout|Stderr
+par_append_different_cmd $SQLITE	:|sleep .3;echo 1 a|1|a|1 a
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 1 b|1|b|1 b
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 1 c|1|c|1 c
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 1 d|1|d|1 d
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 1 e|1|e|1 e
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 2 a|2|a|2 a
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 2 b|2|b|2 b
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 2 c|2|c|2 c
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 2 d|2|d|2 d
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 2 e|2|e|2 e
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 3 a|3|a|3 a
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 3 b|3|b|3 b
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 3 c|3|c|3 c
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 3 d|3|d|3 d
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 3 e|3|e|3 e
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 4 a|4|a|4 a
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 4 b|4|b|4 b
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 4 c|4|c|4 c
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 4 d|4|d|4 d
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 4 e|4|e|4 e
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 5 a|5|a|5 a
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 5 b|5|b|5 b
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 5 c|5|c|5 c
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 5 d|5|d|5 d
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo 5 e|5|e|5 e
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo A-11|11|A|A-11
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo B-11|11|B|B-11
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo C-11|11|C|C-11
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo D-11|11|D|D-11
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo E-11|11|E|E-11
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo A-12|12|A|A-12
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo B-12|12|B|B-12
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo C-12|12|C|C-12
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo D-12|12|D|D-12
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo E-12|12|E|E-12
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo A-13|13|A|A-13
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo B-13|13|B|B-13
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo C-13|13|C|C-13
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo D-13|13|D|D-13
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo E-13|13|E|E-13
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo A-14|14|A|A-14
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo B-14|14|B|B-14
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo C-14|14|C|C-14
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo D-14|14|D|D-14
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo E-14|14|E|E-14
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo A-15|15|A|A-15
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo B-15|15|B|B-15
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo C-15|15|C|C-15
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo D-15|15|D|D-15
+par_append_different_cmd $SQLITE	|
+par_append_different_cmd $SQLITE	:|sleep .3;echo E-15|15|E|E-15
+par_append_different_cmd $SQLITE	|
 p_wrapper par_shuf \$MYSQL
 par_shuf $MYSQL	1 a
 par_shuf $MYSQL	1 b

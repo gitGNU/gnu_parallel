@@ -72,7 +72,6 @@ mysql: [Warning] Using a password on the command line interface can be insecure.
 ### Test --debug
 dburl mysql://sqlunittest:CB5A1FFFA5A@localhost:3306/sqlunittest
 databasedriver mysql user sqlunittest password CB5A1FFFA5A host localhost port 3306 database sqlunittest query 
-mysql -C     --host=localhost --user=sqlunittest --port=3306 --password=CB5A1FFFA5A sqlunittest
 mysql: [Warning] Using a password on the command line interface can be insecure.
 Test if --debug works
 Yes it does
@@ -82,34 +81,27 @@ Yes it does
 ### Test -r
 dburl pg://nongood@127.0.0.3:2227/
 databasedriver pg user nongood password  host 127.0.0.3 port 2227 database nongood query 
-  psql     -h 127.0.0.3 -U nongood -p 2227 -d nongood
 psql: could not connect to server: Connection refused
 	Is the server running on host "127.0.0.3" and accepting
 	TCP/IP connections on port 2227?
-  psql     -h 127.0.0.3 -U nongood -p 2227 -d nongood
 psql: could not connect to server: Connection refused
 	Is the server running on host "127.0.0.3" and accepting
 	TCP/IP connections on port 2227?
-  psql     -h 127.0.0.3 -U nongood -p 2227 -d nongood
 psql: could not connect to server: Connection refused
 	Is the server running on host "127.0.0.3" and accepting
 	TCP/IP connections on port 2227?
 ### Test --retries=s
 dburl pg://nongood@127.0.0.3:2227/
 databasedriver pg user nongood password  host 127.0.0.3 port 2227 database nongood query 
-  psql     -h 127.0.0.3 -U nongood -p 2227 -d nongood
 psql: could not connect to server: Connection refused
 	Is the server running on host "127.0.0.3" and accepting
 	TCP/IP connections on port 2227?
-  psql     -h 127.0.0.3 -U nongood -p 2227 -d nongood
 psql: could not connect to server: Connection refused
 	Is the server running on host "127.0.0.3" and accepting
 	TCP/IP connections on port 2227?
-  psql     -h 127.0.0.3 -U nongood -p 2227 -d nongood
 psql: could not connect to server: Connection refused
 	Is the server running on host "127.0.0.3" and accepting
 	TCP/IP connections on port 2227?
-  psql     -h 127.0.0.3 -U nongood -p 2227 -d nongood
 psql: could not connect to server: Connection refused
 	Is the server running on host "127.0.0.3" and accepting
 	TCP/IP connections on port 2227?
