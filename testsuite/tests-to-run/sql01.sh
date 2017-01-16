@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mysqlrootpass=${mysqlrootpass:-b+Ydjq4ejT4E}
+mysqlrootpass=${mysqlrootpass:-M-b+Ydjq4ejT4E}
 MYSQL_ADMIN_DBURL=mysql://root:$mysqlrootpass@/mysql
 
 exec 2>&1

@@ -58,8 +58,10 @@ create_shell_user() {
     echo Do ssh $shell@lo 'cat .ssh/id_rsa.pub >> .ssh/authorized_keys' &&
     ssh $shell@lo 'cat .ssh/id_rsa.pub >> .ssh/authorized_keys' &&
     ssh $shell@lo cat .ssh/id_rsa.pub | ssh parallel@lo 'cat >> .ssh/authorized_keys' &&
+    ssh $shell@lo 'echo ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAxg+dh+BL1myqo6A+pHcQCKVV5v7cewdkN8xGtMDqm7xGgh+e5A44W7qKViIx641d6yoWb012XzDz2MKetG4Kosoma8Z/qkS27p6901RmI3ap2JFffzBESlpQtW1FyxQPlMyBfrd4ONy8xW6R/gEkjC3yOcXCQO2494/c46ouXs5gtE84Cusr3RsopR4bI7oloH1GQZ4vsHSFSakq8IwcujaSh1mmribMONLb2TjDpmE7tAY+yfOVWHPQ2J+EU1//Go60EZfSRKOu81oxW7SJ2uGgWfWcs2T1lRtT8Yh+TwVTz8UFV75kVtpZ10x5baN+ncsSpaBK+8sFLfoMvA9yQQ== tange@freebsd71.tange.dk >> .ssh/authorized_keys' &&
     echo Do env_parallel --install &&
     ssh $shell@lo env_parallel --install &&
+    ssh $shell@lo 'mkdir .parallel; touch .parallel/will-cite' &&
     echo OK Created $shell &&
     echo
 }
