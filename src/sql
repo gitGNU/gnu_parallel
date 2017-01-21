@@ -576,7 +576,7 @@ $Global::Initfile && unlink $Global::Initfile;
 exit ($err);
 
 sub parse_options {
-    $Global::version = 20161223;
+    $Global::version = 20170121;
     $Global::progname = 'sql';
 
     # This must be done first as this may exec myself
@@ -674,11 +674,11 @@ sub mysql_commands {
 			  $host && "host=$opt{'host'}\n");
     close $credential_fh;
 
-    # Prepend with a remover of the tempfile
+    # Prepend with a remover of the credential tempfile
     # -C: Compression if both ends support it
     $batch_command =
-	"(sleep 1; rm $tmp) &".
-	"mysql --defaults-extra-file=$tmp -C $pass_through_options $no_headers $html $ssl $host $user $port  $database";
+	"((sleep 1; rm $tmp) & ".
+	"mysql --defaults-extra-file=$tmp -C $pass_through_options $no_headers $html $ssl $host $user $port  $database)";
     $interactive_command = $batch_command;
     return($batch_command,$interactive_command);
 }

@@ -1,18 +1,10 @@
-mysql: [Warning] Using a password on the command line interface can be insecure.
-mysql: [Warning] Using a password on the command line interface can be insecure.
-mysql: [Warning] Using a password on the command line interface can be insecure.
-mysql: [Warning] Using a password on the command line interface can be insecure.
-mysql: [Warning] Using a password on the command line interface can be insecure.
 ### Test reading sql from url command line
-mysql: [Warning] Using a password on the command line interface can be insecure.
 Test reading SQL from command line
 Yes it works
 ### Test reading sql from url command line %-quoting
-mysql: [Warning] Using a password on the command line interface can be insecure.
 Test %-quoting SQL from command line
 Yes it works
 ### Test .sql/aliases with url on commandline
-mysql: [Warning] Using a password on the command line interface can be insecure.
 Test if .sql/aliases with %-quoting works
 Yes it works
 ### Test cyclic alias .sql/aliases
@@ -22,7 +14,6 @@ Test statement in alias
 It works
 Test statement in alias
 It works
-mysql: [Warning] Using a password on the command line interface can be insecure.
 Test statement in alias
 It works
 ### Test alias followed by SQL as arg
@@ -42,7 +33,6 @@ It works
 Query added to alias
 'Query from stdin'
 Query from stdin
-mysql: [Warning] Using a password on the command line interface can be insecure.
 Test statement in alias
 It works
 Query added to alias

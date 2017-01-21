@@ -16,6 +16,9 @@ mem: ../src/parallel tests-to-run/*mem* wanted-results/*mem* prereqlocal
 	touch ~/.parallel/will-cite
 	make stopvm
 
+polarhome: polar
+	true
+
 polar: ../src/parallel tests-to-run/*polar* wanted-results/*polar* prereqlocal
 	make stopvm
 	time bash Start.sh polar NONE || true

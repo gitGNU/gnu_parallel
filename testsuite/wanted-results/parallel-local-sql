@@ -52,7 +52,6 @@ par_append_different_cmd $MYSQL	:	sleep .3;echo B-15	15	B	B-15\n
 par_append_different_cmd $MYSQL	:	sleep .3;echo C-15	15	C	C-15\n	
 par_append_different_cmd $MYSQL	:	sleep .3;echo D-15	15	D	D-15\n	
 par_append_different_cmd $MYSQL	:	sleep .3;echo E-15	15	E	E-15\n	
-par_append_different_cmd $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
 p_wrapper par_append_different_cmd \$PG
 par_append_different_cmd $PG	Exit=0
 par_append_different_cmd $PG	Exit=0
@@ -276,7 +275,6 @@ par_no_table $MYSQL	:	true dummy dummy	dummy	dummy
 par_no_table $MYSQL	parallel: Error: The DBURL (mysql://tange:tange@lo/tange) must contain a table.
 par_no_table $MYSQL	parallel: Error: The DBURL (mysql://tange:tange@lo/tange) must contain a table.
 par_no_table $MYSQL	parallel: Error: The DBURL (mysql://tange:tange@lo/tange) must contain a table.
-par_no_table $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
 p_wrapper par_no_table \$PG
 par_no_table $PG	bug #50018: --dburl without table dies
 par_no_table $PG	255
@@ -359,9 +357,6 @@ par_shuf $MYSQL	:	sleep .3;echo 5 b	5	b	/tmp/parallel-bug49791-c20/1/5/2/b/stdou
 par_shuf $MYSQL	:	sleep .3;echo 5 c	5	c	/tmp/parallel-bug49791-c20/1/5/2/c/stdout	/tmp/parallel-bug49791-c20/1/5/2/c/stderr
 par_shuf $MYSQL	:	sleep .3;echo 5 d	5	d	/tmp/parallel-bug49791-c20/1/5/2/d/stdout	/tmp/parallel-bug49791-c20/1/5/2/d/stderr
 par_shuf $MYSQL	:	sleep .3;echo 5 e	5	e	/tmp/parallel-bug49791-c20/1/5/2/e/stdout	/tmp/parallel-bug49791-c20/1/5/2/e/stderr
-par_shuf $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
-par_shuf $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
-par_shuf $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
 p_wrapper par_shuf \$PG
 par_shuf $PG	1 a
 par_shuf $PG	1 b
@@ -609,7 +604,6 @@ par_sql_joblog $MYSQL	:	sleep .3;echo 5 b	5	b	5 b\n
 par_sql_joblog $MYSQL	:	sleep .3;echo 5 c	5	c	5 c\n	
 par_sql_joblog $MYSQL	:	sleep .3;echo 5 d	5	d	5 d\n	
 par_sql_joblog $MYSQL	:	sleep .3;echo 5 e	5	e	5 e\n	
-par_sql_joblog $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
 p_wrapper par_sql_joblog \$PG
 par_sql_joblog $PG	### should only give a single --joblog heading
 par_sql_joblog $PG	### --sqlmaster/--sqlworker
@@ -960,7 +954,6 @@ par_sqlandworker $MYSQL	:	sleep .3;echo 5 b	5	b	5 b\n
 par_sqlandworker $MYSQL	:	sleep .3;echo 5 c	5	c	5 c\n	
 par_sqlandworker $MYSQL	:	sleep .3;echo 5 d	5	d	5 d\n	
 par_sqlandworker $MYSQL	:	sleep .3;echo 5 e	5	e	5 e\n	
-par_sqlandworker $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
 p_wrapper par_sqlandworker \$PG
 par_sqlandworker $PG	Exit=0
 par_sqlandworker $PG	Exit=0
@@ -1101,7 +1094,6 @@ par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 5 b	5	b	5 b\t5 b
 par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 5 c	5	c	5 c\t5 c\n	
 par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 5 d	5	d	5 d\t5 d\n	
 par_sqlandworker_compress_linebuffer_tag $MYSQL	:	sleep .3;echo 5 e	5	e	5 e\t5 e\n	
-par_sqlandworker_compress_linebuffer_tag $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
 p_wrapper par_sqlandworker_compress_linebuffer_tag \$PG
 par_sqlandworker_compress_linebuffer_tag $PG	Exit=0
 par_sqlandworker_compress_linebuffer_tag $PG	Exit=0
@@ -1242,7 +1234,6 @@ par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 5 b	5	b	5 b\n
 par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 5 c	5	c	5 c\n	
 par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 5 d	5	d	5 d\n	
 par_sqlandworker_linebuffer $MYSQL	:	sleep .3;echo 5 e	5	e	5 e\n	
-par_sqlandworker_linebuffer $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
 p_wrapper par_sqlandworker_linebuffer \$PG
 par_sqlandworker_linebuffer $PG	Exit=0
 par_sqlandworker_linebuffer $PG	Exit=0
@@ -1383,7 +1374,6 @@ par_sqlandworker_linebuffer_tag $MYSQL	:	sleep .3;echo 5 b	5	b	5 b\t5 b\n
 par_sqlandworker_linebuffer_tag $MYSQL	:	sleep .3;echo 5 c	5	c	5 c\t5 c\n	
 par_sqlandworker_linebuffer_tag $MYSQL	:	sleep .3;echo 5 d	5	d	5 d\t5 d\n	
 par_sqlandworker_linebuffer_tag $MYSQL	:	sleep .3;echo 5 e	5	e	5 e\t5 e\n	
-par_sqlandworker_linebuffer_tag $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
 p_wrapper par_sqlandworker_linebuffer_tag \$PG
 par_sqlandworker_linebuffer_tag $PG	Exit=0
 par_sqlandworker_linebuffer_tag $PG	Exit=0
@@ -1524,7 +1514,6 @@ par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 5 b	5	b	5 b\n
 par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 5 c	5	c	5 c\n	
 par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 5 d	5	d	5 d\n	
 par_sqlandworker_lo $MYSQL	lo	sleep .3;echo 5 e	5	e	5 e\n	
-par_sqlandworker_lo $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
 p_wrapper par_sqlandworker_lo \$PG
 par_sqlandworker_lo $PG	Exit=0
 par_sqlandworker_lo $PG	Exit=0
@@ -1665,7 +1654,6 @@ par_sqlandworker_results $MYSQL	:	sleep .3;echo 5 b	5	b	/tmp/out--sql/1/5/2/b/st
 par_sqlandworker_results $MYSQL	:	sleep .3;echo 5 c	5	c	/tmp/out--sql/1/5/2/c/stdout	/tmp/out--sql/1/5/2/c/stderr
 par_sqlandworker_results $MYSQL	:	sleep .3;echo 5 d	5	d	/tmp/out--sql/1/5/2/d/stdout	/tmp/out--sql/1/5/2/d/stderr
 par_sqlandworker_results $MYSQL	:	sleep .3;echo 5 e	5	e	/tmp/out--sql/1/5/2/e/stdout	/tmp/out--sql/1/5/2/e/stderr
-par_sqlandworker_results $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
 p_wrapper par_sqlandworker_results \$PG
 par_sqlandworker_results $PG	Exit=0
 par_sqlandworker_results $PG	Exit=0
@@ -1756,7 +1744,6 @@ par_sqlandworker_tag $MYSQL	:	sleep .3;echo 5 b	5	b	5 b\t5 b\n
 par_sqlandworker_tag $MYSQL	:	sleep .3;echo 5 c	5	c	5 c\t5 c\n	
 par_sqlandworker_tag $MYSQL	:	sleep .3;echo 5 d	5	d	5 d\t5 d\n	
 par_sqlandworker_tag $MYSQL	:	sleep .3;echo 5 e	5	e	5 e\t5 e\n	
-par_sqlandworker_tag $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
 p_wrapper par_sqlandworker_tag \$PG
 par_sqlandworker_tag $PG	Exit=0
 par_sqlandworker_tag $PG	Exit=0
@@ -1897,7 +1884,6 @@ par_sqlandworker_total_jobs $MYSQL	:	echo 22 of 25; sleep .3;echo	5	b	22 of 25\n
 par_sqlandworker_total_jobs $MYSQL	:	echo 23 of 25; sleep .3;echo	5	c	23 of 25\n\n	
 par_sqlandworker_total_jobs $MYSQL	:	echo 24 of 25; sleep .3;echo	5	d	24 of 25\n\n	
 par_sqlandworker_total_jobs $MYSQL	:	echo 25 of 25; sleep .3;echo	5	e	25 of 25\n\n	
-par_sqlandworker_total_jobs $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
 p_wrapper par_sqlandworker_total_jobs \$PG
 par_sqlandworker_total_jobs $PG	Exit=0
 par_sqlandworker_total_jobs $PG	Exit=0
@@ -2088,7 +2074,6 @@ par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 b	5	b
 par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 c	5	c		
 par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 d	5	d		
 par_sqlandworker_unbuffer $MYSQL	:	sleep .3;echo 5 e	5	e		
-par_sqlandworker_unbuffer $MYSQL	mysql: [Warning] Using a password on the command line interface can be insecure.
 p_wrapper par_sqlandworker_unbuffer \$PG
 par_sqlandworker_unbuffer $PG	Exit=0
 par_sqlandworker_unbuffer $PG	Exit=0

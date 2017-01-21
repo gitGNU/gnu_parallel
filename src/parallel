@@ -161,7 +161,7 @@ if($opt::pipepart) {
 	$Global::max_jobs_running or
 	    ::die_bug("Global::max_jobs_running not set");
 	# Run in total $job_slots*(- $blocksize) jobs
-	# Set --blocksize = size / no of proc / 10
+	# Set --blocksize = size / no of proc / (- $blocksize)
 	$Global::blocksize = 1 +
 	    int($size / $Global::max_jobs_running / -$opt::blocksize);
     }
@@ -1061,7 +1061,7 @@ sub parse_options {
     if(not defined $opt::recstart and
        not defined $opt::recend) { $opt::recend = "\n"; }
     $Global::blocksize = multiply_binary_prefix($opt::blocksize || "1M");
-    if($Global::blocksize > 2**31-1) {
+    if($Global::blocksize > 2**31-1 and not $opt::pipepart) {
 	warning("--blocksize >= 2G causes problems. Using 2G-1.");
 	$Global::blocksize = 2**31-1;
     }
@@ -1269,7 +1269,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20170111;
+    $Global::version = 20170121;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -8004,9 +8004,8 @@ sub print_dryrun_and_verbose {
 		    `sleep 1;$ENV{'PARALLEL_TMUX'} -S $tmuxsocket attach`;
 		    exit;
 		}
-	    } else {
-		::status("See output with: $ENV{'PARALLEL_TMUX'} -S $tmuxsocket attach");
 	    }
+	    ::status("See output with: $ENV{'PARALLEL_TMUX'} -S $tmuxsocket attach");
 	}
 	$tmux = "sh -c '".
 	    $ENV{'PARALLEL_TMUX'}." -S $tmuxsocket new-session -s p$$ -d \"sleep .2\" >/dev/null 2>&1';" .

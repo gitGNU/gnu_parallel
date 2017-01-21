@@ -226,17 +226,37 @@ GNU Parallel 20170122 ('George Michael') <<[stable]>> has been released. It is a
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
 Haiku of the month:
-  <<>>
+
+  Speed is good for you
+  Multi speed is better still
+  Use GNU Parallel
     -- Ole Tange
 
 New in this release:
-http://www.slideshare.net/AmazonWebServices/aws-reinvent-2016-deep-dive-on-amazon-elastic-file-system-stg202
-https://www.youtube.com/watch?v=PlTuJx4VnGw slide 45 of the deck and 30:16 
-https://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-212.pdf
-http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0168456#references
-http://people.inf.ethz.ch/trayteld/papers/aerial/aerial.pdf
-https://blog.razrlele.com/p/1843
-https://www.javacodegeeks.com/2017/01/processing-image-documents-mapr-scale.html
+
+* sql now uses a temporary credentials file for MySQL to avoid warning.
+
+* --sqlmaster and --sqlworker have been reworked.
+
+* --sqlworker only reads from the DBURL: any command and any arguments are ignored.
+
+* --sqlmaster +DBURL will append commands to the DBURL and not erase the table.
+
+* If --results contain a replacement string, no tree structure with args will be generated.
+
+* --fg --tmux or --fg --tmuxpane will connect to the tmux.
+
+* GNU Parallel was cited in: Fast, Automated Indoor Light Detection, Classification, and Measurement https://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-212.pdf
+
+* GNU Parallel was cited in: Unbiased RNA Shotgun Metagenomics in Social and Solitary Wild Bees Detects Associations with Eukaryote Parasites and New Viruses http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0168456
+
+* GNU Parallel was cited in: Almost Event-Rate Independent Monitoring of Metric Temporal Logic http://people.inf.ethz.ch/trayteld/papers/tacas17-aerial/aerial.pdf
+
+* 使用GNU parallel命令并行预处理数据https://blog.razrlele.com/p/1843
+
+* GNU Parallel as a queuing system: http://puntoblogspot.blogspot.com/2017/01/gnu-parallel-as-queuing-system.html
+
+* AWS re:Invent 2016: Deep Dive on Amazon Elastic File System (STG202) slide 45 http://www.slideshare.net/AmazonWebServices/aws-reinvent-2016-deep-dive-on-amazon-elastic-file-system-stg202 and https://youtu.be/PlTuJx4VnGw?t=30m16s
 
 * <<Possibly http://link.springer.com/chapter/10.1007%2F978-3-319-22053-6_46>>
 

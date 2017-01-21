@@ -712,6 +712,14 @@ par_result_replace() {
     rm -rf /tmp/par_*_49983
 }
 
+par_pipepart_block_bigger_2G() {
+    echo '### Test that --pipepart can have blocks > 2GB'
+    tmp=$(mktemp)
+    echo foo >$tmp
+    parallel --pipepart -a $tmp --block 3G wc
+    rm $tmp
+}
+
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort |
     parallel -j6 --tag -k --joblog +/tmp/jl-`basename $0` '{} 2>&1'
