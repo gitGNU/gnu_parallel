@@ -60,6 +60,7 @@ pushd
 YYYYMMDD=`yyyymmdd`
 export YYYYMMDD
 eval `gpg-agent --daemon`
+# Takes up to 8 minutes
 make upload
 
 # Only needed for alpha:

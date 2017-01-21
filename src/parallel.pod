@@ -486,9 +486,9 @@ making it harder to finance development. However, if you pay 10000
 EUR, you should feel free to use B<--will-cite> in scripts.
 
 
-=item B<--block> I<size>
+=item B<--block> I<size> (beta testing)
 
-=item B<--block-size> I<size>
+=item B<--block-size> I<size> (beta testing)
 
 Size of block in bytes to read at a time. The I<size> can be postfixed
 with K, M, G, T, P, E, k, m, g, t, p, or e which would multiply the
@@ -640,7 +640,7 @@ If I<eof-str> is omitted, there is no end of file string.  If neither
 B<-E> nor B<-e> is used, no end of file string is used.
 
 
-=item B<--env> I<var>
+=item B<--env> I<var> (alpha testing)
 
 Copy environment variable I<var>. This will copy I<var> to the
 environment that the command is run in. This is especially useful for
@@ -1448,9 +1448,9 @@ it to the command.
 Only used with B<--pipe>.
 
 
-=item B<--results> I<name> (prealpha testing)
+=item B<--results> I<name> (alpha testing)
 
-=item B<--res> I<name> (prealpha testing)
+=item B<--res> I<name> (alpha testing)
 
 Save the output into files.
 
@@ -1926,7 +1926,7 @@ when called with B<--shebang>).
 Use B<--sqlmaster> instead.
 
 
-=item B<--sqlmaster> I<DBURL> (beta testing)
+=item B<--sqlmaster> I<DBURL> (alpha testing)
 
 Submit jobs via SQL server. I<DBURL> must point to a table, which will
 contain the same information as B<--joblog>, the values from the input
@@ -1965,12 +1965,12 @@ It can also be an alias from ~/.sql/aliases:
   :myalias mysql:///mydb/paralleljobs
 
 
-=item B<--sqlandworker> I<DBURL> (beta testing)
+=item B<--sqlandworker> I<DBURL> (alpha testing)
 
 Shorthand for: B<--sqlmaster> I<DBURL> B<--sqlworker> I<DBURL>.
 
 
-=item B<--sqlworker> I<DBURL> (beta testing)
+=item B<--sqlworker> I<DBURL> (alpha testing)
 
 Execute jobs via SQL server. Read the input sources variables from the
 table pointed to by I<DBURL>. The I<command> on the command line
@@ -2172,13 +2172,13 @@ different dir for the files. Setting B<--tmpdir> is equivalent to
 setting $TMPDIR.
 
 
-=item B<--tmux>
+=item B<--tmux> (alpha testing)
 
 Use B<tmux> for output. Start a B<tmux> session and run each job in a
 window in that session. No other output will be produced.
 
 
-=item B<--tmuxpane>
+=item B<--tmuxpane> (alpha testing)
 
 Use B<tmux> for output but put output into panes in the first window.
 Useful if you want to monitor the progress of less than 100 concurrent
