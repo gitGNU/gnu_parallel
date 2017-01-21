@@ -234,6 +234,10 @@ par_kill_children_timeout() {
     pstree $$ | grep sleep | grep -v anacron | grep -v screensave | wc
 }
 
+par_tmux_fg() {
+    echo 'bug #50107: --tmux --fg should also write how to access it'
+    stdout parallel --tmux --fg sleep ::: 3 | perl -pe 's/.tmp\S+/tmp/'
+}
 
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort |

@@ -8,8 +8,8 @@
 * --sqlworker only reads from the DBURL: any command and any arguments
   are ignored.
 
-* --sqlmaster +DBURL will append commands to the DBURL and not erase
-  the table.
+* --sqlmaster +DBURL will append different commands to the DBURL and
+  not erase the table.
 
 * If --results contain a replacement string, no tree structure with
   args will be generated.
@@ -29,7 +29,7 @@
   of Metric Temporal Logic
   http://people.inf.ethz.ch/trayteld/papers/tacas17-aerial/aerial.pdf
 
-* 使用GNU parallel命令并行预处理数据https://blog.razrlele.com/p/1843
+* 使用GNU parallel命令并行预处理数据: https://blog.razrlele.com/p/1843
 
 * GNU Parallel as a queuing system:
   http://puntoblogspot.blogspot.com/2017/01/gnu-parallel-as-queuing-system.html

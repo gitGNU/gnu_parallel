@@ -207,18 +207,6 @@ file:///home/tange/privat/parallel/doc/release_new_version
 
 from:tange@gnu.org
 to:parallel@gnu.org, bug-parallel@gnu.org
-cc:Tim Cuthbertson <tim3d.junk@gmail.com>,
-   Ludovic Courtès <ludo@gnu.org>, Markus Ammer <mkmm@gmx-topmail.de>,
-   Pavel Nuzhdin <pnzhdin@gmail.com>, Phil Sung <psung@alum.mit.edu>,
-   Michael Shigorin <mike@altlinux.org>,
-   Chris Howey <howeyc@gmail.com>,
-   Fethican Coşkuner <fethicanc@gmail.com>,
-   Rogério Brito <rbrito@ime.usp.br>,
-   Koen Vervloesem <koen@vervloesem.eu>,
-   R. Tyler Croy <tyler@monkeypox.org>,
-   kerick@shiftedbit.net, Christian Faulhammer <fauli@gentoo.org>,
-   Ryoichiro Suzuki <ryoichiro.suzuki@gmail.com>,
-   Jesse Alama <jesse.alama@gmail.com>
 
 Subject: GNU Parallel 20170122 ('George Michael') released <<[stable]>>
 

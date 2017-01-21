@@ -1425,3 +1425,6 @@ par_testhalt	sleep 1; exit 0
 par_testhalt	parallel: This job succeeded:
 par_testhalt	sleep 1; exit 0
 par_testhalt	50
+par_tmux_fg	bug #50107: --tmux --fg should also write how to access it
+par_tmux_fg	See output with: tmux -S tmp attach
+par_tmux_fg	open terminal failed: not a terminal
