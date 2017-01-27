@@ -765,6 +765,10 @@ simply executes according to Seq number.
 
 =head2 Buffering on disk
 
+GNU B<parallel> buffers output, because if output is not buffered you
+have to be ridiculously careful on sizes to avoid mixing of outputs
+(see excellent example on https://catern.com/posts/pipes.html).
+
 GNU B<parallel> buffers on disk in $TMPDIR using files, that are
 removed as soon as they are created, but which are kept open. So even
 if GNU B<parallel> is killed by a power outage, there will be no files

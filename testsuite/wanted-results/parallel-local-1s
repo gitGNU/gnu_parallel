@@ -369,3 +369,343 @@ a7 b1 2 3 4 5 6 7
 a8 b1 2 3 4 5 6 7 8
 a9 b1 2 3 4 5 6 7 8 9
 a10 b1 2 3 4 5 6 7 8 9 10
+par_failing_compressor	Compress with failing (de)compressor
+par_failing_compressor	Test --tag/--line-buffer/--files in all combinations
+par_failing_compressor	Test working/failing compressor/decompressor in all combinations
+par_failing_compressor	(-k is used as a dummy argument)
+par_failing_compressor	parallel -k --tag --line-buffer --files --compress --compress-program cat\;true --decompress-program cat\;true echo ::: C=cat\;true,D=cat\;true
+par_failing_compressor	C=cat;true,D=cat;true	/tmp/parallel-local-1s-tmpdir/tmpfile
+par_failing_compressor	parallel -k --tag --line-buffer --files --compress --compress-program cat\;true --decompress-program cat\;false echo ::: C=cat\;true,D=cat\;false
+par_failing_compressor	C=cat;true,D=cat;false	/tmp/parallel-local-1s-tmpdir/tmpfile
+par_failing_compressor	parallel -k --tag --line-buffer --files --compress --compress-program cat\;false --decompress-program cat\;true echo ::: C=cat\;false,D=cat\;true
+par_failing_compressor	C=cat;false,D=cat;true	/tmp/parallel-local-1s-tmpdir/tmpfile
+par_failing_compressor	parallel: Error: cat;false failed.
+par_failing_compressor	parallel -k --tag --line-buffer --files --compress --compress-program cat\;false --decompress-program cat\;false echo ::: C=cat\;false,D=cat\;false
+par_failing_compressor	C=cat;false,D=cat;false	/tmp/parallel-local-1s-tmpdir/tmpfile
+par_failing_compressor	parallel: Error: cat;false failed.
+par_failing_compressor	parallel -k --tag --line-buffer -k --compress --compress-program cat\;true --decompress-program cat\;true echo ::: C=cat\;true,D=cat\;true
+par_failing_compressor	C=cat;true,D=cat;true	C=cat;true,D=cat;true
+par_failing_compressor	parallel -k --tag --line-buffer -k --compress --compress-program cat\;true --decompress-program cat\;false echo ::: C=cat\;true,D=cat\;false
+par_failing_compressor	C=cat;true,D=cat;false	C=cat;true,D=cat;false
+par_failing_compressor	parallel -k --tag --line-buffer -k --compress --compress-program cat\;false --decompress-program cat\;true echo ::: C=cat\;false,D=cat\;true
+par_failing_compressor	C=cat;false,D=cat;true	C=cat;false,D=cat;true
+par_failing_compressor	parallel: Error: cat;false failed.
+par_failing_compressor	parallel -k --tag --line-buffer -k --compress --compress-program cat\;false --decompress-program cat\;false echo ::: C=cat\;false,D=cat\;false
+par_failing_compressor	C=cat;false,D=cat;false	C=cat;false,D=cat;false
+par_failing_compressor	parallel: Error: cat;false failed.
+par_failing_compressor	parallel -k --tag -k --files --compress --compress-program cat\;true --decompress-program cat\;true echo ::: C=cat\;true,D=cat\;true
+par_failing_compressor	C=cat;true,D=cat;true	/tmp/parallel-local-1s-tmpdir/tmpfile
+par_failing_compressor	parallel -k --tag -k --files --compress --compress-program cat\;true --decompress-program cat\;false echo ::: C=cat\;true,D=cat\;false
+par_failing_compressor	C=cat;true,D=cat;false	/tmp/parallel-local-1s-tmpdir/tmpfile
+par_failing_compressor	parallel -k --tag -k --files --compress --compress-program cat\;false --decompress-program cat\;true echo ::: C=cat\;false,D=cat\;true
+par_failing_compressor	C=cat;false,D=cat;true	/tmp/parallel-local-1s-tmpdir/tmpfile
+par_failing_compressor	parallel: Error: cat;false failed.
+par_failing_compressor	parallel -k --tag -k --files --compress --compress-program cat\;false --decompress-program cat\;false echo ::: C=cat\;false,D=cat\;false
+par_failing_compressor	C=cat;false,D=cat;false	/tmp/parallel-local-1s-tmpdir/tmpfile
+par_failing_compressor	parallel: Error: cat;false failed.
+par_failing_compressor	parallel -k --tag -k -k --compress --compress-program cat\;true --decompress-program cat\;true echo ::: C=cat\;true,D=cat\;true
+par_failing_compressor	C=cat;true,D=cat;true	C=cat;true,D=cat;true
+par_failing_compressor	parallel -k --tag -k -k --compress --compress-program cat\;true --decompress-program cat\;false echo ::: C=cat\;true,D=cat\;false
+par_failing_compressor	C=cat;true,D=cat;false	C=cat;true,D=cat;false
+par_failing_compressor	parallel -k --tag -k -k --compress --compress-program cat\;false --decompress-program cat\;true echo ::: C=cat\;false,D=cat\;true
+par_failing_compressor	C=cat;false,D=cat;true	C=cat;false,D=cat;true
+par_failing_compressor	parallel: Error: cat;false failed.
+par_failing_compressor	parallel -k --tag -k -k --compress --compress-program cat\;false --decompress-program cat\;false echo ::: C=cat\;false,D=cat\;false
+par_failing_compressor	C=cat;false,D=cat;false	C=cat;false,D=cat;false
+par_failing_compressor	parallel: Error: cat;false failed.
+par_failing_compressor	parallel -k -k --line-buffer --files --compress --compress-program cat\;true --decompress-program cat\;true echo ::: C=cat\;true,D=cat\;true
+par_failing_compressor	/tmp/parallel-local-1s-tmpdir/tmpfile
+par_failing_compressor	parallel -k -k --line-buffer --files --compress --compress-program cat\;true --decompress-program cat\;false echo ::: C=cat\;true,D=cat\;false
+par_failing_compressor	/tmp/parallel-local-1s-tmpdir/tmpfile
+par_failing_compressor	parallel -k -k --line-buffer --files --compress --compress-program cat\;false --decompress-program cat\;true echo ::: C=cat\;false,D=cat\;true
+par_failing_compressor	/tmp/parallel-local-1s-tmpdir/tmpfile
+par_failing_compressor	parallel: Error: cat;false failed.
+par_failing_compressor	parallel -k -k --line-buffer --files --compress --compress-program cat\;false --decompress-program cat\;false echo ::: C=cat\;false,D=cat\;false
+par_failing_compressor	/tmp/parallel-local-1s-tmpdir/tmpfile
+par_failing_compressor	parallel: Error: cat;false failed.
+par_failing_compressor	parallel -k -k --line-buffer -k --compress --compress-program cat\;true --decompress-program cat\;true echo ::: C=cat\;true,D=cat\;true
+par_failing_compressor	C=cat;true,D=cat;true
+par_failing_compressor	parallel -k -k --line-buffer -k --compress --compress-program cat\;true --decompress-program cat\;false echo ::: C=cat\;true,D=cat\;false
+par_failing_compressor	C=cat;true,D=cat;false
+par_failing_compressor	parallel -k -k --line-buffer -k --compress --compress-program cat\;false --decompress-program cat\;true echo ::: C=cat\;false,D=cat\;true
+par_failing_compressor	C=cat;false,D=cat;true
+par_failing_compressor	parallel: Error: cat;false failed.
+par_failing_compressor	parallel -k -k --line-buffer -k --compress --compress-program cat\;false --decompress-program cat\;false echo ::: C=cat\;false,D=cat\;false
+par_failing_compressor	C=cat;false,D=cat;false
+par_failing_compressor	parallel: Error: cat;false failed.
+par_failing_compressor	parallel -k -k -k --files --compress --compress-program cat\;true --decompress-program cat\;true echo ::: C=cat\;true,D=cat\;true
+par_failing_compressor	/tmp/parallel-local-1s-tmpdir/tmpfile
+par_failing_compressor	parallel -k -k -k --files --compress --compress-program cat\;true --decompress-program cat\;false echo ::: C=cat\;true,D=cat\;false
+par_failing_compressor	/tmp/parallel-local-1s-tmpdir/tmpfile
+par_failing_compressor	parallel -k -k -k --files --compress --compress-program cat\;false --decompress-program cat\;true echo ::: C=cat\;false,D=cat\;true
+par_failing_compressor	/tmp/parallel-local-1s-tmpdir/tmpfile
+par_failing_compressor	parallel: Error: cat;false failed.
+par_failing_compressor	parallel -k -k -k --files --compress --compress-program cat\;false --decompress-program cat\;false echo ::: C=cat\;false,D=cat\;false
+par_failing_compressor	/tmp/parallel-local-1s-tmpdir/tmpfile
+par_failing_compressor	parallel: Error: cat;false failed.
+par_failing_compressor	parallel -k -k -k -k --compress --compress-program cat\;true --decompress-program cat\;true echo ::: C=cat\;true,D=cat\;true
+par_failing_compressor	C=cat;true,D=cat;true
+par_failing_compressor	parallel -k -k -k -k --compress --compress-program cat\;true --decompress-program cat\;false echo ::: C=cat\;true,D=cat\;false
+par_failing_compressor	C=cat;true,D=cat;false
+par_failing_compressor	parallel -k -k -k -k --compress --compress-program cat\;false --decompress-program cat\;true echo ::: C=cat\;false,D=cat\;true
+par_failing_compressor	C=cat;false,D=cat;true
+par_failing_compressor	parallel: Error: cat;false failed.
+par_failing_compressor	parallel -k -k -k -k --compress --compress-program cat\;false --decompress-program cat\;false echo ::: C=cat\;false,D=cat\;false
+par_failing_compressor	C=cat;false,D=cat;false
+par_failing_compressor	parallel: Error: cat;false failed.
+par_result	### Test --results
+par_result	I III
+par_result	I IIII
+par_result	II III
+par_result	II IIII
+par_result	/tmp/parallel_results_test/testA/1/I/2/III/seq
+par_result	/tmp/parallel_results_test/testA/1/I/2/III/stderr
+par_result	/tmp/parallel_results_test/testA/1/I/2/III/stdout
+par_result	/tmp/parallel_results_test/testA/1/I/2/IIII/seq
+par_result	/tmp/parallel_results_test/testA/1/I/2/IIII/stderr
+par_result	/tmp/parallel_results_test/testA/1/I/2/IIII/stdout
+par_result	/tmp/parallel_results_test/testA/1/II/2/III/seq
+par_result	/tmp/parallel_results_test/testA/1/II/2/III/stderr
+par_result	/tmp/parallel_results_test/testA/1/II/2/III/stdout
+par_result	/tmp/parallel_results_test/testA/1/II/2/IIII/seq
+par_result	/tmp/parallel_results_test/testA/1/II/2/IIII/stderr
+par_result	/tmp/parallel_results_test/testA/1/II/2/IIII/stdout
+par_result	### Test --res
+par_result	I III
+par_result	I IIII
+par_result	II III
+par_result	II IIII
+par_result	/tmp/parallel_results_test/testD/1/I/2/III/seq
+par_result	/tmp/parallel_results_test/testD/1/I/2/III/stderr
+par_result	/tmp/parallel_results_test/testD/1/I/2/III/stdout
+par_result	/tmp/parallel_results_test/testD/1/I/2/IIII/seq
+par_result	/tmp/parallel_results_test/testD/1/I/2/IIII/stderr
+par_result	/tmp/parallel_results_test/testD/1/I/2/IIII/stdout
+par_result	/tmp/parallel_results_test/testD/1/II/2/III/seq
+par_result	/tmp/parallel_results_test/testD/1/II/2/III/stderr
+par_result	/tmp/parallel_results_test/testD/1/II/2/III/stdout
+par_result	/tmp/parallel_results_test/testD/1/II/2/IIII/seq
+par_result	/tmp/parallel_results_test/testD/1/II/2/IIII/stderr
+par_result	/tmp/parallel_results_test/testD/1/II/2/IIII/stdout
+par_result	### Test --result
+par_result	I III
+par_result	I IIII
+par_result	II III
+par_result	II IIII
+par_result	/tmp/parallel_results_test/testE/1/I/2/III/seq
+par_result	/tmp/parallel_results_test/testE/1/I/2/III/stderr
+par_result	/tmp/parallel_results_test/testE/1/I/2/III/stdout
+par_result	/tmp/parallel_results_test/testE/1/I/2/IIII/seq
+par_result	/tmp/parallel_results_test/testE/1/I/2/IIII/stderr
+par_result	/tmp/parallel_results_test/testE/1/I/2/IIII/stdout
+par_result	/tmp/parallel_results_test/testE/1/II/2/III/seq
+par_result	/tmp/parallel_results_test/testE/1/II/2/III/stderr
+par_result	/tmp/parallel_results_test/testE/1/II/2/III/stdout
+par_result	/tmp/parallel_results_test/testE/1/II/2/IIII/seq
+par_result	/tmp/parallel_results_test/testE/1/II/2/IIII/stderr
+par_result	/tmp/parallel_results_test/testE/1/II/2/IIII/stdout
+par_result	### Test --results --header :
+par_result	I III
+par_result	I IIII
+par_result	II III
+par_result	II IIII
+par_result	/tmp/parallel_results_test/testB/a/I/b/III/seq
+par_result	/tmp/parallel_results_test/testB/a/I/b/III/stderr
+par_result	/tmp/parallel_results_test/testB/a/I/b/III/stdout
+par_result	/tmp/parallel_results_test/testB/a/I/b/IIII/seq
+par_result	/tmp/parallel_results_test/testB/a/I/b/IIII/stderr
+par_result	/tmp/parallel_results_test/testB/a/I/b/IIII/stdout
+par_result	/tmp/parallel_results_test/testB/a/II/b/III/seq
+par_result	/tmp/parallel_results_test/testB/a/II/b/III/stderr
+par_result	/tmp/parallel_results_test/testB/a/II/b/III/stdout
+par_result	/tmp/parallel_results_test/testB/a/II/b/IIII/seq
+par_result	/tmp/parallel_results_test/testB/a/II/b/IIII/stderr
+par_result	/tmp/parallel_results_test/testB/a/II/b/IIII/stdout
+par_result	### Test --results --header : named - a/b swapped
+par_result	I III
+par_result	II III
+par_result	I IIII
+par_result	II IIII
+par_result	/tmp/parallel_results_test/testC/a/I/b/III/seq
+par_result	/tmp/parallel_results_test/testC/a/I/b/III/stderr
+par_result	/tmp/parallel_results_test/testC/a/I/b/III/stdout
+par_result	/tmp/parallel_results_test/testC/a/I/b/IIII/seq
+par_result	/tmp/parallel_results_test/testC/a/I/b/IIII/stderr
+par_result	/tmp/parallel_results_test/testC/a/I/b/IIII/stdout
+par_result	/tmp/parallel_results_test/testC/a/II/b/III/seq
+par_result	/tmp/parallel_results_test/testC/a/II/b/III/stderr
+par_result	/tmp/parallel_results_test/testC/a/II/b/III/stdout
+par_result	/tmp/parallel_results_test/testC/a/II/b/IIII/seq
+par_result	/tmp/parallel_results_test/testC/a/II/b/IIII/stderr
+par_result	/tmp/parallel_results_test/testC/a/II/b/IIII/stdout
+par_result	### Test --results --header : piped
+par_result	parallel: Warning: a NUL character occurred in the input.
+par_result	parallel: Warning: It cannot be passed through in the argument list.
+par_result	parallel: Warning: Did you mean to use the --null option?
+par_result	/tmp/parallel_results_test/testF/Col/backslash\\tab/2
+par_result	/tmp/parallel_results_test/testF/Col/backslash\\tab/2/slash\_null\0eof
+par_result	/tmp/parallel_results_test/testF/Col/backslash\\tab/2/slash\_null\0eof/seq
+par_result	/tmp/parallel_results_test/testF/Col/backslash\\tab/2/slash\_null\0eof/stderr
+par_result	/tmp/parallel_results_test/testF/Col/backslash\\tab/2/slash\_null\0eof/stdout
+par_result	### Test --results --header : piped - non-existing column header
+par_result	parallel: Warning: a NUL character occurred in the input.
+par_result	parallel: Warning: It cannot be passed through in the argument list.
+par_result	parallel: Warning: Did you mean to use the --null option?
+par_result	/tmp/parallel_results_test/testG/
+par_result	/tmp/parallel_results_test/testG/Col1
+par_result	/tmp/parallel_results_test/testG/Col1/backslash\\tab
+par_result	/tmp/parallel_results_test/testG/Col1/backslash\\tab/2
+par_result	/tmp/parallel_results_test/testG/Col1/backslash\\tab/2/slash\_null\0eof
+par_result	/tmp/parallel_results_test/testG/Col1/backslash\\tab/2/slash\_null\0eof/seq
+par_result	/tmp/parallel_results_test/testG/Col1/backslash\\tab/2/slash\_null\0eof/stderr
+par_result	/tmp/parallel_results_test/testG/Col1/backslash\\tab/2/slash\_null\0eof/stdout
+par_result	/tmp/parallel_results_test/testG/Col1/v1
+par_result	/tmp/parallel_results_test/testG/Col1/v1/2
+par_result	/tmp/parallel_results_test/testG/Col1/v1/2/v2
+par_result	/tmp/parallel_results_test/testG/Col1/v1/2/v2/3
+par_result	/tmp/parallel_results_test/testG/Col1/v1/2/v2/3/v3
+par_result	/tmp/parallel_results_test/testG/Col1/v1/2/v2/3/v3/seq
+par_result	/tmp/parallel_results_test/testG/Col1/v1/2/v2/3/v3/stderr
+par_result	/tmp/parallel_results_test/testG/Col1/v1/2/v2/3/v3/stdout
+par_result_replace	### bug #49983: --results with {1}
+par_result_replace	foo
+par_result_replace	bar
+par_result_replace	baz
+par_result_replace	/tmp/par_bar_49983
+par_result_replace	/tmp/par_baz_49983
+par_result_replace	/tmp/par_foo_49983
+par_result_replace	foo A
+par_result_replace	foo B
+par_result_replace	foo C
+par_result_replace	bar A
+par_result_replace	bar B
+par_result_replace	bar C
+par_result_replace	baz A
+par_result_replace	baz B
+par_result_replace	baz C
+par_result_replace	/tmp/par_bar A_49983
+par_result_replace	/tmp/par_bar B_49983
+par_result_replace	/tmp/par_bar C_49983
+par_result_replace	/tmp/par_baz A_49983
+par_result_replace	/tmp/par_baz B_49983
+par_result_replace	/tmp/par_baz C_49983
+par_result_replace	/tmp/par_foo A_49983
+par_result_replace	/tmp/par_foo B_49983
+par_result_replace	/tmp/par_foo C_49983
+par_result_replace	foo A
+par_result_replace	foo B
+par_result_replace	foo C
+par_result_replace	bar A
+par_result_replace	bar B
+par_result_replace	bar C
+par_result_replace	baz A
+par_result_replace	baz B
+par_result_replace	baz C
+par_result_replace	/tmp/par_bar-A_49983
+par_result_replace	/tmp/par_bar-B_49983
+par_result_replace	/tmp/par_bar-C_49983
+par_result_replace	/tmp/par_baz-A_49983
+par_result_replace	/tmp/par_baz-B_49983
+par_result_replace	/tmp/par_baz-C_49983
+par_result_replace	/tmp/par_foo-A_49983
+par_result_replace	/tmp/par_foo-B_49983
+par_result_replace	/tmp/par_foo-C_49983
+par_result_replace	foo A
+par_result_replace	foo B
+par_result_replace	foo C
+par_result_replace	bar A
+par_result_replace	bar B
+par_result_replace	bar C
+par_result_replace	baz A
+par_result_replace	baz B
+par_result_replace	baz C
+par_result_replace	/tmp/par__49983
+par_result_replace	/tmp/par__49983/1
+par_result_replace	/tmp/par__49983/1/bar
+par_result_replace	/tmp/par__49983/1/bar/2
+par_result_replace	/tmp/par__49983/1/bar/2/A
+par_result_replace	/tmp/par__49983/1/bar/2/A/seq
+par_result_replace	/tmp/par__49983/1/bar/2/A/stderr
+par_result_replace	/tmp/par__49983/1/bar/2/A/stdout
+par_result_replace	/tmp/par__49983/1/bar/2/B
+par_result_replace	/tmp/par__49983/1/bar/2/B/seq
+par_result_replace	/tmp/par__49983/1/bar/2/B/stderr
+par_result_replace	/tmp/par__49983/1/bar/2/B/stdout
+par_result_replace	/tmp/par__49983/1/bar/2/C
+par_result_replace	/tmp/par__49983/1/bar/2/C/seq
+par_result_replace	/tmp/par__49983/1/bar/2/C/stderr
+par_result_replace	/tmp/par__49983/1/bar/2/C/stdout
+par_result_replace	/tmp/par__49983/1/baz
+par_result_replace	/tmp/par__49983/1/baz/2
+par_result_replace	/tmp/par__49983/1/baz/2/A
+par_result_replace	/tmp/par__49983/1/baz/2/A/seq
+par_result_replace	/tmp/par__49983/1/baz/2/A/stderr
+par_result_replace	/tmp/par__49983/1/baz/2/A/stdout
+par_result_replace	/tmp/par__49983/1/baz/2/B
+par_result_replace	/tmp/par__49983/1/baz/2/B/seq
+par_result_replace	/tmp/par__49983/1/baz/2/B/stderr
+par_result_replace	/tmp/par__49983/1/baz/2/B/stdout
+par_result_replace	/tmp/par__49983/1/baz/2/C
+par_result_replace	/tmp/par__49983/1/baz/2/C/seq
+par_result_replace	/tmp/par__49983/1/baz/2/C/stderr
+par_result_replace	/tmp/par__49983/1/baz/2/C/stdout
+par_result_replace	/tmp/par__49983/1/foo
+par_result_replace	/tmp/par__49983/1/foo/2
+par_result_replace	/tmp/par__49983/1/foo/2/A
+par_result_replace	/tmp/par__49983/1/foo/2/A/seq
+par_result_replace	/tmp/par__49983/1/foo/2/A/stderr
+par_result_replace	/tmp/par__49983/1/foo/2/A/stdout
+par_result_replace	/tmp/par__49983/1/foo/2/B
+par_result_replace	/tmp/par__49983/1/foo/2/B/seq
+par_result_replace	/tmp/par__49983/1/foo/2/B/stderr
+par_result_replace	/tmp/par__49983/1/foo/2/B/stdout
+par_result_replace	/tmp/par__49983/1/foo/2/C
+par_result_replace	/tmp/par__49983/1/foo/2/C/seq
+par_result_replace	/tmp/par__49983/1/foo/2/C/stderr
+par_result_replace	/tmp/par__49983/1/foo/2/C/stdout
+par_result_replace	bar B
+par_result_replace	bar C
+par_result_replace	baz B
+par_result_replace	baz C
+par_result_replace	/tmp/par__49983
+par_result_replace	/tmp/par__49983/A
+par_result_replace	/tmp/par__49983/A/B
+par_result_replace	/tmp/par__49983/A/B/foo
+par_result_replace	/tmp/par__49983/A/B/foo/bar
+par_result_replace	/tmp/par__49983/A/B/foo/bar/seq
+par_result_replace	/tmp/par__49983/A/B/foo/bar/stderr
+par_result_replace	/tmp/par__49983/A/B/foo/bar/stdout
+par_result_replace	/tmp/par__49983/A/B/foo/baz
+par_result_replace	/tmp/par__49983/A/B/foo/baz/seq
+par_result_replace	/tmp/par__49983/A/B/foo/baz/stderr
+par_result_replace	/tmp/par__49983/A/B/foo/baz/stdout
+par_result_replace	/tmp/par__49983/A/C
+par_result_replace	/tmp/par__49983/A/C/foo
+par_result_replace	/tmp/par__49983/A/C/foo/bar
+par_result_replace	/tmp/par__49983/A/C/foo/bar/seq
+par_result_replace	/tmp/par__49983/A/C/foo/bar/stderr
+par_result_replace	/tmp/par__49983/A/C/foo/bar/stdout
+par_result_replace	/tmp/par__49983/A/C/foo/baz
+par_result_replace	/tmp/par__49983/A/C/foo/baz/seq
+par_result_replace	/tmp/par__49983/A/C/foo/baz/stderr
+par_result_replace	/tmp/par__49983/A/C/foo/baz/stdout
+par_result_replace	bar B
+par_result_replace	bar C
+par_result_replace	baz B
+par_result_replace	baz C
+par_result_replace	/tmp/par__49983-bar B
+par_result_replace	/tmp/par__49983-bar B/seq
+par_result_replace	/tmp/par__49983-bar B/stderr
+par_result_replace	/tmp/par__49983-bar B/stdout
+par_result_replace	/tmp/par__49983-bar C
+par_result_replace	/tmp/par__49983-bar C/seq
+par_result_replace	/tmp/par__49983-bar C/stderr
+par_result_replace	/tmp/par__49983-bar C/stdout
+par_result_replace	/tmp/par__49983-baz B
+par_result_replace	/tmp/par__49983-baz B/seq
+par_result_replace	/tmp/par__49983-baz B/stderr
+par_result_replace	/tmp/par__49983-baz B/stdout
+par_result_replace	/tmp/par__49983-baz C
+par_result_replace	/tmp/par__49983-baz C/seq
+par_result_replace	/tmp/par__49983-baz C/stderr
+par_result_replace	/tmp/par__49983-baz C/stdout

@@ -6544,9 +6544,24 @@ sub openoutputfiles {
     my ($outfhw, $errfhw, $outname, $errname);
 
     if($opt::results and not $Global::csv) {
-	my $dir = $self->{'commandline'}->resultsdir();
-	# prefix/name1/val1/name2/val2/seq
-	my $seqname = "$dir/seq";
+	my $out = $self->{'commandline'}->results_out();
+	my $seqname;
+	if($out eq $opt::results or $out =~ m:/$:) {
+	    # $opt::results = simple string or ending in /
+	    # => $out is a dir/
+	    # prefix/name1/val1/name2/val2/seq
+	    $seqname = $out."seq";
+	    # prefix/name1/val1/name2/val2/stdout
+	    $outname = $out."stdout";
+	    # prefix/name1/val1/name2/val2/stderr
+	    $errname = $out."stderr";
+	} else {
+	    # $opt::results = replacement string not ending in /
+	    # => $out is a file
+	    $outname = $out;
+	    $errname = "$out.err";
+	    $seqname = "$out.seq";
+	}
 	my $seqfhw;
 	if(not open($seqfhw, "+>", $seqname)) {
 	    ::error("Cannot write to `$seqname'.");
@@ -6554,14 +6569,10 @@ sub openoutputfiles {
 	}
 	print $seqfhw $self->seq();
 	close $seqfhw;
-	# prefix/name1/val1/name2/val2/stdout
-	$outname = "$dir/stdout";
 	if(not open($outfhw, "+>", $outname)) {
 	    ::error("Cannot write to `$outname'.");
 	    ::wait_and_exit(255);
 	}
-	# prefix/name1/val1/name2/val2/stderr
-	$errname = "$dir/stderr";
 	if(not open($errfhw, "+>", $errname)) {
 	    ::error("Cannot write to `$errname'.");
 	    ::wait_and_exit(255);
@@ -8037,9 +8048,9 @@ sub is_already_in_results {
     # Returns:
     #   $job_already_run = bool whether there is output for this or not
     my $job = $_[0];
-    my $dir = $job->{'commandline'}->resultsdir();
-    ::debug("run", "Test $dir/stdout", -e "$dir/stdout", "\n");
-    return -e "$dir/stdout";
+    my $out = $job->{'commandline'}->results_out();
+    ::debug("run", "Test ${out}stdout", -e "${out}stdout", "\n");
+    return(-e $out."stdout" or -f $out);
 }
 
 sub is_already_in_joblog {
@@ -8905,7 +8916,7 @@ sub args_as_string {
 	    map { @$_ } @{$self->{'arg_list'}});
 }
 
-sub resultsdir {
+sub results_out {
     sub max_file_name_length {
 	# Figure out the max length of a subdir
 	# TODO and the max total length
@@ -8945,13 +8956,13 @@ sub resultsdir {
     }
 
     my $self = shift;
-    my $dir = $self->replace_placeholders([$opt::results],0,0);
-    if($dir eq $opt::results) {
+    my $out = $self->replace_placeholders([$opt::results],0,0);
+    if($out eq $opt::results) {
 	# $opt::results simple string: Append args_as_dirname
 	my $args_as_dirname = $self->args_as_dirname();
 	# Output in: prefix/name1/val1/name2/val2/stdout
-	$dir = $opt::results."/".$args_as_dirname;
-	if(-d $dir or eval{ File::Path::mkpath($dir); }) {
+	$out = $opt::results."/".$args_as_dirname;
+	if(-d $out or eval{ File::Path::mkpath($out); }) {
 	    # OK
 	} else {
 	    # mkpath failed: Argument probably too long.
@@ -8960,18 +8971,25 @@ sub resultsdir {
 	    max_file_name_length($opt::results);
 	    $args_as_dirname = $self->args_as_dirname();
 	    # prefix/name1/val1/name2/val2/
-	    $dir = $opt::results."/".$args_as_dirname;
-	    File::Path::mkpath($dir);
+	    $out = $opt::results."/".$args_as_dirname;
+	    File::Path::mkpath($out);
 	}
+	$out .="/";
     } else {
-	if(-d $dir or eval{ File::Path::mkpath($dir); }) {
-	    # OK
+	if($out =~ m:/$:) {
+	    # / = dir
+	    if(-d $out or eval{ File::Path::mkpath($out); }) {
+		# OK
+	    } else {
+		::error("Cannot make dir '$out'.");
+		::wait_and_exit(255);
+	    }
 	} else {
-	    ::error("Cannot make dir '$dir'.");
-	    ::wait_and_exit(255);
+	    $out =~ m:(.*)/:;
+	    File::Path::mkpath($1);
 	}
     }
-    return $dir;
+    return $out;
 }
 
 sub args_as_dirname {

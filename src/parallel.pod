@@ -1448,54 +1448,21 @@ it to the command.
 Only used with B<--pipe>.
 
 
-=item B<--results> I<name> (beta testing)
+=item B<--results> I<name> (alpha testing)
 
-=item B<--res> I<name> (beta testing)
+=item B<--res> I<name> (alpha testing)
 
 Save the output into files.
 
-B<CSV file output>
+B<Simple string output dir>
 
-If I<name> ends in B<.csv>/B<.tsv> the output will be a CSV-file
-named I<name>.
-
-B<.csv> gives a comma separated value file. B<.tsv> gives a TAB
-separated value file.
-
-B<-.csv>/B<-.tsv> are special: It will give the file on stdout
-(standard output).
-
-
-B<Dir structure output>
-
-If I<name> does not end in B<.csv>/B<.tsv> will be treated as a dir.
-
-If I<name> contains replacement strings output files will be stored in
-the resulting dir.
-
-E.g.
-
-  parallel --results my_{} echo ::: foo bar baz
-
-will generate the files:
-
-  my_bar/seq
-  my_bar/stderr
-  my_bar/stdout
-  my_baz/seq
-  my_baz/stderr
-  my_baz/stdout
-  my_foo/seq
-  my_foo/stderr
-  my_foo/stdout
-
-If I<name> does not contain replacement strings the files will be
-stored in a directory tree rooted at I<name>.  Within this directory
-tree, each command will result in three files: I<name>/<ARGS>/stdout
-and I<name>/<ARGS>/stderr, I<name>/<ARGS>/seq, where <ARGS> is a
-sequence of directories representing the header of the input source
-(if using B<--header :>) or the number of the input source and
-corresponding values.
+If I<name> does not contain replacement strings and does not end in
+B<.csv/.tsv>, the output will be stored in a directory tree rooted at
+I<name>.  Within this directory tree, each command will result in
+three files: I<name>/<ARGS>/stdout and I<name>/<ARGS>/stderr,
+I<name>/<ARGS>/seq, where <ARGS> is a sequence of directories
+representing the header of the input source (if using B<--header :>)
+or the number of the input source and corresponding values.
 
 E.g:
 
@@ -1536,26 +1503,64 @@ will generate the files:
   foo/1/I/2/IIII/stderr
   foo/1/I/2/IIII/stdout
 
-and
 
-  parallel --results foo-{1} echo {1} {2} ::: I II ::: III IIII
+B<CSV file output>
+
+If I<name> ends in B<.csv>/B<.tsv> the output will be a CSV-file
+named I<name>.
+
+B<.csv> gives a comma separated value file. B<.tsv> gives a TAB
+separated value file.
+
+B<-.csv>/B<-.tsv> are special: It will give the file on stdout
+(standard output).
+
+
+B<Replacement string output file>
+
+If I<name> contains a replacement string and the replaced result does
+not end in /, then the standard output will be stored in a file named
+by this result. Standard error will be stored in the same file name
+with '.err' added, and the sequence number will be stored in the same
+file name with '.seq' added.
+
+E.g.
+
+  parallel --results my_{} echo ::: foo bar baz
 
 will generate the files:
 
-  foo-I/1/I/2/IIII/seq
-  foo-I/1/I/2/IIII/stderr
-  foo-I/1/I/2/IIII/stdout
-  foo-I/1/I/2/III/seq
-  foo-I/1/I/2/III/stderr
-  foo-I/1/I/2/III/stdout
-  foo-II/1/II/2/IIII/seq
-  foo-II/1/II/2/IIII/stderr
-  foo-II/1/II/2/IIII/stdout
-  foo-II/1/II/2/III/seq
-  foo-II/1/II/2/III/stderr
-  foo-II/1/II/2/III/stdout
+  my_bar
+  my_bar.err
+  my_bar.seq
+  my_baz
+  my_baz.err
+  my_baz.seq
+  my_foo
+  my_foo.err
+  my_foo.seq
 
-If you do not want the dir structure, try B<--files> B<--tag> instead.
+
+B<Replacement string output dir>
+
+If I<name> contains a replacement string and the replaced result ends
+in /, then output files will be stored in the resulting dir.
+
+E.g.
+
+  parallel --results my_{}/ echo ::: foo bar baz
+
+will generate the files:
+
+  my_bar/seq
+  my_bar/stderr
+  my_bar/stdout
+  my_baz/seq
+  my_baz/stderr
+  my_baz/stdout
+  my_foo/seq
+  my_foo/stderr
+  my_foo/stdout
 
 See also B<--files>, B<--tag>, B<--header>, B<--joblog>.
 
@@ -1994,11 +1999,11 @@ I<secs> seconds after starting each ssh. I<secs> can be less than 1
 seconds.
 
 
-=item B<-S> I<[@hostgroups/][ncpu/]sshlogin[,[@hostgroups/][ncpu/]sshlogin[,...]]>
+=item B<-S> I<[@hostgroups/][ncores/]sshlogin[,[@hostgroups/][ncores/]sshlogin[,...]]>
 
 =item B<-S> I<@hostgroup>
 
-=item B<--sshlogin> I<[@hostgroups/][ncpu/]sshlogin[,[@hostgroups/][ncpu/]sshlogin[,...]]>
+=item B<--sshlogin> I<[@hostgroups/][ncores/]sshlogin[,[@hostgroups/][ncores/]sshlogin[,...]]>
 
 =item B<--sshlogin> I<@hostgroup>
 
@@ -2014,8 +2019,9 @@ hostgroup will be used. Multiple I<@hostgroup> can be given.
 
 GNU B<parallel> will determine the number of CPU cores on the remote
 computers and run the number of jobs as specified by B<-j>.  If the
-number I<ncpu> is given GNU B<parallel> will use this number for
-number of CPU cores on the host. Normally I<ncpu> will not be needed.
+number I<ncores> is given GNU B<parallel> will use this number for
+number of CPU cores on the host. Normally I<ncores> will not be
+needed.
 
 An I<sshlogin> is of the form:
 
