@@ -10,7 +10,19 @@ par_tmux() {
     (stdout parallel --timeout 3 --tmux --delay 0.03 echo '{}{=$_="\\"x$_=}'; echo $?) | par_tmux_filter
 }
 export -f par_tmux
+
+# Does not work
+# cat >/tmp/parallel-local7-script <<EOF
+# stdout /usr/bin/time -f %e 
+# parallel --tmux --fg sleep ::: 1 2 3
+# parallel --tmuxpane --fg sleep ::: 1 2 3
+# EOF
+# chmod +x /tmp/parallel-local7-script
+# echo '### bug #48841: --tmux(pane) --fg should start tmux in foreground'
+# stdout /usr/bin/time -f %e script -q -f -c /tmp/parallel-local7-script /dev/null |  perl -ne '$_ >= 26 and $_ <= 45 and print "OK\n"'
+
 cat <<'EOF' | sed -e 's/;$/; /;s/$SERVER1/'$SERVER1'/;s/$SERVER2/'$SERVER2'/' | stdout parallel -vj3 --timeout 60 --retries 2 -k --joblog /tmp/jl-`basename $0` -L1
+
 echo '### tmux1.9'
   seq 000   100 | PARALLEL_TMUX=tmux1.9 par_tmux
   seq 100   200 | PARALLEL_TMUX=tmux1.9 par_tmux

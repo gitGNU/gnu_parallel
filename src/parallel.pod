@@ -674,10 +674,15 @@ See also: B<--bar>, B<--progress>.
 
 =item B<--fg>
 
-Run command in foreground thus GNU B<parallel> will wait for
-completion of the command before exiting.
+Run command in foreground.
 
-Implies B<--semaphore>.
+With B<--tmux> and B<--tmuxpane> GNU B<parallel> will start B<tmux> in
+the foreground.
+
+With B<--semaphore> GNU B<parallel> will run the command in the
+foreground (opposite B<--bg>), and wait for completion of the command
+before exiting.
+
 
 See also B<--bg>, B<man sem>.
 
@@ -889,8 +894,12 @@ and output of bytes.
 
 To convert the times into ISO-8601 strict do:
 
-  perl -a -F"\t" -ne \
+  cat joblog | perl -a -F"\t" -ne \
     'chomp($F[2]=`date -d \@$F[2] +%FT%T`); print join("\t",@F)'
+
+If the host is long, you can use B<column -t> to pretty print it:
+
+  cat joblog | column -t
 
 See also B<--resume> B<--resume-failed>.
 

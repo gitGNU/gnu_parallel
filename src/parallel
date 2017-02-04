@@ -921,7 +921,7 @@ sub options_hash {
 	 # Termination and retries
 	 "halt-on-error|halt=s" => \$opt::halt,
 	 "memfree=s" => \$opt::memfree,
-	 "retries=i" => \$opt::retries,
+	 "retries=s" => \$opt::retries,
 	 "timeout=s" => \$opt::timeout,
 	 "termseq|term-seq=s" => \$opt::termseq,
 	 # xargs-compatibility - implemented, man, testsuite
@@ -1023,7 +1023,9 @@ sub parse_options {
     if(defined $opt::silent) { $Global::verbose = 0; }
     if(defined $opt::0) { $/ = "\0"; }
     if(defined $opt::d) { $/ = unquote_printf($opt::d) }
-    if(defined $opt::tagstring) { $opt::tagstring = unquote_printf($opt::tagstring); }
+    if(defined $opt::tagstring) {
+	$opt::tagstring = unquote_printf($opt::tagstring);
+    }
     if(defined $opt::interactive) { $Global::interactive = $opt::interactive; }
     if(defined $opt::q) { $Global::quoting = 1; }
     if(defined $opt::r) { $Global::ignore_empty = 1; }
@@ -1031,18 +1033,28 @@ sub parse_options {
     parse_replacement_string_options();
     if(defined $opt::eof) { $Global::end_of_file_string = $opt::eof; }
     if(defined $opt::max_args) { $Global::max_number_of_args = $opt::max_args; }
-    if(defined $opt::timeout) { $Global::timeoutq = TimeoutQueue->new($opt::timeout); }
+    if(defined $opt::timeout) {
+	$Global::timeoutq = TimeoutQueue->new($opt::timeout);
+    }
     if(defined $opt::tmpdir) { $ENV{'TMPDIR'} = $opt::tmpdir; }
     $opt::nice ||= 0;
     if(defined $opt::help) { usage(); exit(0); }
-    if(defined $opt::sqlandworker) { $opt::sqlmaster = $opt::sqlworker = $opt::sqlandworker; }
+    if(defined $opt::sqlandworker) {
+	$opt::sqlmaster = $opt::sqlworker = $opt::sqlandworker;
+    }
     if(defined $opt::tmuxpane) { $opt::tmux = $opt::tmuxpane; }
     if(defined $opt::colsep) { $Global::trim = 'lr'; }
-    if(defined $opt::header) { $opt::colsep = defined $opt::colsep ? $opt::colsep : "\t"; }
+    if(defined $opt::header) {
+	$opt::colsep = defined $opt::colsep ? $opt::colsep : "\t";
+    }
     if(defined $opt::trim) { $Global::trim = $opt::trim; }
     if(defined $opt::arg_sep) { $Global::arg_sep = $opt::arg_sep; }
-    if(defined $opt::arg_file_sep) { $Global::arg_file_sep = $opt::arg_file_sep; }
-    if(defined $opt::number_of_cpus) { print SSHLogin::no_of_cpus(),"\n"; wait_and_exit(0); }
+    if(defined $opt::arg_file_sep) {
+	$Global::arg_file_sep = $opt::arg_file_sep;
+    }
+    if(defined $opt::number_of_cpus) {
+	print SSHLogin::no_of_cpus(),"\n"; wait_and_exit(0);
+    }
     if(defined $opt::number_of_cores) {
         print SSHLogin::no_of_cores(),"\n"; wait_and_exit(0);
     }
@@ -1056,8 +1068,10 @@ sub parse_options {
     if(@opt::sshlogin) { @Global::sshlogin = @opt::sshlogin; }
     if(@opt::sshloginfile) { read_sshloginfiles(@opt::sshloginfile); }
     if(@opt::return) { push @Global::ret_files, @opt::return; }
-    if($opt::transfer) { push @Global::transfer_files, $opt::i || $opt::I || "{}"; }
-    if(@opt::transfer_files) { push @Global::transfer_files, @opt::transfer_files; }
+    if($opt::transfer) {
+	push @Global::transfer_files, $opt::i || $opt::I || "{}";
+    }
+    push @Global::transfer_files, @opt::transfer_files;
     if(not defined $opt::recstart and
        not defined $opt::recend) { $opt::recend = "\n"; }
     $Global::blocksize = multiply_binary_prefix($opt::blocksize || "1M");
@@ -1185,12 +1199,8 @@ sub parse_options {
     }
     parse_semaphore();
 
-    if(defined $opt::eta) {
-        $opt::progress = $opt::eta;
-    }
-    if(defined $opt::bar) {
-        $opt::progress = $opt::bar;
-    }
+    if(defined $opt::eta) { $opt::progress = $opt::eta; }
+    if(defined $opt::bar) { $opt::progress = $opt::bar; }
     citation_notice();
 
     parse_halt();
@@ -1203,17 +1213,13 @@ sub parse_options {
         ::warning("Using -X or -m with --sshlogin may fail.");
     }
 
-    if(not defined $opt::jobs) {
-        $opt::jobs = "100%";
-    }
+    if(not defined $opt::jobs) { $opt::jobs = "100%"; }
     open_joblog();
     open_csv();
     if($opt::sqlmaster or $opt::sqlworker) {
 	$Global::sql = SQL->new($opt::sqlmaster || $opt::sqlworker);
     }
-    if($opt::sqlworker) {
-	$Global::membuffer ||= 1;
-    }
+    if($opt::sqlworker) { $Global::membuffer ||= 1; }
 }
 
 sub check_invalid_option_combinations {
@@ -1249,7 +1255,8 @@ sub check_invalid_option_combinations {
 	::wait_and_exit(255);
     }
     if(defined $opt::tollef and not $opt::gnu) {
-       ::error("--tollef has been retired.","Remove --tollef or use --gnu to override --tollef.");
+       ::error("--tollef has been retired.",
+	       "Remove --tollef or use --gnu to override --tollef.");
        ::wait_and_exit(255);
     }
     if(defined $opt::retired) {
@@ -1283,7 +1290,9 @@ sub init_globals {
 	 '{#}'  => '1 $_=$job->seq()',
 	 '{%}'  => '1 $_=$job->slot()',
 	 '{/}'  => 's:.*/::',
-	 '{//}' => '$Global::use{"File::Basename"} ||= eval "use File::Basename; 1;"; $_ = dirname($_);',
+	 '{//}' =>
+	 ('$Global::use{"File::Basename"} ||= eval "use File::Basename; 1;"; '.
+	  '$_ = dirname($_);'),
 	 '{/.}' => 's:.*/::; s:\.[^/.]+$::;',
 	 '{.}'  => 's:\.[^/.]+$::',
 	);
@@ -2321,7 +2330,9 @@ sub init_run_jobs {
 		debug("run", "Running jobs before on ", $sshlogin->string(), ": ",
 		      $sshlogin->jobs_running(), "\n");
 		if ($sshlogin->jobs_running() < $sshlogin->max_jobs_running()) {
-		    if($opt::delay and $opt::delay > ::now() - $Global::newest_starttime) {
+		    if($opt::delay
+		       and
+		       $opt::delay > ::now() - $Global::newest_starttime) {
 			# It has been too short since last start
 			next;
 		    }
@@ -2342,12 +2353,14 @@ sub init_run_jobs {
 			# It has been too short since
 			next;
 		    }
-		    debug("run", $sshlogin->string(), " has ", $sshlogin->jobs_running(),
+		    debug("run", $sshlogin->string(),
+			  " has ", $sshlogin->jobs_running(),
 			  " out of ", $sshlogin->max_jobs_running(),
 			  " jobs running. Start another.\n");
 		    if(start_another_job($sshlogin) == 0) {
 			# No more jobs to start on this $sshlogin
-			debug("run","No jobs started on ", $sshlogin->string(), "\n");
+			debug("run","No jobs started on ",
+			      $sshlogin->string(), "\n");
 			next;
 		    }
 		    $sshlogin->inc_jobs_running();
@@ -2768,7 +2781,8 @@ sub progress {
 	my($total, $completed, $left, $pctcomplete, $avgtime, $eta) =
 	    compute_eta();
 	my $arg = $Global::newest_job ?
-	    $Global::newest_job->{'commandline'}->replace_placeholders(["\257<\257>"],0,0) : "";
+	    $Global::newest_job->{'commandline'}->
+	    replace_placeholders(["\257<\257>"],0,0) : "";
 	# These chars mess up display in the terminal
 	$arg =~ tr/[\011-\016\033\302-\365]//d;
 	my $bar_text =
@@ -8079,7 +8093,9 @@ sub should_be_retried {
     } else {
 	# The job failed. Should it be retried?
 	$self->add_failed_here();
-	if($self->total_failed() == $opt::retries) {
+	my $retries = $self->{'commandline'}->
+	    replace_placeholders([$opt::retries],0,0);
+	if($self->total_failed() == $retries) {
 	    # This has been retried enough
 	    return 0;
 	} else {
@@ -9314,7 +9330,7 @@ sub new {
     # @command, --transferfile, --return,
     # --tagstring, --workdir, --results
     for(@command, @$transfer_files, @$return_files,
-	$opt::tagstring, $opt::workdir, $opt::results) {
+	$opt::tagstring, $opt::workdir, $opt::results, $opt::retries) {
 	# Skip if undefined
 	$_ or next;
 	# Disallow \257 to avoid nested {= {= =} =}
@@ -9458,7 +9474,7 @@ sub replacement_counts_and_lengths {
 	    $noncontextlen += length $c;
 	}
 	for(@$transfer_files, @$return_files,
-	    $opt::tagstring, $opt::workdir, $opt::results) {
+	    $opt::tagstring, $opt::workdir, $opt::results, $opt::retries) {
 	    # Options that can contain replacement strings
 	    $_ or next;
 	    my $t = $_;

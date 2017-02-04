@@ -665,6 +665,13 @@ par_pipepart_block_bigger_2G() {
     rm $tmp
 }
 
+par_retries_replacement_string() {
+    tmp=$(mktemp)
+    parallel --retries {//} "echo {/} >>$tmp;exit {/}" ::: 1/11 2/22 3/33
+    sort $tmp
+    rm $tmp
+}
+
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort |
     parallel -j6 --tag -k --joblog +/tmp/jl-`basename $0` '{} 2>&1'

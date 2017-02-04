@@ -208,9 +208,9 @@ file:///home/tange/privat/parallel/doc/release_new_version
 from:tange@gnu.org
 to:parallel@gnu.org, bug-parallel@gnu.org
 
-Subject: GNU Parallel 20170222 ('<<>>') released <<[stable]>>
+Subject: GNU Parallel 20170222 ('13769') released <<[stable]>>
 
-GNU Parallel 20170222 ('<<>>') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
+GNU Parallel 20170222 ('13769') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
@@ -221,8 +221,15 @@ Haiku of the month:
 
 New in this release:
 
+https://www.linux.org.ru/forum/development/13190247
+http://coreygoldberg.blogspot.dk/2017/02/batch-convert-images-from-png-to-jpeg.html
+
+http://tomkimpson.com/howto/gnuparallel/
 http://workshop2016.iwslt.org/downloads/IWSLT_2016_paper_27.pdf
 http://aip.scitation.org/doi/full/10.1063/1.4974021
+http://fowlerlab.org/2017/01/26/accelerating-oxford-nanopore-basecalling/
+http://rockefeller.jobs/new-york-ny/devops-engineersenior-systems-administrator/2DB3408EAC9E4617AD238550F31C7641/job/
+
 
 
 * <<Possibly http://link.springer.com/chapter/10.1007%2F978-3-319-22053-6_46>>
