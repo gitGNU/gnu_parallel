@@ -79,6 +79,31 @@ par_pipepart_block() {
     rm /run/shm/parallel$$
 }
 
+par_keeporder_roundrobin() {
+    echo 'bug #50081: --keep-order --round-robin should give predictable results'
+
+    export PARALLEL="-j13 --block 1m --pipe --roundrobin"
+    random500m() {
+	< /dev/zero openssl enc -aes-128-ctr -K 1234 -iv 1234 2>/dev/null |
+	    head -c 500m;
+    }
+    a=$(random500m | parallel -k 'echo {#} $(md5sum)' | sort)
+    b=$(random500m | parallel -k 'echo {#} $(md5sum)' | sort)
+    c=$(random500m | parallel    'echo {#} $(md5sum)' | sort)
+    if [ "$a" == "$b" ] ; then
+	# Good: -k should be == -k
+	if [ "$a" == "$c" ] ; then
+	    # Bad: without -k the command should give different output
+	    echo 'Broken: a == c'
+	    printf "$a\n$b\n$c\n"
+	else
+	    echo OK
+	fi
+    else
+	echo 'Broken: a <> b'
+	printf "$a\n$b\n$c\n"
+    fi
+}
 
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort | parallel -j6 --tag -k '{} 2>&1'

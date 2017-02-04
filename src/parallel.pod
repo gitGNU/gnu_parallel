@@ -988,6 +988,9 @@ to see the difference:
 If used with B<--onall> or B<--nonall> the output will grouped by
 sshlogin in sorted order.
 
+If used with B<--pipe --roundrobin> and the same input, the jobslots
+will get the same blocks in the same order in every run.
+
 
 =item B<-L> I<max-lines>
 
