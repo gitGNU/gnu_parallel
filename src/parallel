@@ -96,7 +96,10 @@ sub set_input_source_header {
 	    for my $s (split /$delimiter/o, $line) {
 		::debug("init", "Colname: '$s'");
 		# Replace {colname} with {2}
-		for(@command,@Global::ret_files,@Global::transfer_files) {
+		for(@command,@Global::ret_files,@Global::transfer_files,
+		    $opt::tagstring, $opt::workdir, $opt::results, $opt::retries) {
+		    # Skip if undefined
+		    $_ or next;
 		  s:\{$s(|/|//|\.|/\.)\}:\{$id$1\}:g;
 		    # {=header1 ... =}  =>  {=1 ... =}
 		  s:$left $s (.*?) $right:$l$id$1$r:gx;
@@ -7930,6 +7933,8 @@ sub start {
 	$command = "true";
     }
     $job->openoutputfiles();
+    # Call slot to store the slot value
+    $job->slot();
     my($stdout_fh,$stderr_fh) = ($job->fh(1,"w"),$job->fh(2,"w"));
     if($opt::ungroup or $opt::sqlworker) {
 	print_dryrun_and_verbose($stdout_fh,$job,$command);

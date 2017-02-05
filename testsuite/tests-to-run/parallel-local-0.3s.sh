@@ -677,6 +677,11 @@ par_tee() {
     seq 1000000 | parallel 'echo {%};LANG=C wc' ::: {1..5} ::: {a..b}
 }
 
+par_tagstring_pipe() {
+    echo 'bug #50228: --pipe --tagstring broken'
+    seq 3000 | parallel -j4 --pipe -N1000 -k --tagstring {%} LANG=C wc
+}
+
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort |
     parallel -j6 --tag -k --joblog +/tmp/jl-`basename $0` '{} 2>&1'

@@ -1630,6 +1630,10 @@ par_retries_replacement_string	22
 par_retries_replacement_string	33
 par_retries_replacement_string	33
 par_retries_replacement_string	33
+par_tagstring_pipe	bug #50228: --pipe --tagstring broken
+par_tagstring_pipe	1	   1000    1000    3893
+par_tagstring_pipe	2	   1000    1000    5000
+par_tagstring_pipe	3	   1000    1000    5000
 par_tee	1 a	1
 par_tee	1 a	1000000 1000000 6888896
 par_tee	1 b	2
