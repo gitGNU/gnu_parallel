@@ -51,8 +51,17 @@ my @command = @ARGV;
 
 my @input_source_fh;
 if($opt::pipepart) {
-    # -a is used for data - not for command line args
-    @input_source_fh = map { open_or_exit($_) } "/dev/null";
+    if($opt::tee) {
+	@input_source_fh = map { open_or_exit($_) } @opt::a;
+	# Remove the first: It will be the file piped.
+	shift @input_source_fh;
+	if(not @input_source_fh and not $opt::pipe) {
+	    @input_source_fh = (*STDIN);
+	}
+    } else {
+	# -a is used for data - not for command line args
+	@input_source_fh = map { open_or_exit($_) } "/dev/null";
+    }
 } else {
     @input_source_fh = map { open_or_exit($_) } @opt::a;
     if(not @input_source_fh and not $opt::pipe) {
@@ -76,6 +85,65 @@ if($opt::skip_first_line) {
 }
 
 set_input_source_header();
+
+if($opt::filter_hosts and (@opt::sshlogin or @opt::sshloginfile)) {
+    # Parallel check all hosts are up. Remove hosts that are down
+    filter_hosts();
+}
+
+if($opt::nonall or $opt::onall) {
+    onall(\@input_source_fh,@command);
+    wait_and_exit(min(undef_as_zero($Global::exitstatus),254));
+}
+
+# TODO --transfer foo/./bar --cleanup
+# multiple --transfer and --basefile with different /./
+
+$Global::JobQueue = JobQueue->new(
+    \@command,\@input_source_fh,$Global::ContextReplace,
+    $number_of_args,\@Global::transfer_files,\@Global::ret_files);
+
+if($opt::pipepart) {
+    pipepart_setup();
+} elsif($opt::pipe and $opt::tee) {
+    pipe_tee_setup();
+}
+
+if($opt::eta or $opt::bar or $opt::shuf or $Global::halt_pct) {
+    # Count the number of jobs or shuffle all jobs
+    # before starting any.
+    # Must be done after ungetting any --pipepart jobs.
+    $Global::JobQueue->total_jobs();
+}
+# Compute $Global::max_jobs_running
+# Must be done after ungetting any --pipepart jobs.
+max_jobs_running();
+
+init_run_jobs();
+my $sem;
+if($Global::semaphore) {
+    $sem = acquire_semaphore();
+}
+$SIG{TERM} = \&start_no_new_jobs;
+start_more_jobs();
+if($opt::tee) {
+    # All jobs must be running in parallel for --tee
+    $Global::start_no_new_jobs = 1;
+} elsif($opt::pipe and not $opt::pipepart) {
+    spreadstdin();
+}
+::debug("init", "Start draining\n");
+drain_job_queue();
+::debug("init", "Done draining\n");
+reaper();
+::debug("init", "Done reaping\n");
+::debug("init", "Cleaning\n");
+if($Global::semaphore) {
+    $sem->release();
+}
+cleanup();
+::debug("init", "Halt\n");
+halt();
 
 sub set_input_source_header {
     if($opt::header and not $opt::pipe) {
@@ -117,114 +185,102 @@ sub set_input_source_header {
     }
 }
 
-if($opt::filter_hosts and (@opt::sshlogin or @opt::sshloginfile)) {
-    # Parallel check all hosts are up. Remove hosts that are down
-    filter_hosts();
-}
-
-if($opt::nonall or $opt::onall) {
-    onall(\@input_source_fh,@command);
-    wait_and_exit(min(undef_as_zero($Global::exitstatus),254));
-}
-
-# TODO --transfer foo/./bar --cleanup
-# multiple --transfer and --basefile with different /./
-
-$Global::JobQueue = JobQueue->new(
-    \@command,\@input_source_fh,$Global::ContextReplace,
-    $number_of_args,\@Global::transfer_files,\@Global::ret_files);
-
-if($opt::pipepart) {
-    if(not $opt::blocksize) {
-	# --blocksize with 10 jobs per jobslot
-	$opt::blocksize = -10;
-    }
-    if($opt::roundrobin) {
-	# --blocksize with 1 job per jobslot
-	$opt::blocksize = -1;
-    }
-    if($opt::blocksize < 0) {
-	my $size = 0;
-	# Compute size of -a
-	for(@opt::a) {
-	    if(-f $_) {
-		$size += -s $_;
-	    } elsif(-b $_) {
-		$size += size_of_block_dev($_);
-	    } else {
-		::error("$_ is neither a file nor a block device");
-		wait_and_exit(255);
-	    }
-	}
+sub max_jobs_running {
+    if(not $Global::max_jobs_running) {
 	# Compute $Global::max_jobs_running
-	$Global::dummy_jobs = 1;
 	for my $sshlogin (values %Global::host) {
 	    $sshlogin->max_jobs_running();
 	}
-	$Global::max_jobs_running or
-	    ::die_bug("Global::max_jobs_running not set");
-	# Run in total $job_slots*(- $blocksize) jobs
-	# Set --blocksize = size / no of proc / (- $blocksize)
-	$Global::blocksize = 1 +
-	    int($size / $Global::max_jobs_running / -$opt::blocksize);
     }
-    @Global::cat_partials = map { pipe_part_files($_) } @opt::a;
-    # Unget the empty arg as many times as there are parts
-    $Global::JobQueue->{'commandlinequeue'}{'arg_queue'}->unget(
-	map { [Arg->new("\0")] } @Global::cat_partials
-	);
-}
-if($opt::eta or $opt::bar or $opt::shuf or $Global::halt_pct) {
-    # Count the number of jobs or shuffle all jobs
-    # before starting any.
-    # Must be done after ungetting any --pipepart jobs.
-    $Global::JobQueue->total_jobs();
-}
-# Compute $Global::max_jobs_running
-# Must be done after ungetting any --pipepart jobs.
-for my $sshlogin (values %Global::host) {
-    $sshlogin->max_jobs_running();
+    return $Global::max_jobs_running;
 }
 
-init_run_jobs();
-my $sem;
-if($Global::semaphore) {
-    $sem = acquire_semaphore();
-}
-$SIG{TERM} = \&start_no_new_jobs;
-start_more_jobs();
-if($opt::pipe and not $opt::pipepart) {
-    spreadstdin();
-}
-::debug("init", "Start draining\n");
-drain_job_queue();
-::debug("init", "Done draining\n");
-reaper();
-::debug("init", "Done reaping\n");
-::debug("init", "Cleaning\n");
-if($Global::semaphore) {
-    $sem->release();
-}
-cleanup();
-::debug("init", "Halt\n");
-if($opt::halt and $Global::halt_when ne "never") {
-    if(not defined $Global::halt_exitstatus) {
-	if($Global::halt_pct) {
-	    $Global::halt_exitstatus =
-		::ceil($Global::total_failed / $Global::total_started * 100);
-	} elsif($Global::halt_count) {
-	    $Global::halt_exitstatus =
-		::min(undef_as_zero($Global::total_failed),101);
+sub halt {
+    if($opt::halt and $Global::halt_when ne "never") {
+	if(not defined $Global::halt_exitstatus) {
+	    if($Global::halt_pct) {
+		$Global::halt_exitstatus =
+		    ::ceil($Global::total_failed / $Global::total_started * 100);
+	    } elsif($Global::halt_count) {
+		$Global::halt_exitstatus =
+		    ::min(undef_as_zero($Global::total_failed),101);
+	    }
 	}
+	wait_and_exit($Global::halt_exitstatus);
+    } else {
+	wait_and_exit(min(undef_as_zero($Global::exitstatus),101));
     }
-    wait_and_exit($Global::halt_exitstatus);
-} else {
-    wait_and_exit(min(undef_as_zero($Global::exitstatus),101));
 }
-
 
 sub __PIPE_MODE__ {}
 
+sub pipepart_setup {
+    if($opt::tee) {
+	# Prepend each command with
+	#   cat file
+	my $cat_string = "cat ".::shell_quote_scalar($opt::a[0]);
+	for(1..max_jobs_running()) {
+	    push @Global::cat_prepends, $cat_string;
+	}
+    } else {
+	if(not $opt::blocksize) {
+	    # --blocksize with 10 jobs per jobslot
+	    $opt::blocksize = -10;
+	}
+	if($opt::roundrobin) {
+	    # --blocksize with 1 job per jobslot
+	    $opt::blocksize = -1;
+	}
+	if($opt::blocksize < 0) {
+	    my $size = 0;
+	    # Compute size of -a
+	    for(@opt::a) {
+		if(-f $_) {
+		    $size += -s $_;
+		} elsif(-b $_) {
+		    $size += size_of_block_dev($_);
+		} else {
+		    ::error("$_ is neither a file nor a block device");
+		    wait_and_exit(255);
+		}
+	    }
+	    # Run in total $job_slots*(- $blocksize) jobs
+	    # Set --blocksize = size / no of proc / (- $blocksize)
+	    $Global::dummy_jobs = 1;
+	    $Global::blocksize = 1 +
+		int($size / max_jobs_running() / -$opt::blocksize);
+	}
+	@Global::cat_prepends = map { pipe_part_files($_) } @opt::a;
+	# Unget the empty arg as many times as there are parts
+	$Global::JobQueue->{'commandlinequeue'}{'arg_queue'}->unget(
+	    map { [Arg->new("\0")] } @Global::cat_prepends
+	    );
+    }
+}
+
+sub pipe_tee_setup {
+    # mkfifo t1..5
+    my @fifos;
+    for(1..max_jobs_running()) {
+	push @fifos, tmpfifo();
+    }
+
+    # cat foo | tee t1 t2 t3 t4 t5 > /dev/null
+    if(not fork()){
+	# Let tee inheirit our stdin
+	# and redirect stdout to null
+	open STDOUT, ">","/dev/null";
+	exec "tee",@fifos;
+    }
+
+    # cat t1 | grep 1
+    # cat t2 | grep 2
+    # cat t3 | grep 3
+    # cat t4 | grep 4
+    # cat t5 | grep 5
+    # Remove the tmpfifo as soon as it is open
+    @Global::cat_prepends = map { "(rm $_;cat) < $_" } @fifos;
+}
 
 sub pipe_part_files {
     # Input:
@@ -240,12 +296,12 @@ sub pipe_part_files {
     my $header = find_header(\$buf,open_or_exit($file));
     # find positions
     my @pos = find_split_positions($file,$Global::blocksize,length $header);
-    # Make @cat_partials
-    my @cat_partials = ();
+    # Make @cat_prepends
+    my @cat_prepends = ();
     for(my $i=0; $i<$#pos; $i++) {
-	push @cat_partials, cat_partial($file, 0, length($header), $pos[$i], $pos[$i+1]);
+	push @cat_prepends, cat_partial($file, 0, length($header), $pos[$i], $pos[$i+1]);
     }
-    return @cat_partials;
+    return @cat_prepends;
 }
 
 sub find_header {
@@ -336,22 +392,26 @@ sub cat_partial {
     #   $file = the file to read
     #   ($start, $end, [$start2, $end2, ...]) = start byte, end byte
     # Returns:
-    #   Efficient perl command to copy $start..$end, $start2..$end2, ... to stdout
+    #   Efficient command to copy $start..$end, $start2..$end2, ... to stdout
     my($file, @start_end) = @_;
     my($start, $i);
     # Convert start_end to start_len
-    my @start_len = map { if(++$i % 2) { $start = $_; } else { $_-$start } } @start_end;
-    my $script = spacefree(0,
-		  q{
-		      while(@ARGV) {
-			  sysseek(STDIN,shift,0) || die;
-			  $left = shift;
-			  while($read = sysread(STDIN,$buf, $left > 131072 ? 131072 : $left)){
-			      $left -= $read;
-			      syswrite(STDOUT,$buf);
-			  }
-		      }
-		  });
+    my @start_len = map { 
+	if(++$i % 2) { $start = $_; } else { $_-$start }
+    } @start_end;
+    my $script = spacefree
+	(0,
+	 q{
+	     while(@ARGV) {
+		 sysseek(STDIN,shift,0) || die;
+		 $left = shift;
+		 while($read =
+		       sysread(STDIN,$buf, $left > 131072 ? 131072 : $left)){
+		     $left -= $read;
+		     syswrite(STDOUT,$buf);
+		 }
+	     }
+	 });
     return "<". shell_quote_scalar($file) .
 	" perl -e '$script' @start_len";
 }
@@ -639,50 +699,6 @@ sub nindex {
     }
 }
 
-{
-    my $sleep = 1;
-
-    sub tee_write {
-	# Write the block to all jobs
-	#
-	# Input:
-	#   $header_ref = ref to $header string
-	#   $block_ref = ref to $block to be written
-	#   $recstart = record start string
-	#   $recend = record end string
-	#   $endpos = end position of $block
-	# Uses:
-	#   %Global::running
-	# Returns:
-	#   $written = amount of bytes written
-	my ($header_ref,$buffer_ref,$recstart,$recend,$endpos) = @_;
-	my $written = 0;
-	my $done = 0;
-	my %done;
-	while(not $done) {
-	    $done = 1;
-	    for my $job (values %Global::running) {
-		if(not $done{$job}) {
-		    $done = 0;
-		    if($job->block_length() > 0) {
-			# Flush old block
-			$written += $job->non_blocking_write();
-		    } else {
-			# Give a copy of the new block
-			$job->set_block($header_ref,$buffer_ref,$endpos,$recstart,$recend);
-			$job->set_virgin(0);
-			$written += $job->non_blocking_write();
-			# Mark this job as done
-			$done{$job} = 1;
-		    }
-		}
-	    }
-	    $sleep = ::reap_usleep($sleep);
-	}
-	return $written;
-    }
-}
-
 sub index64 {
     # Do index on strings > 2GB.
     # index in Perl < v5.22 does not work for > 2GB
@@ -794,10 +810,6 @@ sub write_record_to_pipe {
     if($opt::roundrobin) {
 	# Write the block to one of the already running jobs
 	return round_robin_write($header_ref,$buffer_ref,$recstart,$recend,$endpos);
-    }
-    if($opt::tee) {
-	# Write the block to all jobs
-	return tee_write($header_ref,$buffer_ref,$recstart,$recend,$endpos);
     }
     # If no virgin found, backoff
     my $sleep = 0.0001; # 0.01 ms - better performance on highend
@@ -1349,7 +1361,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20170123;
+    $Global::version = 20170202;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -4119,17 +4131,17 @@ sub tmpname {
     do {
 	$tmpname = $ENV{'TMPDIR'}."/".$name.
 	    join"", map { (0..9,"a".."z","A".."Z")[rand(62)] } (1..5);
-    } while($Global::unlink{$tmpname}++ or -e $tmpname);
+    } while(-e $tmpname or $Global::unlink{$tmpname}++);
     return $tmpname;
 }
 
-#sub tmpfifo {
-#    # Find an unused name and mkfifo on it
-#    use POSIX qw(mkfifo);
-#    my $tmpfifo = tmpname("fif",@_);
-#    mkfifo($tmpfifo,0600);
-#    return $tmpfifo;
-#}
+sub tmpfifo {
+    # Find an unused name and mkfifo on it
+    use POSIX qw(mkfifo);
+    my $tmpfifo = tmpname("fif",@_);
+    mkfifo($tmpfifo,0600);
+    return $tmpfifo;
+}
 
 sub rm {
     # Remove file and remove it from %Global::unlink
@@ -7129,7 +7141,8 @@ sub wrapped {
     # * --cat
     # * --fifo
     # * --sshlogin
-    # * --pipepart (@Global::cat_partials)
+    # * --pipepart (@Global::cat_prepends)
+    # * --tee (@Global::cat_prepends)
     # * --pipe
     # * --tmux
     # The ordering of the wrapping is important:
@@ -7141,7 +7154,7 @@ sub wrapped {
     #   $Global::shell
     #   $opt::cat
     #   $opt::fifo
-    #   @Global::cat_partials
+    #   @Global::cat_prepends
     #   $opt::pipe
     #   $opt::tmux
     # Returns:
@@ -7201,15 +7214,21 @@ sub wrapped {
 	}
 	# Wrap with ssh + tranferring of files
 	$command = $self->sshlogin_wrap($command);
-	if(@Global::cat_partials) {
-	    # Prepend:
+	if(@Global::cat_prepends) {
+	    # --pipepart: prepend:
 	    # < /tmp/foo perl -e 'while(@ARGV) {
 	    #   sysseek(STDIN,shift,0) || die; $left = shift;
 	    #   while($read = sysread(STDIN,$buf, ($left > 131072 ? 131072 : $left))){
 	    #     $left -= $read; syswrite(STDOUT,$buf);
 	    #   }
 	    # }'  0 0 0 11 |
-	    $command = (shift @Global::cat_partials). " | ($command)";
+	    #
+	    # --pipepart --tee: prepend:
+	    #   cat dash-a-file |
+	    #
+	    # --pipe --tee: prepend:
+	    #   cat fifo |
+	    $command = (shift @Global::cat_prepends). " | ($command)";
 	} elsif($opt::pipe) {
 	    # Wrap with EOF-detector to avoid starting $command if EOF.
 	    $command = empty_input_wrapper($command);

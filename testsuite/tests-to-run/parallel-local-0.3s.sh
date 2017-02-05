@@ -675,6 +675,7 @@ par_retries_replacement_string() {
 par_tee() {
     export PARALLEL='-k --tee --pipe --tag'
     seq 1000000 | parallel 'echo {%};LANG=C wc' ::: {1..5} ::: {a..b}
+    seq 300000 | parallel 'grep {1} | LANG=C wc {2}' ::: {1..5} ::: -l -c
 }
 
 par_tagstring_pipe() {

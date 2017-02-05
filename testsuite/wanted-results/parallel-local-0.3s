@@ -1654,3 +1654,13 @@ par_tee	5 a	9
 par_tee	5 a	1000000 1000000 6888896
 par_tee	5 b	10
 par_tee	5 b	1000000 1000000 6888896
+par_tee	1 -l	181902
+par_tee	1 -c	1228633
+par_tee	2 -l	181902
+par_tee	2 -c	1228633
+par_tee	3 -l	122854
+par_tee	3 -c	815297
+par_tee	4 -l	122853
+par_tee	4 -c	815290
+par_tee	5 -l	122853
+par_tee	5 -c	815290

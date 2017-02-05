@@ -1772,7 +1772,7 @@ Here are a few examples:
   Is the job sequence even or odd?
   --rpl '{odd} $_ = seq() % 2 ? "odd" : "even"'
   Pad job sequence with leading zeros to get equal width
-  --rpl '{0#} $f = "%0".int(1+log(total_jobs())/log(10))."d"; $_=sprintf($f,seq())'
+  --rpl '{0#} $f=1+int("".(log(total_jobs())/log(10))); $_=sprintf("%0${f}d",seq())'
   Job sequence counting from 0
   --rpl '{#0} $_ = seq() - 1'
   Job slot counting from 2
@@ -2170,9 +2170,15 @@ B<--tagstring> is ignored when using B<-u>, B<--onall>, and B<--nonall>.
 
 =item B<--tee> (alpha testing)
 
-Pipe all data to all jobs. Used with B<--pipe> and B<:::>.
+Pipe all data to all jobs. Used with B<--pipe>/B<--pipepart> and
+B<:::>.
 
   seq 1000 | parallel --pipe --tee -v wc {} ::: -w -l -c
+
+How many numbers in 1..1000 contain 0..9, and how many bytes do they
+fill:
+
+  seq 1000 | parallel --pipe --tee --tag 'grep {1} | wc {2}' ::: {0..9} ::: -l -c
 
 
 =item B<--termseq> I<sequence>

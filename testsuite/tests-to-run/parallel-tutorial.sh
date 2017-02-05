@@ -74,6 +74,8 @@ perl -ne '$/="\n\n"; /^Output/../^[^O]\S/ and next; /^  / and print;' ../../src/
             # Timings are often off
             s/^(\d)$/9/;
             s/^(\d\d)$/99/;
+	    # Sometime these vars are not present
+            s/^PAM_KWALLET5*_LOGIN$//;
 	    # Fails often due to race
 	    s/cat: input_file: No such file or directory\n//;
 	    s{rsync: link_stat ".*/home/parallel/input_file.out" .*\n}{};
