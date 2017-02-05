@@ -273,11 +273,11 @@ perl quote a string
 
 number of jobs in total
 
-=item Z<> B<$job->>B<slot()>
+=item Z<> B<slot()>
 
 slot number of job
 
-=item Z<> B<$job->>B<seq()>
+=item Z<> B<seq()>
 
 sequence number of job
 
@@ -1770,13 +1770,13 @@ of GNU B<parallel>'s internal functions and data structures.
 Here are a few examples:
 
   Is the job sequence even or odd?
-  --rpl '{odd} $_ = $job->seq() % 2 ? "odd" : "even"'
+  --rpl '{odd} $_ = seq() % 2 ? "odd" : "even"'
   Pad job sequence with leading zeros to get equal width
-  --rpl '{0#} $f = "%0".int(1+log(total_jobs())/log(10))."d"; $_=sprintf($f,$job->seq())'
+  --rpl '{0#} $f = "%0".int(1+log(total_jobs())/log(10))."d"; $_=sprintf($f,seq())'
   Job sequence counting from 0
-  --rpl '{#0} $_ = $job->seq() - 1'
+  --rpl '{#0} $_ = seq() - 1'
   Job slot counting from 2
-  --rpl '{%1} $_ = $job->slot() + 1'
+  --rpl '{%1} $_ = slot() + 1'
 
 See also: B<{= perl expression =}> B<--parens>
 
@@ -2166,6 +2166,13 @@ I<str> and TAB (\t). I<str> can contain replacement strings such as
 B<{}>.
 
 B<--tagstring> is ignored when using B<-u>, B<--onall>, and B<--nonall>.
+
+
+=item B<--tee> (alpha testing)
+
+Pipe all data to all jobs. Used with B<--pipe> and B<:::>.
+
+  seq 1000 | parallel --pipe --tee -v wc {} ::: -w -l -c
 
 
 =item B<--termseq> I<sequence>
@@ -4141,7 +4148,7 @@ Killed by Ctrl-C, timeout, not enough memory or similar.
 
 =item Z<>-2 (In joblog and SQL table)
 
-$job->skip() was called in B<{= =}>.
+skip() was called in B<{= =}>.
 
 =item Z<>-1000 (In SQL table)
 

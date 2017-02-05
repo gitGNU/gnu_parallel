@@ -198,14 +198,6 @@ drain_job_queue();
 ::debug("init", "Done draining\n");
 reaper();
 ::debug("init", "Done reaping\n");
-if($opt::pipe and @opt::a) {
-    for my $job (@Global::tee_jobs) {
-	::rm($job->fh(2,"name"));
-	$job->set_fh(2,"name","");
-	$job->print();
-	::rm($job->fh(1,"name"));
-    }
-}
 ::debug("init", "Cleaning\n");
 if($Global::semaphore) {
     $sem->release();
@@ -375,6 +367,15 @@ sub spreadstdin {
     #   $opt::roundrobin
     #   %Global::running
     # Returns: N/A
+
+    if($opt::tee) {
+	# Spawn all jobs
+	# read a record
+	# Write record to all jobs
+	if(not $Global::JobQueue->empty()) {
+	    ::error("--tee requres --jobs to be higher. Try --jobs 0.");
+	}
+    }
 
     my $buf = "";
     my ($recstart,$recend) = recstartrecend();
@@ -635,6 +636,50 @@ sub nindex {
     }
 }
 
+{
+    my $sleep = 1;
+
+    sub tee_write {
+	# Write the block to all jobs
+	#
+	# Input:
+	#   $header_ref = ref to $header string
+	#   $block_ref = ref to $block to be written
+	#   $recstart = record start string
+	#   $recend = record end string
+	#   $endpos = end position of $block
+	# Uses:
+	#   %Global::running
+	# Returns:
+	#   $written = amount of bytes written
+	my ($header_ref,$buffer_ref,$recstart,$recend,$endpos) = @_;
+	my $written = 0;
+	my $done = 0;
+	my %done;
+	while(not $done) {
+	    $done = 1;
+	    for my $job (values %Global::running) {
+		if(not $done{$job}) {
+		    $done = 0;
+		    if($job->block_length() > 0) {
+			# Flush old block
+			$written += $job->non_blocking_write();
+		    } else {
+			# Give a copy of the new block
+			$job->set_block($header_ref,$buffer_ref,$endpos,$recstart,$recend);
+			$job->set_virgin(0);
+			$written += $job->non_blocking_write();
+			# Mark this job as done
+			$done{$job} = 1;
+		    }
+		}
+	    }
+	    $sleep = ::reap_usleep($sleep);
+	}
+	return $written;
+    }
+}
+
 sub index64 {
     # Do index on strings > 2GB.
     # index in Perl < v5.22 does not work for > 2GB
@@ -744,7 +789,12 @@ sub write_record_to_pipe {
     if($endpos == 0) { return 0; }
     if(vec($Global::job_already_run,$chunk_number,1)) { return 1; }
     if($opt::roundrobin) {
+	# Write the block to one of the already running jobs
 	return round_robin_write($header_ref,$buffer_ref,$recstart,$recend,$endpos);
+    }
+    if($opt::tee) {
+	# Write the block to all jobs
+	return tee_write($header_ref,$buffer_ref,$recstart,$recend,$endpos);
     }
     # If no virgin found, backoff
     my $sleep = 0.0001; # 0.01 ms - better performance on highend
@@ -1151,6 +1201,11 @@ sub parse_options {
 	$Global::arg_sep = join "",
 	map { (0..9,"a".."z","A".."Z")[rand(62)] } (1..50);
 	push @ARGV, $Global::arg_sep, "\0";
+    }
+    if(defined $opt::tee) {
+	if(not defined $opt::jobs) {
+	    $opt::jobs = 0;
+	}
     }
     if(defined $opt::tty) {
         # Defaults for --tty: -j1 -u
@@ -5377,7 +5432,7 @@ sub compute_number_of_processes {
 
     sub get_args_or_jobs {
 	# Get an arg or a job (depending on mode)
-	if($Global::semaphore or $opt::pipe) {
+	if($Global::semaphore or ($opt::pipe and not $opt::tee)) {
 	    # Skip: No need to get args
 	    return 1;
 	} elsif(defined $opt::retries and $count_jobs_already_read) {
@@ -6617,9 +6672,7 @@ sub openoutputfiles {
     } elsif(not $opt::ungroup) {
 	# To group we create temporary files for STDOUT and STDERR
 	# To avoid the cleanup unlink the files immediately (but keep them open)
-	if(@Global::tee_jobs) {
-	    # files must be removed when the tee is done
-	} elsif($opt::files) {
+	if($opt::files) {
 	    ($outfhw, $outname) = ::tmpfile(SUFFIX => ".par");
 	    ($errfhw, $errname) = ::tmpfile(SUFFIX => ".par");
 	    # --files => only remove stderr
@@ -10222,6 +10275,10 @@ sub total_jobs {
     sub slot {
 	# shorthand for $job->slot();
 	$job->slot();
+    }
+    sub seq {
+	# shorthand for $job->seq();
+	$job->seq();
     }
 
     sub replace {

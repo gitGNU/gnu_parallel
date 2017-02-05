@@ -672,6 +672,11 @@ par_retries_replacement_string() {
     rm $tmp
 }
 
+par_tee() {
+    export PARALLEL='-k --tee --pipe --tag'
+    seq 1000000 | parallel 'echo {%};LANG=C wc' ::: {1..5} ::: {a..b}
+}
+
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort |
     parallel -j6 --tag -k --joblog +/tmp/jl-`basename $0` '{} 2>&1'

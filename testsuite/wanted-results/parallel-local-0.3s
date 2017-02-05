@@ -1630,3 +1630,23 @@ par_retries_replacement_string	22
 par_retries_replacement_string	33
 par_retries_replacement_string	33
 par_retries_replacement_string	33
+par_tee	1 a	1
+par_tee	1 a	1000000 1000000 6888896
+par_tee	1 b	2
+par_tee	1 b	1000000 1000000 6888896
+par_tee	2 a	3
+par_tee	2 a	1000000 1000000 6888896
+par_tee	2 b	4
+par_tee	2 b	1000000 1000000 6888896
+par_tee	3 a	5
+par_tee	3 a	1000000 1000000 6888896
+par_tee	3 b	6
+par_tee	3 b	1000000 1000000 6888896
+par_tee	4 a	7
+par_tee	4 a	1000000 1000000 6888896
+par_tee	4 b	8
+par_tee	4 b	1000000 1000000 6888896
+par_tee	5 a	9
+par_tee	5 a	1000000 1000000 6888896
+par_tee	5 b	10
+par_tee	5 b	1000000 1000000 6888896
