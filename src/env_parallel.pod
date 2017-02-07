@@ -81,6 +81,50 @@ Same as GNU B<parallel>.
 
 =head1 SUPPORTED SHELLS
 
+=head2 Ash
+
+B<--env> is supported to export only the variable, or alias with the
+given name. Multiple B<--env>s can be given.
+
+Installation
+
+Put this in $HOME/.profile:
+
+  . `which env_parallel.ash`
+
+E.g. by doing:
+
+  echo '. `which env_parallel.ash`' >> $HOME/.profile
+
+=over 8
+
+=item aliases
+
+  alias myecho='echo aliases'
+  env_parallel myecho ::: work
+  env_parallel -S server myecho ::: work
+  env_parallel --env myecho myecho ::: work
+  env_parallel --env myecho -S server myecho ::: work
+
+=item functions
+
+Functions cannot be used. If you find a way to list function names
+and definitions please contact B<parallel@gnu.org>.
+
+=item variables
+
+  myvar=variables
+  env_parallel echo '$myvar' ::: work
+  env_parallel -S server echo '$myvar' ::: work
+  env_parallel --env myvar echo '$myvar' ::: work
+  env_parallel --env myvar -S server echo '$myvar' ::: work
+
+=item arrays
+
+Arrays are not supported by Ash.
+
+=back
+
 =head2 Bash
 
 B<--env> is supported to export only the variable, alias, function, or
@@ -180,6 +224,51 @@ Not supported by B<csh>.
   env_parallel -k -S server echo \$'{myarray[{}]}' ::: 1 2 3
   env_parallel -k --env myarray echo \$'{myarray[{}]}' ::: 1 2 3
   env_parallel -k --env myarray -S server echo \$'{myarray[{}]}' ::: 1 2 3
+
+=back
+
+
+=head2 Dash
+
+B<--env> is supported to export only the variable, or alias with the
+given name. Multiple B<--env>s can be given.
+
+Installation
+
+Put this in $HOME/.profile:
+
+  . `which env_parallel.dash`
+
+E.g. by doing:
+
+  echo '. `which env_parallel.dash`' >> $HOME/.profile
+
+=over 8
+
+=item aliases
+
+  alias myecho='echo aliases'
+  env_parallel myecho ::: work
+  env_parallel -S server myecho ::: work
+  env_parallel --env myecho myecho ::: work
+  env_parallel --env myecho -S server myecho ::: work
+
+=item functions
+
+Functions cannot be used. If you find a way to list function names
+and definitions please contact B<parallel@gnu.org>.
+
+=item variables
+
+  myvar=variables
+  env_parallel echo '$myvar' ::: work
+  env_parallel -S server echo '$myvar' ::: work
+  env_parallel --env myvar echo '$myvar' ::: work
+  env_parallel --env myvar -S server echo '$myvar' ::: work
+
+=item arrays
+
+Arrays are not supported by Dash.
 
 =back
 

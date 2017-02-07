@@ -35,12 +35,12 @@ sql mysql://root:"$mysqlrootpass"@/mysql "DROP DATABASE `whoami`;DROP USER '`who
 sql mysql://root:"$mysqlrootpass"@/mysql "CREATE DATABASE `whoami`;CREATE USER '`whoami`'@'localhost' IDENTIFIED BY '`whoami`'; GRANT ALL ON `whoami`.* TO '`whoami`'@'localhost';"
 
 # SHELLS
-$INSTALL ash csh fdclone fish fizsh ksh mksh pdksh posh rc rush sash tcsh yash zsh
+$INSTALL ash csh dash fdclone fish fizsh ksh mksh pdksh posh rc rush sash tcsh yash zsh
 
 SSHPASS=`goodpasswd`
 export SSHPASS
 #shells="bash sh csh ash tcsh zsh ksh fish fizsh mksh pdksh posh rc sash yash nopathbash nopathcsh"
-shells="bash sh csh ash tcsh zsh ksh fish fizsh mksh posh rc sash yash nopathbash nopathcsh"
+shells="bash sh csh ash dash tcsh zsh ksh fish fizsh mksh posh rc sash yash nopathbash nopathcsh"
 create_shell_user() {
   shell="$1"
   sudo deluser $shell && sudo mv /home/$shell /tmp/$shell.$RANDOM

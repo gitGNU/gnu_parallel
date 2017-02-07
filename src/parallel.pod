@@ -2180,6 +2180,11 @@ fill:
 
   seq 1000 | parallel --pipe --tee --tag 'grep {1} | wc {2}' ::: {0..9} ::: -l -c
 
+How many words contain a..z and how many bytes do they fill?
+
+  parallel -a /usr/share/dict/words --pipepart --tee --tag \
+    'grep {1} | wc {2}' ::: {a..z} ::: -l -c
+
 
 =item B<--termseq> I<sequence>
 
