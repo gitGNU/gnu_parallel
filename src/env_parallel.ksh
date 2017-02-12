@@ -28,23 +28,37 @@
 env_parallel() {
     # env_parallel.ksh
 
-    # Get the --env variables if set
-    # --env _ should be ignored
-    # and convert  a b c  to (a|b|c)
-    # If --env not set: Match everything (.*)
-    _grep_REGEXP="$(
-        perl -e '
-            for(@ARGV){
-                /^_$/ and $next_is_env = 0;
-                $next_is_env and push @envvar, split/,/, $_;
-                $next_is_env = /^--env$/;
-            }
-            $vars = join "|",map { quotemeta $_ } @envvar;
-            print $vars ? "($vars)" : "(.*)";
-            ' -- "$@"
-    )"
-    # Deal with --env _
-    _ignore_UNDERSCORE="$(
+    _names_of_ALIASES() {
+	alias | perl -pe 's/=.*//'
+    }
+    _bodies_of_ALIASES() {
+	alias "$@" | perl -pe 's/^/alias /'
+    }
+    _names_of_maybe_FUNCTIONS() {
+	true not used
+    }
+    _names_of_FUNCTIONS() {
+	typeset +p -f | perl -pe 's/\(\).*//'
+    }
+    _bodies_of_FUNCTIONS() {
+	typeset -f "$@"
+    }
+    _names_of_VARIABLES() {
+	typeset +p | perl -pe 's/^typeset .. //'
+    }
+    _bodies_of_VARIABLES() {
+	typeset -p "$@"
+    }
+    _remove_bad_NAMES() {
+	# Do not transfer vars and funcs from env_parallel
+	grep -Ev '^(_names_of_ALIASES|_bodies_of_ALIASES|_names_of_maybe_FUNCTIONS|_names_of_FUNCTIONS|_bodies_of_FUNCTIONS|_names_of_VARIABLES|_bodies_of_VARIABLES|_remove_bad_NAMES|_prefix_PARALLEL_ENV|_get_ignored_VARS|_make_grep_REGEXP|_ignore_UNDERSCORE|_alias_NAMES|_list_alias_BODIES|_function_NAMES|_list_function_BODIES|_variable_NAMES|_list_variable_VALUES|_prefix_PARALLEL_ENV)$' |
+	    # Filter names matching --env
+	    grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ |
+	    # Vars set by /bin/sh
+            grep -Ev '^(_)$'
+    }
+
+    _get_ignored_VARS() {
         perl -e '
             for(@ARGV){
                 $next_is_env and push @envvar, split/,/, $_;
@@ -61,56 +75,89 @@ env_parallel() {
                 }
             }
             ' -- "$@"
-    )"
+    }
+
+    # Get the --env variables if set
+    # --env _ should be ignored
+    # and convert  a b c  to (a|b|c)
+    # If --env not set: Match everything (.*)
+    _make_grep_REGEXP() {
+        perl -e '
+            for(@ARGV){
+                /^_$/ and $next_is_env = 0;
+                $next_is_env and push @envvar, split/,/, $_;
+                $next_is_env = /^--env$/;
+            }
+            $vars = join "|",map { quotemeta $_ } @envvar;
+            print $vars ? "($vars)" : "(.*)";
+            ' -- "$@"
+    }
+
+    if which parallel | grep 'no parallel in' >/dev/null; then
+	echo 'env_parallel: Error: parallel must be in $PATH.' >&2
+	return 1
+    fi
+    if which parallel >/dev/null; then
+	true which on linux
+    else
+	echo 'env_parallel: Error: parallel must be in $PATH.' >&2
+	return 1
+    fi
+
+    # Grep regexp for vars given by --env
+    _grep_REGEXP="`_make_grep_REGEXP \"$@\"`"
+
+    # Deal with --env _
+    _ignore_UNDERSCORE="`_get_ignored_VARS \"$@\"`"
 
     # --record-env
-    if ! perl -e 'exit grep { /^--record-env$/ } @ARGV' -- "$@"; then
-	(alias | perl -pe 's/=.*//';
-	 typeset +p -f | perl -pe 's/\(\).*//';
-	 typeset +p | perl -pe 's/^typeset .. //') |
+    if perl -e 'exit grep { /^--record-env$/ } @ARGV' -- "$@"; then
+	true skip
+    else
+	(_names_of_ALIASES;
+	 _names_of_FUNCTIONS;
+	 _names_of_VARIABLES) |
 	    cat > $HOME/.parallel/ignored_vars
 	return 0
     fi
-    
+
     # Grep alias names
-    _alias_NAMES="$(alias | perl -pe 's/=.*//' |
-        grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ )"
-    _list_alias_BODIES="alias $_alias_NAMES | perl -pe 's/^/alias /'"
-    if [[ "$_alias_NAMES" = "" ]] ; then
+    _alias_NAMES="`_names_of_ALIASES | _remove_bad_NAMES`"
+    _list_alias_BODIES="_bodies_of_ALIASES $_alias_NAMES"
+    if [ "$_alias_NAMES" = "" ] ; then
 	# no aliases selected
 	_list_alias_BODIES="true"
     fi
     unset _alias_NAMES
 
     # Grep function names
-    _function_NAMES="$(typeset +p -f | perl -pe 's/\(\).*//' |
-        grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ )"
-    _list_function_BODIES="typeset -f $_function_NAMES"
-    if [[ "$_function_NAMES" = "" ]] ; then
+    _function_NAMES="`_names_of_FUNCTIONS | _remove_bad_NAMES`"
+    _list_function_BODIES="_bodies_of_FUNCTIONS $_function_NAMES"
+    if [ "$_function_NAMES" = "" ] ; then
 	# no functions selected
 	_list_function_BODIES="true"
     fi
     unset _function_NAMES
 
     # Grep variable names
-    _variable_NAMES="$(typeset +p | perl -pe 's/^typeset .. //' |
-        grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ |
-        grep -Ev '^(PIPESTATUS)$')"
-    _list_variable_VALUES="typeset -p $_variable_NAMES"
-    if [[ "$_variable_NAMES" = "" ]] ; then
+    _variable_NAMES="`_names_of_VARIABLES | _remove_bad_NAMES`"
+    _list_variable_VALUES="_bodies_of_VARIABLES $_variable_NAMES"
+    if [ "$_variable_NAMES" = "" ] ; then
 	# no variables selected
 	_list_variable_VALUES="true"
     fi
     unset _variable_NAMES
 
-    # eval is needed for aliases - cannot explain why
-    export PARALLEL_ENV="$(
-        eval $_list_alias_BODIES;
+    PARALLEL_ENV="`
+        $_list_alias_BODIES;
+        $_list_function_BODIES;
         $_list_variable_VALUES;
-        $_list_function_BODIES)";
+    `"
+    export PARALLEL_ENV
     unset _list_alias_BODIES
     unset _list_variable_VALUES
     unset _list_function_BODIES
+
     `which parallel` "$@";
     _parallel_exit_CODE=$?
     unset PARALLEL_ENV;

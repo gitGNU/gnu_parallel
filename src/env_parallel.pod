@@ -81,6 +81,50 @@ Same as GNU B<parallel>.
 
 =head1 SUPPORTED SHELLS
 
+=head2 ash
+
+B<--env> is supported to export only the variable, or alias with the
+given name. Multiple B<--env>s can be given.
+
+Installation
+
+Put this in $HOME/.profile:
+
+  . `which env_parallel.ash`
+
+E.g. by doing:
+
+  echo '. `which env_parallel.ash`' >> $HOME/.profile
+
+=over 8
+
+=item aliases
+
+  alias myecho='echo aliases'
+  env_parallel myecho ::: work
+  env_parallel -S server myecho ::: work
+  env_parallel --env myecho myecho ::: work
+  env_parallel --env myecho -S server myecho ::: work
+
+=item functions
+
+  ash cannot list defined functions - thus is not supported.
+
+=item variables
+
+  myvar=variables
+  env_parallel echo '$myvar' ::: work
+  env_parallel -S server echo '$myvar' ::: work
+  env_parallel --env myvar echo '$myvar' ::: work
+  env_parallel --env myvar -S server echo '$myvar' ::: work
+
+=item arrays
+
+  ash does not support arrays.
+
+=back
+
+
 =head2 Bash
 
 B<--env> is supported to export only the variable, alias, function, or
@@ -180,6 +224,50 @@ Not supported by B<csh>.
   env_parallel -k -S server echo \$'{myarray[{}]}' ::: 1 2 3
   env_parallel -k --env myarray echo \$'{myarray[{}]}' ::: 1 2 3
   env_parallel -k --env myarray -S server echo \$'{myarray[{}]}' ::: 1 2 3
+
+=back
+
+
+=head2 dash
+
+B<--env> is supported to export only the variable, or alias with the
+given name. Multiple B<--env>s can be given.
+
+Installation
+
+Put this in $HOME/.profile:
+
+  . `which env_parallel.dash`
+
+E.g. by doing:
+
+  echo '. `which env_parallel.dash`' >> $HOME/.profile
+
+=over 8
+
+=item aliases
+
+  alias myecho='echo aliases'
+  env_parallel myecho ::: work
+  env_parallel -S server myecho ::: work
+  env_parallel --env myecho myecho ::: work
+  env_parallel --env myecho -S server myecho ::: work
+
+=item functions
+
+  dash cannot list defined functions - thus is not supported.
+
+=item variables
+
+  myvar=variables
+  env_parallel echo '$myvar' ::: work
+  env_parallel -S server echo '$myvar' ::: work
+  env_parallel --env myvar echo '$myvar' ::: work
+  env_parallel --env myvar -S server echo '$myvar' ::: work
+
+=item arrays
+
+  dash does not support arrays.
 
 =back
 
@@ -338,6 +426,50 @@ E.g. by doing:
   env_parallel -k -S server echo "\${myarray[{}]}" ::: 0 1 2;
   env_parallel -k --env myarray echo "\${myarray[{}]}" ::: 0 1 2;
   env_parallel -k --env myarray -S server echo "\${myarray[{}]}" ::: 0 1 2
+
+=back
+
+
+=head2 sh
+
+B<--env> is supported to export only the variable, or alias with the
+given name. Multiple B<--env>s can be given.
+
+Installation
+
+Put this in $HOME/.profile:
+
+  . `which env_parallel.sh`
+
+E.g. by doing:
+
+  echo '. `which env_parallel.sh`' >> $HOME/.profile
+
+=over 8
+
+=item aliases
+
+  sh does not support aliases.
+
+=item functions
+
+  myfunc() { echo functions $*; }
+  env_parallel myfunc ::: work
+  env_parallel -S server myfunc ::: work
+  env_parallel --env myfunc myfunc ::: work
+  env_parallel --env myfunc -S server myfunc ::: work
+
+=item variables
+
+  myvar=variables
+  env_parallel echo '$myvar' ::: work
+  env_parallel -S server echo '$myvar' ::: work
+  env_parallel --env myvar echo '$myvar' ::: work
+  env_parallel --env myvar -S server echo '$myvar' ::: work
+
+=item arrays
+
+  sh does not support arrays.
 
 =back
 

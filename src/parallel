@@ -3508,7 +3508,7 @@ sub onall {
 	     (@Global::ret_files ? map { "--return ".::shell_quote_scalar($_) }
 	      @Global::ret_files : ""),
 	     (@opt::env ? map { "--env ".::shell_quote_scalar($_) } @opt::env : ""),
-	     (@opt::v ? "-vv" : ""),
+	     (map { "-v" } @opt::v),
 	);
     ::debug("init", "| $0 $options\n");
     open(my $parallel_fh, "|-", "$0 --will-cite -j0 $options") ||

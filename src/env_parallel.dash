@@ -1,13 +1,13 @@
-#!/usr/bin/env pdksh
+#!/usr/bin/env dash
 
-# This file must be sourced in pdksh:
+# This file must be sourced in dash:
 #
-#   source `which env_parallel.pdksh`
+#   . `which env_parallel.dash`
 #
 # after which 'env_parallel' works
 #
 #
-# Copyright (C) 2016,2017
+# Copyright (C) 2017
 # Ole Tange and Free Software Foundation, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -26,41 +26,46 @@
 # Fifth Floor, Boston, MA 02110-1301 USA
 
 env_parallel() {
-    # env_parallel.pdksh
+    # based on env_parallel.sh
 
     _names_of_ALIASES() {
-	compgen -a
+	alias | perl -pe 's/=.*//'
     }
     _bodies_of_ALIASES() {
 	alias "$@" | perl -pe 's/^/alias /'
     }
+    _names_of_maybe_FUNCTIONS() {
+	set | perl -ne '/^(\S+)\(\)\{$/ and print "$1\n"'
+    }
     _names_of_FUNCTIONS() {
-	compgen -A function
+	# myfunc is a function
+	type `_names_of_maybe_FUNCTIONS` |
+	    perl -ne '/^(\S+) is a function$/ and not $seen{$1}++ and print "$1\n"'
     }
     _bodies_of_FUNCTIONS() {
-	typeset -f "$@"
+	type "$@" | perl -ne '/^(\S+) is a function$/ or print'
     }
     _names_of_VARIABLES() {
-	compgen -A variable
+	# This may screw up if variables contain \n and =
+	set | perl -ne 's/^(\S+)=.*/$1/ and print;'
     }
     _bodies_of_VARIABLES() {
-	typeset -p "$@"
+	# Crappy typeset -p
+	for _i in "$@"
+	do
+	    perl -e 'print @ARGV' "$_i="
+	    eval echo \"\$$_i\" | perl -e '$/=undef; $a=<>; chop($a); print $a' |
+		perl -pe 's/[\002-\011\013-\032\\\#\?\`\(\)\{\}\[\]\^\*\<\=\>\~\|\; \"\!\$\&\202-\377]/\\$&/go;'"s/'/\\\'/g; s/[\n]/'\\n'/go;";
+	    echo
+	done
     }
     _remove_bad_NAMES() {
-	_tmp_READONLY="$(mktemp)"
-	readonly > "$_tmp_READONLY"
-	grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ |
-            grep -vFf $_tmp_READONLY |
-            grep -Ev '^(PIPESTATUS)'
-	rm $_tmp_READONLY
-	unset _tmp_READONLY
-    }
-    _prefix_PARALLEL_ENV() {
-        shopt 2>/dev/null |
-        perl -pe 's:\s+off:;: and s/^/shopt -u /;
-                  s:\s+on:;: and s/^/shopt -s /;
-                  s:;$:&>/dev/null;:';
-        echo 'shopt -s expand_aliases &>/dev/null';
+	# Do not transfer vars and funcs from env_parallel
+	grep -Ev '^(_names_of_ALIASES|_bodies_of_ALIASES|_names_of_maybe_FUNCTIONS|_names_of_FUNCTIONS|_bodies_of_FUNCTIONS|_names_of_VARIABLES|_bodies_of_VARIABLES|_remove_bad_NAMES|_prefix_PARALLEL_ENV|_get_ignored_VARS|_make_grep_REGEXP|_ignore_UNDERSCORE|_alias_NAMES|_list_alias_BODIES|_function_NAMES|_list_function_BODIES|_variable_NAMES|_list_variable_VALUES|_prefix_PARALLEL_ENV)$' |
+	    # Filter names matching --env
+	    grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ |
+	    # Vars set by /bin/sh
+            grep -Ev '^(_)$'
     }
 
     _get_ignored_VARS() {
@@ -115,41 +120,6 @@ env_parallel() {
     # Deal with --env _
     _ignore_UNDERSCORE="`_get_ignored_VARS \"$@\"`"
 
-    # Get the --env variables if set
-    # --env _ should be ignored
-    # and convert  a b c  to (a|b|c)
-    # If --env not set: Match everything (.*)
-    _grep_REGEXP="$(
-        perl -e '
-            for(@ARGV){
-                /^_$/ and $next_is_env = 0;
-                $next_is_env and push @envvar, split/,/, $_;
-                $next_is_env = /^--env$/;
-            }
-            $vars = join "|",map { quotemeta $_ } @envvar;
-            print $vars ? "($vars)" : "(.*)";
-            ' -- "$@"
-    )"
-    # Deal with --env _
-    _ignore_UNDERSCORE="$(
-        perl -e '
-            for(@ARGV){
-                $next_is_env and push @envvar, split/,/, $_;
-                $next_is_env=/^--env$/;
-            }
-            if(grep { /^_$/ } @envvar) {
-                if(not open(IN, "<", "$ENV{HOME}/.parallel/ignored_vars")) {
-             	    print STDERR "parallel: Error: ",
-            	    "Run \"parallel --record-env\" in a clean environment first.\n";
-                } else {
-            	    chomp(@ignored_vars = <IN>);
-            	    $vars = join "|",map { quotemeta $_ } "env_parallel", @ignored_vars;
-		    print $vars ? "($vars)" : "(,,nO,,VaRs,,)";
-                }
-            }
-            ' -- "$@"
-    )"
-
     # --record-env
     if perl -e 'exit grep { /^--record-env$/ } @ARGV' -- "$@"; then
 	true skip
@@ -160,7 +130,7 @@ env_parallel() {
 	    cat > $HOME/.parallel/ignored_vars
 	return 0
     fi
-    
+
     # Grep alias names
     _alias_NAMES="`_names_of_ALIASES | _remove_bad_NAMES`"
     _list_alias_BODIES="_bodies_of_ALIASES $_alias_NAMES"
@@ -188,12 +158,12 @@ env_parallel() {
     fi
     unset _variable_NAMES
 
-    # eval is needed for aliases - cannot explain why
-    export PARALLEL_ENV="`
-        eval $_list_alias_BODIES;
-        $_list_function_BODIES
+    PARALLEL_ENV="`
+        $_list_alias_BODIES;
+        $_list_function_BODIES;
         $_list_variable_VALUES;
-    `";
+    `"
+    export PARALLEL_ENV
     unset _list_alias_BODIES
     unset _list_variable_VALUES
     unset _list_function_BODIES
