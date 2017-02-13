@@ -18,28 +18,41 @@
 # or write to the Free Software Foundation, Inc., 51 Franklin St,
 # Fifth Floor, Boston, MA 02110-1301 USA
 
-GREPQ="grep >/dev/null 2>/dev/null"
+grepq() {
+    # grep -q for systems without -q
+    grep >/dev/null 2>/dev/null "$@"
+}
+
+installer() {
+    source="$1"
+    script="$2"
+    into="$3"
+    if grepq $script $into; then
+	true already installed
+    else
+	echo $source \`which $script\` >> $into
+    fi
+}
 
 while test $# -gt 0; do
   key="$1"
 
   case $key in
       -i|--install)
-	  eval $GREPQ env_parallel.bash $HOME/.bashrc ||
-	    echo '. `which env_parallel.bash`' >> $HOME/.bashrc
-	  eval $GREPQ env_parallel.zsh $HOME/.zshenv ||
-	    echo '. `which env_parallel.zsh`' >> $HOME/.zshenv
+	  installer . env_parallel.bash  $HOME/.bashrc
+	  installer . env_parallel.zsh   $HOME/.zshenv
+	  installer source env_parallel.ksh $HOME/.kshrc
+	  echo $SHELL | grepq /pdksh &&
+	      installer . env_parallel.pdksh $HOME/.profile
+	  echo $SHELL | grepq /ash &&
+	      installer . env_parallel.ash $HOME/.profile
+	  echo $SHELL | grepq /dash &&
+	      installer . env_parallel.dash $HOME/.profile
+	  installer source env_parallel.csh $HOME/.cshrc
+	  installer source env_parallel.tcsh $HOME/.tcshrc
 	  mkdir -p $HOME/.config/fish
-	  eval $GREPQ env_parallel.fish $HOME/.config/fish/config.fish ||
+	  grepq env_parallel.fish $HOME/.config/fish/config.fish ||
   	    echo '. (which env_parallel.fish)' >> $HOME/.config/fish/config.fish
-	  eval $GREPQ env_parallel.ksh $HOME/.kshrc ||
-  	    echo 'source `which env_parallel.ksh`' >> $HOME/.kshrc
-	  eval $GREPQ env_parallel.pdksh $HOME/.profile ||
-  	    echo '. `which env_parallel.pdksh`' >> $HOME/.profile
-	  eval $GREPQ env_parallel.csh $HOME/.cshrc ||
-  	    echo 'source `which env_parallel.csh`' >> $HOME/.cshrc
-	  eval $GREPQ env_parallel.tcsh $HOME/.tcshrc ||
-  	    echo 'source `which env_parallel.tcsh`' >> $HOME/.tcshrc
   	  echo 'Installed env_parallel in: '
   	  echo "    " $HOME/.bashrc
   	  echo "    " $HOME/.zshenv
@@ -82,6 +95,14 @@ ksh:   Put this in $HOME/.kshrc:  source `which env_parallel.ksh`
 pdksh: Put this in $HOME/.profile:  source `which env_parallel.pdksh`
        E.g. by doing:  echo '. `which env_parallel.pdksh`' >> $HOME/.profile
        Supports: aliases, functions, variables, arrays
+
+ash:   Put this in $HOME/.profile:  . `which env_parallel.ash`
+       E.g. by doing:  echo '. `which env_parallel.ash`' >> $HOME/.profile
+       Supports: aliases, variables
+
+dash:  Put this in $HOME/.profile:  . `which env_parallel.dash`
+       E.g. by doing:  echo '. `which env_parallel.dash`' >> $HOME/.profile
+       Supports: aliases, variables
 
 csh:   Put this in $HOME/.cshrc:  source `which env_parallel.csh`
        E.g. by doing:  echo 'source `which env_parallel.csh`' >> $HOME/.cshrc

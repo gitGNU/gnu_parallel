@@ -35,7 +35,7 @@ sql mysql://root:"$mysqlrootpass"@/mysql "DROP DATABASE `whoami`;DROP USER '`who
 sql mysql://root:"$mysqlrootpass"@/mysql "CREATE DATABASE `whoami`;CREATE USER '`whoami`'@'localhost' IDENTIFIED BY '`whoami`'; GRANT ALL ON `whoami`.* TO '`whoami`'@'localhost';"
 
 # SHELLS
-$INSTALL ash csh fdclone fish fizsh ksh mksh pdksh posh rc rush sash tcsh yash zsh
+$INSTALL ash csh dash fdclone fish fizsh ksh mksh pdksh posh rc rush sash tcsh yash zsh
 
 SSHPASS=`goodpasswd`
 export SSHPASS

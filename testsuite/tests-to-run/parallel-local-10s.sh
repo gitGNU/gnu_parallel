@@ -239,6 +239,31 @@ par_tmux_fg() {
     stdout parallel --tmux --fg sleep ::: 3 | perl -pe 's/.tmp\S+/tmp/'
 }
 
+par_pipe_tee() {
+    echo 'bug #45479: --pipe/--pipepart --tee'
+    echo '--pipe --tee'
+
+    random1G() {
+	< /dev/zero openssl enc -aes-128-ctr -K 1234 -iv 1234 2>/dev/null |
+	    head -c 1G;
+    }
+    random1G | parallel --pipe --tee cat ::: {1..3} | LANG=C wc -c
+}
+
+par_pipepart_tee() {
+    echo 'bug #45479: --pipe/--pipepart --tee'
+    echo '--pipepart --tee'
+
+    random1G() {
+	< /dev/zero openssl enc -aes-128-ctr -K 1234 -iv 1234 2>/dev/null |
+	    head -c 1G;
+    }
+    tmp=$(mktemp)
+    random1G >$tmp
+    parallel --pipepart --tee -a $tmp cat ::: {1..3} | LANG=C wc -c
+    rm $tmp
+}
+
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort |
     parallel --joblog /tmp/jl-`basename $0` -j10 --tag -k '{} 2>&1'

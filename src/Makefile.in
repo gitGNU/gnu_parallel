@@ -152,7 +152,7 @@ NROFF = nroff
 MANS = $(man_MANS)
 DATA = $(doc_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
-am__DIST_COMMON = $(srcdir)/Makefile.in README
+am__DIST_COMMON = $(srcdir)/Makefile.in
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -229,10 +229,10 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-bin_SCRIPTS = parallel sql niceload parcat \
-	env_parallel env_parallel.bash env_parallel.csh \
-	env_parallel.dash env_parallel.fish env_parallel.ksh \
-	env_parallel.pdksh env_parallel.sh env_parallel.tcsh \
+bin_SCRIPTS = parallel sql niceload parcat env_parallel		\
+	env_parallel.ash env_parallel.bash env_parallel.csh	\
+	env_parallel.dash env_parallel.fish env_parallel.ksh	\
+	env_parallel.pdksh env_parallel.sh env_parallel.tcsh	\
 	env_parallel.zsh
 
 @DOCUMENTATION_TRUE@man_MANS = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 \
@@ -262,12 +262,13 @@ DISTCLEANFILES = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 \
 	parallel_tutorial.pdf parallel_design.pdf parallel_alternatives.pdf \
 	parcat.pdf
 
-EXTRA_DIST = parallel sem sql niceload parcat env_parallel \
-	env_parallel.bash env_parallel.zsh env_parallel.fish env_parallel.ksh \
-	env_parallel.pdksh env_parallel.csh env_parallel.tcsh \
-	sem.pod parallel.pod env_parallel.pod niceload.pod parallel_tutorial.pod \
-	parallel_design.pod parallel_alternatives.pod \
-	$(DISTCLEANFILES)
+EXTRA_DIST = parallel sem sql niceload parcat env_parallel	\
+	env_parallel.ash env_parallel.bash env_parallel.csh	\
+	env_parallel.dash env_parallel.fish env_parallel.ksh	\
+	env_parallel.pdksh env_parallel.tcsh env_parallel.zsh	\
+	sem.pod parallel.pod env_parallel.pod niceload.pod	\
+	parallel_tutorial.pod parallel_design.pod		\
+	parallel_alternatives.pod $(DISTCLEANFILES)
 
 all: all-am
 

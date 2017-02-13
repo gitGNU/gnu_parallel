@@ -672,6 +672,17 @@ par_retries_replacement_string() {
     rm $tmp
 }
 
+par_tee() {
+    export PARALLEL='-k --tee --pipe --tag'
+    seq 1000000 | parallel 'echo {%};LANG=C wc' ::: {1..5} ::: {a..b}
+    seq 300000 | parallel 'grep {1} | LANG=C wc {2}' ::: {1..5} ::: -l -c
+}
+
+par_tagstring_pipe() {
+    echo 'bug #50228: --pipe --tagstring broken'
+    seq 3000 | parallel -j4 --pipe -N1000 -k --tagstring {%} LANG=C wc
+}
+
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort |
     parallel -j6 --tag -k --joblog +/tmp/jl-`basename $0` '{} 2>&1'

@@ -81,7 +81,7 @@ Same as GNU B<parallel>.
 
 =head1 SUPPORTED SHELLS
 
-=head2 ash
+=head2 Ash
 
 B<--env> is supported to export only the variable, or alias with the
 given name. Multiple B<--env>s can be given.
@@ -120,10 +120,9 @@ E.g. by doing:
 
 =item arrays
 
-  ash does not support arrays.
+Arrays are not supported by Ash.
 
 =back
-
 
 =head2 Bash
 
@@ -228,7 +227,7 @@ Not supported by B<csh>.
 =back
 
 
-=head2 dash
+=head2 Dash
 
 B<--env> is supported to export only the variable, or alias with the
 given name. Multiple B<--env>s can be given.

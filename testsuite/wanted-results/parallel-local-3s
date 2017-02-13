@@ -4,6 +4,8 @@ par_children_receive_sig	Got TERM
 par_children_receive_sig	Got TERM
 par_children_receive_sig	Got INT
 par_children_receive_sig	Got TERM
+par_keeporder_roundrobin	bug #50081: --keep-order --round-robin should give predictable results
+par_keeporder_roundrobin	OK
 par_kill_int_twice	### Are children killed if GNU Parallel receives INT twice? There should be no sleep at the end
 par_kill_int_twice	bash-+-perl---bash---sleep
 par_kill_int_twice	     `-pstree

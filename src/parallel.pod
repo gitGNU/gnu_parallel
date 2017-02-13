@@ -273,11 +273,11 @@ perl quote a string
 
 number of jobs in total
 
-=item Z<> B<$job->>B<slot()>
+=item Z<> B<slot()>
 
 slot number of job
 
-=item Z<> B<$job->>B<seq()>
+=item Z<> B<seq()>
 
 sequence number of job
 
@@ -987,6 +987,9 @@ to see the difference:
 
 If used with B<--onall> or B<--nonall> the output will grouped by
 sshlogin in sorted order.
+
+If used with B<--pipe --roundrobin> and the same input, the jobslots
+will get the same blocks in the same order in every run.
 
 
 =item B<-L> I<max-lines>
@@ -1767,13 +1770,13 @@ of GNU B<parallel>'s internal functions and data structures.
 Here are a few examples:
 
   Is the job sequence even or odd?
-  --rpl '{odd} $_ = $job->seq() % 2 ? "odd" : "even"'
+  --rpl '{odd} $_ = seq() % 2 ? "odd" : "even"'
   Pad job sequence with leading zeros to get equal width
-  --rpl '{0#} $f = "%0".int(1+log(total_jobs())/log(10))."d"; $_=sprintf($f,$job->seq())'
+  --rpl '{0#} $f=1+int("".(log(total_jobs())/log(10))); $_=sprintf("%0${f}d",seq())'
   Job sequence counting from 0
-  --rpl '{#0} $_ = $job->seq() - 1'
+  --rpl '{#0} $_ = seq() - 1'
   Job slot counting from 2
-  --rpl '{%1} $_ = $job->slot() + 1'
+  --rpl '{%1} $_ = slot() + 1'
 
 See also: B<{= perl expression =}> B<--parens>
 
@@ -2163,6 +2166,24 @@ I<str> and TAB (\t). I<str> can contain replacement strings such as
 B<{}>.
 
 B<--tagstring> is ignored when using B<-u>, B<--onall>, and B<--nonall>.
+
+
+=item B<--tee> (alpha testing)
+
+Pipe all data to all jobs. Used with B<--pipe>/B<--pipepart> and
+B<:::>.
+
+  seq 1000 | parallel --pipe --tee -v wc {} ::: -w -l -c
+
+How many numbers in 1..1000 contain 0..9, and how many bytes do they
+fill:
+
+  seq 1000 | parallel --pipe --tee --tag 'grep {1} | wc {2}' ::: {0..9} ::: -l -c
+
+How many words contain a..z and how many bytes do they fill?
+
+  parallel -a /usr/share/dict/words --pipepart --tee --tag \
+    'grep {1} | wc {2}' ::: {a..z} ::: -l -c
 
 
 =item B<--termseq> I<sequence>
@@ -4138,7 +4159,7 @@ Killed by Ctrl-C, timeout, not enough memory or similar.
 
 =item Z<>-2 (In joblog and SQL table)
 
-$job->skip() was called in B<{= =}>.
+skip() was called in B<{= =}>.
 
 =item Z<>-1000 (In SQL table)
 

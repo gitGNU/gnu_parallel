@@ -1630,3 +1630,37 @@ par_retries_replacement_string	22
 par_retries_replacement_string	33
 par_retries_replacement_string	33
 par_retries_replacement_string	33
+par_tagstring_pipe	bug #50228: --pipe --tagstring broken
+par_tagstring_pipe	1	   1000    1000    3893
+par_tagstring_pipe	2	   1000    1000    5000
+par_tagstring_pipe	3	   1000    1000    5000
+par_tee	1 a	1
+par_tee	1 a	1000000 1000000 6888896
+par_tee	1 b	2
+par_tee	1 b	1000000 1000000 6888896
+par_tee	2 a	3
+par_tee	2 a	1000000 1000000 6888896
+par_tee	2 b	4
+par_tee	2 b	1000000 1000000 6888896
+par_tee	3 a	5
+par_tee	3 a	1000000 1000000 6888896
+par_tee	3 b	6
+par_tee	3 b	1000000 1000000 6888896
+par_tee	4 a	7
+par_tee	4 a	1000000 1000000 6888896
+par_tee	4 b	8
+par_tee	4 b	1000000 1000000 6888896
+par_tee	5 a	9
+par_tee	5 a	1000000 1000000 6888896
+par_tee	5 b	10
+par_tee	5 b	1000000 1000000 6888896
+par_tee	1 -l	181902
+par_tee	1 -c	1228633
+par_tee	2 -l	181902
+par_tee	2 -c	1228633
+par_tee	3 -l	122854
+par_tee	3 -c	815297
+par_tee	4 -l	122853
+par_tee	4 -c	815290
+par_tee	5 -l	122853
+par_tee	5 -c	815290

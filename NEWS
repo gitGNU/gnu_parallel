@@ -1,3 +1,8 @@
+20170206alpha
+
+* --tee introduced.
+
+
 20170122
 
 * sql now uses a temporary credentials file for MySQL to avoid

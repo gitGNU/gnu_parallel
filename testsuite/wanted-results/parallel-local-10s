@@ -492,8 +492,14 @@ par_memleak	should give 1 == true
 par_memleak	Memory use should not depend very much on the total number of jobs run\n
 par_memleak	Test if memory consumption(300 jobs) < memory consumption(30 jobs) * 110% 
 par_memleak	1
+par_pipe_tee	bug #45479: --pipe/--pipepart --tee
+par_pipe_tee	--pipe --tee
+par_pipe_tee	3221225472
 par_pipepart_spawn	### bug #46214: Using --pipepart doesnt spawn multiple jobs in version 20150922
 par_pipepart_spawn	1:local / 8 / 999
+par_pipepart_tee	bug #45479: --pipe/--pipepart --tee
+par_pipepart_tee	--pipepart --tee
+par_pipepart_tee	3221225472
 par_print_before_halt_on_error	### What is printed before the jobs are killed
 par_print_before_halt_on_error	-2	exit code 0
 par_print_before_halt_on_error	-2	0	0
