@@ -785,6 +785,14 @@ pdksh: Put this in /mnt/4tb/home/tange/.profile:  source /usr/local/bin/env_para
        E.g. by doing:  echo '. /usr/local/bin/env_parallel.pdksh' >> /mnt/4tb/home/tange/.profile
        Supports: aliases, functions, variables, arrays
 
+ash:   Put this in /mnt/4tb/home/tange/.profile:  . /usr/local/bin/env_parallel.ash
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.ash' >> /mnt/4tb/home/tange/.profile
+       Supports: aliases, variables
+
+dash:  Put this in /mnt/4tb/home/tange/.profile:  . /usr/local/bin/env_parallel.dash
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.dash' >> /mnt/4tb/home/tange/.profile
+       Supports: aliases, variables
+
 csh:   Put this in /mnt/4tb/home/tange/.cshrc:  source /usr/local/bin/env_parallel.csh
        E.g. by doing:  echo 'source /usr/local/bin/env_parallel.csh' >> /mnt/4tb/home/tange/.cshrc
        Supports: aliases, variables, arrays with no special chars

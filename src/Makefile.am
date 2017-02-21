@@ -233,7 +233,7 @@ DISTCLEANFILES = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 \
 EXTRA_DIST = parallel sem sql niceload parcat env_parallel	\
 	env_parallel.ash env_parallel.bash env_parallel.csh	\
 	env_parallel.dash env_parallel.fish env_parallel.ksh	\
-	env_parallel.pdksh env_parallel.tcsh env_parallel.zsh	\
-	sem.pod parallel.pod env_parallel.pod niceload.pod	\
-	parallel_tutorial.pod parallel_design.pod		\
+	env_parallel.pdksh env_parallel.sh env_parallel.tcsh	\
+	env_parallel.zsh sem.pod parallel.pod env_parallel.pod	\
+	niceload.pod parallel_tutorial.pod parallel_design.pod	\
 	parallel_alternatives.pod $(DISTCLEANFILES)

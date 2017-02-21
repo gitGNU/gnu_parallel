@@ -3357,7 +3357,7 @@ If you have a lot of hosts use '-j0' to access more hosts in parallel.
 If the workers are behind a NAT wall, you need some trickery to get to
 them.
 
-If you can B<ssh> to a jump host, and reach the workers from there,
+If you can B<ssh> to a jumphost, and reach the workers from there,
 then the obvious solution would be this, but it B<does not work>:
 
   parallel --ssh 'ssh jumphost ssh' -S host1 echo ::: DOES NOT WORK
@@ -3547,7 +3547,7 @@ can read into R or LibreCalc, then you can use B<--results>:
 
 =head1 EXAMPLE: Use XML as input
 
-The show Aflyttet on Radio 24syv publishes a RSS feed with their audio
+The show Aflyttet on Radio 24syv publishes an RSS feed with their audio
 podcasts on: http://arkiv.radio24syv.dk/audiopodcast/channel/4466232
 
 Using B<xpath> you can extract the URLs for 2016 and download them
@@ -3626,6 +3626,44 @@ the parts directly to the program:
 
   parallel --pipepart --block 100m -a bigfile --files sort |\
     parallel -Xj1 sort -m {} ';' rm {} >bigfile.sort
+
+
+=head1 EXAMPLE: Grouping input lines
+
+When processing with B<--pipe> you may have lines grouped by a
+value. Here is I<my.csv>:
+
+   Transaction Customer Item
+	1	a	53
+	2	b	65
+	3	b	82
+	4	c	96
+	5	c	67
+	6	c	13
+	7	d	90
+	8	d	43
+	9	d	91
+	10	d	84
+	11	e	72
+	12	e	102
+	13	e	63
+	14	e	56
+	15	e	74
+
+Let us assume you want GNU B<parallel> to process each customer. In
+other words: You want all the transactions for a single customer to be
+treated as a single record.
+
+To do this we preprocess the data with a program that inserts a record
+separator before each customer (column 2 = $F[1]). Here we first make
+a 50 character random string, which we then use as the separator:
+
+  sep=`perl -e 'print map { ("a".."z","A".."Z")[rand(52)] } (1..50);'`
+  cat my.csv | perl -ape '$F[1] ne $last and print "'$sep'"; $last = $F[1]' |
+     parallel --recend $sep --rrs --pipe -N1 wc
+
+If your program can process multiple customers replace B<-N1> with a
+reasonable B<--blocksize>.
 
 
 =head1 EXAMPLE: Running more than 250 jobs workaround
