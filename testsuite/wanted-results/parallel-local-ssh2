@@ -1,81 +1,67 @@
-echo "### bug #43518: GNU Parallel doesn't obey servers' jobs capacity when an ssh login file is reloaded"
-### bug #43518: GNU Parallel doesn't obey servers' jobs capacity when an ssh login file is reloaded
-  # Pre-20141106 Would reset the number of jobs run on all sshlogin if --slf changed
-  # Thus must take at least 25 sec to run
-  echo -e '1/lo\n1/csh@lo\n1/tcsh@lo\n1/parallel@lo\n' > /tmp/parallel.bug43518;   parallel --delay 0.1 -N0 echo 1/: '>>' /tmp/parallel.bug43518 ::: {1..100} &   seq 30 | stdout /usr/bin/time -f %e parallel  --slf /tmp/parallel.bug43518 'sleep {=$_=$_%3?0:10=}.{%}' |   perl -ne '$_ > 25 and print "OK\n"';   rm /tmp/parallel.bug43518
-OK
-echo '### --filter-hosts --slf <()'
-### --filter-hosts --slf <()
-  parallel --nonall --filter-hosts --slf <(echo localhost) echo OK
-OK
-echo '### --wd no-such-dir - csh'
-### --wd no-such-dir - csh
-  stdout parallel --wd /no-such-dir -S csh@localhost echo ::: "ERROR IF PRINTED"; echo Exit code $?
-mkdir: cannot create directory ‘/no-such-dir’: Permission denied
-parallel: Cannot chdir to /no-such-dir
-Exit code 1
-echo '### --wd no-such-dir - tcsh'
-### --wd no-such-dir - tcsh
-  stdout parallel --wd /no-such-dir -S tcsh@localhost echo ::: "ERROR IF PRINTED"; echo Exit code $?
-mkdir: cannot create directory ‘/no-such-dir’: Permission denied
-parallel: Cannot chdir to /no-such-dir
-Exit code 1
-echo '### --wd no-such-dir - bash'
-### --wd no-such-dir - bash
-  stdout parallel --wd /no-such-dir -S parallel@localhost echo ::: "ERROR IF PRINTED"; echo Exit code $?
-mkdir: cannot create directory ‘/no-such-dir’: Permission denied
-parallel: Cannot chdir to /no-such-dir
-Exit code 1
-echo '### bug #42725: csh with \n in variables'
-### bug #42725: csh with \n in variables
-  not_csh() { echo This is not csh/tcsh; };   export -f not_csh;   parallel --env not_csh -S csh@lo not_csh ::: 1;   parallel --env not_csh -S tcsh@lo not_csh ::: 1;   parallel --env not_csh -S parallel@lo not_csh ::: 1
-This is not csh/tcsh
-CSH/TCSH DO NOT SUPPORT newlines IN VARIABLES/FUNCTIONS. Unset not_csh
-CSH/TCSH DO NOT SUPPORT newlines IN VARIABLES/FUNCTIONS. Unset not_csh
-echo '### bug #42999: --pipepart with remote does not work'
-### bug #42999: --pipepart with remote does not work
-  seq 100 > /tmp/bug42999; chmod 600 /tmp/bug42999;   parallel --sshdelay 0.3 --pipepart --block 31 -a /tmp/bug42999 -k -S parallel@lo wc;   parallel --sshdelay 0.2 --pipepart --block 31 -a /tmp/bug42999 -k --fifo -S parallel@lo wc | perl -pe 's:(/tmp\S+par)\S+:${1}XXXXX:' ;   parallel --sshdelay 0.1 --pipepart --block 31 -a /tmp/bug42999 -k --cat -S parallel@lo wc | perl -pe 's:(/tmp\S+par)\S+:${1}XXXXX:' ;   rm /tmp/bug42999
-     14      14      33
-     11      11      33
-     11      11      33
-     11      11      33
-     11      11      33
-     11      11      33
-     11      11      33
-     11      11      33
-      9       9      28
-     14      14      33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-     11      11      33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-     11      11      33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-     11      11      33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-     11      11      33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-     11      11      33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-     11      11      33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-     11      11      33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-      9       9      28 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-14 14 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
- 9  9 28 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
-echo '### --cat gives incorrect exit value in csh'
-### --cat gives incorrect exit value in csh
-  echo false | parallel --pipe --cat   -Scsh@lo 'cat {}; false' ; echo $?;   echo false | parallel --pipe --cat  -Stcsh@lo 'cat {}; false' ; echo $?;   echo true  | parallel --pipe --cat   -Scsh@lo 'cat {}; true' ; echo $?;   echo true  | parallel --pipe --cat  -Stcsh@lo 'cat {}; true' ; echo $?; echo '### --cat and --fifo exit value in bash'
-false
-1
-false
-1
-true
-0
-true
-0
-### --cat and --fifo exit value in bash
-  echo true  | parallel --pipe --fifo -Slo 'cat {}; true' ; echo $?;   echo false | parallel --pipe --fifo -Slo 'cat {}; false' ; echo $?; 
-true
-0
-false
-1
+par_cat_fifo_exit	### --cat and --fifo exit value in bash
+par_cat_fifo_exit	true
+par_cat_fifo_exit	0
+par_cat_fifo_exit	false
+par_cat_fifo_exit	1
+par_cat_incorrect_exit_csh	### --cat gives incorrect exit value in csh
+par_cat_incorrect_exit_csh	false
+par_cat_incorrect_exit_csh	1
+par_cat_incorrect_exit_csh	false
+par_cat_incorrect_exit_csh	1
+par_cat_incorrect_exit_csh	true
+par_cat_incorrect_exit_csh	0
+par_cat_incorrect_exit_csh	true
+par_cat_incorrect_exit_csh	0
+par_csh_newline_var	### bug #42725: csh with \n in variables
+par_csh_newline_var	CSH/TCSH DO NOT SUPPORT newlines IN VARIABLES/FUNCTIONS. Unset not_csh
+par_csh_newline_var	CSH/TCSH DO NOT SUPPORT newlines IN VARIABLES/FUNCTIONS. Unset not_csh
+par_csh_newline_var	This is not csh/tcsh
+par_env_parallel_fifo	### bug #50386: --fifo does not export function, --cat does
+par_env_parallel_fifo	transferred non-exported func
+par_env_parallel_fifo	cat: /tmp/parallel-local-ssh2-tmpdir/parZEeqC: No such file or directory
+par_env_parallel_fifo	transferred non-exported func
+par_env_parallel_fifo	cat: /tmp/parallel-local-ssh2-tmpdir/parZEeqC: No such file or directory
+par_filter_hosts_slf	### --filter-hosts --slf <()
+par_filter_hosts_slf	OK
+par_obey_servers_capacity_slf_reload	### bug #43518: GNU Parallel doesn't obey servers' jobs capacity when an ssh login file is reloaded
+par_obey_servers_capacity_slf_reload	OK
+par_pipepart_remote	### bug #42999: --pipepart with remote does not work
+par_pipepart_remote	     14      14      33
+par_pipepart_remote	     11      11      33
+par_pipepart_remote	     11      11      33
+par_pipepart_remote	     11      11      33
+par_pipepart_remote	     11      11      33
+par_pipepart_remote	     11      11      33
+par_pipepart_remote	     11      11      33
+par_pipepart_remote	     11      11      33
+par_pipepart_remote	      9       9      28
+par_pipepart_remote	     14      14      33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	     11      11      33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	     11      11      33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	     11      11      33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	     11      11      33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	     11      11      33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	     11      11      33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	     11      11      33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	      9       9      28 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	14 14 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_pipepart_remote	 9  9 28 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_wd_no_such_dir	### --wd no-such-dir - csh
+par_wd_no_such_dir	mkdir: cannot create directory ‘/no-such-dir’: Permission denied
+par_wd_no_such_dir	parallel: Cannot chdir to /no-such-dir
+par_wd_no_such_dir	Exit code 1
+par_wd_no_such_dir	### --wd no-such-dir - tcsh
+par_wd_no_such_dir	mkdir: cannot create directory ‘/no-such-dir’: Permission denied
+par_wd_no_such_dir	parallel: Cannot chdir to /no-such-dir
+par_wd_no_such_dir	Exit code 1
+par_wd_no_such_dir	### --wd no-such-dir - bash
+par_wd_no_such_dir	mkdir: cannot create directory ‘/no-such-dir’: Permission denied
+par_wd_no_such_dir	parallel: Cannot chdir to /no-such-dir
+par_wd_no_such_dir	Exit code 1

@@ -397,6 +397,12 @@ The ordering of the wrapping is important:
 
 =item *
 
+$PARALLEL_ENV which is set in env_parallel.* must be prepended to the
+command first, as the command may contain exported variables or
+functions.
+
+=item *
+
 B<--nice>/B<--cat>/B<--fifo> should be done on the remote machine
 
 =item *

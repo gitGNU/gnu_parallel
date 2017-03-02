@@ -4,7 +4,7 @@
 
 Check that documentation is updated (compare to web):
 
-Fixet for 20170222
+Fixet for 20170322
 git diff last-release-commit
 Unmodified beta since last version => production
 Unmodified alpha since last version => beta
@@ -193,66 +193,20 @@ file:///home/tange/privat/parallel/doc/release_new_version
 from:tange@gnu.org
 to:parallel@gnu.org, bug-parallel@gnu.org
 
-Subject: GNU Parallel 20170222 ('13769') released <<[stable]>>
+Subject: GNU Parallel 20170322 ('TRAPPIST-1') released <<[stable]>>
 
-GNU Parallel 20170222 ('13769') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
+GNU Parallel 20170322 ('TRAPPIST-1') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
 Haiku of the month:
 
-  Alias and vars
-  export them more easily
-  With env parallel
+  <<>>
     -- Ole Tange
 
 New in this release:
 
-* env_parallel now supports /bin/sh, ash, dash.
-
-* --tee will pipe all data to all jobs. Used with --pipe/--pipepart and :::. Small example: seq 3333 | parallel --pipe --tee --tag 'grep {} | wc -l' ::: {0..9}
-
-* If --results {replstr} ends in /: save in dir. Otherwise save as file. Example: parallel --results {} echo {} ::: a b c
-
-* Vote for GNU Parallel's community ads on
-  http://meta.unix.stackexchange.com/a/4356/2972
-  http://meta.askubuntu.com/a/16750/22307
-  http://meta.serverfault.com/a/9040/45704
-
-* GNU Parallel was cited in: Low-delay forwarding with multiple candidates for VANETs using multi-criteria decision making http://ieeexplore.ieee.org/document/7835961/
-
-* GNU Parallel was cited in: An Integrated Simulator and Dataset that Combines Grasping and Vision for Deep Learning https://arxiv.org/pdf/1702.02103.pdf
-
-* GNU Parallel was cited in: A Bayesian model selection approach for identifying differentially expressed transcripts from RNA sequencing data http://onlinelibrary.wiley.com/doi/10.1111/rssc.12213/full
-
-* GNU Parallel was cited in: The impact of copy number variation on gout, and the apple genome https://ourarchive.otago.ac.nz/bitstream/handle/10523/7060/BoocockJames2016MSc.pdf?sequence=3
-
-* GNU Parallel was cited in: Determination of crystal structures of proteins of unknown identity using a marathon molecular replacement procedure: structure of Stenotrophomonas maltophilia phosphate-binding protein https://www.researchgate.net/publication/308186413_Determination_of_crystal_structures_of_proteins_of_unknown_identity_using_a_marathon_molecular_replacement_procedure_Structure_of_Stenotrophomonas_maltophilia_phosphate-binding_protein
-
-* GNU Parallel was cited in: Reaction rates for reaction-diffusion kinetics on unstructured meshes http://aip.scitation.org/doi/10.1063/1.4975167
-
-* GNU Parallel was cited in: Modeling prediction error improves power of transcriptome-wide association studies http://biorxiv.org/content/biorxiv/early/2017/02/14/108316.full.pdf
-
-* GNU Parallel was cited in: Proper experimental design requires randomization/balancing of molecular ecology experiments http://biorxiv.org/content/biorxiv/early/2017/02/17/109280.full.pdf
-
-* GNU Parallel was cited in: Experiment-based thermal micromagnetic simulations of the magnetization reversal for ns-range clocked nanomagnetic logic http://aip.scitation.org/doi/full/10.1063/1.4974021
-
-* GNU Parallel was cited in: The University of Edinburgh’s systems submission to the MT task at IWSLT http://workshop2016.iwslt.org/downloads/IWSLT_2016_paper_27.pdf
-
-* Fast-GBS uses GNU Parallel: https://bitbucket.org/jerlar73/fast-gbs
-
-* Job: DevOps Engineer/Senior Systems Administrator in New York, New York http://rockefeller.jobs/new-york-ny/devops-engineersenior-systems-administrator/2DB3408EAC9E4617AD238550F31C7641/job/
-
-* Training in GNU Parallel: https://www.carc.unm.edu/education-outreach/workshops--training/
-
-* Training in GNU Parallel: http://www.hpc.lsu.edu/training/registration.php?topic=Parallel%20Serial%20Jobs%20Using%20GNU%20Parallel&date=February%2022,%202017&time=9:00%20AM%20-%2011:00%20AM&place=307%20Frey&deadline=2017-02-21%2016:30:00
-
-* Batch Convert Images from PNG to JPEG http://coreygoldberg.blogspot.dk/2017/02/batch-convert-images-from-png-to-jpeg.html
-
-* Accelerating Oxford Nanopore Basecalling http://fowlerlab.org/2017/01/26/accelerating-oxford-nanopore-basecalling/
-
-* parallel и imagemagick в loop на bash https://www.linux.org.ru/forum/development/13190247
-
+http://garf.us/2017/02/stig-sandbeck-mathisen-change-all-the-passwords-again/
 
 * <<Possibly http://link.springer.com/chapter/10.1007%2F978-3-319-22053-6_46>>
 

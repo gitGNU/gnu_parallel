@@ -1361,7 +1361,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20170222;
+    $Global::version = 20170223;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -7168,29 +7168,6 @@ sub wrapped {
 	    $command = "/bin/echo " .
 		::shell_quote_scalar(::shell_quote_scalar($command));
 	}
-	if($opt::cat) {
-	    # In '--cat' and '--fifo' {} == $PARALLEL_TMP.
-	    # This is to make it possible to compute $PARALLEL_TMP on
-	    # the fly when running remotely.
-	    # $ENV{PARALLEL_TMP} is set in the remote wrapper before
-	    # the command is run.
-	    #
-	    # Prepend 'cat > $PARALLEL_TMP;'
-	    # Append 'unlink $PARALLEL_TMP without affecting $?'
-	    $command =
-		'cat > $PARALLEL_TMP;'.
-		$command.";". postpone_exit_and_cleanup().
-		'$PARALLEL_TMP';
-	} elsif($opt::fifo) {
-	    # Prepend 'mkfifo {}; ('
-	    # Append ') & cat > {}; wait; '
-	    # Append 'unlink {} without affecting $?'
-	    $command = fifo_wrap(). " ".
-		$Global::shell. " ".
-		::shell_quote_scalar($command).
-		' $PARALLEL_TMP'.
-		';';
-	}
 	if($ENV{'PARALLEL_ENV'}) {
 	    if(-e $ENV{'PARALLEL_ENV'}) {
 		# This is a file/fifo: Replace envvar with content of file
@@ -7211,6 +7188,33 @@ sub wrapped {
 	    } else {
 		$command = $ENV{'PARALLEL_ENV'}."\n".$command;
 	    }
+	}
+	if($opt::cat) {
+	    # In '--cat' and '--fifo' {} == $PARALLEL_TMP.
+	    # This is to make it possible to compute $PARALLEL_TMP on
+	    # the fly when running remotely.
+	    # $ENV{PARALLEL_TMP} is set in the remote wrapper before
+	    # the command is run.
+	    #
+	    # Prepend 'cat > $PARALLEL_TMP;'
+	    # Append 'unlink $PARALLEL_TMP without affecting $?'
+	    $command =
+		'cat > $PARALLEL_TMP;'.
+		$command.";". postpone_exit_and_cleanup().
+		'$PARALLEL_TMP';
+	} elsif($opt::fifo) {
+	    # Prepend fifo-wrapper. In essence:
+	    #   mkfifo {}
+	    #   ( $command ) &
+	    #   # $command must read {}, otherwise this 'cat' will block
+	    #   cat > {};
+	    #   wait; rm {}
+	    # without affecting $?
+	    $command = fifo_wrap(). " ".
+		$Global::shell. " ".
+		::shell_quote_scalar($command).
+		' $PARALLEL_TMP'.
+		';';
 	}
 	# Wrap with ssh + tranferring of files
 	$command = $self->sshlogin_wrap($command);

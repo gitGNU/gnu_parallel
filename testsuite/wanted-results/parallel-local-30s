@@ -20,6 +20,476 @@ par_race_condition1	7
 par_race_condition1	8
 par_race_condition1	9
 par_race_condition1	10
+par_testhalt	### testhalt --halt now,fail=0
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.6; exit 1
+par_testhalt	0
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 0.6; exit 1
+par_testhalt	0
+par_testhalt	### testhalt --halt now,fail=1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.6; exit 1
+par_testhalt	1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 0.6; exit 1
+par_testhalt	1
+par_testhalt	### testhalt --halt now,fail=2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.6; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3; exit 2
+par_testhalt	2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 0.6; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1; exit 2
+par_testhalt	2
+par_testhalt	### testhalt --halt now,fail=30%
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.6; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.4; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.8; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 4.2; exit 5
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 4.6; exit 6
+par_testhalt	30
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 0.6; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.4; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.8; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 5
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.6; exit 6
+par_testhalt	30
+par_testhalt	### testhalt --halt now,fail=70%
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.6; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.4; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.8; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 4.2; exit 5
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 4.6; exit 6
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 5; exit 7
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 5.4; exit 8
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 5.8; exit 9
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 6.2; exit 10
+par_testhalt	50
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 0.6; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.4; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.8; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 5
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.6; exit 6
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3; exit 7
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.4; exit 8
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.8; exit 9
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 4.2; exit 10
+par_testhalt	50
+par_testhalt	### testhalt --halt now,success=0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.4; exit 0
+par_testhalt	0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.4; exit 0
+par_testhalt	0
+par_testhalt	### testhalt --halt now,success=1
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.4; exit 0
+par_testhalt	0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.4; exit 0
+par_testhalt	0
+par_testhalt	### testhalt --halt now,success=2
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.6; exit 0
+par_testhalt	0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.6; exit 0
+par_testhalt	0
+par_testhalt	### testhalt --halt now,success=30%
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1.2; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1.4; exit 0
+par_testhalt	0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3.2; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3.4; exit 0
+par_testhalt	0
+par_testhalt	### testhalt --halt now,success=70%
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1.2; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.2; exit 0
+par_testhalt	50
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3.2; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 4.2; exit 0
+par_testhalt	50
+par_testhalt	### testhalt --halt soon,fail=0
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.6; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.4; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.8; exit 4
+par_testhalt	0
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 0.6; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.4; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.8; exit 4
+par_testhalt	0
+par_testhalt	### testhalt --halt soon,fail=1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.6; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.4; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.8; exit 4
+par_testhalt	1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 0.6; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.4; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.8; exit 4
+par_testhalt	1
+par_testhalt	### testhalt --halt soon,fail=2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.6; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.4; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.8; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 4.2; exit 5
+par_testhalt	2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 0.6; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.4; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.8; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 5
+par_testhalt	2
+par_testhalt	### testhalt --halt soon,fail=30%
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.6; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.4; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.8; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 4.2; exit 5
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 4.6; exit 6
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 5; exit 7
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 5.4; exit 8
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 5.8; exit 9
+par_testhalt	30
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 0.6; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.4; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.8; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 5
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.6; exit 6
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3; exit 7
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.4; exit 8
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.8; exit 9
+par_testhalt	30
+par_testhalt	### testhalt --halt soon,fail=70%
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.6; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.4; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.8; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 4.2; exit 5
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 4.6; exit 6
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 5; exit 7
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 5.4; exit 8
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 5.8; exit 9
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 6.2; exit 10
+par_testhalt	50
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 0.6; exit 1
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1; exit 2
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.4; exit 3
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 1.8; exit 4
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.2; exit 5
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 2.6; exit 6
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3; exit 7
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.4; exit 8
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 3.8; exit 9
+par_testhalt	parallel: This job failed:
+par_testhalt	sleep 4.2; exit 10
+par_testhalt	50
+par_testhalt	### testhalt --halt soon,success=0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.8; exit 0
+par_testhalt	0
+par_testhalt	### testhalt --halt soon,success=1
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.8; exit 0
+par_testhalt	0
+par_testhalt	### testhalt --halt soon,success=2
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1.2; exit 0
+par_testhalt	0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3; exit 0
+par_testhalt	0
+par_testhalt	### testhalt --halt soon,success=30%
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1.2; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2; exit 0
+par_testhalt	0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3.2; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 4; exit 0
+par_testhalt	0
+par_testhalt	### testhalt --halt soon,success=70%
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 0.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1.2; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 1.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.2; exit 0
+par_testhalt	50
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 2.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3.2; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3.4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3.6; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 3.8; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 4; exit 0
+par_testhalt	parallel: This job succeeded:
+par_testhalt	sleep 4.2; exit 0
+par_testhalt	50
 par_tmp_full	### Test --tmpdir running full. bug #40733 was caused by this
 par_tmp_full	parallel: Error: Output is incomplete. Cannot append to buffer file in /tmp/shm/parallel. Is the disk full?
 par_tmp_full	parallel: Error: Change $TMPDIR with --tmpdir or use --compress.

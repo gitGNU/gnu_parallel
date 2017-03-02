@@ -61,20 +61,6 @@ par_pipepart_spawn() {
     grep 1:local | perl -pe 's/\d\d\d/999/g'
 }
 
-par_testhalt() {
-    testhalt() {
-	echo '### testhalt --halt '$1;
-	(yes 0 | head -n 10; seq 10) | stdout parallel -kj4 --halt $1 'sleep {= $_=$_*0.3+1 =}; exit {}'; echo $?;
-	(seq 10; yes 0 | head -n 10) | stdout parallel -kj4 --halt $1 'sleep {= $_=$_*0.3+1 =}; exit {}'; echo $?;
-    };
-    export -f testhalt;
-
-    stdout parallel -kj0 testhalt {1},{2}={3} \
-	::: now soon ::: fail success ::: 0 1 2 30% 70% |
-    # Remove lines that only show up now and then
-    perl -ne '/Starting no more jobs./ or print'
-}
-
 par_halt_on_error() {
     mytest() {
 	HALT=$1

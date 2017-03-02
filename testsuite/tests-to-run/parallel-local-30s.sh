@@ -4,6 +4,23 @@
 # Each should be taking 30-100s and be possible to run in parallel
 # I.e.: No race conditions, no logins
 
+par_testhalt() {
+    testhalt() {
+	echo '### testhalt --halt '$1;
+	# Append "00$_" so we can see the original value
+	(yes 0 | head -n 10; seq 10) |
+	    stdout parallel -kj4 --halt $1 'sleep {= $_=0.2*($_+1+seq()) =}; exit {}'; echo $?;
+	(seq 10; yes 0 | head -n 10) |
+	    stdout parallel -kj4 --halt $1 'sleep {= $_=0.2*($_+1+seq()) =}; exit {}'; echo $?;
+    };
+    export -f testhalt;
+
+    stdout parallel -kj0 testhalt {1},{2}={3} \
+	::: now soon ::: fail success ::: 0 1 2 30% 70% |
+    # Remove lines that only show up now and then
+    perl -ne '/Starting no more jobs./ or print'
+}
+
 par_race_condition1() {
     echo '### Test race condition on 8 CPU (my laptop)'
     seq 1 5000000 > /tmp/parallel_race_cond
@@ -30,8 +47,8 @@ par_memory_leak() {
     }
     export -f a_run
     echo "### Test for memory leaks"
-    echo "Of 30 runs of 1 job at least one should be bigger than a 3000 job run"
-    small_max=$(seq 30 | parallel a_run 1 | jq -s max)
+    echo "Of 100 runs of 1 job at least one should be bigger than a 3000 job run"
+    small_max=$(seq 100 | parallel a_run 1 | jq -s max)
     big=$(a_run 3000)
     if [ $small_max -lt $big ] ; then
 	echo "Bad: Memleak likely."
