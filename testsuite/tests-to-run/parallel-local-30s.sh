@@ -7,11 +7,10 @@
 par_testhalt() {
     testhalt() {
 	echo '### testhalt --halt '$1;
-	# Append "00$_" so we can see the original value
 	(yes 0 | head -n 10; seq 10) |
-	    stdout parallel -kj4 --halt $1 'sleep {= $_=0.2*($_+1+seq()) =}; exit {}'; echo $?;
+	    stdout parallel -kj4 --halt $1 'sleep {= $_=0.3*($_+1+seq()) =}; exit {}'; echo $?;
 	(seq 10; yes 0 | head -n 10) |
-	    stdout parallel -kj4 --halt $1 'sleep {= $_=0.2*($_+1+seq()) =}; exit {}'; echo $?;
+	    stdout parallel -kj4 --halt $1 'sleep {= $_=0.3*($_+1+seq()) =}; exit {}'; echo $?;
     };
     export -f testhalt;
 

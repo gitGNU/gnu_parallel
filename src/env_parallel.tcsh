@@ -28,7 +28,7 @@
 set _parallel_exit_CODE=0
 if ("`alias env_parallel`" == '') then
   # Activate alias
-  alias env_parallel 'setenv PARALLEL "\!*"; source `which env_parallel.tcsh`'
+  alias env_parallel '(setenv PARALLEL "\!*"; source `which env_parallel.tcsh`)'
 else
   # Get the --env variables if set
   # --env _ should be ignored
@@ -71,7 +71,7 @@ else
   rm $_tMpscRIpt
 
   # Get the scalar and array variable names
-  set _vARnAmES=(`set | awk -e '{print $1}' |grep -vE '^(#|_|killring|prompt2|command)$' | grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$`)
+  set _vARnAmES=(`set | awk -e '{print $1}' |grep -vE '^(#|_|killring|prompt2|command)$' | grep -Ev '^(PARALLEL_TMP)$' | grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$`)
 
   # Make a tmpfile for the variable definitions
   set _tMpvARfILe=`tempfile`

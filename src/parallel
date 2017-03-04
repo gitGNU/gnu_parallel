@@ -6788,8 +6788,20 @@ sub empty_input_wrapper {
 	    }
 		  });
     ::debug("run",'Empty wrap: perl -e '.::shell_quote_scalar($script)."\n");
-    return 'perl -e '.::shell_quote_scalar($script)." ".
-	$Global::shell." -c ".::shell_quote_scalar($command);
+    if($Global::cshell
+       and
+       length $command > 499) {
+	# csh does not like words longer than 1000 (499 quoted)
+	# $command = "perl -e '".base64_zip_eval()."' ".
+	# join" ",string_zip_base64(
+	#         'exec "'.::perl_quote_scalar($command).'"');
+        return 'perl -e '.::shell_quote_scalar($script)." ".	    
+	    base64_wrap("exec \"$Global::shell\",'-c',\"".
+				   ::perl_quote_scalar($command).'"');
+    } else {
+	return 'perl -e '.::shell_quote_scalar($script)." ".
+	    $Global::shell." -c ".::shell_quote_scalar($command);
+    }
 }
 
 sub filter_through_compress {

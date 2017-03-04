@@ -1,6 +1,11 @@
 ### test --env _
 Both test that variables are copied,
 but also that they are NOT copied, if ignored
+par_bash_env_parallel_fifo	OK
+par_bash_env_parallel_fifo	OK
+par_bash_env_parallel_fifo	bug #50435: Remote fifo broke in 20150522
+par_bash_env_parallel_fifo	data from stdin
+par_bash_env_parallel_fifo	data from stdin
 par_bash_funky	
 par_bash_funky	
 par_bash_funky	
@@ -77,6 +82,11 @@ par_bash_underscore	/bin/bash: line 48: myfunc: command not found
 par_bash_underscore	OK if no myfunc      ^^^^^^^^^^^^^^^^^^^^^^^^^
 par_bash_underscore	/bin/bash: line 48: myfunc: command not found
 par_bash_underscore	OK if no myfunc      ^^^^^^^^^^^^^^^^^^^^^^^^^
+par_csh_env_parallel_fifo	bug #50435: Remote fifo broke in 20150522
+par_csh_env_parallel_fifo	data from stdin
+par_csh_env_parallel_fifo	OK
+par_csh_env_parallel_fifo	data from stdin
+par_csh_env_parallel_fifo	OK
 par_csh_funky	3 arg alias_works
 par_csh_funky	myvar  works
 par_csh_funky	space special chars problem
@@ -168,6 +178,14 @@ par_csh_underscore	OK      ^^^^^^^^^^^^^^^^^ if no myecho
 par_csh_underscore	myecho: Command not found.
 par_csh_underscore	OK      ^^^^^^^^^^^^^^^^^ if no myecho
 par_csh_underscore	Connection to lo closed.
+par_fish_env_parallel_fifo	bug #50435: Remote fifo broke in 20150522
+par_fish_env_parallel_fifo	data from stdin
+par_fish_env_parallel_fifo	OK
+par_fish_env_parallel_fifo	data from stdin
+par_fish_env_parallel_fifo	OK
+par_fish_env_parallel_fifo	$? is not the exit status. In fish, please use $status.
+par_fish_env_parallel_fifo	fish: cat $PARALLEL_TMP; and echo $OK;perl -e '$bash=shift;$csh=shift;for(@ARGV){unlink;rmdir;}if($bash=~s/h//){exit$bash;}exit$csh;' "$?h" "$status" $PARALLEL_TMP
+par_fish_env_parallel_fifo	                                                                                                                                        ^
 par_fish_funky	env_parallel: Warning: ASCII value 1 in variables is not supported
 par_fish_funky	3 arg alias_works
 par_fish_funky	env_parallel: Warning: ASCII value 1 in variables is not supported
@@ -261,6 +279,11 @@ par_fish_underscore	      ^
 par_fish_underscore	OK if   ^^^^^^^^^^^^^^^^^ no myfunc
 par_fish_underscore	      ^
 par_fish_underscore	OK if   ^^^^^^^^^^^^^^^^^ no myfunc
+par_ksh_env_parallel_fifo	OK
+par_ksh_env_parallel_fifo	OK
+par_ksh_env_parallel_fifo	bug #50435: Remote fifo broke in 20150522
+par_ksh_env_parallel_fifo	data from stdin
+par_ksh_env_parallel_fifo	data from stdin
 par_ksh_funky	
 par_ksh_funky	\\\\\\\\	
 par_ksh_funky	 !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—˜™š›œŸ ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõö÷øùúûüışÿ-funky
@@ -331,6 +354,11 @@ par_ksh_underscore	/usr/bin/ksh: line 2: myfunc: not found
 par_ksh_underscore	OK if no myfunc         ^^^^^^^^^^^^^^^^^
 par_ksh_underscore	/usr/bin/ksh: line 2: myfunc: not found
 par_ksh_underscore	OK if no myfunc         ^^^^^^^^^^^^^^^^^
+par_tcsh_env_parallel_fifo	OK
+par_tcsh_env_parallel_fifo	OK
+par_tcsh_env_parallel_fifo	bug #50435: Remote fifo broke in 20150522
+par_tcsh_env_parallel_fifo	data from stdin
+par_tcsh_env_parallel_fifo	data from stdin
 par_tcsh_funky	
 par_tcsh_funky	
 par_tcsh_funky	
@@ -428,6 +456,11 @@ par_tcsh_underscore	OK      ^^^^^^^^^^^^^^^^^ if no myecho
 par_tcsh_underscore	myecho: Command not found.
 par_tcsh_underscore	OK      ^^^^^^^^^^^^^^^^^ if no myecho
 par_tcsh_underscore	Connection to lo closed.
+par_zsh_env_parallel_fifo	OK
+par_zsh_env_parallel_fifo	OK
+par_zsh_env_parallel_fifo	bug #50435: Remote fifo broke in 20150522
+par_zsh_env_parallel_fifo	data from stdin
+par_zsh_env_parallel_fifo	data from stdin
 par_zsh_funky	
 par_zsh_funky	\\\\\\\\	
 par_zsh_funky		

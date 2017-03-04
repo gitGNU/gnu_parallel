@@ -94,6 +94,7 @@ function env_parallel
       # Replace \001 with \002 because \001 is used by env_parallel
       # Convert \n to \001
       functions -n | perl -pe 's/,/\n/g' | \
+        grep -Ev '^(PARALLEL_TMP)$' | \
         grep -E "^$_grep_REGEXP"\$ | grep -vE "^$_ignore_UNDERSCORE"\$ | \
         while read d; functions $d; end | \
         perl -pe 's/\001/\002/g and not $printed++ and print STDERR
@@ -105,6 +106,7 @@ function env_parallel
       # Ignore read only vars
       # Execute 'set' of the content
       eval (set -L | \
+        grep -Ev '^(PARALLEL_TMP)$' | \
         grep -E "^$_grep_REGEXP " | grep -vE "^$_ignore_UNDERSCORE " | \
         perl -ne 'chomp;
           ($name,$val)=split(/ /,$_,2);
@@ -119,6 +121,7 @@ function env_parallel
       # 
       begin;
         for v in (set -n | \
+          grep -Ev '^(PARALLEL_TMP)$' | \
           grep -E "^$_grep_REGEXP\$" | grep -vE "^$_ignore_UNDERSCORE\$");
           # Separate variables with the string: \000
 	  # array_name1 val1\0

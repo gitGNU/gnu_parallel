@@ -858,6 +858,82 @@ _EOF
   ssh tcsh@lo "$myscript" 2>&1 | sort
 }
 
+par_bash_env_parallel_fifo() {
+  myscript=$(cat <<'_EOF'
+    echo 'bug #50435: Remote fifo broke in 20150522'
+    # Due to $PARALLEL_TMP being transferred
+    OK=OK
+    echo data from stdin | env_parallel --pipe -S lo --fifo 'cat {} && echo $OK'
+    echo data from stdin | env_parallel --pipe -S lo --cat 'cat {} && echo $OK'
+_EOF
+  )
+  # Order is often different. Dunno why. So sort
+  ssh bash@lo "$myscript" 2>&1 | sort
+}
+
+par_zsh_env_parallel_fifo() {
+  myscript=$(cat <<'_EOF'
+    echo 'bug #50435: Remote fifo broke in 20150522'
+    # Due to $PARALLEL_TMP being transferred
+    OK=OK
+    echo data from stdin | env_parallel --pipe -S lo --fifo 'cat {} && echo $OK'
+    echo data from stdin | env_parallel --pipe -S lo --cat 'cat {} && echo $OK'
+_EOF
+  )
+  # Order is often different. Dunno why. So sort
+  ssh zsh@lo "$myscript" 2>&1 | sort
+}
+
+par_ksh_env_parallel_fifo() {
+  myscript=$(cat <<'_EOF'
+    . `which env_parallel.ksh`;
+    echo 'bug #50435: Remote fifo broke in 20150522'
+    # Due to $PARALLEL_TMP being transferred
+    OK=OK
+    echo data from stdin | env_parallel --pipe -S lo --fifo 'cat {} && echo $OK'
+    echo data from stdin | env_parallel --pipe -S lo --cat 'cat {} && echo $OK'
+_EOF
+  )
+  # Order is often different. Dunno why. So sort
+  ssh ksh@lo "$myscript" 2>&1 | sort
+}
+
+par_fish_env_parallel_fifo() {
+  myscript=$(cat <<'_EOF'
+    echo 'bug #50435: Remote fifo broke in 20150522'
+    # Due to $PARALLEL_TMP being transferred
+    set OK OK
+    echo data from stdin | env_parallel --pipe -S lo --fifo 'cat {}; and echo $OK'
+    echo data from stdin | env_parallel --pipe -S lo --cat 'cat {}; and echo $OK'
+_EOF
+  )
+  ssh fish@lo "$myscript"
+}
+
+par_csh_env_parallel_fifo() {
+  myscript=$(cat <<'_EOF'
+    echo 'bug #50435: Remote fifo broke in 20150522'
+    # Due to $PARALLEL_TMP being transferred
+    set OK=OK
+    echo data from stdin | env_parallel --pipe -S lo --fifo 'cat {} && echo $OK'
+    echo data from stdin | env_parallel --pipe -S lo --cat 'cat {} && echo $OK'
+_EOF
+  )
+  ssh csh@lo "$myscript"
+}
+
+par_tcsh_env_parallel_fifo() {
+  myscript=$(cat <<'_EOF'
+    echo 'bug #50435: Remote fifo broke in 20150522'
+    # Due to $PARALLEL_TMP being transferred
+    set OK=OK
+    echo data from stdin | env_parallel --pipe -S lo --fifo 'cat {} && echo $OK'
+    echo data from stdin | env_parallel --pipe -S lo --cat 'cat {} && echo $OK'
+_EOF
+  )
+  # Order is often different. Dunno why. So sort
+  ssh tcsh@lo "$myscript" 2>&1 | sort
+}
 
 export -f $(compgen -A function | grep par_)
 #compgen -A function | grep par_ | sort | parallel --delay $D -j$P --tag -k '{} 2>&1'

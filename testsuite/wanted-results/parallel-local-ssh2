@@ -17,10 +17,10 @@ par_csh_newline_var	CSH/TCSH DO NOT SUPPORT newlines IN VARIABLES/FUNCTIONS. Uns
 par_csh_newline_var	CSH/TCSH DO NOT SUPPORT newlines IN VARIABLES/FUNCTIONS. Unset not_csh
 par_csh_newline_var	This is not csh/tcsh
 par_env_parallel_fifo	### bug #50386: --fifo does not export function, --cat does
+par_env_parallel_fifo	data from stdin
 par_env_parallel_fifo	transferred non-exported func
-par_env_parallel_fifo	cat: /tmp/parallel-local-ssh2-tmpdir/parZEeqC: No such file or directory
+par_env_parallel_fifo	data from stdin
 par_env_parallel_fifo	transferred non-exported func
-par_env_parallel_fifo	cat: /tmp/parallel-local-ssh2-tmpdir/parZEeqC: No such file or directory
 par_filter_hosts_slf	### --filter-hosts --slf <()
 par_filter_hosts_slf	OK
 par_obey_servers_capacity_slf_reload	### bug #43518: GNU Parallel doesn't obey servers' jobs capacity when an ssh login file is reloaded
