@@ -1778,6 +1778,22 @@ Here are a few examples:
   Job slot counting from 2
   --rpl '{%1} $_ = slot() + 1'
 
+You can have dynamic replacement strings by including parenthesis in
+the replacement string and adding a regular expression between the
+parenthesis. The matching string will be inserted as $$1:
+
+  parallel --rpl '{%(.*?)} s/$$1//' echo {%.tar.gz} ::: file.tar.gz
+
+You can even use multiple matches:
+
+  parallel --rpl '{@(\d+)\S(\d+)\S(\d+)} 
+    if($$3 > 31) { ($$1,$$2,$$3) = ($$3,$$2,$$1) }
+    if($$2 > 12) { ($$1,$$2,$$3) = ($$1,$$3,$$2) }
+    $$1 = ($$1%100 + 1900); $_="$$1-$$2-$$3"
+  ' echo {@99-12-31} {@12.31.99} {@31/12-1999} ::: a
+
+  parallel --rpl '{(.*?)/(.*?)} $_="$$2$_$$1"' echo {swap/these} ::: -middle-
+
 See also: B<{= perl expression =}> B<--parens>
 
 

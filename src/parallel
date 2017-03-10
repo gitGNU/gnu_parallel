@@ -396,7 +396,7 @@ sub cat_partial {
     my($file, @start_end) = @_;
     my($start, $i);
     # Convert start_end to start_len
-    my @start_len = map { 
+    my @start_len = map {
 	if(++$i % 2) { $start = $_; } else { $_-$start }
     } @start_end;
     my $script = spacefree
@@ -6795,7 +6795,7 @@ sub empty_input_wrapper {
 	# $command = "perl -e '".base64_zip_eval()."' ".
 	# join" ",string_zip_base64(
 	#         'exec "'.::perl_quote_scalar($command).'"');
-        return 'perl -e '.::shell_quote_scalar($script)." ".	    
+        return 'perl -e '.::shell_quote_scalar($script)." ".
 	    base64_wrap("exec \"$Global::shell\",'-c',\"".
 				   ::perl_quote_scalar($command).'"');
     } else {
@@ -9449,18 +9449,60 @@ sub new {
 	}
 	# Needs to match rightmost left parens (Perl defaults to leftmost)
 	# to deal with: {={==}
+	# Replace {= -> \257<  and  =} -> \257>
 	while(s{([^\257]*) \Q$Global::parensleft\E ([^\257]*?) \Q$Global::parensright\E }
 	      {$1\257<$2\257>}gx) {}
 	for my $rpl (sort { length $b <=> length $a } keys %Global::rpl) {
 	    # Replace long --rpl's before short ones, as a short may be a
 	    # substring of a long:
 	    #   --rpl '% s/a/b/' --rpl '%% s/b/a/'
+	    #
 	    # Replace the short hand string (--rpl)
 	    # with the {= perl expr =}
+	    #
 	    # Avoid replacing inside existing {= perl expr =}
-	    while(s{((^|\257>)[^\257]*?) # Don't replace after \257 unless \257>
-                    \Q$rpl\E}
-		  {$1\257<$Global::rpl{$rpl}\257>}xg) {
+	    #
+	    # Replace $$1 in {= perl expr =} with groupings in short hand string
+	    #
+	    # ppar --rpl '{rm_suffix(\S+)} s/$$1$//;' echo {rm_suffix.tar.gz} ::: UU.tar.gz
+	    # ppar --rpl '{%(\S+)} s/$$1$//;' echo {%.tar.gz} ::: UU.tar.gz
+	    #
+	    # ppar --rpl '{rm_prefix(\S+)} s/^$$1//;' echo {rm_prefixUU.} ::: UU.tar.gz
+	    # ppar --rpl '{#(\S+)} s/^$$1//;' echo {rm_prefixUU.} ::: UU.tar.gz
+	    #
+	    # ppar --rpl '{replace(\.\S+)/(\.\S+)} s/$$1/$$2/g;' echo {replace.tar/.gz} ::: UU.tar.gz
+	    # ppar --rpl '{/(\.\S+)/(\.\S+)} s/$$1/$$2/g;' echo {/.tar/.gz} ::: UU.tar.gz
+	    my ($prefix,$grp_regexp,$postfix) =
+		$rpl =~ /^( [^(]*  )    # Prefix - e.g. {%%
+                          ( \(.*\) )?   # Group capture regexp - e.g (.*)
+                          ( [^)]*  )$   # Postfix - e.g }
+                        /x;
+	    my $rplval = $Global::rpl{$rpl};
+	    while(s{( (?: ^|\257> ) [^\257]*? ) # Don't replace after \257 unless \257>
+                    \Q$prefix\E $grp_regexp \Q$postfix\E}
+		  {
+		      # The start remains the same
+		      my $unchanged = $1;
+		      # Dummy entry to start at 2.
+		      my @grp = (1);
+		      # $2 = first ()-group in $grp_regexp
+		      # Put $2 in $grp[1], Put $3 in $grp[2]
+		      # so first ()-group in $grp_regexp is $grp[1];
+		      for(my $i = 2; defined $grp[$#grp]; $i++) {
+			  push @grp, eval '$'.$i;
+		      }
+		      my $rv = $rplval;
+		      # replace $$1 with $_pAr_gRp1, $$2 with $_pAr_gRp2
+		      # in the code to be executed
+		      $rv =~ s/\$\$(\d+)/\$_pAr_gRp$1/g;
+		      # prepend with $_pAr_gRp1 = perlquote($1),
+		      my $set_args = "";
+		      for(my $i = 1;defined $grp[$i]; $i++) {
+			  $set_args .= "\$_pAr_gRp$i = \"" .
+			      ::perl_quote_scalar($grp[$i]) . "\";";
+		      }
+		      $unchanged . "\257<" . $set_args . $rv . "\257>"
+		  }gxe) {
 	    }
 	    # Do the same for the positional replacement strings
 	    # A bit harder as we have to put in the position number
