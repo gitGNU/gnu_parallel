@@ -1397,6 +1397,26 @@ sub init_globals {
 	 '{/...}' => 's:.*/::; s:\.[^/.]+$::; s:\.[^/.]+$::; s:\.[^/.]+$::',
 	 # {##} = number of jobs
 	 '{##}' => '$_=total_jobs()',
+	 # Bash ${a:-myval}
+	 '{:-(.+?)}' => '$_ ||= $$1',
+	 # Bash ${a:2}
+	 '{:(\d+?)}' => 'substr($_,0,$$1) = ""',
+	 # Bash ${a:2:3}
+	 '{:(\d+?):(\d+?)}' => '$_ = substr($_,$$1,$$2);',
+	 # Bash ${a#bc}
+	 '{#([^#].*?)}' => 's/^$$1//;',
+	 # Bash ${a%def}
+	 '{%(.+?)}' => 's/$$1$//;',
+	 # Bash ${a/def/ghi}
+	 '{/(.+?)/(.+?)}' => 's/$$1/$$2/;',
+	 # Bash ${a^a}
+	 '{^(.+?)}' => 's/($$1)/uc($1)/e;',
+	 # Bash ${a^^a}
+	 '{^^(.+?)}' => 's/($$1)/uc($1)/eg;',
+	 # Bash ${a,A}
+	 '{,(.+?)}' => 's/($$1)/lc($1)/e;',
+	 # Bash ${a,,A}
+	 '{,,(.+?)}' => 's/($$1)/lc($1)/eg;',
 	);
     # Modifiable copy of %Global::replace
     %Global::rpl = %Global::replace;
@@ -9477,6 +9497,7 @@ sub new {
                           ( \(.*\) )?   # Group capture regexp - e.g (.*)
                           ( [^)]*  )$   # Postfix - e.g }
                         /x;
+	    $grp_regexp ||= '';
 	    my $rplval = $Global::rpl{$rpl};
 	    while(s{( (?: ^|\257> ) [^\257]*? ) # Don't replace after \257 unless \257>
                     \Q$prefix\E $grp_regexp \Q$postfix\E}

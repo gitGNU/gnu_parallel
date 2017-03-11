@@ -727,9 +727,9 @@ may not be used. B<--gnu> is kept for compatibility.
 =item B<--group>
 
 Group output. Output from each jobs is grouped together and is only
-printed when the command is finished. stderr (standard error) first
-followed by stdout (standard output). This takes some CPU time. In
-rare situations GNU B<parallel> takes up lots of CPU time and if it is
+printed when the command is finished.  stdout (standard output) first
+followed by stderr (standard error). This takes some CPU time. In rare
+situations GNU B<parallel> takes up lots of CPU time and if it is
 acceptable that the outputs from different commands are mixed
 together, then disabling grouping with B<-u> can speedup GNU
 B<parallel> by a factor of 10.
@@ -1759,6 +1759,16 @@ The B<--plus> replacement strings are implemented as:
   --rpl '{/..} s:.*/::; s:\.[^/.]+$::; s:\.[^/.]+$::'
   --rpl '{/...} s:.*/::; s:\.[^/.]+$::; s:\.[^/.]+$::; s:\.[^/.]+$::'
   --rpl '{##} $_=total_jobs()'
+  --rpl '{:-(.+?)} $_ ||= $$1'
+  --rpl '{:(\d+?)} substr($_,0,$$1) = ""'
+  --rpl '{:(\d+?):(\d+?)} $_ = substr($_,$$1,$$2);'
+  --rpl '{#([^#].*?)} s/^$$1//;'
+  --rpl '{%(.+?)} s/$$1$//;'
+  --rpl '{/(.+?)/(.+?)} s/$$1/$$2/;'
+  --rpl '{^(.+?)} s/($$1)/uc($1)/e;'
+  --rpl '{^^(.+?)} s/($$1)/uc($1)/eg;'
+  --rpl '{,(.+?)} s/($$1)/lc($1)/e;'
+  --rpl '{,,(.+?)} s/($$1)/lc($1)/eg;'
 
 
 If the user defined replacement string starts with '{' it can also be

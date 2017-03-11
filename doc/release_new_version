@@ -206,6 +206,19 @@ Haiku of the month:
 
 New in this release:
 
+* --rpl can now take arguments by adding '(regexp)' in the replacement string.
+
+https://joss.theoj.org/papers/3cde54de7dfbcada7c0fc04f569b36c7
+https://link.springer.com/article/10.1134/S0016793217010108
+http://biorxiv.org/content/biorxiv/early/2017/02/17/109280.full.pdf
+https://arxiv.org/pdf/1612.08239.pdf
+http://pubs.acs.org/doi/pdfplus/10.1021/acs.jctc.6b00506
+https://link.springer.com/article/10.1007/s11042-016-4185-5
+https://arxiv.org/pdf/1611.08003.pdf
+https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-016-0208-8
+
+https://dspace.library.colostate.edu/bitstream/handle/11124/170687/Johnson_mines_0052E_11207.pdf?sequence=1&isAllowed=y
+
 http://www.blopig.com/blog/2017/02/parallel-computing-gnu-parallel/
 http://garf.us/2017/02/stig-sandbeck-mathisen-change-all-the-passwords-again/
 
