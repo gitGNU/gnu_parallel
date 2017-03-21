@@ -53,15 +53,51 @@ par_pipepart_remote	11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
 par_pipepart_remote	11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
 par_pipepart_remote	11 11 33 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
 par_pipepart_remote	 9  9 28 /tmp/parallel-local-ssh2-tmpdir/parXXXXX
+par_tee_ssh	A 1	A 1
+par_tee_ssh	A 1	1000000 1000000 6888896
+par_tee_ssh	A 2	A 2
+par_tee_ssh	A 2	1000000 1000000 6888896
+par_tee_ssh	A 3	A 3
+par_tee_ssh	A 3	1000000 1000000 6888896
+par_tee_ssh	A 4	A 4
+par_tee_ssh	A 4	1000000 1000000 6888896
+par_tee_ssh	B 1	B 1
+par_tee_ssh	B 1	1000000 1000000 6888896
+par_tee_ssh	B 2	B 2
+par_tee_ssh	B 2	1000000 1000000 6888896
+par_tee_ssh	B 3	B 3
+par_tee_ssh	B 3	1000000 1000000 6888896
+par_tee_ssh	B 4	B 4
+par_tee_ssh	B 4	1000000 1000000 6888896
+par_tee_ssh	A 1	A 1
+par_tee_ssh	A 1	1000000 1000000 6888896
+par_tee_ssh	A 2	A 2
+par_tee_ssh	A 2	1000000 1000000 6888896
+par_tee_ssh	A 3	A 3
+par_tee_ssh	A 3	1000000 1000000 6888896
+par_tee_ssh	A 4	A 4
+par_tee_ssh	A 4	1000000 1000000 6888896
+par_tee_ssh	B 1	B 1
+par_tee_ssh	B 1	1000000 1000000 6888896
+par_tee_ssh	B 2	B 2
+par_tee_ssh	B 2	1000000 1000000 6888896
+par_tee_ssh	B 3	B 3
+par_tee_ssh	B 3	1000000 1000000 6888896
+par_tee_ssh	B 4	B 4
+par_tee_ssh	B 4	1000000 1000000 6888896
+par_tee_ssh	Do we get different shells?
+par_tee_ssh	2
+par_tee_ssh	3
+par_tee_ssh	3
 par_wd_no_such_dir	### --wd no-such-dir - csh
-par_wd_no_such_dir	mkdir: cannot create directory ‘/no-such-dir’: Permission denied
+par_wd_no_such_dir	mkdir: cannot create directory '/no-such-dir': Permission denied
 par_wd_no_such_dir	parallel: Cannot chdir to /no-such-dir
 par_wd_no_such_dir	Exit code 1
 par_wd_no_such_dir	### --wd no-such-dir - tcsh
-par_wd_no_such_dir	mkdir: cannot create directory ‘/no-such-dir’: Permission denied
+par_wd_no_such_dir	mkdir: cannot create directory '/no-such-dir': Permission denied
 par_wd_no_such_dir	parallel: Cannot chdir to /no-such-dir
 par_wd_no_such_dir	Exit code 1
 par_wd_no_such_dir	### --wd no-such-dir - bash
-par_wd_no_such_dir	mkdir: cannot create directory ‘/no-such-dir’: Permission denied
+par_wd_no_such_dir	mkdir: cannot create directory '/no-such-dir': Permission denied
 par_wd_no_such_dir	parallel: Cannot chdir to /no-such-dir
 par_wd_no_such_dir	Exit code 1

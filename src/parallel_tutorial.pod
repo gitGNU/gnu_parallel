@@ -18,7 +18,7 @@ To run this tutorial you must have the following:
 =item parallel >= version 20160822
 
 Install the newest version using your package manager (recommended for
-security reasons) or with this command:
+security reasons), the way described in README, or with this command:
 
   (wget -O - pi.dk/3 || curl pi.dk/3/ || fetch -o - http://pi.dk/3) | bash
 

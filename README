@@ -100,3 +100,11 @@ publication please cite:
 = New versions =
 
 New versions will be released at: ftp://ftp.gnu.org/gnu/parallel/
+
+= Dependencies =
+
+GNU Parallel should work with a normal full Perl installation. However,
+if you system has split up Perl into multiple packages then these are
+the important ones:
+
+    opkg install perlbase-getopt perlbase-ipc procps-ng-ps perlbase-mime

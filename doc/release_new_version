@@ -208,6 +208,8 @@ New in this release:
 
 * --rpl can now take arguments by adding '(regexp)' in the replacement string.
 
+https://blogs.oracle.com/LetTheSunShineIn/entry/gnu_parallel_%E3%81%A8_sql_loader
+http://www.beyeler.com.br/2017/03/trabalhando-como-paralelismo-no-bash-usando-o-gnu-parallel/
 https://joss.theoj.org/papers/3cde54de7dfbcada7c0fc04f569b36c7
 https://link.springer.com/article/10.1134/S0016793217010108
 http://biorxiv.org/content/biorxiv/early/2017/02/17/109280.full.pdf

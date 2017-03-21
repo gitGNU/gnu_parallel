@@ -79,6 +79,14 @@ par_env_parallel_fifo() {
 	env_parallel --pipe -S lo --cat 'cat {};myfunc'
 }
 
+par_tee_ssh() {
+    seq 1000000 | parallel --pipe --tee -kS lo,csh@lo,tcsh@lo --tag 'echo {};wc' ::: A B ::: {1..4}
+    seq 1000000 > /tmp/1000000
+    parallel --pipepart -a /tmp/1000000 --tee -kS lo,csh@lo,tcsh@lo --tag 'echo {};wc' ::: A B ::: {1..4}
+    echo "Do we get different shells?"
+    parallel --pipepart -a /tmp/1000000 --tee -kS lo,csh@lo,tcsh@lo 'echo $SHELL' ::: A B ::: {1..4} | sort | uniq -c | field 1 | sort -n
+}
+
 export -f $(compgen -A function | grep par_)
 #compgen -A function | grep par_ | sort | parallel --delay $D -j$P --tag -k '{} 2>&1'
 compgen -A function | grep par_ | sort |

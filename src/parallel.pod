@@ -18,6 +18,8 @@ B<parallel> --semaphore [options] I<command>
 
 B<#!/usr/bin/parallel> --shebang [options] [I<command> [arguments]]
 
+B<#!/usr/bin/parallel> --shebang-wrap [options] [I<command> [arguments]]
+
 
 =head1 DESCRIPTION
 
@@ -89,7 +91,9 @@ B<Bash functions>: B<export -f> the function first or use B<env_parallel>.
 
 B<Bash aliases>: Use B<env_parallel>.
 
-B<Ksh functions and aliases>: Use B<env_parallel>.
+B<Csh aliases>: Use B<env_parallel>.
+
+B<Tcsh aliases>: Use B<env_parallel>.
 
 B<Zsh functions and aliases>: Use B<env_parallel>.
 
@@ -858,10 +862,10 @@ Example:
   parallel --hostgroups \
     --sshlogin @grp1/myserver1 -S @grp1+grp2/myserver2 \
     --sshlogin @grp3/myserver3 \
-    echo ::: my_grp1_arg@grp1 arg_for_grp2@grp2 third_arg@grp1+grp3
+    echo ::: my_grp1_arg@grp1 arg_for_grp2@grp2 third@grp1+grp3
 
 B<my_grp1_arg> may be run on either B<myserver1> or B<myserver2>,
-B<third_arg> may be run on either B<myserver1> or B<myserver3>,
+B<third> may be run on either B<myserver1> or B<myserver3>,
 but B<arg_for_grp2> will only be run on B<myserver2>.
 
 See also: B<--sshlogin>.
@@ -1125,6 +1129,9 @@ are free, no more jobs will be started. If less than 50% I<size> bytes
 are free, the youngest job will be killed, and put back on the queue
 to be run later.
 
+B<--retries> must be set to determine how many times GNU B<parallel>
+should retry a given job.
+
 
 =item B<--minversion> I<version>
 
@@ -1248,6 +1255,20 @@ Activate additional replacement strings: {+/} {+.} {+..} {+...} {..}
 B<{##}> is the number of jobs to be run. It is incompatible with
 B<-X>/B<-m>/B<--xargs>.
 
+The following dynamic replacement strings are also activated. They are
+inspired by bash's parameter expansion:
+
+  {:-str}       str if the value is empty
+  {:num}        remove the first num characters
+  {:num1:num2}  characters from num1 to num2
+  {#str}        remove prefix str
+  {%str}        remove postfix str
+  {/str1/str2}  replace str1 with str2
+  {^str}        uppercase str if found at the start
+  {^^str}       uppercase str
+  {,str}        lowercase str if found at the start
+  {,,str}       lowercase str
+
 
 =item B<--progress>
 
@@ -1263,7 +1284,7 @@ reading everything at startup.
 By sending GNU B<parallel> SIGUSR2 you can toggle turning on/off
 B<--progress> on a running GNU B<parallel> process.
 
-See also B<--eta>.
+See also B<--eta> and B<--bar>.
 
 
 =item B<--max-args>=I<max-args>
@@ -1610,11 +1631,12 @@ B<parallel> will figure out the failed jobs and run those again.
 B<--retry-failed> ignores the command and arguments on the command
 line: It only looks at the joblog.
 
-    B<Differences between --resume, --resume-failed, --retry-failed>
+B<Differences between --resume, --resume-failed, --retry-failed>
 
 In this example B<exit {= $_%=2 =}> will cause every other job to fail.
 
-  timeout -k 1 4 parallel --joblog log -j10 'sleep {}; exit {= $_%=2 =}' ::: {10..1}
+  timeout -k 1 4 parallel --joblog log -j10 \
+    'sleep {}; exit {= $_%=2 =}' ::: {10..1}
 
 4 jobs completed. 2 failed:
 
@@ -1628,7 +1650,8 @@ B<--resume> does not care about the Exitval, but only looks at Seq. If
 the Seq is run, it will not be run again. So if needed, you can change
 the command for the seqs not run yet:
 
-  parallel --resume --joblog log -j10 'sleep .{}; exit {= $_%=2 =}' ::: {10..1}
+  parallel --resume --joblog log -j10 \
+    'sleep .{}; exit {= $_%=2 =}' ::: {10..1}
 
   Seq	[...]	Exitval	Signal	Command
   [... as above ...]
@@ -1644,7 +1667,8 @@ to figure out which commands to run. Again this means you can change
 the command, but not the arguments. It will run the failed seqs and
 the seqs not yet run:
 
-  parallel --resume-failed --joblog log -j10 'echo {};sleep .{}; exit {= $_%=3 =}' ::: {10..1}
+  parallel --resume-failed --joblog log -j10 \
+    'echo {};sleep .{}; exit {= $_%=3 =}' ::: {10..1}
 
   Seq	[...]	Exitval	Signal	Command
   [... as above ...]
@@ -1744,7 +1768,8 @@ it possible to define your own replacement strings. GNU B<parallel>'s
   --rpl '{#} 1 $_=$job->seq()'
   --rpl '{%} 1 $_=$job->slot()'
   --rpl '{/} s:.*/::'
-  --rpl '{//} $Global::use{"File::Basename"} ||= eval "use File::Basename; 1;"; $_ = dirname($_);'
+  --rpl '{//} $Global::use{"File::Basename"} ||=
+    eval "use File::Basename; 1;"; $_ = dirname($_);'
   --rpl '{/.} s:.*/::; s:\.[^/.]+$::;'
   --rpl '{.} s:\.[^/.]+$::'
 
@@ -1757,17 +1782,17 @@ The B<--plus> replacement strings are implemented as:
   --rpl '{..} s:\.[^/.]+$::; s:\.[^/.]+$::'
   --rpl '{...} s:\.[^/.]+$::; s:\.[^/.]+$::; s:\.[^/.]+$::'
   --rpl '{/..} s:.*/::; s:\.[^/.]+$::; s:\.[^/.]+$::'
-  --rpl '{/...} s:.*/::; s:\.[^/.]+$::; s:\.[^/.]+$::; s:\.[^/.]+$::'
+  --rpl '{/...} s:.*/::;s:\.[^/.]+$::;s:\.[^/.]+$::;s:\.[^/.]+$::'
   --rpl '{##} $_=total_jobs()'
   --rpl '{:-(.+?)} $_ ||= $$1'
   --rpl '{:(\d+?)} substr($_,0,$$1) = ""'
   --rpl '{:(\d+?):(\d+?)} $_ = substr($_,$$1,$$2);'
   --rpl '{#([^#].*?)} s/^$$1//;'
   --rpl '{%(.+?)} s/$$1$//;'
-  --rpl '{/(.+?)/(.+?)} s/$$1/$$2/;'
-  --rpl '{^(.+?)} s/($$1)/uc($1)/e;'
+  --rpl '{/(.+?)/(.*?)} s/$$1/$$2/;'
+  --rpl '{^(.+?)} s/^($$1)/uc($1)/e;'
   --rpl '{^^(.+?)} s/($$1)/uc($1)/eg;'
-  --rpl '{,(.+?)} s/($$1)/lc($1)/e;'
+  --rpl '{,(.+?)} s/^($$1)/lc($1)/e;'
   --rpl '{,,(.+?)} s/($$1)/lc($1)/eg;'
 
 
@@ -1782,7 +1807,8 @@ Here are a few examples:
   Is the job sequence even or odd?
   --rpl '{odd} $_ = seq() % 2 ? "odd" : "even"'
   Pad job sequence with leading zeros to get equal width
-  --rpl '{0#} $f=1+int("".(log(total_jobs())/log(10))); $_=sprintf("%0${f}d",seq())'
+  --rpl '{0#} $f=1+int("".(log(total_jobs())/log(10)));
+    $_=sprintf("%0${f}d",seq())'
   Job sequence counting from 0
   --rpl '{#0} $_ = seq() - 1'
   Job slot counting from 2
@@ -1792,7 +1818,7 @@ You can have dynamic replacement strings by including parenthesis in
 the replacement string and adding a regular expression between the
 parenthesis. The matching string will be inserted as $$1:
 
-  parallel --rpl '{%(.*?)} s/$$1//' echo {%.tar.gz} ::: file.tar.gz
+  parallel --rpl '{%(.*?)} s/$$1//' echo {%.tar.gz} ::: my.tar.gz
 
 You can even use multiple matches:
 
@@ -1802,7 +1828,8 @@ You can even use multiple matches:
     $$1 = ($$1%100 + 1900); $_="$$1-$$2-$$3"
   ' echo {@99-12-31} {@12.31.99} {@31/12-1999} ::: a
 
-  parallel --rpl '{(.*?)/(.*?)} $_="$$2$_$$1"' echo {swap/these} ::: -middle-
+  parallel --rpl '{(.*?)/(.*?)} $_="$$2$_$$1"' \
+    echo {swap/these} ::: -middle-
 
 See also: B<{= perl expression =}> B<--parens>
 
@@ -1923,7 +1950,7 @@ line. If the program can be run like this:
 
 then the script can be changed to:
 
-  #!/usr/bin/parallel --shebang-wrap /the/original/parser --with-options
+  #!/usr/bin/parallel --shebang-wrap /original/parser --options
 
 E.g.
 
@@ -1935,7 +1962,7 @@ If the program can be run like this:
 
 then the script can be changed to:
 
-  #!/usr/bin/parallel --shebang-wrap --pipe /the/original/parser --with-options
+  #!/usr/bin/parallel --shebang-wrap --pipe /orig/parser --opts
 
 E.g.
 
@@ -1992,7 +2019,7 @@ complete.
 
 The format of a DBURL is:
 
-  [sql:]vendor://[[user][:password]@][host][:port]/[database]/table
+  [sql:]vendor://[[user][:pwd]@][host][:port]/[db]/table
 
 E.g.
 
@@ -2204,7 +2231,8 @@ B<:::>.
 How many numbers in 1..1000 contain 0..9, and how many bytes do they
 fill:
 
-  seq 1000 | parallel --pipe --tee --tag 'grep {1} | wc {2}' ::: {0..9} ::: -l -c
+  seq 1000 | parallel --pipe --tee --tag \
+    'grep {1} | wc {2}' ::: {0..9} ::: -l -c
 
 How many words contain a..z and how many bytes do they fill?
 
@@ -2222,7 +2250,7 @@ I<sequence> determines how the job is killed. The default is:
 
 which sends a TERM signal, waits 200 ms, sends another TERM signal,
 waits 100 ms, sends another TERM signal, waits 50 ms, sends a KILL
-signal, waits 25 ms, and exits. GNU B<parallel> discovers if a process
+signal, waits 25 ms, and exits. GNU B<parallel> detects if a process
 dies before the waiting time is up.
 
 
@@ -2250,8 +2278,7 @@ jobs.
 =item B<--timeout> I<secs>
 
 Time out for command. If the command runs for longer than I<secs>
-seconds it will get killed with SIGTERM, followed by SIGTERM 200 ms
-later, followed by SIGKILL 200 ms later.
+seconds it will get killed as per B<--termseq>.
 
 If I<secs> is followed by a % then the timeout will dynamically be
 computed as a percentage of the median average runtime. Only values
@@ -2281,22 +2308,22 @@ remote computers. The files will be transferred using B<rsync> and
 will be put relative to the default work dir. If the path contains /./
 the remaining path will be relative to the work dir. E.g.
 
-  echo foo/bar.txt | parallel \
-    --sshlogin server.example.com --transferfile {} wc
+  echo foo/bar.txt | parallel --transferfile {} \
+    --sshlogin server.example.com wc
 
 This will transfer the file I<foo/bar.txt> to the computer
 I<server.example.com> to the file I<$HOME/foo/bar.txt> before running
 B<wc foo/bar.txt> on I<server.example.com>.
 
-  echo /tmp/foo/bar.txt | parallel \
-    --sshlogin server.example.com --transferfile {} wc
+  echo /tmp/foo/bar.txt | parallel --transferfile {} \
+    --sshlogin server.example.com wc
 
 This will transfer the file I</tmp/foo/bar.txt> to the computer
 I<server.example.com> to the file I</tmp/foo/bar.txt> before running
 B<wc /tmp/foo/bar.txt> on I<server.example.com>.
 
-  echo /tmp/./foo/bar.txt | parallel \
-    --sshlogin server.example.com --transferfile {} wc {= s:.*/./:./: =}
+  echo /tmp/./foo/bar.txt | parallel --transferfile {} \
+    --sshlogin server.example.com wc {= s:.*/./:./: =}
 
 This will transfer the file I</tmp/foo/bar.txt> to the computer
 I<server.example.com> to the file I<foo/bar.txt> before running
@@ -2622,7 +2649,8 @@ Find the files in a list that do not exist
 You have a dir with files named as 24 hours in 5 minute intervals:
 00:00, 00:05, 00:10 .. 23:55. You want to find the files missing:
 
-  parallel [ -f {1}:{2} ] "||" echo {1}:{2} does not exist ::: {00..23} ::: {00..55..5}
+  parallel [ -f {1}:{2} ] "||" echo {1}:{2} does not exist \
+    ::: {00..23} ::: {00..55..5}
 
 
 =head1 EXAMPLE: Calling Bash functions
@@ -2731,18 +2759,26 @@ Let us assume a website stores images like:
 where YYYYMMDD is the date and ## is the number 01-24. This will
 download images for the past 30 days:
 
-  parallel wget http://www.example.com/path/to/'$(date -d "today -{1} days" +%Y%m%d)_{2}.jpg' ::: $(seq 30) ::: $(seq -w 24)
+  getit() {
+    date=$(date -d "today -$1 days" +%Y%m%d)
+    num=$2
+    echo wget http://www.example.com/path/to/${date}_${num}.jpg
+  }
+  export -f getit
+  
+  parallel getit ::: $(seq 30) ::: $(seq -w 24)
 
-B<$(date -d "today -{1} days" +%Y%m%d)> will give the dates in
-YYYYMMDD with B<{1}> days subtracted.
+B<$(date -d "today -$1 days" +%Y%m%d)> will give the dates in
+YYYYMMDD with B<$1> days subtracted.
 
 
 =head1 EXAMPLE: Copy files as last modified date (ISO8601) with added random digits
 
-  find . | parallel cp {} \
-    '../destdir/{= $a=int(10000*rand); $_=`date -r "$_" +%FT%T"$a"`; chomp; =}'
+  find . | parallel cp {} '../destdir/{= $a=int(10000*rand); $_=pQ($_);
+    $_=`date -r "$_" +%FT%T"$a"`; chomp; =}'
 
-B<{=> and B<=}> mark a perl expression. B<date +%FT%T> is the date in ISO8601 with time.
+B<{=> and B<=}> mark a perl expression. B<pQ> quotes the
+string. B<date +%FT%T> is the date in ISO8601 with time.
 
 
 =head1 EXAMPLE: Digtal clock with "blinking" :
@@ -2812,7 +2848,8 @@ URLs and the process is started over until no unseen links are found.
     cat $URLLIST |
       parallel lynx -listonly -image_links -dump {} \; \
         wget -qm -l1 -Q1 {} \; echo Spidered: {} \>\&2 |
-        perl -ne 's/#.*//; s/\s+\d+.\s(\S+)$/$1/ and do { $seen{$1}++ or print }' |
+        perl -ne 's/#.*//; s/\s+\d+.\s(\S+)$/$1/ and
+          do { $seen{$1}++ or print }' |
       grep -F $BASEURL |
       grep -v -x -F -f $SEEN | tee -a $SEEN > $URLLIST2
     mv $URLLIST2 $URLLIST
@@ -2860,7 +2897,7 @@ If the processing requires more steps the for-loop like this:
 
   (for x in `cat list` ; do
     no_extension=${x%.*};
-    do_something $x scale $no_extension.jpg
+    do_step1 $x scale $no_extension.jpg
     do_step2 <$x $no_extension
   done) | process_output
 
@@ -2868,13 +2905,13 @@ and while-loops like this:
 
   cat list | (while read x ; do
     no_extension=${x%.*};
-    do_something $x scale $no_extension.jpg
+    do_step1 $x scale $no_extension.jpg
     do_step2 <$x $no_extension
   done) | process_output
 
 can be written like this:
 
-  cat list | parallel "do_something {} scale {.}.jpg ; do_step2 <{} {.}" |\
+  cat list | parallel "do_step1 {} scale {.}.jpg ; do_step2 <{} {.}" |\
     process_output
 
 If the body of the loop is bigger, it improves readability to use a function:
@@ -2945,7 +2982,8 @@ the loop variable if is is named instead of just having a number. Use
 B<--header :> to let the first argument be an named alias for the
 positional replacement string:
 
-  parallel --header : echo {colour} {size} ::: colour red green blue ::: size S M L XL XXL
+  parallel --header : echo {colour} {size} \
+    ::: colour red green blue ::: size S M L XL XXL
 
 This also works if the input file is a file with columns:
 
@@ -3021,7 +3059,8 @@ printed as soon as possible you can use B<-u>.
 Compare the output of:
 
   parallel traceroute ::: qubes-os.org debian.org freenetproject.org
-  parallel --line-buffer traceroute ::: qubes-os.org debian.org freenetproject.org
+  parallel --line-buffer traceroute ::: \
+    qubes-os.org debian.org freenetproject.org
   parallel -u traceroute ::: qubes-os.org debian.org freenetproject.org
 
 
@@ -3031,7 +3070,8 @@ GNU B<parallel> groups the output lines, but it can be hard to see
 where the different jobs begin. B<--tag> prepends the argument to make
 that more visible:
 
-  parallel --tag traceroute ::: qubes-os.org debian.org freenetproject.org
+  parallel --tag traceroute ::: \
+    qubes-os.org debian.org freenetproject.org
 
 B<--tag> works with B<--line-buffer> but not with B<-u>:
 
@@ -3156,7 +3196,7 @@ is much faster.
 
 If it still does not fit in memory you can do this:
 
-  parallel --pipepart -a regexps.txt --block 1M grep -F -f - -n bigfile |
+  parallel --pipepart -a regexps.txt --block 1M grep -Ff - -n bigfile |
     sort -un | perl -pe 's/^\d+://'
 
 The 1M should be your free memory divided by the number of cores and
@@ -3167,19 +3207,22 @@ GNU/Linux you can do:
               END { print sum }' /proc/meminfo)
   percpu=$((free / 200 / $(parallel --number-of-cores)))k
 
-  parallel --pipepart -a regexps.txt --block $percpu --compress grep -F -f - -n bigfile |
+  parallel --pipepart -a regexps.txt --block $percpu --compress \
+    grep -F -f - -n bigfile |
     sort -un | perl -pe 's/^\d+://'
 
 If you can live with duplicated lines and wrong order, it is faster to do:
 
-  parallel --pipepart -a regexps.txt --block $percpu --compress grep -F -f - bigfile
+  parallel --pipepart -a regexps.txt --block $percpu --compress \
+    grep -F -f - bigfile
 
 =head2 Limiting factor: CPU
 
 If the CPU is the limiting factor parallelization should be done on
 the regexps:
 
-  cat regexp.txt | parallel --pipe -L1000 --round-robin --compress grep -f - -n bigfile |
+  cat regexp.txt | parallel --pipe -L1000 --round-robin --compress \
+    grep -f - -n bigfile |
     sort -un | perl -pe 's/^\d+://'
 
 The command will start one B<grep> per CPU and read I<bigfile> one
@@ -3191,7 +3234,8 @@ Some storage systems perform better when reading multiple chunks in
 parallel. This is true for some RAID systems and for some network file
 systems. To parallelize the reading of I<bigfile>:
 
-  parallel --pipepart --block 100M -a bigfile -k --compress grep -f regexp.txt
+  parallel --pipepart --block 100M -a bigfile -k --compress \
+    grep -f regexp.txt
 
 This will split I<bigfile> into 100MB chunks and run B<grep> on each of
 these chunks. To parallelize both reading of I<bigfile> and I<regexp.txt>
@@ -3442,7 +3486,8 @@ prepend B<torsocks> to B<ssh>:
 
 If not all hosts are accessible through TOR:
 
-  parallel -S 'torsocks ssh izjafdceobowklhz.onion,host2,host3' echo ::: a b c
+  parallel -S 'torsocks ssh izjafdceobowklhz.onion,host2,host3' \
+    echo ::: a b c
 
 See more B<ssh> tricks on https://en.wikibooks.org/wiki/OpenSSH/Cookbook/Proxies_and_Jump_Hosts
 
@@ -3468,7 +3513,7 @@ are not being transferred. To fix those run B<rsync> a final time:
 If you are unable to push data, but need to pull them and the files
 are called digits.png (e.g. 000000.png) you might be able to do:
 
-  seq -w 0 99 | parallel rsync -Havessh fooserver:src-path/*{}.png destdir/
+  seq -w 0 99 | parallel rsync -Havessh fooserver:src/*{}.png destdir/
 
 
 =head1 EXAMPLE: Use multiple inputs in one command
@@ -3555,7 +3600,8 @@ Or MySQL:
   DBTABLEURL=$DBURL/mytable
   parallel --sqlandworker $DBTABLEURL seq ::: {1..10}
   sql -p -B $DBURL "SELECT * FROM mytable;" > mytable.tsv
-  perl -pe 's/"/""/g;s/\t/","/g;s/^/"/;s/$/"/;s/\\\\/\\/g;s/\\t/\t/g;s/\\n/\n/g;' mytable.tsv
+  perl -pe 's/"/""/g; s/\t/","/g; s/^/"/; s/$/"/; s/\\\\/\\/g;
+    s/\\t/\t/g; s/\\n/\n/g;' mytable.tsv
 
 
 =head1 EXAMPLE: Output to CSV-file for R
@@ -3685,7 +3731,7 @@ separator before each customer (column 2 = $F[1]). Here we first make
 a 50 character random string, which we then use as the separator:
 
   sep=`perl -e 'print map { ("a".."z","A".."Z")[rand(52)] } (1..50);'`
-  cat my.csv | perl -ape '$F[1] ne $last and print "'$sep'"; $last = $F[1]' |
+  cat my.csv | perl -ape '$F[1] ne $l and print "'$sep'"; $l = $F[1]' |
      parallel --recend $sep --rrs --pipe -N1 wc
 
 If your program can process multiple customers replace B<-N1> with a
@@ -3875,7 +3921,7 @@ If you have a dir in which users drop files that needs to be processed
 you can do this on GNU/Linux (If you know what B<inotifywait> is
 called on other platforms file a bug report):
 
-  inotifywait -q -m -r -e MOVED_TO -e CLOSE_WRITE --format %w%f my_dir |\
+  inotifywait -qmre MOVED_TO -e CLOSE_WRITE --format %w%f my_dir |\
     parallel -u echo
 
 This will run the command B<echo> on each file put into B<my_dir> or
@@ -3884,7 +3930,7 @@ subdirs of B<my_dir>.
 You can of course use B<-S> to distribute the jobs to remote
 computers:
 
-  inotifywait -q -m -r -e MOVED_TO -e CLOSE_WRITE --format %w%f my_dir |\
+  inotifywait -qmre MOVED_TO -e CLOSE_WRITE --format %w%f my_dir |\
     parallel -S ..  -u echo
 
 If the files to be processed are in a tar file then unpacking one file

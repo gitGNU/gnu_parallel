@@ -7,26 +7,12 @@ par_keeporder	job0
 par_keeporder	job1
 par_keeporder	job2
 par_path_remote_bash	bug #47695: How to set $PATH on remote? Bash
-par_path_remote_bash	
-par_path_remote_bash	 * Documentation:  https://help.ubuntu.com
-par_path_remote_bash	 * Management:     https://landscape.canonical.com
-par_path_remote_bash	 * Support:        https://ubuntu.com/advantage
-par_path_remote_bash	
-par_path_remote_bash	0 updates are security updates.
-par_path_remote_bash	
 par_path_remote_bash	BASH Path before: /bin:/usr/bin with no parallel
 par_path_remote_bash	-bash: line 2: parallel: command not found
 par_path_remote_bash	^^^^^^^^ Not found is OK
 par_path_remote_bash	/bin:/usr/bin:/tmp OK
 par_path_remote_bash	
 par_path_remote_csh	bug #47695: How to set $PATH on remote? csh
-par_path_remote_csh	
-par_path_remote_csh	 * Documentation:  https://help.ubuntu.com
-par_path_remote_csh	 * Management:     https://landscape.canonical.com
-par_path_remote_csh	 * Support:        https://ubuntu.com/advantage
-par_path_remote_csh	
-par_path_remote_csh	0 updates are security updates.
-par_path_remote_csh	
 par_path_remote_csh	Warning: no access to tty (Bad file descriptor).
 par_path_remote_csh	Thus no job control in this shell.
 par_path_remote_csh	CSH Path before: /bin:/usr/bin with no parallel

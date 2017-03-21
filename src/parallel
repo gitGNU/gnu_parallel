@@ -219,7 +219,7 @@ sub pipepart_setup {
 	# Prepend each command with
 	#   cat file
 	my $cat_string = "cat ".::shell_quote_scalar($opt::a[0]);
-	for(1..max_jobs_running()) {
+	for(1..$Global::JobQueue->total_jobs()) {
 	    push @Global::cat_prepends, $cat_string;
 	}
     } else {
@@ -261,10 +261,9 @@ sub pipepart_setup {
 sub pipe_tee_setup {
     # mkfifo t1..5
     my @fifos;
-    for(1..max_jobs_running()) {
+    for(1..$Global::JobQueue->total_jobs()) {
 	push @fifos, tmpfifo();
     }
-
     # cat foo | tee t1 t2 t3 t4 t5 > /dev/null
     if(not fork()){
 	# Let tee inheirit our stdin
@@ -1361,7 +1360,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20170223;
+    $Global::version = 20170311;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1407,14 +1406,14 @@ sub init_globals {
 	 '{#([^#].*?)}' => 's/^$$1//;',
 	 # Bash ${a%def}
 	 '{%(.+?)}' => 's/$$1$//;',
-	 # Bash ${a/def/ghi}
-	 '{/(.+?)/(.+?)}' => 's/$$1/$$2/;',
+	 # Bash ${a/def/ghi} ${a/def/}
+	 '{/(.+?)/(.*?)}' => 's/$$1/$$2/;',
 	 # Bash ${a^a}
-	 '{^(.+?)}' => 's/($$1)/uc($1)/e;',
+	 '{^(.+?)}' => 's/^($$1)/uc($1)/e;',
 	 # Bash ${a^^a}
 	 '{^^(.+?)}' => 's/($$1)/uc($1)/eg;',
 	 # Bash ${a,A}
-	 '{,(.+?)}' => 's/($$1)/lc($1)/e;',
+	 '{,(.+?)}' => 's/^($$1)/lc($1)/e;',
 	 # Bash ${a,,A}
 	 '{,,(.+?)}' => 's/($$1)/lc($1)/eg;',
 	);
@@ -3543,8 +3542,9 @@ sub onall {
     #   $Global::exitstatus
     #   $Global::debug
     #   $Global::joblog
-    #   $opt::tag
     #   $opt::joblog
+    #   $opt::tag
+    #   $opt::tee
     # Input:
     #   @command = command to run on all hosts
     # Returns: N/A
@@ -3590,6 +3590,7 @@ sub onall {
 	     ((defined $opt::max_chars) ? "--max-chars ".$opt::max_chars : ""),
 	     ((defined $opt::plain) ? "--plain" : ""),
 	     ((defined $opt::ungroup) ? "-u" : ""),
+	     ((defined $opt::tee) ? "--tee" : ""),
 	);
     my $suboptions =
 	join(" ",
@@ -3607,6 +3608,7 @@ sub onall {
 	     ((defined $opt::retries) ? "--retries ".$opt::retries : ""),
 	     ((defined $opt::timeout) ? "--timeout ".$opt::timeout : ""),
 	     ((defined $opt::ungroup) ? "-u" : ""),
+	     ((defined $opt::tee) ? "--tee" : ""),
 	     ((defined $opt::workdir) ? "--wd ".$opt::workdir : ""),
 	     (@Global::transfer_files ? map { "--tf ".::shell_quote_scalar($_) }
 	      @Global::transfer_files : ""),
@@ -6461,7 +6463,7 @@ sub empty {
 sub total_jobs {
     my $self = shift;
     if(not defined $self->{'total_jobs'}) {
-	if($opt::pipe) {
+	if($opt::pipe and not $opt::tee) {
 	    ::error("--pipe is incompatible with --eta/--bar/--shuf");
 	    ::wait_and_exit(255);
 	}
@@ -8277,7 +8279,7 @@ sub print {
 	# cleanup tmp files if --files was set
 	::rm($self->fh(1,"name"));
     }
-    if($opt::pipe and $self->virgin()) {
+    if($opt::pipe and $self->virgin() and not $opt::tee) {
 	# Skip --joblog, --dryrun, --verbose
     } else {
 	if($opt::ungroup) {
@@ -9950,15 +9952,15 @@ sub get {
        and $Global::max_number_of_args == 0) {
 	::debug("run", "Read 1 but return 0 args\n");
 	# \0 => nothing (not the empty string)
-	return [Arg->new("\0")];
+	$ret = [Arg->new("\0")];
     } else {
 	# Flush cached computed replacements in Arg-objects
 	# To fix: parallel --bar echo {%} ::: a b c ::: d e f
 	if($ret) {
 	    map { $_->flush_cache() } @$ret;
 	}
-	return $ret;
     }
+    return $ret;
 }
 
 sub unget {
@@ -10365,7 +10367,7 @@ sub pQ {
 }
 
 sub total_jobs {
-    return $Global::JobQueue->total_jobs()
+    return $Global::JobQueue->total_jobs();
 }
 
 {
