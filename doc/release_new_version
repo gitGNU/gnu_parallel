@@ -208,21 +208,38 @@ New in this release:
 
 * --rpl can now take arguments by adding '(regexp)' in the replacement string.
 
-https://blogs.oracle.com/LetTheSunShineIn/entry/gnu_parallel_%E3%81%A8_sql_loader
-http://www.beyeler.com.br/2017/03/trabalhando-como-paralelismo-no-bash-usando-o-gnu-parallel/
-https://joss.theoj.org/papers/3cde54de7dfbcada7c0fc04f569b36c7
-https://link.springer.com/article/10.1134/S0016793217010108
-http://biorxiv.org/content/biorxiv/early/2017/02/17/109280.full.pdf
-https://arxiv.org/pdf/1612.08239.pdf
-http://pubs.acs.org/doi/pdfplus/10.1021/acs.jctc.6b00506
-https://link.springer.com/article/10.1007/s11042-016-4185-5
-https://arxiv.org/pdf/1611.08003.pdf
-https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-016-0208-8
+* Vote for GNU Parallel's community ads on
+  http://meta.unix.stackexchange.com/a/4356/2972
+  http://meta.askubuntu.com/a/16750/22307
+  http://meta.serverfault.com/a/9040/45704
 
-https://dspace.library.colostate.edu/bitstream/handle/11124/170687/Johnson_mines_0052E_11207.pdf?sequence=1&isAllowed=y
+* GNU Parallel was cited in: shmlast: An improved implementation of Conditional Reciprocal Best Hits with LAST and Python https://joss.theoj.org/papers/3cde54de7dfbcada7c0fc04f569b36c7
 
-http://www.blopig.com/blog/2017/02/parallel-computing-gnu-parallel/
-http://garf.us/2017/02/stig-sandbeck-mathisen-change-all-the-passwords-again/
+* GNU Parallel was cited in: Prediction of relativistic electron flux in the Earth’s outer radiation belt at geostationary orbit by adaptive methods https://link.springer.com/article/10.1134/S0016793217010108
+
+* GNU Parallel was cited in: Proper experimental design requires randomization/balancing of molecular ecology experiments http://biorxiv.org/content/biorxiv/early/2017/02/17/109280.full.pdf
+
+* GNU Parallel was cited in: Higher likelihood of multiple bit-flips due to neutron-induced strikes on logic gates https://arxiv.org/pdf/1612.08239.pdf
+
+* GNU Parallel was cited in: A Monte Carlo Resampling Approach for the Calculation of Hybrid Classical and Quantum Free Energies http://pubs.acs.org/doi/pdfplus/10.1021/acs.jctc.6b00506
+
+* GNU Parallel was cited in: Learning string distance with smoothing for OCR spelling correction https://link.springer.com/article/10.1007/s11042-016-4185-5
+
+* GNU Parallel was cited in: The Breakdown of String Perturbation Theory for Many External Particles https://arxiv.org/pdf/1611.08003.pdf
+
+* GNU Parallel was cited in: Large-scale benchmarking reveals false discoveries and count transformation sensitivity in 16S rRNA gene amplicon data analysis methods used in microbiome studies https://microbiomejournal.biomedcentral.com/articles/10.1186/s40168-016-0208-8
+
+* GNU Parallel was cited in: Operations Research Applications in Nuclear Energy https://dspace.library.colostate.edu/bitstream/handle/11124/170687/Johnson_mines_0052E_11207.pdf?sequence=1&isAllowed=y
+
+* GNU Parallel was cited in: Parallel Computing: GNU Parallel http://www.blopig.com/blog/2017/02/parallel-computing-gnu-parallel/
+
+* Stig Sandbeck Mathisen: Change All The Passwords (Again) http://garf.us/2017/02/stig-sandbeck-mathisen-change-all-the-passwords-again/
+
+* Trabalhando como Paralelismo no Bash usando o GNU Parallel http://www.beyeler.com.br/2017/03/trabalhando-como-paralelismo-no-bash-usando-o-gnu-parallel/
+
+* GNU parallel と SQL*Loader 組み合わせ実行例https://blogs.oracle.com/LetTheSunShineIn/entry/gnu_parallel_%E3%81%A8_sql_loader
+
+
 
 * <<Possibly http://link.springer.com/chapter/10.1007%2F978-3-319-22053-6_46>>
 
