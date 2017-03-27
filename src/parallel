@@ -272,11 +272,12 @@ sub pipe_tee_setup {
 	exec "tee",@fifos;
     }
 
-    # cat t1 | grep 1
-    # cat t2 | grep 2
-    # cat t3 | grep 3
-    # cat t4 | grep 4
-    # cat t5 | grep 5
+    # Make cats for each fifo
+    #   cat t1 | grep 1
+    #   cat t2 | grep 2
+    #   cat t3 | grep 3
+    #   cat t4 | grep 4
+    #   cat t5 | grep 5
     # Remove the tmpfifo as soon as it is open
     @Global::cat_prepends = map { "(rm $_;cat) < $_" } @fifos;
 }
