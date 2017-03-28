@@ -9487,13 +9487,6 @@ sub new {
 	    #
 	    # Replace $$1 in {= perl expr =} with groupings in short hand string
 	    #
-	    # ppar --rpl '{rm_suffix(\S+)} s/$$1$//;' echo {rm_suffix.tar.gz} ::: UU.tar.gz
-	    # ppar --rpl '{%(\S+)} s/$$1$//;' echo {%.tar.gz} ::: UU.tar.gz
-	    #
-	    # ppar --rpl '{rm_prefix(\S+)} s/^$$1//;' echo {rm_prefixUU.} ::: UU.tar.gz
-	    # ppar --rpl '{#(\S+)} s/^$$1//;' echo {rm_prefixUU.} ::: UU.tar.gz
-	    #
-	    # ppar --rpl '{replace(\.\S+)/(\.\S+)} s/$$1/$$2/g;' echo {replace.tar/.gz} ::: UU.tar.gz
 	    # ppar --rpl '{/(\.\S+)/(\.\S+)} s/$$1/$$2/g;' echo {/.tar/.gz} ::: UU.tar.gz
 	    my ($prefix,$grp_regexp,$postfix) =
 		$rpl =~ /^( [^(]*  )    # Prefix - e.g. {%%
@@ -9507,7 +9500,7 @@ sub new {
 		  {
 		      # The start remains the same
 		      my $unchanged = $1;
-		      # Dummy entry to start at 2.
+		      # Dummy entry to start at 1.
 		      my @grp = (1);
 		      # $2 = first ()-group in $grp_regexp
 		      # Put $2 in $grp[1], Put $3 in $grp[2]
@@ -9518,7 +9511,7 @@ sub new {
 		      my $rv = $rplval;
 		      # replace $$1 with $_pAr_gRp1, $$2 with $_pAr_gRp2
 		      # in the code to be executed
-		      $rv =~ s/\$\$(\d+)/\$_pAr_gRp$1/g;
+		      $rv =~ s/\$\$ (\d+)/\$_pAr_gRp$1/gx;
 		      # prepend with $_pAr_gRp1 = perlquote($1),
 		      my $set_args = "";
 		      for(my $i = 1;defined $grp[$i]; $i++) {
@@ -9529,13 +9522,36 @@ sub new {
 		  }gxe) {
 	    }
 	    # Do the same for the positional replacement strings
-	    # A bit harder as we have to put in the position number
 	    $posrpl = $rpl;
 	    if($posrpl =~ s/^\{//) {
 		# Only do this if the shorthand start with {
-		while(s{((^|\257>)[^\257]*?) # Don't replace after \257 unless \257>
-                        \{(-?\d+)\Q$posrpl\E}
-		      {$1\257<$3 $Global::rpl{$rpl}\257>}xg) {
+		$prefix=~s/^\{//;
+		while(s{( (?: ^|\257> ) [^\257]*? ) # Don't replace after \257 unless \257>
+		  \{(-?\d+) \s* \Q$prefix\E $grp_regexp \Q$postfix\E}
+		      {
+		      # The start remains the same
+		      my $unchanged = $1;
+		      my $position = $2;
+		      # Dummy entry to start at 1.
+		      my @grp = (1);
+		      # $3 = first ()-group in $grp_regexp
+		      # Put $3 in $grp[1], Put $4 in $grp[2]
+		      # so first ()-group in $grp_regexp is $grp[1];
+		      for(my $i = 3; defined $grp[$#grp]; $i++) {
+			  push @grp, eval '$'.$i;
+		      }
+		      my $rv = $rplval;
+		      # replace $$1 with $_pAr_gRp1, $$2 with $_pAr_gRp2
+		      # in the code to be executed
+		      $rv =~ s/\$\$(\d+)/\$_pAr_gRp$1/gx;
+		      # prepend with $_pAr_gRp1 = perlquote($1),
+		      my $set_args = "";
+		      for(my $i = 1;defined $grp[$i]; $i++) {
+			  $set_args .= "\$_pAr_gRp$i = \"" .
+			      ::perl_quote_scalar($grp[$i]) . "\";";
+		      }
+		      $unchanged . "\257<" . $position . $set_args . $rv . "\257>"
+		  }gxe) {
 		}
 	    }
 	}

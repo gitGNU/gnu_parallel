@@ -576,6 +576,32 @@ replacement string, too:
 
 Output: Same as above.
 
+If the shorthand contains matching parenthesis the replacement string
+becomes a dynamic replacement string and the string in the parenthesis
+can be accessed as $$1. If there are multiple matching parenthesis,
+the matched strings can be accessed using $$2, $$3 and so on.
+
+You can think of this as giving arguments to the replacement
+string. Here we give the argument B<.tar.gz> to the replacement string
+B<{%I<string>}> which removes I<string>:
+
+  parallel --rpl '{%(.+?)} s/$$1$//;' echo {%.tar.gz}.zip ::: foo.tar.gz
+
+Output:
+
+  foo.zip
+
+Here we give the two arguments B<tar.gz> and B<zip> to the replacement
+string B<{/I<string1>/I<string2>}> which replaces I<string1> with
+I<string2>:
+
+  parallel --rpl '{/(.+?)/(.*?)} s/$$1/$$2/;' echo {/tar.gz/zip} ::: foo.tar.gz
+
+Output:
+
+  foo.zip
+
+
 GNU B<parallel>'s 7 replacement strings are implemented as this:
 
   --rpl '{} '
@@ -713,6 +739,76 @@ Output:
   Job 3 of 5
   Job 4 of 5
   Job 5 of 5
+
+=head4 Dynamic replacement strings
+
+B<--plus> also defines B<{:-I<string>}>, B<{:I<number>}>,
+B<{:I<number1>:I<number2>}>, B<{#I<string>}>, B<{%I<string>}>,
+B<{/I<string1>/I<string2>}>, B<{^I<string>}>, B<{^^I<string>}>,
+B<{,I<string>}>, and B<{,,I<string>}>. They are inspired from B<Bash>:
+
+  unset myvar
+  echo ${myvar:-myval}
+  parallel --plus echo {:-myval} ::: "$myvar"
+
+  myvar=abcAaAdef
+  echo ${myvar:2}
+  parallel --plus echo {:2} ::: "$myvar"
+
+  echo ${myvar:2:3}
+  parallel --plus echo {:2:3} ::: "$myvar"
+
+  echo ${myvar#bc}
+  parallel --plus echo {#bc} ::: "$myvar"
+  echo ${myvar#abc}
+  parallel --plus echo {#abc} ::: "$myvar"
+
+  echo ${myvar%de}
+  parallel --plus echo {%de} ::: "$myvar"
+  echo ${myvar%def}
+  parallel --plus echo {%def} ::: "$myvar"
+
+  echo ${myvar/def/ghi}
+  parallel --plus echo {/def/ghi} ::: "$myvar"
+
+  echo ${myvar^a}
+  parallel --plus echo {^a} ::: "$myvar"
+  echo ${myvar^^a}
+  parallel --plus echo {^^a} ::: "$myvar"
+
+  myvar=AbcAaAdef
+  echo ${myvar,A}
+  parallel --plus echo '{,A}' ::: "$myvar"
+  echo ${myvar,,A}
+  parallel --plus echo '{,,A}' ::: "$myvar"
+
+Output:
+
+  myval
+  myval
+  cAaAdef
+  cAaAdef
+  cAa
+  cAa
+  abcAaAdef
+  abcAaAdef
+  AaAdef
+  AaAdef
+  abcAaAdef
+  abcAaAdef
+  abcAaA
+  abcAaA
+  abcAaAghi
+  abcAaAghi
+  AbcAaAdef
+  AbcAaAdef
+  AbcAAAdef
+  AbcAAAdef
+  abcAaAdef
+  abcAaAdef
+  abcaaadef
+  abcaaadef
+
 
 =head2 More than one argument
 
@@ -1857,8 +1953,8 @@ Output:
 
   in my_func baz
 
-GNU B<parallel> can copy all defined variables and functions to the
-remote system. It just needs to record which ones to ignore in
+GNU B<parallel> can copy all user defined variables and functions to
+the remote system. It just needs to record which ones to ignore in
 B<~/.parallel/ignored_vars>. Do that by running this once:
 
   parallel --record-env
@@ -1868,8 +1964,8 @@ Output:
 
   [list of variables to ignore - including $PATH and $HOME]
 
-Now all new variables and functions defined will be copied when using
-B<--env _>:
+Now all other variables and functions defined will be copied when
+using B<--env _>.
 
   # The function is only copied if using Bash
   my_func2() {
@@ -1886,6 +1982,20 @@ Output:
   foo
   in my_func2 foo bar
 
+If you use B<env_parallel> the variables, functions, and aliases do
+not even need to be exported to be copied:
+
+  NOT='not exported var'
+  alias myecho=echo
+  not_ex() {
+    myecho in not_exported_func $NOT $1
+  }
+  env_parallel --env _ -S $SERVER1 'echo $NOT; not_ex' ::: bar
+
+Output:
+
+  not exported var
+  in not_exported_func not exported var bar
 
 
 =head2 Showing what is actually run

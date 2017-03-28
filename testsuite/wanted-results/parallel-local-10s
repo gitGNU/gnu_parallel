@@ -500,6 +500,70 @@ par_pipepart_spawn	1:local / 8 / 999
 par_pipepart_tee	bug #45479: --pipe/--pipepart --tee
 par_pipepart_tee	--pipepart --tee
 par_pipepart_tee	3221225472
+par_plus_dyn_repl	Dynamic replacement strings defined by --plus
+par_plus_dyn_repl	myval
+par_plus_dyn_repl	myval
+par_plus_dyn_repl	myval
+par_plus_dyn_repl	myval
+par_plus_dyn_repl	myval
+par_plus_dyn_repl	cAaAdef
+par_plus_dyn_repl	cAaAdef
+par_plus_dyn_repl	cAaAdef
+par_plus_dyn_repl	cAaAdef
+par_plus_dyn_repl	cAaAdef
+par_plus_dyn_repl	cAa
+par_plus_dyn_repl	cAa
+par_plus_dyn_repl	cAa
+par_plus_dyn_repl	cAa
+par_plus_dyn_repl	cAa
+par_plus_dyn_repl	9
+par_plus_dyn_repl	9
+par_plus_dyn_repl	1
+par_plus_dyn_repl	abcAaAdef
+par_plus_dyn_repl	abcAaAdef
+par_plus_dyn_repl	abcAaAdef
+par_plus_dyn_repl	abcAaAdef
+par_plus_dyn_repl	abcAaAdef
+par_plus_dyn_repl	AaAdef
+par_plus_dyn_repl	AaAdef
+par_plus_dyn_repl	AaAdef
+par_plus_dyn_repl	AaAdef
+par_plus_dyn_repl	AaAdef
+par_plus_dyn_repl	abcAaAdef
+par_plus_dyn_repl	abcAaAdef
+par_plus_dyn_repl	abcAaAdef
+par_plus_dyn_repl	abcAaAdef
+par_plus_dyn_repl	abcAaAdef
+par_plus_dyn_repl	abcAaA
+par_plus_dyn_repl	abcAaA
+par_plus_dyn_repl	abcAaA
+par_plus_dyn_repl	abcAaA
+par_plus_dyn_repl	abcAaA
+par_plus_dyn_repl	abcAaAghi
+par_plus_dyn_repl	abcAaAghi
+par_plus_dyn_repl	abcAaAghi
+par_plus_dyn_repl	abcAaAghi
+par_plus_dyn_repl	abcAaAghi
+par_plus_dyn_repl	AbcAaAdef
+par_plus_dyn_repl	AbcAaAdef
+par_plus_dyn_repl	AbcAaAdef
+par_plus_dyn_repl	AbcAaAdef
+par_plus_dyn_repl	AbcAaAdef
+par_plus_dyn_repl	AbcAAAdef
+par_plus_dyn_repl	AbcAAAdef
+par_plus_dyn_repl	AbcAAAdef
+par_plus_dyn_repl	AbcAAAdef
+par_plus_dyn_repl	AbcAAAdef
+par_plus_dyn_repl	abcAaAdef
+par_plus_dyn_repl	abcAaAdef
+par_plus_dyn_repl	abcAaAdef
+par_plus_dyn_repl	abcAaAdef
+par_plus_dyn_repl	abcAaAdef
+par_plus_dyn_repl	abcaaadef
+par_plus_dyn_repl	abcaaadef
+par_plus_dyn_repl	abcaaadef
+par_plus_dyn_repl	abcaaadef
+par_plus_dyn_repl	abcaaadef
 par_print_before_halt_on_error	### What is printed before the jobs are killed
 par_print_before_halt_on_error	-2	exit code 0
 par_print_before_halt_on_error	-2	0	0

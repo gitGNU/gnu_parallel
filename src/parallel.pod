@@ -2741,13 +2741,26 @@ Put all converted in the same directory:
     parallel lame {} -o mydir/{/.}.mp3
 
 
-=head1 EXAMPLE: Removing two file extensions when processing files
+=head1 EXAMPLE: Removing strings from the argument
 
 If you have directory with tar.gz files and want these extracted in
 the corresponding dir (e.g foo.tar.gz will be extracted in the dir
 foo) you can do:
 
   parallel --plus 'mkdir {..}; tar -C {..} -xf {}' ::: *.tar.gz
+
+If you want to remove a different ending, you can use {%string}:
+
+  parallel --plus echo {%_beta} ::: mycode_beta keep_beta_here
+
+You can also remove a starting string with {#string}
+
+  parallel --plus echo {#beta_} ::: beta_mycode keep_beta_here
+
+To remove a string anywhere you can use regular expressions with
+{/regexp/replacement} and leave the replacement empty:
+
+  parallel --plus echo {/beta_/} ::: beta_mycode remove_beta_here
 
 
 =head1 EXAMPLE: Download 24 images for each of the past 30 days
@@ -3561,7 +3574,8 @@ you can run:
 
   parallel -a table_file.tsv --colsep '\t' cmd -o {2} -i {1}
 
-Note: The default for GNU B<parallel> is to remove the spaces around the columns. To keep the spaces:
+Note: The default for GNU B<parallel> is to remove the spaces around
+the columns. To keep the spaces:
 
   parallel -a table_file.tsv --trim n --colsep '\t' cmd -o {2} -i {1}
 

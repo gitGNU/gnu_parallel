@@ -683,62 +683,6 @@ par_tagstring_pipe() {
     seq 3000 | parallel -j4 --pipe -N1000 -k --tagstring {%} LANG=C wc
 }
 
-par_plus_dyn_repl() {
-    echo "Dynamic replacement strings defined by --plus"
-
-    unset a
-    echo ${a:-myval}
-    parallel --rpl '{:-(.+)} $_ ||= $$1' echo {:-myval} ::: "$a"
-    parallel --plus echo {:-myval} ::: "$a"
-
-    a=abcAaAdef
-    echo ${a:2}
-    parallel --rpl '{:(\d+)} substr($_,0,$$1) = ""' echo {:2} ::: "$a"
-    parallel --plus echo {:2} ::: "$a"
-
-    echo ${a:2:3}
-    parallel --rpl '{:(\d+?):(\d+?)} $_ = substr($_,$$1,$$2);' echo {:2:3} ::: "$a"
-    parallel --plus echo {:2:3} ::: "$a"
-
-    echo ${#a}
-    parallel --rpl '{#} $_ = length $_;' echo {#} ::: "$a"
-    # {#} used for job number
-    parallel --plus echo {#} ::: "$a"
-
-    echo ${a#bc}
-    parallel --rpl '{#(.+?)} s/^$$1//;' echo {#bc} ::: "$a"
-    parallel --plus echo {#bc} ::: "$a"
-    echo ${a#abc}
-    parallel --rpl '{#(.+?)} s/^$$1//;' echo {#abc} ::: "$a"
-    parallel --plus echo {#abc} ::: "$a"
-
-    echo ${a%de}
-    parallel --rpl '{%(.+?)} s/$$1$//;' echo {%de} ::: "$a"
-    parallel --plus echo {%de} ::: "$a"
-    echo ${a%def}
-    parallel --rpl '{%(.+?)} s/$$1$//;' echo {%def} ::: "$a"
-    parallel --plus echo {%def} ::: "$a"
-
-    echo ${a/def/ghi}
-    parallel --rpl '{/(.+?)/(.+?)} s/$$1/$$2/;' echo {/def/ghi} ::: "$a"
-    parallel --plus echo {/def/ghi} ::: "$a"
-
-    echo ${a^a}
-    parallel --rpl '{^(.+?)} s/($$1)/uc($1)/e;' echo {^a} ::: "$a"
-    parallel --plus echo {^a} ::: "$a"
-    echo ${a^^a}
-    parallel --rpl '{^^(.+?)} s/($$1)/uc($1)/eg;' echo {^^a} ::: "$a"
-    parallel --plus echo {^^a} ::: "$a"
-
-    a=AbcAaAdef
-    echo ${a,A}
-    parallel --rpl '{,(.+?)} s/($$1)/lc($1)/e;' echo '{,A}' ::: "$a"
-    parallel --plus echo '{,A}' ::: "$a"
-    echo ${a,,A}
-    parallel --rpl '{,,(.+?)} s/($$1)/lc($1)/eg;' echo '{,,A}' ::: "$a"
-    parallel --plus echo '{,,A}' ::: "$a"
-}
-
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort |
     parallel -j6 --tag -k --joblog +/tmp/jl-`basename $0` '{} 2>&1'
