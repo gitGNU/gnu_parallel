@@ -1,4 +1,8 @@
 ### test parallel_tutorial
+   fetch -o - http://pi.dk/3) | bash
+/bin/bash: -c: line 0: syntax error near unexpected token `)'
+/bin/bash: -c: line 0: `   fetch -o - http://pi.dk/3) | bash'
+
   parallel -k echo ::: A B C > abc-file
   parallel -k echo ::: D E F > def-file
   perl -e 'printf "A\0B\0C\0"' > abc0-file
@@ -8,7 +12,9 @@
   perl -e 'for(1..128){print "$_\n"}' > num128
   perl -e 'for(1..30000){print "$_\n"}' > num30000
   perl -e 'for(1..1000000){print "$_\n"}' > num1000000
-  (echo %head1; echo %head2; perl -e 'for(1..10){print "$_\n"}') > num_%header
+  (echo %head1; echo %head2; \
+sleep .3
+/bin/bash: -c: line 2: syntax error: unexpected end of file
 sleep .3
 sleep .3
 sleep .3
@@ -18,8 +24,10 @@ sleep .3
 sleep .3
 sleep .3
 sleep .3
-sleep .3
-
+   perl -e 'for(1..10){print "$_\n"}') > num_%header
+/bin/bash: -c: line 0: syntax error near unexpected token `)'
+/bin/bash: -c: line 0: `   perl -e 'for(1..10){print "$_\n"}') > num_%header'
+  perl -e 'print "HHHHAAABBBCCC"' > fixedlen
   parallel echo ::: A B C
 A
 B
@@ -154,14 +162,14 @@ abc-file
 abc0-file
 abc_-file
 def-file
+fixedlen
 num1000000
 num128
 num30000
 num8
-num_%header
 tsv-file.tsv
 foo
-/mnt/4tb/home/tange/privat/parallel/testsuite/tmp
+~/privat/parallel/testsuite/tmp
   my_func() {
     echo in my_func $1
   }
@@ -223,33 +231,43 @@ Job 5 of 5
 9
 9
 9
-  parallel echo {= 'if($arg[1]==$arg[2]) { skip() }' =} ::: {1..3} ::: {1..3}
+  parallel echo {= 'if($arg[1]==$arg[2]) { skip() }' =} \
+    ::: {1..3} ::: {1..3}
 1 2
 1 3
 2 1
 2 3
 3 1
 3 2
-  parallel --parens ,,,, echo ',, s:\.[^.]+$::;s:\.[^.]+$::; ,,' ::: foo.tar.gz
+  parallel --parens ,,,, echo ',, s:\.[^.]+$::;s:\.[^.]+$::; ,,' \
+    ::: foo.tar.gz
 foo
-  parallel --rpl '.. s:\.[^.]+$::;s:\.[^.]+$::;' echo '..' ::: foo.tar.gz
+  parallel --rpl '.. s:\.[^.]+$::;s:\.[^.]+$::;' echo '..' \
+    ::: foo.tar.gz
 foo
-  parallel --rpl '{..} s:\.[^.]+$::;s:\.[^.]+$::;' echo '{..}' ::: foo.tar.gz
-foo
+  parallel --rpl '{..} s:\.[^.]+$::;s:\.[^.]+$::;' echo '{..}'
+    ::: foo.tar.gz
+/bin/bash: line 1: :::: command not found
+  parallel --rpl '{%(.+?)} s/$$1$//;' echo {%.tar.gz}.zip ::: foo.tar.gz
+foo.zip
+  parallel --rpl '{/(.+?)/(.*?)} s/$$1/$$2/;' echo {/tar.gz/zip} \
+    ::: foo.tar.gz
+foo.zip
   --rpl '{} '
   --rpl '{#} $_=$job->seq()'
   --rpl '{%} $_=$job->slot()'
   --rpl '{/} s:.*/::'
-  --rpl '{//} $Global::use{"File::Basename"} ||= eval "use File::Basename; 1;"; $_ = dirname($_);'
+  --rpl '{//} $Global::use{"File::Basename"} ||=
+           eval "use File::Basename; 1;"; $_ = dirname($_);'
   --rpl '{/.} s:.*/::; s:\.[^/.]+$::;'
   --rpl '{.} s:\.[^/.]+$::'
 /bin/bash: --rpl: command not found
 /bin/bash: line 1: --rpl: command not found
 /bin/bash: line 2: --rpl: command not found
 /bin/bash: line 3: --rpl: command not found
-/bin/bash: line 4: --rpl: command not found
 /bin/bash: line 5: --rpl: command not found
 /bin/bash: line 6: --rpl: command not found
+/bin/bash: line 7: --rpl: command not found
   parallel echo {1} and {2} ::: A B ::: C D
 A and C
 A and D
@@ -258,7 +276,8 @@ B and D
   parallel echo /={1/} //={1//} /.={1/.} .={1.} ::: A/B.C D/E.F
 /=B.C //=A /.=B .=A/B
 /=E.F //=D /.=E .=D/E
-  parallel echo 1={1} 2={2} 3={3} -1={-1} -2={-2} -3={-3} ::: A B ::: C D ::: E F
+  parallel echo 1={1} 2={2} 3={3} -1={-1} -2={-2} -3={-3} \
+    ::: A B ::: C D ::: E F
 1=A 2=C 3=E -1=E -2=C -3=A
 1=A 2=C 3=F -1=F -2=C -3=A
 1=A 2=D 3=E -1=E -2=D -3=A
@@ -267,9 +286,11 @@ B and D
 1=B 2=C 3=F -1=F -2=C -3=B
 1=B 2=D 3=E -1=E -2=D -3=B
 1=B 2=D 3=F -1=F -2=D -3=B
-  parallel echo '{=2 s:\.[^.]+$::;s:\.[^.]+$::; =} {1}' ::: bar ::: foo.tar.gz
+  parallel echo '{=2 s:\.[^.]+$::;s:\.[^.]+$::; =} {1}' \
+    ::: bar ::: foo.tar.gz
 foo bar
-  parallel --rpl '{..} s:\.[^.]+$::;s:\.[^.]+$::;' echo '{2..} {1}' ::: bar ::: foo.tar.gz
+  parallel --rpl '{..} s:\.[^.]+$::;s:\.[^.]+$::;' echo '{2..} {1}' \
+    ::: bar ::: foo.tar.gz
 foo bar
   parallel --colsep '\t' echo 1={1} 2={2} :::: tsv-file.tsv
 1=f1 2=f2
@@ -280,31 +301,83 @@ f1=A f2=C
 f1=A f2=D
 f1=B f2=C
 f1=B f2=D
-  parallel --header : --colsep '\t' echo f1={f1} f2={f2} :::: tsv-file.tsv
+  parallel --header : --colsep '\t' echo f1={f1} f2={f2} \
+    :::: tsv-file.tsv
 f1=A f2=B
 f1=C f2=D
-  parallel --plus echo {} ::: dir/sub/file.ext1.ext2.ext3
-  parallel --plus echo {+/}/{/} ::: dir/sub/file.ext1.ext2.ext3
-  parallel --plus echo {.}.{+.} ::: dir/sub/file.ext1.ext2.ext3
-  parallel --plus echo {+/}/{/.}.{+.} ::: dir/sub/file.ext1.ext2.ext3
-  parallel --plus echo {..}.{+..} ::: dir/sub/file.ext1.ext2.ext3
-  parallel --plus echo {+/}/{/..}.{+..} ::: dir/sub/file.ext1.ext2.ext3
-  parallel --plus echo {...}.{+...} ::: dir/sub/file.ext1.ext2.ext3
-  parallel --plus echo {+/}/{/...}.{+...} ::: dir/sub/file.ext1.ext2.ext3
-dir/sub/file.ext1.ext2.ext3
-dir/sub/file.ext1.ext2.ext3
-dir/sub/file.ext1.ext2.ext3
-dir/sub/file.ext1.ext2.ext3
-dir/sub/file.ext1.ext2.ext3
-dir/sub/file.ext1.ext2.ext3
-dir/sub/file.ext1.ext2.ext3
-dir/sub/file.ext1.ext2.ext3
+  parallel --plus echo {} ::: dir/sub/file.ex1.ex2.ex3
+  parallel --plus echo {+/}/{/} ::: dir/sub/file.ex1.ex2.ex3
+  parallel --plus echo {.}.{+.} ::: dir/sub/file.ex1.ex2.ex3
+  parallel --plus echo {+/}/{/.}.{+.} ::: dir/sub/file.ex1.ex2.ex3
+  parallel --plus echo {..}.{+..} ::: dir/sub/file.ex1.ex2.ex3
+  parallel --plus echo {+/}/{/..}.{+..} ::: dir/sub/file.ex1.ex2.ex3
+  parallel --plus echo {...}.{+...} ::: dir/sub/file.ex1.ex2.ex3
+  parallel --plus echo {+/}/{/...}.{+...} ::: dir/sub/file.ex1.ex2.ex3
+dir/sub/file.ex1.ex2.ex3
+dir/sub/file.ex1.ex2.ex3
+dir/sub/file.ex1.ex2.ex3
+dir/sub/file.ex1.ex2.ex3
+dir/sub/file.ex1.ex2.ex3
+dir/sub/file.ex1.ex2.ex3
+dir/sub/file.ex1.ex2.ex3
+dir/sub/file.ex1.ex2.ex3
   parallel --plus echo Job {#} of {##} ::: {1..5}
 Job 1 of 5
 Job 2 of 5
 Job 3 of 5
 Job 4 of 5
 Job 5 of 5
+  unset myvar
+  echo ${myvar:-myval}
+  parallel --plus echo {:-myval} ::: "$myvar"
+myval
+myval
+  myvar=abcAaAdef
+  echo ${myvar:2}
+  parallel --plus echo {:2} ::: "$myvar"
+cAaAdef
+cAaAdef
+  echo ${myvar:2:3}
+  parallel --plus echo {:2:3} ::: "$myvar"
+
+
+  echo ${myvar#bc}
+  parallel --plus echo {#bc} ::: "$myvar"
+  echo ${myvar#abc}
+  parallel --plus echo {#abc} ::: "$myvar"
+
+
+
+
+  echo ${myvar%de}
+  parallel --plus echo {%de} ::: "$myvar"
+  echo ${myvar%def}
+  parallel --plus echo {%def} ::: "$myvar"
+
+
+
+
+  echo ${myvar/def/ghi}
+  parallel --plus echo {/def/ghi} ::: "$myvar"
+
+
+  echo ${myvar^a}
+  parallel --plus echo {^a} ::: "$myvar"
+  echo ${myvar^^a}
+  parallel --plus echo {^^a} ::: "$myvar"
+
+
+
+
+  myvar=AbcAaAdef
+  echo ${myvar,A}
+  parallel --plus echo '{,A}' ::: "$myvar"
+  echo ${myvar,,A}
+  parallel --plus echo '{,,A}' ::: "$myvar"
+abcAaAdef
+abcAaAdef
+abcaaadef
+abcaaadef
   cat num30000 | parallel --xargs echo | wc -l
 9
   cat num30000 | parallel --xargs -s 10000 echo | wc -l
@@ -337,15 +410,15 @@ foo
 A
   parallel perl -e 'print "@ARGV\n"' ::: This wont work
 
-  parallel: Warning: Input is read from the terminal. You either know what you
-  parallel: Warning: are doing (in which case: YOU ARE AWESOME!) or you forgot
-  parallel: Warning: ::: or :::: or to pipe data into parallel. If so
-  parallel: Warning: Press CTRL-D to exit.
+  Warning: Input is read from the terminal. You either know what you
+  Warning: are doing (in which case: YOU ARE AWESOME!) or you forgot
+  Warning: ::: or :::: or to pipe data into parallel. If so
+  Warning: Press CTRL-D to exit.
   perl -e 'print "@ARGV\n"'
   [CTRL-D]
-/bin/bash: line 1: parallel:: command not found
+/bin/bash: line 1: Warning:: command not found
 /bin/bash: -c: line 2: syntax error near unexpected token `('
-/bin/bash: -c: line 2: `  parallel: Warning: are doing (in which case: YOU ARE AWESOME!) or you forgot'
+/bin/bash: -c: line 2: `  Warning: are doing (in which case: YOU ARE AWESOME!) or you forgot'
 
   parallel --trim r echo pre-{}-post ::: ' A '
 pre- A-post
@@ -367,6 +440,8 @@ pre-A-post
 /bin/bash: -c: line 0: syntax error near unexpected token `)'
 /bin/bash: -c: line 0: `set a="def-file"; if( { test -d "$a" } ) echo "$a is a dir"'
 /bin/bash: -c: line 0: syntax error near unexpected token `)'
+/bin/bash: -c: line 0: `set a="fixedlen"; if( { test -d "$a" } ) echo "$a is a dir"'
+/bin/bash: -c: line 0: syntax error near unexpected token `)'
 /bin/bash: -c: line 0: `set a="num1000000"; if( { test -d "$a" } ) echo "$a is a dir"'
 /bin/bash: -c: line 0: syntax error near unexpected token `)'
 /bin/bash: -c: line 0: `set a="num128"; if( { test -d "$a" } ) echo "$a is a dir"'
@@ -374,8 +449,6 @@ pre-A-post
 /bin/bash: -c: line 0: `set a="num30000"; if( { test -d "$a" } ) echo "$a is a dir"'
 /bin/bash: -c: line 0: syntax error near unexpected token `)'
 /bin/bash: -c: line 0: `set a="num8"; if( { test -d "$a" } ) echo "$a is a dir"'
-/bin/bash: -c: line 0: syntax error near unexpected token `)'
-/bin/bash: -c: line 0: `set a="num_%header"; if( { test -d "$a" } ) echo "$a is a dir"'
 /bin/bash: -c: line 0: syntax error near unexpected token `)'
 /bin/bash: -c: line 0: `set a="tsv-file.tsv"; if( { test -d "$a" } ) echo "$a is a dir"'
   parallel --tag echo foo-{} ::: A B C
@@ -397,7 +470,8 @@ C
 echo A
 echo B
 echo C
-  parallel -j2 'printf "%s-start\n%s" {} {};sleep {};printf "%s\n" -middle;echo {}-end' ::: 4 2 1
+  parallel -j2 'printf "%s-start\n%s" {} {};
+    sleep {};printf "%s\n" -middle;echo {}-end' ::: 4 2 1
 4-start
 2-start
 2-middle
@@ -405,7 +479,8 @@ echo C
 1-start
 1-middle
 1-end
-  parallel -j2 --ungroup 'printf "%s-start\n%s" {} {};sleep {};printf "%s\n" -middle;echo {}-end' ::: 4 2 1
+  parallel -j2 --ungroup 'printf "%s-start\n%s" {} {};
+    sleep {};printf "%s\n" -middle;echo {}-end' ::: 4 2 1
 4-start
 42-start
 2-middle
@@ -414,7 +489,8 @@ echo C
 1-middle
 1-end
 -middle
-  parallel -j2 --linebuffer 'printf "%s-start\n%s" {} {};sleep {};printf "%s\n" -middle;echo {}-end' ::: 4 2 1
+  parallel -j2 --linebuffer 'printf "%s-start\n%s" {} {};
+    sleep {};printf "%s\n" -middle;echo {}-end' ::: 4 2 1
 4-start
 2-start
 2-middle
@@ -422,7 +498,8 @@ echo C
 1-start
 1-middle
 1-end
-  parallel -j2 -k 'printf "%s-start\n%s" {} {};sleep {};printf "%s\n" -middle;echo {}-end' ::: 4 2 1
+  parallel -j2 -k 'printf "%s-start\n%s" {} {};
+    sleep {};printf "%s\n" -middle;echo {}-end' ::: 4 2 1
 4-start
 2-start
 2-middle
@@ -566,7 +643,8 @@ Computers / CPU cores / Max jobs to run
 
 Computer:jobs running/jobs completed/%of started jobs/Average seconds to complete
 
-  seq 1000 | parallel -j10 --bar '(echo -n {};sleep 0.1)' 2> >(zenity --timeout=15 --progress --auto-kill --auto-close)
+  seq 1000 | parallel -j10 --bar '(echo -n {};sleep 0.1)' \
+    2> >(zenity --timeout=15 --progress --auto-kill --auto-close)
 BASE64-Message: GtkDialog mapped without a transient parent. This is discouraged.
   parallel --joblog /tmp/log exit  ::: 1 2 3 0
   cat /tmp/log;
@@ -621,19 +699,17 @@ Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
 9
 9
 9
-9
 parallel: This job failed:
 echo X; exit X
 parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-parallel: This job failed:
-echo X; exit X
   parallel -j2 --halt now,fail=1 echo {}\; exit {} ::: 0 0 1 2 3
 9
 9
 9
 parallel: This job failed:
 echo X; exit X
-  parallel -j2 --halt soon,fail=20% echo {}\; exit {} ::: 0 1 2 3 4 5 6 7 8 9
+  parallel -j2 --halt soon,fail=20% echo {}\; exit {} \
+    ::: 0 1 2 3 4 5 6 7 8 9
 9
 9
 9
@@ -652,7 +728,8 @@ echo X; exit X
 9
 parallel: This job succeeded:
 echo X; exit X
-  parallel -k --retries 3 'echo tried {} >>/tmp/runs; echo completed {}; exit {}' ::: 1 2 0
+  parallel -k --retries 3 \
+    'echo tried {} >>/tmp/runs; echo completed {}; exit {}' ::: 1 2 0
   cat /tmp/runs
 completed 1
 completed 2
@@ -662,11 +739,16 @@ tried 0
 tried 1
 tried 1
   show_signals() {
-    perl -e 'for(keys %SIG) { $SIG{$_} = eval "sub { print \"Got $_\\n\"; }";} while(1){sleep 1}'
+    perl -e 'for(keys %SIG) {
+        $SIG{$_} = eval "sub { print \"Got $_\\n\"; }";
+      }
+      while(1){sleep 1}'
   }
   export -f show_signals
-  echo | parallel --termseq TERM,200,TERM,100,TERM,50,KILL,25 -u --timeout 1 show_signals
-  echo | parallel --termseq INT,200,TERM,100,KILL,25 -u --timeout 1 show_signals
+  echo | parallel --termseq TERM,200,TERM,100,TERM,50,KILL,25 \
+    -u --timeout 1 show_signals
+  echo | parallel --termseq INT,200,TERM,100,KILL,25 \
+    -u --timeout 1 show_signals
 /bin/bash: show_signals: command not found
   parallel --load 100% echo load is less than {} job per cpu ::: 1
 load is less than 1 job per cpu
@@ -704,19 +786,21 @@ more
 hosts
   parallel -S 4/$SERVER1 echo force {} cpus on server ::: 4
 force 4 cpus on server
-  parallel --hostgroup -S @grp1/$SERVER1 -S @grp2/$SERVER2 echo {} ::: \
-    run_on_grp1@grp1 run_on_grp2@grp2
+  parallel --hostgroup -S @grp1/$SERVER1 -S @grp2/$SERVER2 echo {} \
+    ::: run_on_grp1@grp1 run_on_grp2@grp2
 run_on_grp1
 run_on_grp2
   echo This is input_file > input_file
   parallel -S $SERVER1 --transferfile {} cat ::: input_file
 This is input_file
   echo This is input_file > input_file
-  parallel -S $SERVER1 --transferfile {} --return {}.out cat {} ">"{}.out ::: input_file
+  parallel -S $SERVER1 --transferfile {} --return {}.out \
+    cat {} ">"{}.out ::: input_file
   cat input_file.out
 This is input_file
   echo This is input_file > input_file
-  parallel -S $SERVER1 --transferfile {} --return {}.out --cleanup cat {} ">"{}.out ::: input_file
+  parallel -S $SERVER1 --transferfile {} --return {}.out --cleanup \
+    cat {} ">"{}.out ::: input_file
   cat input_file.out
 This is input_file
   echo This is input_file > input_file
@@ -724,7 +808,8 @@ This is input_file
   cat input_file.out
 This is input_file
   echo common data > common_file
-  parallel --basefile common_file -S $SERVER1 cat common_file\; echo {} ::: foo
+  parallel --basefile common_file -S $SERVER1 \
+    cat common_file\; echo {} ::: foo
 common data
 foo
   parallel -S $SERVER1 pwd ::: ""
@@ -763,42 +848,42 @@ Unknown option: :::
 Unknown option: green
 env_parallel only works if it is a function. Do the below and restart your shell.
 
-bash:  Put this in /mnt/4tb/home/tange/.bashrc:  . /usr/local/bin/env_parallel.bash
-       E.g. by doing:  echo '. /usr/local/bin/env_parallel.bash' >> /mnt/4tb/home/tange/.bashrc
+bash:  Put this in ~/.bashrc:  . /usr/local/bin/env_parallel.bash
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.bash' >> ~/.bashrc
        Supports: aliases, functions, variables, arrays
 
-zsh:   Put this in /mnt/4tb/home/tange/.zshrc:  . /usr/local/bin/env_parallel.zsh
-       E.g. by doing:  echo '. /usr/local/bin/env_parallel.zsh' >> /mnt/4tb/home/tange/.zshenv
+zsh:   Put this in ~/.zshrc:  . /usr/local/bin/env_parallel.zsh
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.zsh' >> ~/.zshenv
        Supports: functions, variables, arrays
 
-fish:  Put this in /mnt/4tb/home/tange/.config/fish/config.fish:
+fish:  Put this in ~/.config/fish/config.fish:
          . (which env_parallel.fish)
        E.g. by doing:
-         echo '. (which env_parallel.fish)' >> /mnt/4tb/home/tange/.config/fish/config.fish
+         echo '. (which env_parallel.fish)' >> ~/.config/fish/config.fish
        Supports: aliases, functions, variables, arrays
 
-ksh:   Put this in /mnt/4tb/home/tange/.kshrc:  source /usr/local/bin/env_parallel.ksh
-       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.ksh' >> /mnt/4tb/home/tange/.kshrc
+ksh:   Put this in ~/.kshrc:  source /usr/local/bin/env_parallel.ksh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.ksh' >> ~/.kshrc
        Supports: aliases, functions, variables, arrays
 
-pdksh: Put this in /mnt/4tb/home/tange/.profile:  source /usr/local/bin/env_parallel.pdksh
-       E.g. by doing:  echo '. /usr/local/bin/env_parallel.pdksh' >> /mnt/4tb/home/tange/.profile
+pdksh: Put this in ~/.profile:  source /usr/local/bin/env_parallel.pdksh
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.pdksh' >> ~/.profile
        Supports: aliases, functions, variables, arrays
 
-ash:   Put this in /mnt/4tb/home/tange/.profile:  . /usr/local/bin/env_parallel.ash
-       E.g. by doing:  echo '. /usr/local/bin/env_parallel.ash' >> /mnt/4tb/home/tange/.profile
+ash:   Put this in ~/.profile:  . /usr/local/bin/env_parallel.ash
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.ash' >> ~/.profile
        Supports: aliases, variables
 
-dash:  Put this in /mnt/4tb/home/tange/.profile:  . /usr/local/bin/env_parallel.dash
-       E.g. by doing:  echo '. /usr/local/bin/env_parallel.dash' >> /mnt/4tb/home/tange/.profile
+dash:  Put this in ~/.profile:  . /usr/local/bin/env_parallel.dash
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.dash' >> ~/.profile
        Supports: aliases, variables
 
-csh:   Put this in /mnt/4tb/home/tange/.cshrc:  source /usr/local/bin/env_parallel.csh
-       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.csh' >> /mnt/4tb/home/tange/.cshrc
+csh:   Put this in ~/.cshrc:  source /usr/local/bin/env_parallel.csh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.csh' >> ~/.cshrc
        Supports: aliases, variables, arrays with no special chars
 
-tcsh:  Put this in /mnt/4tb/home/tange/.tcshrc:  source /usr/local/bin/env_parallel.tcsh
-       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.tcsh' >> /mnt/4tb/home/tange/.tcshrc
+tcsh:  Put this in ~/.tcshrc:  source /usr/local/bin/env_parallel.tcsh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.tcsh' >> ~/.tcshrc
        Supports: aliases, variables, arrays with no special chars
 
 To install in all shells run:
@@ -819,6 +904,7 @@ foo bar baz
 in my_func baz
   parallel --record-env
   cat ~/.parallel/ignored_vars|sort
+BASH_FUNC_run_once%%
 BASH_FUNC_run_test%%
 COLORFGBG
 DBUS_SESSION_BUS_ADDRESS
@@ -913,6 +999,65 @@ _
   parallel --env _ -S $SERVER1 'echo $VAR; my_func2' ::: bar
 
 /bin/bash: my_func2: command not found
+  NOT='not exported var'
+  alias myecho=echo
+  not_ex() {
+    myecho in not_exported_func $NOT $1
+  }
+  env_parallel --env _ -S $SERVER1 'echo $NOT; not_ex' ::: bar
+Unknown option: --env
+Unknown option: _
+Unknown option: -S
+Unknown option: parallel@lo
+Unknown option: echo $NOT; not_ex
+Unknown option: :::
+Unknown option: bar
+env_parallel only works if it is a function. Do the below and restart your shell.
+
+bash:  Put this in ~/.bashrc:  . /usr/local/bin/env_parallel.bash
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.bash' >> ~/.bashrc
+       Supports: aliases, functions, variables, arrays
+
+zsh:   Put this in ~/.zshrc:  . /usr/local/bin/env_parallel.zsh
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.zsh' >> ~/.zshenv
+       Supports: functions, variables, arrays
+
+fish:  Put this in ~/.config/fish/config.fish:
+         . (which env_parallel.fish)
+       E.g. by doing:
+         echo '. (which env_parallel.fish)' >> ~/.config/fish/config.fish
+       Supports: aliases, functions, variables, arrays
+
+ksh:   Put this in ~/.kshrc:  source /usr/local/bin/env_parallel.ksh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.ksh' >> ~/.kshrc
+       Supports: aliases, functions, variables, arrays
+
+pdksh: Put this in ~/.profile:  source /usr/local/bin/env_parallel.pdksh
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.pdksh' >> ~/.profile
+       Supports: aliases, functions, variables, arrays
+
+ash:   Put this in ~/.profile:  . /usr/local/bin/env_parallel.ash
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.ash' >> ~/.profile
+       Supports: aliases, variables
+
+dash:  Put this in ~/.profile:  . /usr/local/bin/env_parallel.dash
+       E.g. by doing:  echo '. /usr/local/bin/env_parallel.dash' >> ~/.profile
+       Supports: aliases, variables
+
+csh:   Put this in ~/.cshrc:  source /usr/local/bin/env_parallel.csh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.csh' >> ~/.cshrc
+       Supports: aliases, variables, arrays with no special chars
+
+tcsh:  Put this in ~/.tcshrc:  source /usr/local/bin/env_parallel.tcsh
+       E.g. by doing:  echo 'source /usr/local/bin/env_parallel.tcsh' >> ~/.tcshrc
+       Supports: aliases, variables, arrays with no special chars
+
+To install in all shells run:
+
+  env_parallel --install
+
+For details: see  man env_parallel
+
   parallel -vv --pipepart --block 1M wc :::: num30000
 <num30000 perl -e 'while(@ARGV){sysseek(STDIN,shift,0)||die;$left=shift;while($read=sysread(STDIN,$buf,$left>131072?131072:$left)){$left-=$read;syswrite(STDOUT,$buf);}}' 0 0 0 168894 | (wc)
   30000   30000  168894
@@ -920,9 +1065,11 @@ _
     echo in my_func $1 > $1.out
   }
   export -f my_func3
-  parallel -vv --workdir ... --nice 17 --env _ --trc {}.out -S $SERVER1 my_func3 {} ::: abc-file
+  parallel -vv --workdir ... --nice 17 --env _ --trc {}.out \
+    -S $SERVER1 my_func3 {} ::: abc-file
 ssh -l parallel lo -- mkdir -p ./.TMPWORKDIR && rsync --protocol 30 -rlDzR -essh\ -l\ parallel ./abc-file lo:./.TMPWORKDIR;ssh -l parallel lo -- exec perl -e @GNU_Parallel\\\=split/_/,\\\"use_IPC::Open3\\\;_use_MIME::Base64\\\"\\\;eval\\\"@GNU_Parallel\\\"\\\;\\\$chld\\\=\\\$SIG\\\{CHLD\\\}\\\;\\\$SIG\\\{CHLD\\\}\\\=\\\"IGNORE\\\"\\\;my\\\$zip\\\=\\\(grep\\\{-x\\\$_\\\}\\\"/usr/local/bin/bzip2\\\"\\\)\\\[0\\\]\\\|\\\|\\\"bzip2\\\"\\\;open3\\\(\\\$in,\\\$out,\\\"\\\>\\\&STDERR\\\",\\\$zip,\\\"-dc\\\"\\\)\\\;if\\\(my\\\$perlpid\\\=fork\\\)\\\{close\\\$in\\\;\\\$eval\\\=join\\\"\\\",\\\<\\\$out\\\>\\\;close\\\$out\\\;\\\}else\\\{close\\\$out\\\;print\\\$in\\\(decode_base64\\\(join\\\"\\\",@ARGV\\\)\\\)\\\;close\\\$in\\\;exit\\\;\\\}wait\\\;\\\$SIG\\\{CHLD\\\}\\\=\\\$chld\\\;eval\\\$eval\\\; BASE64;_EXIT_status=$?; mkdir -p ./. && rsync --protocol 30 --rsync-path=cd\ ./.TMPWORKDIR/./.\;\ rsync -rlDzR -essh\ -l\ parallel lo:./abc-file.out ./.;ssh -l parallel lo -- rm\ -f\ ./.TMPWORKDIR/abc-file\;\ sh\ -c\ rmdir\\\ ./.TMPWORKDIR/\\\ ./.parallel/tmp/\\\ ./.parallel/\\\ 2\\\>/dev/null\\\;rm\\\ -rf\\\ ./.TMPWORKDIR\\\;;ssh -l parallel lo -- rm\ -f\ ./.TMPWORKDIR/abc-file.out\;\ sh\ -c\ rmdir\\\ ./.TMPWORKDIR/\\\ ./.parallel/tmp/\\\ ./.parallel/\\\ 2\\\>/dev/null\\\;rm\\\ -rf\\\ ./.TMPWORKDIR\\\;;ssh -l parallel lo -- rm -rf .TMPWORKDIR; exit $_EXIT_status;
-  parallel --sqlandworker csv:////%2Ftmp%2Flog.csv seq ::: 10 ::: 12 13 14
+  parallel --sqlandworker csv:////%2Ftmp%2Flog.csv \
+    seq ::: 10 ::: 12 13 14
   cat /tmp/log.csv
 99
 99
@@ -952,7 +1099,8 @@ Seq,Host,Starttime,JobRuntime,Send,Receive,Exitval,_Signal,Command,V1,V2,Stdout,
 99
 99
 ",
-  parallel --results outdir --sqlandworker csv:////%2Ftmp%2Flog2.csv seq ::: 10 ::: 12 13 14
+  parallel --results outdir --sqlandworker csv:////%2Ftmp%2Flog2.csv \
+    seq ::: 10 ::: 12 13 14
   cat /tmp/log2.csv
 99
 99
@@ -1028,7 +1176,16 @@ parallel: Error: echo is not a valid DBURL
  999999  999999 9999999
   85500   85500  598500
      25      25     176
-  echo /foo, bar/, /baz, qux/, | parallel -kN1 --recend ', ' --pipe echo JOB{#}\;cat\;echo END
+  cat fixedlen | parallel --pipe --header .{4} --block 3 --recend '' \
+    'echo start; cat; echo'
+start
+HHHHAAA
+start
+HHHHBBB
+start
+HHHHCCC
+  echo /foo, bar/, /baz, qux/, | \
+    parallel -kN1 --recend ', ' --pipe echo JOB{#}\;cat\;echo END
 JOB1
 /foo, END
 JOB2
@@ -1038,7 +1195,8 @@ JOB3
 JOB4
 qux/,
 END
-  echo /foo, bar/, /baz, qux/, | parallel -kN1 --recstart / --pipe echo JOB{#}\;cat\;echo END
+  echo /foo, bar/, /baz, qux/, | \
+    parallel -kN1 --recstart / --pipe echo JOB{#}\;cat\;echo END
 JOB1
 /foo, barEND
 JOB2
@@ -1048,13 +1206,17 @@ JOB3
 JOB4
 /,
 END
-  echo /foo, bar/, /baz, qux/, | parallel -kN1 --recend ', ' --recstart / --pipe echo JOB{#}\;cat\;echo END
+  echo /foo, bar/, /baz, qux/, | \
+    parallel -kN1 --recend ', ' --recstart / --pipe \
+    echo JOB{#}\;cat\;echo END
 JOB1
 /foo, bar/, END
 JOB2
 /baz, qux/,
 END
-  echo foo,bar,_baz,__qux, | parallel -kN1 --regexp --recend ,_+ --pipe echo JOB{#}\;cat\;echo END
+  echo foo,bar,_baz,__qux, | \
+    parallel -kN1 --regexp --recend ,_+ --pipe \
+    echo JOB{#}\;cat\;echo END
 JOB1
 foo,bar,_END
 JOB2
@@ -1062,7 +1224,9 @@ baz,__END
 JOB3
 qux,
 END
-  echo foo,bar,_baz,__qux, | parallel -kN1 --rrs --regexp --recend ,_+ --pipe echo JOB{#}\;cat\;echo END
+  echo foo,bar,_baz,__qux, | \
+    parallel -kN1 --rrs --regexp --recend ,_+ --pipe \
+    echo JOB{#}\;cat\;echo END
 JOB1
 foo,barEND
 JOB2
@@ -1070,52 +1234,11 @@ bazEND
 JOB3
 qux,
 END
-  cat num_%header | parallel --header '(%.*\n)*' --pipe -N3 echo JOB{#}\;cat
-JOB1
-%head1
-%head2
-9
-9
-9
-JOB2
-%head1
-%head2
-9
-9
-9
-JOB3
-%head1
-%head2
-9
-9
-9
-JOB4
-%head1
-%head2
-99
+  cat num_%header | \
+    parallel --header '(%.*\n)*' --pipe -N3 echo JOB{#}\;cat
+cat: num_%header: No such file or directory
   cat num_%header | parallel --header 2 --pipe -N3 echo JOB{#}\;cat
-JOB1
-%head1
-%head2
-9
-9
-9
-JOB2
-%head1
-%head2
-9
-9
-9
-JOB3
-%head1
-%head2
-9
-9
-9
-JOB4
-%head1
-%head2
-99
+cat: num_%header: No such file or directory
   parallel --pipepart -a num1000000 --block 3m wc
  999999  999999 9999999
  999999  999999 9999999
@@ -1259,27 +1382,30 @@ The second is now running in the background
 The first finished
 The first finished running in the foreground
 The second finished running in the foreground
-  sem --id my_id -u 'echo First started; sleep 10; echo The first finished'
+  sem --id my_id -u 'echo First started; sleep 10; echo First done'
 First started
-The first finished
-  sem --id my_id -u 'echo Second started; sleep 10; echo The second finished'
-  sem --jobs 3 --id my_id -u 'echo First started; sleep 5; echo The first finished' &&
-  sem --jobs 3 --id my_id -u 'echo Second started; sleep 6; echo The second finished' &&
-  sem --jobs 3 --id my_id -u 'echo Third started; sleep 7; echo The third finished' &&
-  sem --jobs 3 --id my_id -u 'echo Fourth started; sleep 8; echo The fourth finished' &&
+First done
+  sem --id my_id -u 'echo Second started; sleep 10; echo Second done'
+Second done
+  sem --jobs 3 --id my_id -u 'echo Start 1; sleep 5; echo 1 done' &&
+  sem --jobs 3 --id my_id -u 'echo Start 2; sleep 6; echo 2 done' &&
+  sem --jobs 3 --id my_id -u 'echo Start 3; sleep 7; echo 3 done' &&
+  sem --jobs 3 --id my_id -u 'echo Start 4; sleep 8; echo 4 done' &&
   sem --wait --id my_id
-First started
-The first finished
-Third started
-Fourth started
-The third finished
-The fourth finished
+Start 1
+Start 2
+1 done
+Start 3
+2 done
+Start 4
+3 done
+4 done
   sem --id foo -u 'echo Slow started; sleep 5; echo Slow ended' &&
-  sem --id foo --semaphoretimeout 1 'echo Force this running after 1 sec' &&
-  sem --id foo --semaphoretimeout -2 'echo Give up after 1 sec'
+  sem --id foo --semaphoretimeout 1 'echo Forced running after 1 sec' &&
+  sem --id foo --semaphoretimeout -2 'echo Give up after 2 secs'
   sem --id foo --wait
 Slow started
-Force this running after 1 sec
+Forced running after 1 sec
 Slow ended
 parallel: Warning: Semaphore timed out. Stealing the semaphore.
 parallel: Warning: Semaphore timed out. Exiting.
@@ -1333,7 +1459,8 @@ Web site: http://www.gnu.org/software/parallel
 
 When using programs that use GNU Parallel to process data for publication
 please cite as described in 'parallel --citation'.
-  parallel --minversion VERSION && echo Your version is at least VERSION.
+  parallel --minversion VERSION && \
+    echo Your version is at least VERSION.
 VERSION
 Your version is at least VERSION.
   parallel --citation

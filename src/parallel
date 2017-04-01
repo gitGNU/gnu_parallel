@@ -399,6 +399,7 @@ sub cat_partial {
     my @start_len = map {
 	if(++$i % 2) { $start = $_; } else { $_-$start }
     } @start_end;
+    # This can read 7 GB/s using a single core
     my $script = spacefree
 	(0,
 	 q{
@@ -1361,7 +1362,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20170322;
+    $Global::version = 20170331;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -7454,7 +7455,7 @@ sub sshlogin_wrap {
 		$pid = fork;
                 unless($pid) {
 		    # Make own process group to be able to kill HUP it later
-		    setpgrp;
+		    eval { setpgrp };
 		    eval { setpriority(0,0,$nice) };
 		    exec $shell, "-c", ($bashfunc."@ARGV");
 		    die "exec: $!\n";
@@ -7899,7 +7900,7 @@ sub start {
 	eval {
 	    if(not $pid = ::open3($stdin_fh, ">&OUT", ">&ERR", "-")) {
 		# Each child gets its own process group to make it safe to killall
-		setpgrp(0,0) || ::die_bug("setpgrp failed");
+		eval{setpgrp(0,0)};
 		exec($Global::shell,"-c",$command)
 		    || ::die_bug("open3-$stdin_fh $command");
 	    }
@@ -7925,7 +7926,7 @@ sub start {
 	my $pid;
 	my @setpgrp_wrap =
 	    ('perl','-e',
-	     "setpgrp\;eval\{setpriority\(0,0,$opt::nice\)\}\;".
+	     "eval\{setpgrp\}\;eval\{setpriority\(0,0,$opt::nice\)\}\;".
 	     "exec '$Global::shell', '-c', \@ARGV");
 	# The eval is needed to catch exception from open3
 	eval {

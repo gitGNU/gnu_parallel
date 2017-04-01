@@ -83,22 +83,6 @@ par_halt_on_error() {
     parallel -j0 -k --tag mytest ::: -2 -1 0 1 2 ::: true false ::: true false
 }
 
-par_print_before_halt_on_error() {
-    echo '### What is printed before the jobs are killed'
-    mytest() {
-	HALT=$1
-	(echo 0;
-	    echo 3;
-	    seq 0 7;
-	    echo 0;
-	    echo 8) |
-	parallel --tag -j10 -kq --halt $HALT perl -e 'sleep $ARGV[0];print STDERR @ARGV,"\n"; '$HALT' > 0 ? exit shift : exit not shift;';
-	echo exit code $?
-    }
-    export -f mytest
-    parallel -j0 -k --tag mytest ::: -2 -1 0 1 2
-}
-
 par_first_print_halt_on_error_1() {
     echo '### Test first dying print --halt-on-error 1';
     (echo 0; echo 3; seq 0 7;echo 0; echo 8) | parallel -j10 -kq --halt 1 perl -e 'sleep $ARGV[0];print STDERR @ARGV,"\n"; exit shift';

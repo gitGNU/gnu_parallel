@@ -1245,7 +1245,7 @@ control on the command line (used by GNU B<parallel> internally when
 called with B<--sshlogin>).
 
 
-=item B<--plus>
+=item B<--plus> (alpha testing)
 
 Activate additional replacement strings: {+/} {+.} {+..} {+...} {..}
 {...} {/..} {/...} {##}. The idea being that '{+foo}' matches the opposite of
@@ -1481,9 +1481,9 @@ it to the command.
 Only used with B<--pipe>.
 
 
-=item B<--results> I<name> (beta testing)
+=item B<--results> I<name>
 
-=item B<--res> I<name> (beta testing)
+=item B<--res> I<name>
 
 Save the output into files.
 
@@ -1758,7 +1758,7 @@ impossible to track which input block corresponds to which output.
 B<--round-robin> implies B<--pipe>, except if B<--pipepart> is given.
 
 
-=item B<--rpl> 'I<tag> I<perl expression>'
+=item B<--rpl> 'I<tag> I<perl expression>' (alpha testing)
 
 Use I<tag> as a replacement string for I<perl expression>. This makes
 it possible to define your own replacement strings. GNU B<parallel>'s

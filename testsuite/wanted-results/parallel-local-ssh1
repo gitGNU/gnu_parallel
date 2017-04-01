@@ -20,22 +20,22 @@ echo '### bug #41805: Idea: propagate --env for parallel --number-of-cores'
 ** test_zsh
   FOO=test_zsh parallel --env FOO,HOME -S zsh@lo -N0 env ::: "" |sort|egrep 'FOO|^HOME'
 FOO=test_zsh
-HOME=/mnt/4tb/home/tange
+HOME=~
   echo '** test_zsh_filter'
 ** test_zsh_filter
   FOO=test_zsh_filter parallel --filter-hosts --env FOO,HOME -S zsh@lo -N0 env ::: "" |sort|egrep 'FOO|^HOME'
 FOO=test_zsh_filter
-HOME=/mnt/4tb/home/tange
+HOME=~
   echo '** test_csh'
 ** test_csh
   FOO=test_csh parallel --env FOO,HOME -S csh@lo -N0 env ::: "" |sort|egrep 'FOO|^HOME'
 FOO=test_csh
-HOME=/mnt/4tb/home/tange
+HOME=~
   echo '** test_csh_filter'
 ** test_csh_filter
   FOO=test_csh_filter parallel --filter-hosts --env FOO,HOME -S csh@lo -N0 env ::: "" |sort|egrep 'FOO|^HOME'
 FOO=test_csh_filter
-HOME=/mnt/4tb/home/tange
+HOME=~
   echo '** bug #41805 done'
 ** bug #41805 done
 echo '### Deal with long command lines on remote servers'
@@ -64,7 +64,7 @@ echo '### bug #40001: --joblog and --nonall seem not to work together:'
 echo '### bug #40132: FreeBSD: --workdir . gives warning if . == $HOME'
 ### bug #40132: FreeBSD: --workdir . gives warning if . == $HOME
   cd && parallel --workdir . -S lo pwd ::: ""
-/mnt/4tb/home/tange
+~
 echo '### use function as $PARALLEL_SSH'
 ### use function as $PARALLEL_SSH
   foossh() { echo "FOOSSH" >&2; ssh "$@"; };   export -f foossh;   PARALLEL_SSH=foossh parallel -S 1/lo echo ::: 'Run through FOOSSH?'

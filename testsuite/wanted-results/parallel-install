@@ -1,24 +1,24 @@
 ### Test installation missing pod2*
-make[0]: Entering directory '/mnt/4tb/home/tange/privat/parallel'
+make[0]: Entering directory '~/privat/parallel'
 make  dist-gzip am__post_remove_distdir='@:'
-make[0]: Entering directory '/mnt/4tb/home/tange/privat/parallel'
+make[0]: Entering directory '~/privat/parallel'
 if test -d "parallel-00000000"; then find "parallel-00000000" -type d ! -perm -200 -exec chmod u+w {} ';' && rm -rf "parallel-00000000" || { sleep 5 && rm -rf "parallel-00000000"; }; else :; fi
 test -d "parallel-00000000" || mkdir "parallel-00000000"
  (cd src && make  top_distdir=../parallel-00000000 distdir=../parallel-00000000/src \
      am__remove_distdir=: am__skip_length_check=: am__skip_mode_fix=: distdir)
-make[0]: Entering directory '/mnt/4tb/home/tange/privat/parallel/src'
-make[0]: Leaving directory '/mnt/4tb/home/tange/privat/parallel/src'
+make[0]: Entering directory '~/privat/parallel/src'
+make[0]: Leaving directory '~/privat/parallel/src'
 test -n "" \
 || find "parallel-00000000" -type d ! -perm -755 \
 	-exec chmod u+rwx,go+rx {} \; -o \
   ! -type d ! -perm -444 -links 1 -exec chmod a+r {} \; -o \
   ! -type d ! -perm -400 -exec chmod a+r {} \; -o \
-  ! -type d ! -perm -444 -exec /bin/bash /mnt/4tb/home/tange/privat/parallel/install-sh -c -m a+r {} {} \; \
+  ! -type d ! -perm -444 -exec /bin/bash ~/privat/parallel/install-sh -c -m a+r {} {} \; \
 || chmod -R a+r "parallel-00000000"
 tardir=parallel-00000000 && ${TAR-tar} chof - "$tardir" | GZIP=--best gzip -c >parallel-00000000.tar.gz
-make[0]: Leaving directory '/mnt/4tb/home/tange/privat/parallel'
+make[0]: Leaving directory '~/privat/parallel'
 if test -d "parallel-00000000"; then find "parallel-00000000" -type d ! -perm -200 -exec chmod u+w {} ';' && rm -rf "parallel-00000000" || { sleep 5 && rm -rf "parallel-00000000"; }; else :; fi
-make[0]: Leaving directory '/mnt/4tb/home/tange/privat/parallel'
+make[0]: Leaving directory '~/privat/parallel'
 checking for a BSD-compatible install... /usr/bin/install -c
 checking whether build environment is sane... yes
 checking for a thread-safe mkdir -p... /bin/mkdir -p

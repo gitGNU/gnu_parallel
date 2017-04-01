@@ -863,6 +863,11 @@ Rush (https://github.com/shenwei356/rush) is written in Go and based
 on gargs.
 
 
+=head2 DIFFERENCES BETWEEN machma AND GNU Parallel
+
+Todo. Requires Go > 1.6.
+
+
 =head2 DIFFERENCES BETWEEN ClusterSSH AND GNU Parallel
 
 ClusterSSH solves a different problem than GNU B<parallel>.

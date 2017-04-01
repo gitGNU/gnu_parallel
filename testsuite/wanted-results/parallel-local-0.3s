@@ -297,23 +297,23 @@ bug #45993: --wd ... should also work when run locally
 parallel: Error: Cannot change into non-executable dir /bi: No such file or directory
   parallel --wd /bin 'pwd; echo $OLDPWD; echo' ::: OK
 /bin
-/mnt/4tb/home/tange/privat/parallel/testsuite
+~/privat/parallel/testsuite
 OK
   parallel --wd / 'pwd; echo $OLDPWD; echo' ::: OK
 /
-/mnt/4tb/home/tange/privat/parallel/testsuite
+~/privat/parallel/testsuite
 OK
   parallel --wd /tmp 'pwd; echo $OLDPWD; echo' ::: OK
 /tmp
-/mnt/4tb/home/tange/privat/parallel/testsuite
+~/privat/parallel/testsuite
 OK
   parallel --wd ... 'pwd; echo $OLDPWD; echo' ::: OK | perl -pe 's/\d+/0/g'
 /mnt/0tb/home/tange/.parallel/tmp/aspire-0-0
 /mnt/0tb/home/tange/privat/parallel/testsuite
 OK
   parallel --wd . 'pwd; echo $OLDPWD; echo' ::: OK
-/mnt/4tb/home/tange/privat/parallel/testsuite
-/mnt/4tb/home/tange/privat/parallel/testsuite
+~/privat/parallel/testsuite
+~/privat/parallel/testsuite
 OK
 echo '**'
 **

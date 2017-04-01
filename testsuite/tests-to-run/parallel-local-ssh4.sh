@@ -1,6 +1,7 @@
 #!/bin/bash
 
 unset run_test
+unset run_once
 
 # SSH only allowed to localhost/lo
 # --retries if ssh dies
