@@ -896,9 +896,12 @@ signal, and command run.
 For B<--pipe> bytes transferred and bytes returned are number of input
 and output of bytes.
 
+If B<logfile> is prepended with '+' log lines will be appended to the
+logfile.
+
 To convert the times into ISO-8601 strict do:
 
-  cat joblog | perl -a -F"\t" -ne \
+  cat logfile | perl -a -F"\t" -ne \
     'chomp($F[2]=`date -d \@$F[2] +%FT%T`); print join("\t",@F)'
 
 If the host is long, you can use B<column -t> to pretty print it:

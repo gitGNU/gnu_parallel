@@ -683,6 +683,11 @@ par_tagstring_pipe() {
     seq 3000 | parallel -j4 --pipe -N1000 -k --tagstring {%} LANG=C wc
 }
 
+par_link_files_as_only_arg() {
+    echo 'bug #50685: single ::::+ does not work'
+    parallel echo ::::+ <(seq 10) <(seq 3) <(seq 4)
+}
+
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort |
     parallel -j6 --tag -k --joblog +/tmp/jl-`basename $0` '{} 2>&1'

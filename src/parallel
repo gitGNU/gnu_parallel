@@ -1279,9 +1279,9 @@ sub parse_options {
 	# Default = {}
 	$opt::tagstring = $Global::parensleft.$Global::parensright;
     }
-    if(grep /^$Global::arg_sep$|^$Global::arg_file_sep$/o, @ARGV) {
-        # Deal with ::: and ::::
-        @ARGV=read_args_from_command_line();
+    if(grep /^$Global::arg_sep\+?$|^$Global::arg_file_sep\+?$/o, @ARGV) {
+        # Deal with ::: :::+ :::: and ::::+
+        @ARGV = read_args_from_command_line();
     }
     parse_semaphore();
 

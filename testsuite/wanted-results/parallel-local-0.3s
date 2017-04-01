@@ -1621,6 +1621,10 @@ par_file_ending_in_newline	### Hans found a bug giving unitialized variable
 par_file_ending_in_newline	gzip /tmp/parallel_f1
 par_file_ending_in_newline	gzip /tmp/parallel_f2'
 par_file_ending_in_newline	'
+par_link_files_as_only_arg	bug #50685: single ::::+ does not work
+par_link_files_as_only_arg	1 1 1
+par_link_files_as_only_arg	2 2 2
+par_link_files_as_only_arg	3 3 3
 par_pipepart_block_bigger_2G	### Test that --pipepart can have blocks > 2GB
 par_pipepart_block_bigger_2G	      1       1       4
 par_python_children	### bug #49970: Python child process dies if --env is used
