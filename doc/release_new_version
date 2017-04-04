@@ -193,9 +193,9 @@ file:///home/tange/privat/parallel/doc/release_new_version
 from:tange@gnu.org
 to:parallel@gnu.org, bug-parallel@gnu.org
 
-Subject: GNU Parallel 20170422 ('') released <<[stable]>>
+Subject: GNU Parallel 20170422 ('Санкт-Петербу́рг') released <<[stable]>>
 
-GNU Parallel 20170422 ('') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
+GNU Parallel 20170422 ('Санкт-Петербу́рг') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
@@ -215,9 +215,11 @@ http://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-017-1593-0
 
 https://128.84.21.199/pdf/1703.09026.pdf
 
+https://wiki.ncsa.illinois.edu/display/ROGER/Using+GNU+Parallel
+
 https://github.com/lucascbeyeler/zmbackup
 
-http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0174575#references
+http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0174575
 
 * <<Possibly http://link.springer.com/chapter/10.1007%2F978-3-319-22053-6_46>>
 

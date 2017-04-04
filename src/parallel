@@ -1438,6 +1438,7 @@ sub init_globals {
 	::warning("\$HOME not set. Using /tmp.");
 	$ENV{HOME} = "/tmp";
     }
+    $ENV{'PARALLEL_HOME'} ||= $ENV{'HOME'} . "/.parallel";
 }
 
 sub parse_halt {
@@ -1607,9 +1608,9 @@ sub parse_semaphore {
 }
 
 sub record_env {
-    # Record current %ENV-keys in ~/.parallel/ignored_vars
+    # Record current %ENV-keys in $PARALLEL_HOME/ignored_vars
     # Returns: N/A
-    my $ignore_filename = $ENV{'HOME'} . "/.parallel/ignored_vars";
+    my $ignore_filename = $ENV{'PARALLEL_HOME'} . "/ignored_vars";
     if(open(my $vars_fh, ">", $ignore_filename)) {
 	print $vars_fh map { $_,"\n" } keys %ENV;
     } else {
@@ -1857,10 +1858,10 @@ sub read_options {
     my @ARGV_profile = ();
     my @ARGV_env = ();
     if(not $opt::plain) {
-	# Add options from .parallel/config and other profiles
+	# Add options from $PARALLEL_HOME/config and other profiles
 	my @config_profiles = (
 	    "/etc/parallel/config",
-	    $ENV{'HOME'}."/.parallel/config",
+	    $ENV{'PARALLEL_HOME'}."/config",
 	    $ENV{'HOME'}."/.parallelrc");
 	my @profiles = @config_profiles;
 	if(@opt::profile) {
@@ -1870,7 +1871,7 @@ sub read_options {
 		if(-r $profile) {
 		    push @profiles, $profile;
 		} else {
-		    push @profiles, $ENV{'HOME'}."/.parallel/".$profile;
+		    push @profiles, $ENV{'PARALLEL_HOME'}."/".$profile;
 		}
 	    }
 	}
@@ -2846,7 +2847,8 @@ sub progress {
 }
 
 {
-    my ($total, $first_completed, $smoothed_avg_time);
+
+    my ($total, $first_completed, $smoothed_avg_time, $last_eta);
 
     sub compute_eta {
 	# Calculate important numbers for ETA
@@ -2872,6 +2874,12 @@ sub progress {
 	$smoothed_avg_time = (1 - $pctcomplete) * $smoothed_avg_time +
 	    $pctcomplete * $avgtime;
 	my $eta = int($left * $smoothed_avg_time);
+	if($eta*0.90 < $last_eta and $last_eta < $eta) {
+	    # Eta jumped less that 10% up: Keep the last eta instead
+	    $eta = $last_eta;
+	} else {
+	    $last_eta = $eta;
+	}
 	return($total, $completed, $left, $pctcomplete, $avgtime, $eta);
     }
 }
@@ -3041,16 +3049,16 @@ sub expand_slf_shorthand {
     if($file eq "-") {
 	# skip: It is stdin
     } elsif($file eq "..") {
-        $file = $ENV{'HOME'}."/.parallel/sshloginfile";
+        $file = $ENV{'PARALLEL_HOME'}."/sshloginfile";
     } elsif($file eq ".") {
         $file = "/etc/parallel/sshloginfile";
     } elsif(not -r $file) {
-	if(not -r $ENV{'HOME'}."/.parallel/".$file) {
-		# Try prepending ~/.parallel
+	if(not -r $ENV{'PARALLEL_HOME'}."/".$file) {
+		# Try prepending $PARALLEL_HOME
 		::error("Cannot open $file.");
 		::wait_and_exit(255);
 	} else {
-	    $file = $ENV{'HOME'}."/.parallel/".$file;
+	    $file = $ENV{'PARALLEL_HOME'}."/".$file;
 	}
     }
     return $file;
@@ -3948,7 +3956,7 @@ sub usage {
 sub citation_notice {
     # if --will-cite or --plain: do nothing
     # if stderr redirected: do nothing
-    # if ~/.parallel/will-cite: do nothing
+    # if $PARALLEL_HOME/will-cite: do nothing
     # else: print citation notice to stderr
     if($opt::willcite
        or
@@ -3956,7 +3964,7 @@ sub citation_notice {
        or
        not -t $Global::original_stderr
        or
-       -e $ENV{'HOME'}."/.parallel/will-cite") {
+       -e $ENV{'PARALLEL_HOME'}."/will-cite") {
 	# skip
     } else {
 	::status
@@ -4063,15 +4071,15 @@ sub citation {
 	  "",
 	  ""
         );
-    while(not -e $ENV{'HOME'}."/.parallel/will-cite") {
+    while(not -e $ENV{'PARALLEL_HOME'}."/will-cite") {
 	print "\nType: 'will cite' and press enter.\n> ";
 	my $input = <STDIN>;
 	if(not defined $input) {
 	    exit(255);
 	}
 	if($input =~ /will cite/i) {
-	    mkdir $ENV{'HOME'}."/.parallel";
-	    if(open (my $fh, ">", $ENV{'HOME'}."/.parallel/will-cite")) {
+	    mkdir $ENV{'PARALLEL_HOME'};
+	    if(open (my $fh, ">", $ENV{'PARALLEL_HOME'}."/will-cite")) {
 		close $fh;
 		::status(
 		    "",
@@ -4784,12 +4792,12 @@ sub new {
         'control_path' => undef,
 	'time_to_login' => undef,
 	'last_login_at' => undef,
-        'loadavg_file' => $ENV{'HOME'} . "/.parallel/tmp/loadavg-" .
-            $no_slash_string,
+        'loadavg_file' => $ENV{'PARALLEL_HOME'} . "/tmp/sshlogin/" .
+	    $no_slash_string . "/loadavg",
         'loadavg' => undef,
 	'last_loadavg_update' => 0,
-        'swap_activity_file' => $ENV{'HOME'} . "/.parallel/tmp/swap_activity-" .
-            $no_slash_string,
+        'swap_activity_file' => $ENV{'PARALLEL_HOME'}  . "/tmp/sshlogin/" .
+            $no_slash_string . "/swap_activity",
         'swap_activity' => undef,
     }, ref($class) || $class;
 }
@@ -5007,8 +5015,8 @@ sub swap_activity {
     if($update_swap_activity_file) {
         ::debug("swap", "Updating swap_activity file ", $self->{'swap_activity_file'});
         $self->{'last_swap_activity_update'} = time;
-        -e $ENV{'HOME'}."/.parallel" or mkdir $ENV{'HOME'}."/.parallel";
-        -e $ENV{'HOME'}."/.parallel/tmp" or mkdir $ENV{'HOME'}."/.parallel/tmp";
+	my $dir = ::dirname($self->{'swap_activity_file'});
+	-d $dir or eval { File::Path::mkpath($dir); };
         my $swap_activity;
 	$swap_activity = swapactivityscript();
         if($self->{'string'} ne ":") {
@@ -5297,10 +5305,9 @@ sub loadavg {
     if($update_loadavg_file) {
         ::debug("load", "Updating loadavg file", $self->{'loadavg_file'}, "\n");
         $self->{'last_loadavg_update'} = time;
-        -w $ENV{'HOME'}."/.parallel" or mkdir $ENV{'HOME'}."/.parallel"
-	    or ::die_bug("Cannot write to $ENV{'HOME'}/.parallel");
-        -w $ENV{'HOME'}."/.parallel/tmp" or mkdir $ENV{'HOME'}."/.parallel/tmp"
-	    or ::die_bug("Cannot write to $ENV{'HOME'}/.parallel/tmp");
+	my $dir = ::dirname($self->{'swap_activity_file'});
+	-d $dir or eval { File::Path::mkpath($dir); };
+        -w $dir or ::die_bug("Cannot write to $dir");
         my $cmd = "";
         if($self->{'string'} ne ":") {
 	    $cmd = $self->sshcommand() . " " . $self->serverlogin() . " " .
@@ -7495,7 +7502,7 @@ sub sshlogin_wrap {
 	if(grep { /^_$/ } @vars) {
 	    # --env _
 	    # Include all vars that are not in a clean environment
-	    if(open(my $vars_fh, "<", $ENV{'HOME'} . "/.parallel/ignored_vars")) {
+	    if(open(my $vars_fh, "<", $ENV{'PARALLEL_HOME'} . "/ignored_vars")) {
 		my @ignore = <$vars_fh>;
 		chomp @ignore;
 		my %ignore;
@@ -9806,7 +9813,8 @@ sub max_length {
     #   number of chars on the longest command line allowed
     if(not $Limits::Command::line_max_len) {
 	# Disk cache of max command line length
-	my $len_cache = $ENV{'HOME'} . "/.parallel/tmp/linelen-" . ::hostname();
+	my $len_cache = $ENV{'PARALLEL_HOME'} . "/tmp/sshlogin/" . ::hostname() .
+	    "/linelen";
 	my $cached_limit;
 	if(-e $len_cache) {
 	    open(my $fh, "<", $len_cache) || ::die_bug("Cannot read $len_cache");
@@ -9815,8 +9823,8 @@ sub max_length {
 	} else {
 	    $cached_limit = real_max_length();
 	    # If $HOME is write protected: Do not fail
-	    mkdir($ENV{'HOME'} . "/.parallel");
-	    mkdir($ENV{'HOME'} . "/.parallel/tmp");
+	    my $dir = ::dirname($len_cache);
+	    -d $dir or eval { File::Path::mkpath($dir); };
 	    open(my $fh, ">", $len_cache);
 	    print $fh $cached_limit;
 	    close $fh;
@@ -11013,8 +11021,8 @@ package Semaphore;
 # If a process dies without releasing the semaphore the next process
 # that needs that entry will clean up dead semaphores
 #
-# The semaphores are stored in ~/.parallel/semaphores/id-<name> Each
-# file in ~/.parallel/semaphores/id-<name>/ is the process ID of the
+# The semaphores are stored in $PARALLEL_HOME/semaphores/id-<name> Each
+# file in $PARALLEL_HOME/semaphores/id-<name>/ is the process ID of the
 # process holding the entry. If the process dies, the entry can be
 # taken by another process.
 
@@ -11024,11 +11032,10 @@ sub new {
     my $count = shift;
     $id =~ s/([^-_a-z0-9])/unpack("H*",$1)/ige; # Convert non-word chars to hex
     $id = "id-".$id; # To distinguish it from a process id
-    my $parallel_dir = $ENV{'HOME'}."/.parallel";
-    -d $parallel_dir or ::mkdir_or_die($parallel_dir);
-    my $parallel_locks = $parallel_dir."/semaphores";
+    my $parallel_locks = $ENV{'PARALLEL_HOME'}."/semaphores";
     -d $parallel_locks or ::mkdir_or_die($parallel_locks);
     my $lockdir = "$parallel_locks/$id";
+
     my $lockfile = $lockdir.".lock";
     if($count < 1) { ::die_bug("semaphore-count: $count"); }
     return bless {

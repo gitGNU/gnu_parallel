@@ -863,6 +863,10 @@ alphaupload:
 	pushd; \
 	sudo cp /usr/local/bin/parallel /usr/local/bin/parallel-$(YYYYMMDD)
 
+monitorman:
+# If man page changed: open new pdfman
+	inotifywait -qmre MOVED_TO -e CLOSE_WRITE --format %w%f . | parallel -uj1 'echo {=/\.pod$$/ or skip()=};make -j && sudo make install; pdfman {/.} &'
+
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
