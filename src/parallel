@@ -1362,7 +1362,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20170331;
+    $Global::version = 20170404;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1399,25 +1399,25 @@ sub init_globals {
 	 # {##} = number of jobs
 	 '{##}' => '$_=total_jobs()',
 	 # Bash ${a:-myval}
-	 '{:-(.+?)}' => '$_ ||= $$1',
+	 '{:-([^}]+?)}' => '$_ ||= $$1',
 	 # Bash ${a:2}
 	 '{:(\d+?)}' => 'substr($_,0,$$1) = ""',
 	 # Bash ${a:2:3}
 	 '{:(\d+?):(\d+?)}' => '$_ = substr($_,$$1,$$2);',
 	 # Bash ${a#bc}
-	 '{#([^#].*?)}' => 's/^$$1//;',
+	 '{#([^#][^}]*?)}' => 's/^$$1//;',
 	 # Bash ${a%def}
-	 '{%(.+?)}' => 's/$$1$//;',
+	 '{%([^}]+?)}' => 's/$$1$//;',
 	 # Bash ${a/def/ghi} ${a/def/}
-	 '{/(.+?)/(.*?)}' => 's/$$1/$$2/;',
+	 '{/([^}]+?)/([^}]*?)}' => 's/$$1/$$2/;',
 	 # Bash ${a^a}
-	 '{^(.+?)}' => 's/^($$1)/uc($1)/e;',
+	 '{^([^}]+?)}' => 's/^($$1)/uc($1)/e;',
 	 # Bash ${a^^a}
-	 '{^^(.+?)}' => 's/($$1)/uc($1)/eg;',
+	 '{^^([^}]+?)}' => 's/($$1)/uc($1)/eg;',
 	 # Bash ${a,A}
-	 '{,(.+?)}' => 's/^($$1)/lc($1)/e;',
+	 '{,([^}]+?)}' => 's/^($$1)/lc($1)/e;',
 	 # Bash ${a,,A}
-	 '{,,(.+?)}' => 's/($$1)/lc($1)/eg;',
+	 '{,,([^}]+?)}' => 's/($$1)/lc($1)/eg;',
 	);
     # Modifiable copy of %Global::replace
     %Global::rpl = %Global::replace;
@@ -1646,32 +1646,38 @@ sub open_joblog {
 	if($opt::resume || $opt::resume_failed || $opt::retry_failed) {
 	    if(open(my $joblog_fh, "<", $opt::joblog)) {
 		# Read the joblog
-		$append = <$joblog_fh>; # If there is a header: Open as append later
+		# If there is a header: Open as append later
+		$append = <$joblog_fh>;
 		my $joblog_regexp;
 		if($opt::retry_failed) {
 		    # Make a regexp that only matches commands with exit+signal=0
 		    # 4 host 1360490623.067 3.445 1023 1222 0 0 command
 		    $joblog_regexp='^(\d+)(?:\t[^\t]+){5}\t0\t0\t';
 		    my @group;
-		    while(<$joblog_fh>) {
-			if(/$joblog_regexp/o) {
-			    # This is 30% faster than set_job_already_run($1);
-			    vec($Global::job_already_run,($1||0),1) = 1;
-			    $Global::total_completed++;
-			    $group[$1-1] = "true";
-			} elsif(/(\d+)\s+\S+(\s+[-0-9.]+){6}\s+(.*)$/) {
-			    $group[$1-1] = $3
-			} else {
-			    chomp;
-			    ::error("Format of '$opt::joblog' is wrong: $_");
-			    ::wait_and_exit(255);
+		    {
+			local $/="\n";
+			while(<$joblog_fh>) {
+			    if(/$joblog_regexp/o) {
+				# This is 30% faster than set_job_already_run($1);
+				vec($Global::job_already_run,($1||0),1) = 1;
+				$Global::total_completed++;
+				$group[$1-1] = "true";
+			    } elsif(/(\d+)\s+\S+(\s+[-0-9.]+){6}\s+(.*)$/) {
+				# Grab out the command
+				$group[$1-1] = $3;
+			    } else {
+				chomp;
+				::error("Format of '$opt::joblog' is wrong: $_");
+				::wait_and_exit(255);
+			    }
 			}
 		    }
 		    if(@group) {
 			my ($outfh,$name) = ::tmpfile(SUFFIX => ".arg");
 			unlink($name);
 			# Put args into argfile
-			print $outfh map { $_,$/ } @group;
+			# Replace \0 with ' ' as used in print_joblog()
+			print $outfh map { s/\0/ /g; $_,$/ } @group;
 			seek $outfh, 0, 0;
 			exit_if_disk_full();
 			# Set filehandle to -a
@@ -2756,13 +2762,15 @@ sub progress {
         $status = $eta .
             join(" ",map
                  {
-                     my $completed = ($Global::host{$_}->jobs_completed()||0);
-                     my $running = $Global::host{$_}->jobs_running();
-                     my $time = $completed ? (time-$^T)/($completed) : "0";
-                     sprintf("%s:%d/%d/%d%%/%.1fs ",
-                             $workerno{$_}, $running, $completed,
-                             ($running+$completed)*100
-                             / $Global::total_started, $time);
+                     if($Global::total_started) {
+			 my $completed = ($Global::host{$_}->jobs_completed()||0);
+			 my $running = $Global::host{$_}->jobs_running();
+			 my $time = $completed ? (time-$^T)/($completed) : "0";
+			 sprintf("%s:%d/%d/%d%%/%.1fs ",
+				 $workerno{$_}, $running, $completed,
+				 ($running+$completed)*100
+				 / $Global::total_started, $time);
+		     }
                  } @workers);
     }
     if(length $status > $termcols) {
@@ -2770,13 +2778,17 @@ sub progress {
         $header = "Computer:jobs running/jobs completed/%of started jobs";
         $status = $eta .
             join(" ",map
-                 { sprintf("%s:%d/%d/%d%%",
-                           $sshlogin{$_},
-                           $Global::host{$_}->jobs_running(),
-                           ($Global::host{$_}->jobs_completed()||0),
-                           ($Global::host{$_}->jobs_running()+
-                            ($Global::host{$_}->jobs_completed()||0))*100
-                           / $Global::total_started) }
+                 {
+                     if($Global::total_started) {
+			 sprintf("%s:%d/%d/%d%%",
+				 $sshlogin{$_},
+				 $Global::host{$_}->jobs_running(),
+				 ($Global::host{$_}->jobs_completed()||0),
+				 ($Global::host{$_}->jobs_running()+
+				  ($Global::host{$_}->jobs_completed()||0))*100
+				 / $Global::total_started)
+		     }
+		 }
                  @workers);
     }
     if(length $status > $termcols) {
@@ -2784,13 +2796,17 @@ sub progress {
         $header = "Computer:jobs running/jobs completed/%of started jobs";
         $status = $eta .
             join(" ",map
-                 { sprintf("%s:%d/%d/%d%%",
-                           $workerno{$_},
-                           $Global::host{$_}->jobs_running(),
-                           ($Global::host{$_}->jobs_completed()||0),
-                           ($Global::host{$_}->jobs_running()+
-                            ($Global::host{$_}->jobs_completed()||0))*100
-                           / $Global::total_started) }
+                 {
+                     if($Global::total_started) {
+			 sprintf("%s:%d/%d/%d%%",
+				 $workerno{$_},
+				 $Global::host{$_}->jobs_running(),
+				 ($Global::host{$_}->jobs_completed()||0),
+				 ($Global::host{$_}->jobs_running()+
+				  ($Global::host{$_}->jobs_completed()||0))*100
+				 / $Global::total_started)
+		     }
+		 }
                  @workers);
     }
     if(length $status > $termcols) {
@@ -5258,7 +5274,8 @@ sub loadavg_too_high {
 		    );
 		print `$ps{$^O}`;
 	    });
-	    $cmd = "perl -e ".::shell_quote_scalar($ps);
+	    # The command is too long for csh, so base64_wrap the command
+	    $cmd = Job::base64_wrap($ps);
 	}
 	return $cmd;
     }
@@ -8673,6 +8690,8 @@ sub print_joblog {
 	# Verbose level > 1: Print the rsync and stuff
 	$cmd = "@command";
     }
+    # Newlines makes it hard to parse the joblog
+    $cmd =~ s/\n/\0/g;
     print $Global::joblog
 	join("\t", $self->seq(), $self->sshlogin()->string(),
 	     $self->starttime(), sprintf("%10.3f",$self->runtime()),

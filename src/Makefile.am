@@ -11,17 +11,20 @@ install-exec-hook:
 if DOCUMENTATION
 man_MANS = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 \
 	parallel_tutorial.7 parallel_design.7 parallel_alternatives.7 \
-	parcat.1
+	parcat.1 parset.1
 doc_DATA = parallel.html env_parallel.html sem.html sql.html niceload.html \
 	parallel_tutorial.html parallel_design.html parallel_alternatives.html \
 	 parcat.html \
 	parallel.texi env_parallel.texi sem.texi sql.texi niceload.texi \
 	parallel_tutorial.texi parallel_design.texi parallel_alternatives.texi \
-	parcat.texi \
+	parcat.texi parset.texi \
 	parallel.pdf env_parallel.pdf sem.pdf sql.pdf niceload.pdf \
 	parallel_tutorial.pdf parallel_design.pdf parallel_alternatives.pdf \
-	parcat.pdf
+	parcat.pdf parset.pdf
 endif
+
+parset: parset.pod
+	cp parset.pod parset
 
 # Build documentation file if the tool to build exists.
 # Otherwise: Use the distributed version
@@ -79,6 +82,12 @@ parcat.1: parcat
 		--section=1 $(srcdir)/parcat > $(srcdir)/parcat.1n \
 	&& mv $(srcdir)/parcat.1n $(srcdir)/parcat.1 \
 	|| echo "Warning: pod2man not found. Using old parcat.1"
+
+parset.1: parset
+	pod2man --release='$(PACKAGE_VERSION)' --center='$(PACKAGE_NAME)' \
+		--section=1 $(srcdir)/parset > $(srcdir)/parset.1n \
+	&& mv $(srcdir)/parset.1n $(srcdir)/parset.1 \
+	|| echo "Warning: pod2man not found. Using old parset.1"
 
 parallel.html: parallel.pod
 	pod2html --title "GNU Parallel" $(srcdir)/parallel.pod > $(srcdir)/parallel.htmln \
@@ -142,6 +151,13 @@ parcat.html: parcat niceload.html
 	|| echo "Warning: pod2html not found. Using old parcat.html"
 	rm -f $(srcdir)/pod2htm*
 
+# Depending on niceload.html to avoid stupid pod2html race condition
+parset.html: parset parcat.html
+	pod2html --title "GNU parset" $(srcdir)/parset > $(srcdir)/parset.htmln \
+	&& mv $(srcdir)/parset.htmln $(srcdir)/parset.html \
+	|| echo "Warning: pod2html not found. Using old parset.html"
+	rm -f $(srcdir)/pod2htm*
+
 parallel.texi: parallel.pod
 	pod2texi --output=$(srcdir)/parallel.texi $(srcdir)/parallel.pod \
 	|| echo "Warning: pod2texi not found. Using old parallel.texi"
@@ -177,6 +193,10 @@ niceload.texi: niceload.pod
 parcat.texi: parcat
 	pod2texi --output=$(srcdir)/parcat.texi $(srcdir)/parcat \
 	|| echo "Warning: pod2texi not found. Using old parcat.texi"
+
+parset.texi: parset
+	pod2texi --output=$(srcdir)/parset.texi $(srcdir)/parset \
+	|| echo "Warning: pod2texi not found. Using old parset.texi"
 
 parallel.pdf: parallel.pod
 	pod2pdf --output-file $(srcdir)/parallel.pdf $(srcdir)/parallel.pod --title "GNU Parallel" \
@@ -214,26 +234,30 @@ parcat.pdf: parcat
 	pod2pdf --output-file $(srcdir)/parcat.pdf $(srcdir)/parcat --title "GNU parcat" \
 	|| echo "Warning: pod2pdf not found. Using old parcat.pdf"
 
+parset.pdf: parset
+	pod2pdf --output-file $(srcdir)/parset.pdf $(srcdir)/parset --title "GNU parset" \
+	|| echo "Warning: pod2pdf not found. Using old parset.pdf"
+
 sem: parallel
 	ln -fs parallel sem
 
 DISTCLEANFILES = parallel.1 env_parallel.1 sem.1 sql.1 niceload.1 \
 	parallel_tutorial.7 parallel_design.7 parallel_alternatives.7 \
-	parcat.1 \
+	parcat.1 parset.1 \
 	parallel.html env_parallel.html sem.html sql.html niceload.html \
 	parallel_tutorial.html parallel_design.html parallel_alternatives.html \
-	parcat.html \
+	parcat.html parset.html \
 	parallel.texi env_parallel.texi sem.texi sql.texi niceload.texi \
 	parallel_tutorial.texi parallel_design.texi parallel_alternatives.texi \
-	parcat.texi \
+	parcat.texi parset.texi \
 	parallel.pdf env_parallel.pdf sem.pdf sql.pdf niceload.pdf \
 	parallel_tutorial.pdf parallel_design.pdf parallel_alternatives.pdf \
-	parcat.pdf
+	parcat.pdf parset.pdf
 
-EXTRA_DIST = parallel sem sql niceload parcat env_parallel	\
-	env_parallel.ash env_parallel.bash env_parallel.csh	\
-	env_parallel.dash env_parallel.fish env_parallel.ksh	\
-	env_parallel.pdksh env_parallel.sh env_parallel.tcsh	\
-	env_parallel.zsh sem.pod parallel.pod env_parallel.pod	\
-	niceload.pod parallel_tutorial.pod parallel_design.pod	\
+EXTRA_DIST = parallel sem sql niceload parcat parset env_parallel	\
+	env_parallel.ash env_parallel.bash env_parallel.csh		\
+	env_parallel.dash env_parallel.fish env_parallel.ksh		\
+	env_parallel.pdksh env_parallel.sh env_parallel.tcsh		\
+	env_parallel.zsh sem.pod parallel.pod env_parallel.pod		\
+	niceload.pod parallel_tutorial.pod parallel_design.pod		\
 	parallel_alternatives.pod $(DISTCLEANFILES)

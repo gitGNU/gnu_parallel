@@ -1816,20 +1816,23 @@ Here are a few examples:
   --rpl '{#0} $_ = seq() - 1'
   Job slot counting from 2
   --rpl '{%1} $_ = slot() + 1'
+  Remove all extensions
+  --rpl '{:} s:(\.[^/]+)*$::'
 
 You can have dynamic replacement strings by including parenthesis in
 the replacement string and adding a regular expression between the
 parenthesis. The matching string will be inserted as $$1:
 
   parallel --rpl '{%(.*?)} s/$$1//' echo {%.tar.gz} ::: my.tar.gz
+  parallel --rpl '{:%(.+?)} s:$$1(\.[^/]+)*$::' \
+    echo {:%_file} ::: my_file.tar.gz
+  parallel -n3 --rpl '{/:%(.*?)} s:.*/(.*)$$1(\.[^/]+)*$:$1:' \
+    echo job {#}: {2} {2.} {3/:%_1} ::: a/b.c c/d.e f/g_1.h.i
 
 You can even use multiple matches:
 
-  parallel --rpl '{@(\d+)\S(\d+)\S(\d+)} 
-    if($$3 > 31) { ($$1,$$2,$$3) = ($$3,$$2,$$1) }
-    if($$2 > 12) { ($$1,$$2,$$3) = ($$1,$$3,$$2) }
-    $$1 = ($$1%100 + 1900); $_="$$1-$$2-$$3"
-  ' echo {@99-12-31} {@12.31.99} {@31/12-1999} ::: a
+  parallel --rpl '{/(.+?)/(.*?)} s/$$1/$$2/;'
+    echo {/replacethis/withthis} {/b/C} ::: a_replacethis_b
 
   parallel --rpl '{(.*?)/(.*?)} $_="$$2$_$$1"' \
     echo {swap/these} ::: -middle-
@@ -4116,7 +4119,7 @@ the currently running jobs are finished before exiting.
 =item $PARALLEL_HOME
 
 Dir where GNU B<parallel> stores config files, semaphores, and caches
-information between invocations. Default: $HOME/.parallel
+information between invocations. Default: $HOME/.parallel.
 
 =item $PARALLEL_PID
 

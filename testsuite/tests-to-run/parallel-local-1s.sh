@@ -196,6 +196,41 @@ par_result_replace() {
     rm -rf /tmp/par_*_49983-*
 }
 
+par_parset() {
+    echo '### test parset'
+    . `which env_parallel.bash`
+
+    echo 'Put output into $myarray'
+    parset myarray seq 3 ::: 4 5 6
+    echo "${myarray[1]}"
+
+    echo 'Put output into vars $seq, $pwd, $ls'
+    parset "seq pwd ls" ::: "seq 10" pwd ls
+    echo "$seq"
+
+    echo 'Put output into vars $seq, $pwd, $ls':
+    into_vars=(seq pwd ls)
+    parset "${into_vars[*]}" ::: "seq 5" pwd ls
+    echo "$seq"
+  
+    echo 'The commands to run can be an array'
+    cmd=("echo '<<joe  \"double  space\"  cartoon>>'" "pwd")
+    parset data ::: "${cmd[@]}"
+    echo "${data[0]}"
+    echo "${data[1]}"
+  
+    echo 'You cannot pipe into parset, but must use a tempfile'
+    seq 10 > parallel_input
+    parset res echo :::: parallel_input
+    echo "${res[0]}"
+    echo "${res[9]}"
+
+    echo 'Commands with newline require -0'
+    parset var -0 ::: 'echo "line1
+line2"' 'echo "command2"'
+    echo "${var[0]}"
+}
+
 
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort |

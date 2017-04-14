@@ -4,7 +4,7 @@ echo "### BUG: The length for -X is not close to max (131072)";   seq 1 60000 | 
   seq 1 60000 | parallel -X echo a{}b{}c |head -n 1 |wc
       1    5644   65514
   seq 1 60000 | parallel -X echo |head -n 1 |wc
-      1   12771   65520
+      1   12770   65514
   seq 1 60000 | parallel -X echo a{}b{}c {} |head -n 1 |wc
       1    8098   65512
   seq 1 60000 | parallel -X echo {}aa{} |head -n 1 |wc
@@ -453,6 +453,37 @@ par_failing_compressor	parallel: Error: cat;false failed.
 par_failing_compressor	parallel -k -k -k -k --compress --compress-program cat\;false --decompress-program cat\;false echo ::: C=cat\;false,D=cat\;false
 par_failing_compressor	C=cat;false,D=cat;false
 par_failing_compressor	parallel: Error: cat;false failed.
+par_parset	### test parset
+par_parset	Put output into $myarray
+par_parset	3
+par_parset	4
+par_parset	5
+par_parset	Put output into vars $seq, $pwd, $ls
+par_parset	1
+par_parset	2
+par_parset	3
+par_parset	4
+par_parset	5
+par_parset	6
+par_parset	7
+par_parset	8
+par_parset	9
+par_parset	10
+par_parset	Put output into vars $seq, $pwd, $ls:
+par_parset	1
+par_parset	2
+par_parset	3
+par_parset	4
+par_parset	5
+par_parset	The commands to run can be an array
+par_parset	<<joe  "double  space"  cartoon>>
+par_parset	~/privat/parallel/testsuite
+par_parset	You cannot pipe into parset, but must use a tempfile
+par_parset	1
+par_parset	10
+par_parset	Commands with newline require -0
+par_parset	line1
+par_parset	line2
 par_result	### Test --results
 par_result	I III
 par_result	I IIII
