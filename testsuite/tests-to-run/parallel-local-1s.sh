@@ -201,14 +201,14 @@ par_parset() {
     . `which env_parallel.bash`
 
     echo 'Put output into $myarray'
-    parset myarray seq 3 ::: 4 5 6
+    parset myarray seq 10 ::: 14 15 16
     echo "${myarray[1]}"
 
-    echo 'Put output into vars $seq, $pwd, $ls'
+    echo 'Put output into vars "$seq, $pwd, $ls"'
     parset "seq pwd ls" ::: "seq 10" pwd ls
     echo "$seq"
 
-    echo 'Put output into vars $seq, $pwd, $ls':
+    echo 'Put output into vars ($seq, $pwd, $ls)':
     into_vars=(seq pwd ls)
     parset "${into_vars[*]}" ::: "seq 5" pwd ls
     echo "$seq"

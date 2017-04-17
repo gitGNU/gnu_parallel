@@ -105,13 +105,13 @@ env_parallel() {
 
     if which parallel | grep 'no parallel in' >/dev/null; then
 	echo 'env_parallel: Error: parallel must be in $PATH.' >&2
-	return 1
+	return 255
     fi
     if which parallel >/dev/null; then
 	true which on linux
     else
 	echo 'env_parallel: Error: parallel must be in $PATH.' >&2
-	return 1
+	return 255
     fi
 
     # Grep regexp for vars given by --env
@@ -167,8 +167,20 @@ env_parallel() {
     unset _list_alias_BODIES
     unset _list_variable_VALUES
     unset _list_function_BODIES
-    `which parallel` "$@";
-    _parallel_exit_CODE=$?
-    unset PARALLEL_ENV;
-    return $_parallel_exit_CODE
+    # Test if environment is too big
+    if `which true` >/dev/null ; then
+	`which parallel` "$@";
+	_parallel_exit_CODE=$?
+	unset PARALLEL_ENV;
+	return $_parallel_exit_CODE
+    else
+	unset PARALLEL_ENV;
+	echo "env_parallel: Error: Your environment is too big." >&2
+	echo "env_parallel: Error: Try running this in a clean environment once:" >&2
+	echo "env_parallel: Error:   env_parallel --record-env" >&2
+	echo "env_parallel: Error: And the use '--env _'" >&2
+	echo "env_parallel: Error: For details see: man env_parallel" >&2
+
+	return 255
+    fi
 }

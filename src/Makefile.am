@@ -23,8 +23,8 @@ doc_DATA = parallel.html env_parallel.html sem.html sql.html niceload.html \
 	parcat.pdf parset.pdf
 endif
 
-parset: parset.pod
-	cp parset.pod parset
+parset.pod: parset
+	cp parset parset.pod
 
 # Build documentation file if the tool to build exists.
 # Otherwise: Use the distributed version

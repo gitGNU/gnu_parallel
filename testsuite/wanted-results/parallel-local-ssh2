@@ -90,14 +90,14 @@ par_tee_ssh	2
 par_tee_ssh	3
 par_tee_ssh	3
 par_wd_no_such_dir	### --wd no-such-dir - csh
-par_wd_no_such_dir	mkdir: cannot create directory '/no-such-dir': Permission denied
+par_wd_no_such_dir	mkdir: cannot create directory ‘/no-such-dir’: Permission denied
 par_wd_no_such_dir	parallel: Cannot chdir to /no-such-dir
 par_wd_no_such_dir	Exit code 1
 par_wd_no_such_dir	### --wd no-such-dir - tcsh
-par_wd_no_such_dir	mkdir: cannot create directory '/no-such-dir': Permission denied
+par_wd_no_such_dir	mkdir: cannot create directory ‘/no-such-dir’: Permission denied
 par_wd_no_such_dir	parallel: Cannot chdir to /no-such-dir
 par_wd_no_such_dir	Exit code 1
 par_wd_no_such_dir	### --wd no-such-dir - bash
-par_wd_no_such_dir	mkdir: cannot create directory '/no-such-dir': Permission denied
+par_wd_no_such_dir	mkdir: cannot create directory ‘/no-such-dir’: Permission denied
 par_wd_no_such_dir	parallel: Cannot chdir to /no-such-dir
 par_wd_no_such_dir	Exit code 1

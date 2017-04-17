@@ -84,24 +84,14 @@ If I<command> is given, GNU B<parallel> solve the same tasks as
 B<xargs>. If I<command> is not given GNU B<parallel> will behave
 similar to B<cat | sh>.
 
-The I<command> must be an executable, a script, a composed command, or
-a function.
+The I<command> must be an executable, a script, a composed command, an
+alias, or a function.
 
 B<Bash functions>: B<export -f> the function first or use B<env_parallel>.
 
-B<Bash aliases>: Use B<env_parallel>.
+B<Bash, Csh, or Tcsh aliases>: Use B<env_parallel>.
 
-B<Csh aliases>: Use B<env_parallel>.
-
-B<Tcsh aliases>: Use B<env_parallel>.
-
-B<Zsh functions and aliases>: Use B<env_parallel>.
-
-B<Fish functions and aliases>: Use B<env_parallel>.
-
-B<Ksh functions and aliases>: Use B<env_parallel>.
-
-B<Pdksh functions and aliases>: Use B<env_parallel>.
+B<Zsh, Fish, Ksh, and Pdksh functions and aliases>: Use B<env_parallel>.
 
 The command cannot contain the character \257 (macron: ¯).
 
@@ -116,6 +106,10 @@ The replacement string B<{}> can be changed with B<-I>.
 
 If the command line contains no replacement strings then B<{}> will be
 appended to the command line.
+
+Replacement strings are normally quoted, so special characters are not
+parsed by the shell. The exception is if the command starts with a
+replacement string; then the string is not quoted.
 
 
 =item B<{.}>
@@ -732,11 +726,11 @@ may not be used. B<--gnu> is kept for compatibility.
 
 Group output. Output from each jobs is grouped together and is only
 printed when the command is finished.  stdout (standard output) first
-followed by stderr (standard error). This takes some CPU time. In rare
-situations GNU B<parallel> takes up lots of CPU time and if it is
-acceptable that the outputs from different commands are mixed
-together, then disabling grouping with B<-u> can speedup GNU
-B<parallel> by a factor of 10.
+followed by stderr (standard error).
+
+This takes in the order of 0.5ms per job and depends on the speed of
+your disk for larger output. It can be disabled with B<-u>, but this
+means output from different commands can get mixed.
 
 B<--group> is the default. Can be reversed with B<-u>.
 
@@ -3045,25 +3039,40 @@ this technique with no problems. To raise the 32000 jobs limit raise
 =head1 EXAMPLE: Using shell variables
 
 When using shell variables you need to quote them correctly as they
-may otherwise be split on spaces.
+may otherwise be interpreted by the shell.
 
 Notice the difference between:
 
-  V=("My brother's 12\" records are worth <\$\$\$>"'!' Foo Bar)
-  parallel echo ::: ${V[@]} # This is probably not what you want
+  ARR=("My brother's 12\" records are worth <\$\$\$>"'!' Foo Bar)
+  parallel echo ::: ${ARR[@]} # This is probably not what you want
 
 and:
 
-  V=("My brother's 12\" records are worth <\$\$\$>"'!' Foo Bar)
-  parallel echo ::: "${V[@]}"
+  ARR=("My brother's 12\" records are worth <\$\$\$>"'!' Foo Bar)
+  parallel echo ::: "${ARR[@]}"
 
 When using variables in the actual command that contains special
 characters (e.g. space) you can quote them using B<'"$VAR"'> or using
 "'s and B<-q>:
 
-  V="Here  are  two "
-  parallel echo "'$V'" ::: spaces
-  parallel -q echo "$V" ::: spaces
+  VAR="My brother's 12\" records are worth <\$\$\$>"
+  parallel -q echo "$VAR" ::: '!'
+  export VAR
+  parallel echo '"$VAR"' ::: '!'
+
+If B<$VAR> does not contain ' then B<"'$VAR'"> will also work
+(and does not need B<export>):
+
+  VAR="My 12\" records are worth <\$\$\$>"
+  parallel echo "'$VAR'" ::: '!'
+
+If you use them in a function you just quote as you normally would do:
+
+  VAR="My brother's 12\" records are worth <\$\$\$>"
+  export VAR
+  myfunc() { echo "$VAR" "$1"; }
+  export -f myfunc
+  parallel myfunc ::: '!'
 
 
 =head1 EXAMPLE: Group output lines
@@ -3959,6 +3968,24 @@ files. Set up the dir processor as above and unpack into the dir.
 
 Using GNU Parallel as dir processor has the same limitations as using
 GNU Parallel as queue system/batch manager.
+
+
+=head1 EXAMPLE: Locate the missing package
+
+If you have downloaded source and tried compiling it, you may have seen:
+
+  $ ./configure
+  [...]
+  checking for something.h... no
+  configure: error: "libsomething not found"
+
+Often it is not obvious which package you should install to get that
+file. Debian has `apt-file` to search for a file. `tracefile` from
+https://gitlab.com/ole.tange/tangetools can tell which files a program
+tried to access. In this case we are interested in one of the last
+files:
+
+  $ tracefile -un ./configure | tail | parallel -j0 apt-file search
 
 
 =head1 QUOTING

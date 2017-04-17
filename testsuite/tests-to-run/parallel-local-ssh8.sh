@@ -59,6 +59,10 @@ par_keeporder() {
     parallel --keeporder -j100% -S 1/:,2/parallel@lo -q perl -e 'sleep 1;print "job{}\n";exit({})'
 }
 
+par_load_csh() {
+    echo '### Gave Word too long.'
+    parallel --load 100% -S csh@lo echo ::: a
+}
 
 export -f $(compgen -A function | grep par_)
 #compgen -A function | grep par_ | sort | parallel --delay $D -j$P --tag -k '{} 2>&1'

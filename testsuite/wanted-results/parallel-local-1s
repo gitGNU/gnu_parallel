@@ -455,10 +455,13 @@ par_failing_compressor	C=cat;false,D=cat;false
 par_failing_compressor	parallel: Error: cat;false failed.
 par_parset	### test parset
 par_parset	Put output into $myarray
-par_parset	3
-par_parset	4
-par_parset	5
-par_parset	Put output into vars $seq, $pwd, $ls
+par_parset	10
+par_parset	11
+par_parset	12
+par_parset	13
+par_parset	14
+par_parset	15
+par_parset	Put output into vars "$seq, $pwd, $ls"
 par_parset	1
 par_parset	2
 par_parset	3
@@ -469,7 +472,7 @@ par_parset	7
 par_parset	8
 par_parset	9
 par_parset	10
-par_parset	Put output into vars $seq, $pwd, $ls:
+par_parset	Put output into vars ($seq, $pwd, $ls):
 par_parset	1
 par_parset	2
 par_parset	3

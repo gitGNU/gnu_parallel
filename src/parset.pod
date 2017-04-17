@@ -28,7 +28,8 @@ the names will be the destination variables.
 
 =head1 OPTIONS
 
-Same as GNU B<parallel>.
+Same as GNU B<parallel>, but they are put I<after> the destination
+variable.
 
 
 =head1 SUPPORTED SHELLS
@@ -217,15 +218,14 @@ A copy of the full license is included in the file as cc-by-sa.txt.
 
 =head1 DEPENDENCIES
 
-B<env_parallel> uses GNU B<parallel>.
+B<parset> uses GNU B<parallel>.
 
 
 =head1 SEE ALSO
 
-B<parallel>(1), 
+B<parallel>(1), B<env_parallel>(1), 
+B<bash>(1).
 
-B<bash>(1), B<csh>(1), B<fish>(1), B<ksh>(1), B<pdksh>(1) B<tcsh>(1),
-B<zsh>(1).
 
 
 =cut

@@ -2,7 +2,7 @@
 
 # Check servers up on http://www.polarhome.com/service/status/
 
-P_ALL="vax freebsd solaris openbsd netbsd debian alpha aix redhat hpux ultrix minix qnx irix tru64 openindiana suse solaris-x86 mandriva ubuntu scosysv unixware dragonfly centos miros hurd raspbian macosx hpux-ia64 syllable pidora"
+P_ALL="tru64 syllable pidora raspbian solaris openindiana aix hpux qnx debian-ppc suse solaris-x86 mandriva ubuntu scosysv unixware centos miros macosx redhat netbsd openbsd freebsd debian dragonfly hpux-ia64 vax alpha ultrix minix irix hurd beaglebone cubieboard2"
 P_NOTWORKING="vax alpha openstep"
 P_NOTWORKING_YET="ultrix irix"
 
@@ -10,6 +10,7 @@ P_WORKING="tru64 syllable pidora raspbian solaris openindiana aix hpux qnx debia
 P_TEMPORARILY_BROKEN="minix hurd hpux-ia64 dragonfly"
 
 P="$P_WORKING"
+P="$P_ALL"
 POLAR=`parallel -k echo {}.polarhome.com ::: $P`
 S_POLAR=`parallel -k echo -S 1/{}.polarhome.com ::: $P`
 
@@ -58,12 +59,12 @@ echo
 echo '### Does exporting a bash function kill parallel'
 echo
 # http://zmwangx.github.io/blog/2015-11-25-bash-function-exporting-fiasco.html
-parallel --onall -j0 -k --tag --timeout $TIMEOUT $S_POLAR 'func() { cat <(echo bash only A); };export -f func; bin/parallel func ::: ' ::: 1 2>&1
+parallel --onall -j0 -k --tag --timeout $TIMEOUT $S_POLAR 'func() { cat <(echo bash only A); };export -f func; bin/parallel func ::: ' ::: 1 2>&1 | sort
 
 echo
 echo '### Does PARALLEL_SHELL help exporting a bash function not kill parallel'
 echo
-PARALLEL_SHELL=/bin/bash parallel --retries $RETRIES --onall -j0 -k --tag --timeout $TIMEOUT $S_POLAR 'func() { cat <(echo bash only B); };export -f func; bin/parallel func ::: ' ::: 1 2>&1
+PARALLEL_SHELL=/bin/bash parallel --retries $RETRIES --onall -j0 -k --tag --timeout $TIMEOUT $S_POLAR 'func() { cat <(echo bash only B); };export -f func; bin/parallel func ::: ' ::: 1 2>&1 | sort
 
 # Started earlier - therefore wait
 wait; cat /tmp/test_empty_cmd

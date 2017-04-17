@@ -105,5 +105,14 @@ par_keeporder_roundrobin() {
     fi
 }
 
+par_multiline_commands() {
+    echo 'bug #50781: joblog format with multiline commands'
+    seq 1 3 | parallel --jl jl --timeout 2 'sleep {}; echo {};
+echo finish {}'
+    seq 1 3 | parallel --jl jl --timeout 4 --retry-failed 'sleep {}; echo {};
+echo finish {}'
+}
+
+
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort | parallel -j6 --tag -k '{} 2>&1'

@@ -19,6 +19,13 @@ par_kill_term_twice	parallel: bash -c sleep\ 120\ \&\ pid\=\$\!\;\ wait\ \$pid 1
 par_kill_term_twice	bash-+-perl---bash---sleep
 par_kill_term_twice	     `-pstree
 par_kill_term_twice	bash---pstree
+par_multiline_commands	bug #50781: joblog format with multiline commands
+par_multiline_commands	1
+par_multiline_commands	finish 1
+par_multiline_commands	2
+par_multiline_commands	finish 2
+par_multiline_commands	3
+par_multiline_commands	finish 3
 par_pipepart_block	### --pipepart --block -# (# < 0)
 par_pipepart_block	1
 par_pipepart_block	2

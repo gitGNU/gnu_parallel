@@ -1362,7 +1362,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20170404;
+    $Global::version = 20170417;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -5485,7 +5485,8 @@ sub compute_number_of_processes {
 	    # The child takes one process slot
 	    # It will be killed later
 	    $SIG{'TERM'} = $Global::original_sig{'TERM'};
-            sleep 10101010;
+	    # 'exec sleep' takes less RAM than sleeping in perl
+	    exec 'sleep', 10101;
             exit(0);
 	} else {
 	    # Failed to spawn
@@ -5619,7 +5620,7 @@ sub compute_number_of_processes {
 	    # The system_limit is less than the wanted_processes
 	    if($system_limit < 1 and not $Global::JobQueue->empty()) {
 		::warning("Cannot spawn any jobs. ".
-			  "Raising ulimit -u or /etc/security/limits.conf",
+			  "Raising ulimit -u or 'nproc' in /etc/security/limits.conf",
 			  "or /proc/sys/kernel/pid_max may help.");
 		::wait_and_exit(255);
 	    }
@@ -5627,7 +5628,8 @@ sub compute_number_of_processes {
 		::warning("Only enough file handles to run ".
 			  $system_limit. " jobs in parallel.",
 			  "Running 'parallel -j0 -N $system_limit --pipe parallel -j0' or",
-			  "raising ulimit -n or /etc/security/limits.conf may help.");
+			  "raising 'ulimit -n' or 'nofile' in /etc/security/limits.conf",
+			  "or /proc/sys/fs/file-max may help.");
 	    }
 	    if($max_system_proc_reached) {
 		::warning("Only enough available processes to run ".
@@ -8135,8 +8137,8 @@ sub print_dryrun_and_verbose {
 	}
 	if($opt::tmuxpane) {
 	    # Move the command into a pane in window 0
-	    $actual_command = 'tmux joinp -t :0 ; '.
-		'tmux select-layout -t :0 tiled ; '.
+	    $actual_command = $ENV{'PARALLEL_TMUX'}.' joinp -t :0 ; '.
+		$ENV{'PARALLEL_TMUX'}.' select-layout -t :0 tiled ; '.
 		$actual_command;
 	}
 	my $visual_command = $self->replaced();
@@ -8147,7 +8149,7 @@ sub print_dryrun_and_verbose {
 	}
 	# ; causes problems
 	# ascii 194-245 annoys tmux
-	$title =~ tr/[\011-\016;\302-\365]//d;
+	$title =~ tr/[\011-\016;\302-\365]/ /s;
 	$title = ::shell_quote_scalar($title);
 
 	my $l_act = length($actual_command);
@@ -8182,8 +8184,9 @@ sub print_dryrun_and_verbose {
 	    if($opt::fg) {
 		if(not fork) {
 		    # Run tmux in the foreground
-		    # Give it 1 second to get started
-		    `sleep 1;$ENV{'PARALLEL_TMUX'} -S $tmuxsocket attach`;
+		    # Wait for the socket to appear
+		    while (not -e $tmuxsocket) { }
+		    `$ENV{'PARALLEL_TMUX'} -S $tmuxsocket attach`;
 		    exit;
 		}
 	    }
@@ -8690,7 +8693,7 @@ sub print_joblog {
 	# Verbose level > 1: Print the rsync and stuff
 	$cmd = "@command";
     }
-    # Newlines makes it hard to parse the joblog
+    # Newlines make it hard to parse the joblog
     $cmd =~ s/\n/\0/g;
     print $Global::joblog
 	join("\t", $self->seq(), $self->sshlogin()->string(),

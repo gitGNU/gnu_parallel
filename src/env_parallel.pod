@@ -29,8 +29,10 @@ B<parallel>, and takes up to 15 ms to start a job.
 Due to the problem with environment space (see below) the recommended
 usage is:
 
-  # Run once to record the "empty" environment
+  # Record the "clean" environment (this only needs to be run once)
   env_parallel --record-env
+
+  # Optionally edit ~/.parallel/ignored_vars (only needed once)
 
   # Define whatever you want to use
   alias myalias=echo
@@ -42,8 +44,10 @@ usage is:
 
 In B<csh>:
 
-  # Run once to record the "empty" environment
+  # Record the "clean" environment (this only needs to be run once)
   env_parallel --record-env
+
+  # Optionally edit ~/.parallel/ignored_vars (only needed once)
 
   # Define whatever you want to use
   alias myalias 'echo \!* $myvar works.'
@@ -62,7 +66,7 @@ individual shells below).
 But this only works if the size of the current environment is smaller
 than the maximal length of a command and smaller than half of the max
 if running remotely. E.g. The max size of Bash's command is 128 KB, so
-B<env_parallel> will fail if B<set | wc -c> is bigger than 128
+B<env_parallel> will fail if 'B<set | wc -c>' is bigger than 128
 KB. Technically the limit is in execve(1) which IPC::open3 uses.
 
 Bash completion functions are well-known for taking up well over 128
@@ -71,7 +75,8 @@ B<env_parallel> to fail.
 
 Instead you can use B<--env> to specify which variables, arrays,
 aliases and functions to export as this will only export those with
-the given name.
+the given name. Or follow the recommended usage in shown in
+DESCRIPTION.
 
 
 =head1 OPTIONS
