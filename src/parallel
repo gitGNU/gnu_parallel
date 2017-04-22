@@ -279,7 +279,8 @@ sub pipe_tee_setup {
     #   cat t4 | grep 4
     #   cat t5 | grep 5
     # Remove the tmpfifo as soon as it is open
-    @Global::cat_prepends = map { "(rm $_;cat) < $_" } @fifos;
+    # 'exec' saves a process
+    @Global::cat_prepends = map { "(rm $_; exec cat) < $_" } @fifos;
 }
 
 sub pipe_part_files {
@@ -1474,6 +1475,8 @@ sub parse_halt {
 		$Global::halt_fail = 1;
 	    } elsif($fail_success eq "success") {
 		$Global::halt_success = 1;
+	    } elsif($fail_success eq "done") {
+		$Global::halt_done = 1;
 	    } else {
 		::error("--halt $when must be followed by ,success or ,fail.");
 		::wait_and_exit(255);
@@ -3812,7 +3815,7 @@ sub reaper {
 	    # Free the jobslot
 	    $job->free_slot();
 	    if($opt::timeout and not $job->exitstatus()) {
-		# Update average runtime for timeout
+		# Update average runtime for timeout only for successful jobs
 		$Global::timeoutq->update_median_runtime($job->runtime());
 	    }
 	    if($opt::keeporder) {
@@ -4224,7 +4227,10 @@ sub qqx {
     # that /bin/sh does not understand
     my $PATH = $ENV{'PATH'};
     my %env;
-    my @keep = qw(PATH SSH_AUTH_SOCK SSH_AGENT_PID);
+    # ssh with ssh-agent needs PATH SSH_AUTH_SOCK SSH_AGENT_PID
+    # ssh with Kerberos needs KRB5CCNAME
+    # tmux needs LC_CTYPE
+    my @keep = qw(PATH SSH_AUTH_SOCK SSH_AGENT_PID KRB5CCNAME LC_CTYPE);
     @env{@keep} = @ENV{@keep};
     local(%ENV);
     %ENV = %env;
@@ -8774,13 +8780,7 @@ sub set_exitsignal {
 	# Should we halt? Immediately? Gracefully?
 	# Returns: N/A
 	my $job = shift;
-	#  --halt # => 1..100 (number of jobs failed, 101 means > 100)
-	#  --halt % => 1..100 (pct of jobs failed)
-	if($Global::halt_pct and not $Global::halt_count) {
-	    $total_jobs ||= $Global::JobQueue->total_jobs();
-	    # From the pct compute the number of jobs that must fail/succeed
-	    $Global::halt_count = $total_jobs * $Global::halt_pct;
-	}
+	my $limit;
 	if($job->exitstatus() or $job->exitsignal()) {
 	    # Job failed
 	    $Global::exitstatus++;
@@ -8788,58 +8788,66 @@ sub set_exitsignal {
 	    if($Global::halt_fail) {
 		::status("$Global::progname: This job failed:",
 			 $job->replaced());
-		if($Global::halt_count <= $Global::total_failed) {
-		    # At least N jobs had failed
-		    if(not defined $Global::halt_exitstatus) {
-			if($Global::halt_pct) {
-			    # --halt now,fail=X% or soon,fail=X%
-			    $Global::halt_exitstatus =
-				::ceil($Global::total_failed / $total_jobs * 100);
-			} elsif($Global::halt_count) {
-			    # --halt now,fail=X or soon,fail=X
-			    $Global::halt_exitstatus = ::min($Global::total_failed,101);
-			}
-			if($Global::halt_count and $Global::halt_count == 1) {
-			    # --halt now,fail=1 or soon,fail=1
-			    $Global::halt_exitstatus = $job->exitstatus();
-			}
-		    }
-		    ::debug("halt","Pct: ",$Global::halt_pct,
-			    " count: ",$Global::halt_count,"\n");
-		    if($Global::halt_when eq "soon"
-		       and scalar(keys %Global::running) > 0) {
-			::status
-			    ("$Global::progname: Starting no more jobs. ".
-			     "Waiting for ". (keys %Global::running).
-			     " jobs to finish.");
-			$Global::start_no_new_jobs ||= 1;
-		    }
-		    return($Global::halt_when);
-		}
+		$limit = $Global::total_failed;
 	    }
-	} else {
-	    if($Global::halt_success) {
-		::debug("halt","Pct: ",$Global::halt_pct,"<=",
-			" count: ",$Global::halt_count,"\n");
-		::status("$Global::progname: This job succeeded:",
-			 $job->replaced());
-		if($Global::halt_count <=
-		   $Global::total_completed-$Global::total_failed) {
-		    # At least N jobs had success
-		    # or at least N% had success
-		    $Global::halt_exitstatus = 0;
-		    if($Global::halt_when eq "soon"
-		       and scalar(keys %Global::running) > 0) {
-			::status
-			    ("$Global::progname: Starting no more jobs. ".
-			     "Waiting for ". (keys %Global::running).
-			     " jobs to finish.");
-			$Global::start_no_new_jobs ||= 1;
-		    }
-		    return($Global::halt_when);
-		}
-	    }
+	} elsif($Global::halt_success) {
+	    ::status("$Global::progname: This job succeeded:",
+		     $job->replaced());
+	    $limit = $Global::total_completed-$Global::total_failed;
 	}
+	if($Global::halt_done) {
+	    ::status("$Global::progname: This job finished:",
+		     $job->replaced());
+	    $limit = $Global::total_completed;
+	}
+	if(not defined $limit) {
+	    return ""
+	}
+	#  --halt # => 1..100 (number of jobs failed, 101 means > 100)
+	#  --halt % => 1..100 (pct of jobs failed)
+	if($Global::halt_pct and not $Global::halt_count) {
+	    $total_jobs ||= $Global::JobQueue->total_jobs();
+	    # From the pct compute the number of jobs that must fail/succeed
+	    $Global::halt_count = $total_jobs * $Global::halt_pct;
+	}
+	if($limit >= $Global::halt_count) {
+	    # At least N jobs have failed/succeded/completed
+	    # or at least N% have failed/succeded/completed
+	    # So we should prepare for exit
+	    if($Global::halt_fail or $Global::halt_done) {
+		# Set exit status
+		if(not defined $Global::halt_exitstatus) {
+		    if($Global::halt_pct) {
+			# --halt now,fail=X% or soon,fail=X%
+			# --halt now,done=X% or soon,done=X%
+			$Global::halt_exitstatus =
+			    ::ceil($Global::total_failed / $total_jobs * 100);
+		    } elsif($Global::halt_count) {
+			# --halt now,fail=X or soon,fail=X
+			# --halt now,done=X or soon,done=X
+			$Global::halt_exitstatus = ::min($Global::total_failed,101);
+		    }
+		    if($Global::halt_count and $Global::halt_count == 1) {
+			# --halt now,fail=1 or soon,fail=1
+			# --halt now,done=1 or soon,done=1
+			$Global::halt_exitstatus = $job->exitstatus();
+		    }
+		}
+		::debug("halt","Pct: ",$Global::halt_pct,
+			" count: ",$Global::halt_count,"\n");
+	    } elsif($Global::halt_success) {
+		$Global::halt_exitstatus = 0;
+	    }
+	    if($Global::halt_when eq "soon"
+	       and scalar(keys %Global::running) > 0) {
+		::status
+		    ("$Global::progname: Starting no more jobs. ".
+		     "Waiting for ". (keys %Global::running).
+		     " jobs to finish.");
+		$Global::start_no_new_jobs ||= 1;
+	    }
+	    return($Global::halt_when);
+	}	
 	return "";
     }
 }

@@ -195,7 +195,7 @@ to:parallel@gnu.org, bug-parallel@gnu.org
 
 Subject: GNU Parallel 20170422 ('Санкт-Петербу́рг') released <<[stable]>>
 
-GNU Parallel 20170422 ('Stockholm/London/Санкт-Петербу́рг') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
+GNU Parallel 20170422 ('Paris/Stockholm/London/Санкт-Петербу́рг') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
@@ -218,6 +218,9 @@ https://128.84.21.199/pdf/1703.09026.pdf
 https://wiki.ncsa.illinois.edu/display/ROGER/Using+GNU+Parallel
 
 https://github.com/lucascbeyeler/zmbackup
+http://helpful.knobs-dials.com/index.php/Find_and_xargs_and_parallel#Parallel
+
+https://github.com/mlangill/microbiome_helper/wiki/Quick-Introduction-to-GNU-Parallel
 
 http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0174575
 

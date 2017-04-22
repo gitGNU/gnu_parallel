@@ -135,7 +135,7 @@ par_result() {
     parallel -k --results /tmp/parallel_results_test/testA echo {1} {2} ::: I II ::: III IIII
     ls /tmp/parallel_results_test/testA/*/*/*/*/*
     rm -rf /tmp/parallel_results_test/testA*
-    
+
     echo "### Test --res"
     mkdir -p /tmp/parallel_results_test
     parallel -k --res /tmp/parallel_results_test/testD echo {1} {2} ::: I II ::: III IIII
@@ -201,32 +201,33 @@ par_parset() {
     . `which env_parallel.bash`
 
     echo 'Put output into $myarray'
-    parset myarray seq 10 ::: 14 15 16
+    parset myarray -k seq 10 ::: 14 15 16
     echo "${myarray[1]}"
 
     echo 'Put output into vars "$seq, $pwd, $ls"'
-    parset "seq pwd ls" ::: "seq 10" pwd ls
+    parset "seq pwd ls" -k ::: "seq 10" pwd ls
     echo "$seq"
 
     echo 'Put output into vars ($seq, $pwd, $ls)':
     into_vars=(seq pwd ls)
-    parset "${into_vars[*]}" ::: "seq 5" pwd ls
+    parset "${into_vars[*]}" -k ::: "seq 5" pwd ls
     echo "$seq"
-  
+
     echo 'The commands to run can be an array'
     cmd=("echo '<<joe  \"double  space\"  cartoon>>'" "pwd")
-    parset data ::: "${cmd[@]}"
+    parset data -k ::: "${cmd[@]}"
     echo "${data[0]}"
     echo "${data[1]}"
-  
+
     echo 'You cannot pipe into parset, but must use a tempfile'
-    seq 10 > parallel_input
-    parset res echo :::: parallel_input
+    seq 10 > /tmp/parset_input_$$
+    parset res -k echo :::: /tmp/parset_input_$$
     echo "${res[0]}"
     echo "${res[9]}"
+    rm /tmp/parset_input_$$
 
     echo 'Commands with newline require -0'
-    parset var -0 ::: 'echo "line1
+    parset var -k -0 ::: 'echo "line1
 line2"' 'echo "command2"'
     echo "${var[0]}"
 }

@@ -237,7 +237,7 @@ echo a b | wc -w
 2
 echo '### Test bug #35820: sem breaks if $HOME is not writable'
 ### Test bug #35820: sem breaks if $HOME is not writable
-  echo 'Workaround: use another writable dir';   rm -rf /tmp/.parallel;   HOME=/tmp sem echo OK;   HOME=/tmp sem --wait;   HOME=/usr/this/should/fail stdout sem echo should fail
+  echo 'Workaround: use another writable dir';   rm -rf /tmp/.parallel;   HOME=/tmp sem echo OK;   HOME=/tmp sem --wait;   ssh lo 'HOME=/usr/this/should/fail stdout sem echo should fail'
 Workaround: use another writable dir
 OK
-parallel: Error: Cannot change into non-executable dir /usr/this/should/fail/.parallel: No such file or directory
+parallel: Error: Cannot change into non-executable dir /usr/this/should/fail/.parallel/semaphores: No such file or directory

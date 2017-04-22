@@ -950,7 +950,7 @@ par_bash_environment_too_big() {
     env_parallel -S lo echo ::: OK
 
     bigvar=u
-    eval 'bigfunc() { a="'"$(yes a| head -c 118k)"'"; };'
+    eval 'bigfunc() { a="'"$(yes a| head -c 120k)"'"; };'
     env_parallel echo ::: OK
     env_parallel -S lo echo ::: OK
 
@@ -963,7 +963,7 @@ par_bash_environment_too_big() {
     env_parallel -S lo echo ::: fail
 
     bigvar=u
-    eval 'bigfunc() { a="'"$(yes a| head -c 119k)"'"; };'
+    eval 'bigfunc() { a="'"$(yes a| head -c 121k)"'"; };'
     env_parallel echo ::: fail
     env_parallel -S lo echo ::: fail
 _EOF

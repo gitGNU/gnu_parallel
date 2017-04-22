@@ -1,9 +1,9 @@
-make[1]: Entering directory '/mnt/4tb/home/tange/privat/parallel/testsuite'
+make[1]: Entering directory '~/privat/parallel/testsuite'
 # || true - because this should not fail if the VM is not running
 VBoxManage controlvm CentOS3-root:centos3 savestate || true
 VBoxManage controlvm RedHat9-root:redhat9 savestate || true
 VBoxManage controlvm OracleXE savestate || true
-make[1]: Leaving directory '/mnt/4tb/home/tange/privat/parallel/testsuite'
+make[1]: Leaving directory '~/privat/parallel/testsuite'
 echo '### bug #44358: 2 GB records cause problems for -N'
 ### bug #44358: 2 GB records cause problems for -N
 echo '5 GB version: Eats 12.5 GB'
@@ -52,7 +52,7 @@ Eats 4.7 GB
 parallel: Warning: --blocksize >= 2G causes problems. Using 2G-1.
 echo '**'
 **
-make[1]: Entering directory '/mnt/4tb/home/tange/privat/parallel/testsuite'
+make[1]: Entering directory '~/privat/parallel/testsuite'
 # Make sure we can reach the virtual machines
 #sudo ifconfig wlp13s0:0 192.168.1.72 ||	sudo ifconfig wlan0:0 192.168.1.72
 sudo ifconfig enp14s0:0 192.168.1.72 ||	sudo ifconfig eth0:0 192.168.1.72
@@ -64,4 +64,4 @@ VBoxManage startvm RedHat9-root:redhat9 || VBoxManage controlvm RedHat9-root:red
 Waiting for VM "RedHat9-root:redhat9" to power on...
 VM "RedHat9-root:redhat9" has been successfully started.
 parallel 'ping {} | read' ::: redhat9.tange.dk centos3.tange.dk
-make[1]: Leaving directory '/mnt/4tb/home/tange/privat/parallel/testsuite'
+make[1]: Leaving directory '~/privat/parallel/testsuite'

@@ -685,7 +685,7 @@ par_tagstring_pipe() {
 
 par_link_files_as_only_arg() {
     echo 'bug #50685: single ::::+ does not work'
-    parallel echo ::::+ <(seq 10) <(seq 3) <(seq 4)
+    parallel -k echo ::::+ <(seq 10) <(seq 3) <(seq 4)
 }
 
 export -f $(compgen -A function | grep par_)

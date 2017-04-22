@@ -182,84 +182,6 @@ env_parallel() {
     fi
 }
 
-_parset() {
-    # $1 = variable NAME
-    # If ${"$1"} is an array: Then put the output into variables with those names
-    # else put the output into an array named ${"$1"}
-    # e.g.:
-    #   # Create array named myvar
-    #   parset myvar echo ::: {1..10}
-    #   echo ${myvar[5]}
-    #
-    #   # Put output into $var_a $var_b $var_c
-    #   varnames=(var_a var_b var_c)
-    #   parset -a varnames echo ::: {1..3}
-    #   echo $var_c
-    #
-    #   # Put output into $var_a2 $var_b2 $var_c2
-    #   varname=var_a2,var_b2,var_c2
-    #   parset -a varname echo ::: {1..3}
-    #   echo $var_c2
-    #
-    #   # Put output into $var_a3 $var_b3 $var_c3
-    #   varname="var_a3 var_b3 var_c3"
-    #   parset -a varname echo ::: {1..3}
-    #   echo $var_c3
-
-    # Variable name to store in
-    local _parset_vname
-    local _parset_vnames
-    # Array to fetch names from
-    local _parset_aname
-    _parset_vname="$1"
-    _parset_aname="_nO_sUch_vAr"
-    shift
-    if [[ "-a" == "$_parset_vname" ]] ; then
-	# Option -a given
-	echo '-a given'
-	_parset_vname="$1"
-        _parset_aname="$1"
-	shift
-	if [[ "$(declare -p $_parset_vname 2>/dev/null)" =~ "declare -a" ]]; then
-	    # OK
-	    true
-	else
-	    # error
-	    echo "$_parset_vname" must be an array
-	    return 1
-	fi
-    else
-	local _parset_splitable
-	_parset_splitable="$(eval echo '$'$_parset_vname)"
-	if echo "$_parset_splitable" | grep -E ',| ' >/dev/null ; then
-	    # Split on , and space
-	    _parset_vnames=( $(perl -e 'print map { s/,| /\n/g; $_ } @ARGV' "$_parset_splitable" ) )
-	    _parset_aname="_parset_vnames"
-	    echo first ${_parset_vnames[0]}
-	else
-	    # _parset_vname should be used as an array
-	    true
-	fi
-    fi
-	   
-       
-    if [[ "$(declare -p $_parset_aname 2>/dev/null)" =~ "declare -a" ]]; then
-	# vname refers to an array
-	# The array elements refers to variable names to put output into
-	eval $(
-	    parallel --files "$@" |
-		perl -pe 'chop;$_="\"\`cat $_; rm $_\`\"\n"' |
-		parallel echo {2}={1} :::: - :::+ $(eval echo '${'$_parset_aname'[@]}')
-	    )
-	unset _parset_aname
-    else
-	# Put output into array ${$_parset_vname}
-	eval $_parset_vname="( $( parallel --files "$@" |
-          perl -pe 'chop;$_="\"\`cat $_; rm $_\`\" "' ) )"
-    fi
-}
-
-
 parset() {
     # If $1 contains ',' or space:
     #   Split on , to get the destination variable names
@@ -286,7 +208,7 @@ parset() {
 	# Split on , or space to get the names
 	eval "$(
 	    # Compute results into files
-	    parallel --files "$@" |
+	    parallel --files -k "$@" |
 		# var1=`cat tmpfile1; rm tmpfile1`
 		# var2=`cat tmpfile2; rm tmpfile2`
 		parallel -q echo {2}='`cat {1}; rm {1}`' :::: - :::+ $(
@@ -297,7 +219,7 @@ parset() {
     else
 	# $1 contains no space or ,
 	# => $1 is the name of the array to put data into
-	eval $_parset_name="( $( parallel --files "$@" |
+	eval $_parset_name="( $( parallel --files -k "$@" |
               perl -pe 'chop;$_="\"\`cat $_; rm $_\`\" "' ) )"
     fi
 }

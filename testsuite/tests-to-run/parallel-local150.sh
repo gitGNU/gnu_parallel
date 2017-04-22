@@ -111,5 +111,5 @@ echo '### Test bug #35820: sem breaks if $HOME is not writable'
   rm -rf /tmp/.parallel; 
   HOME=/tmp sem echo OK; 
   HOME=/tmp sem --wait; 
-  HOME=/usr/this/should/fail stdout sem echo should fail
+  ssh lo 'HOME=/usr/this/should/fail stdout sem echo should fail'
 EOF

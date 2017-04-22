@@ -16,17 +16,18 @@ par_retries_unreachable() {
 }
 
 par_outside_file_handle_limit() {
-  echo "### Test Force outside the file handle limit, 2009-02-17 Gave fork error"
-  (echo echo Start; seq 1 20000 | perl -pe 's/^/true /'; echo echo end) |
-      stdout parallel -uj 0 | egrep -v 'processes took|adjusting' |
-      perl -pe 's/\d\d\d/999/'
+    ulimit -n 1024
+    echo "### Test Force outside the file handle limit, 2009-02-17 Gave fork error"
+    (echo echo Start; seq 1 20000 | perl -pe 's/^/true /'; echo echo end) |
+	stdout parallel -uj 0 | egrep -v 'processes took|adjusting' |
+	perl -pe 's/\d\d\d/999/'
 }
 
 par_over_4GB() {
-  echo '### Test if we can deal with output > 4 GB'
-  echo | 
-    nice parallel --tmpdir $TMP5G -q perl -e '$a="x"x1000000;for(0..4300){print $a}' |
-    nice md5sum
+    echo '### Test if we can deal with output > 4 GB'
+    echo |
+	nice parallel --tmpdir $TMP5G -q perl -e '$a="x"x1000000;for(0..4300){print $a}' |
+	nice md5sum
 }
 
 

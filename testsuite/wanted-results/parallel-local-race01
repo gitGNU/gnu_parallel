@@ -1,50 +1,24 @@
 par_print_before_halt_on_error	### What is printed before the jobs are killed
 par_print_before_halt_on_error	-2	exit code 0
-par_print_before_halt_on_error	-2	0	0
+par_print_before_halt_on_error	-2	0.1	0.1
 par_print_before_halt_on_error	-2	parallel: This job succeeded:
-par_print_before_halt_on_error	-2	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -2\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 1
+par_print_before_halt_on_error	-2	perl -e sleep\ 1\;\ sleep\ \$ARGV\[0\]\;\ print\ STDERR\ \"\",@ARGV,\"\\n\"\;\ -2\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 0.1
 par_print_before_halt_on_error	-1	exit code 0
-par_print_before_halt_on_error	-1	0	0
+par_print_before_halt_on_error	-1	0.1	0.1
 par_print_before_halt_on_error	-1	parallel: This job succeeded:
-par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 1
-par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 8 jobs to finish.
+par_print_before_halt_on_error	-1	perl -e sleep\ 1\;\ sleep\ \$ARGV\[0\]\;\ print\ STDERR\ \"\",@ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 0.1
+par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 3 jobs to finish.
 par_print_before_halt_on_error	-1	parallel: This job succeeded:
-par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 2
-par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 7 jobs to finish.
-par_print_before_halt_on_error	-1	3	3
+par_print_before_halt_on_error	-1	perl -e sleep\ 1\;\ sleep\ \$ARGV\[0\]\;\ print\ STDERR\ \"\",@ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 1
+par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 1 jobs to finish.
+par_print_before_halt_on_error	-1	3.2	3.2
 par_print_before_halt_on_error	-1	0	0
 par_print_before_halt_on_error	-1	1	1
-par_print_before_halt_on_error	-1	2	2
 par_print_before_halt_on_error	-1	parallel: This job succeeded:
-par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 3
-par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 6 jobs to finish.
-par_print_before_halt_on_error	-1	3	3
-par_print_before_halt_on_error	-1	parallel: This job succeeded:
-par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 3
-par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 5 jobs to finish.
-par_print_before_halt_on_error	-1	4	4
-par_print_before_halt_on_error	-1	parallel: This job succeeded:
-par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 4
-par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 4 jobs to finish.
-par_print_before_halt_on_error	-1	5	5
-par_print_before_halt_on_error	-1	parallel: This job succeeded:
-par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 5
-par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-par_print_before_halt_on_error	-1	6	6
-par_print_before_halt_on_error	-1	parallel: This job succeeded:
-par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 6
-par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-par_print_before_halt_on_error	-1	7	7
-par_print_before_halt_on_error	-1	0	0
-par_print_before_halt_on_error	-1	parallel: This job succeeded:
-par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 7
-par_print_before_halt_on_error	-1	parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-par_print_before_halt_on_error	-1	8	8
-par_print_before_halt_on_error	-1	parallel: This job succeeded:
-par_print_before_halt_on_error	-1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 8
-par_print_before_halt_on_error	0	exit code 3
-par_print_before_halt_on_error	0	0	0
-par_print_before_halt_on_error	0	3	3
+par_print_before_halt_on_error	-1	perl -e sleep\ 1\;\ sleep\ \$ARGV\[0\]\;\ print\ STDERR\ \"\",@ARGV,\"\\n\"\;\ -1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 3.2
+par_print_before_halt_on_error	0	exit code 1
+par_print_before_halt_on_error	0	0.1	0.1
+par_print_before_halt_on_error	0	3.2	3.2
 par_print_before_halt_on_error	0	0	0
 par_print_before_halt_on_error	0	1	1
 par_print_before_halt_on_error	0	2	2
@@ -53,520 +27,1367 @@ par_print_before_halt_on_error	0	4	4
 par_print_before_halt_on_error	0	5	5
 par_print_before_halt_on_error	0	6	6
 par_print_before_halt_on_error	0	7	7
-par_print_before_halt_on_error	0	0	0
+par_print_before_halt_on_error	0	0.3	0.3
 par_print_before_halt_on_error	0	8	8
 par_print_before_halt_on_error	1	exit code 1
-par_print_before_halt_on_error	1	0	0
+par_print_before_halt_on_error	1	0.1	0.1
 par_print_before_halt_on_error	1	parallel: This job failed:
-par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 1
-par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 8 jobs to finish.
+par_print_before_halt_on_error	1	perl -e sleep\ 1\;\ sleep\ \$ARGV\[0\]\;\ print\ STDERR\ \"\",@ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 1
+par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 3 jobs to finish.
 par_print_before_halt_on_error	1	parallel: This job failed:
-par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 2
-par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 7 jobs to finish.
-par_print_before_halt_on_error	1	3	3
+par_print_before_halt_on_error	1	perl -e sleep\ 1\;\ sleep\ \$ARGV\[0\]\;\ print\ STDERR\ \"\",@ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 2
+par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 2 jobs to finish.
+par_print_before_halt_on_error	1	3.2	3.2
 par_print_before_halt_on_error	1	0	0
 par_print_before_halt_on_error	1	1	1
 par_print_before_halt_on_error	1	2	2
 par_print_before_halt_on_error	1	parallel: This job failed:
-par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 3
-par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 6 jobs to finish.
+par_print_before_halt_on_error	1	perl -e sleep\ 1\;\ sleep\ \$ARGV\[0\]\;\ print\ STDERR\ \"\",@ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 3.2
+par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 1 jobs to finish.
 par_print_before_halt_on_error	1	3	3
 par_print_before_halt_on_error	1	parallel: This job failed:
-par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 3
-par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 5 jobs to finish.
-par_print_before_halt_on_error	1	4	4
-par_print_before_halt_on_error	1	parallel: This job failed:
-par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 4
-par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 4 jobs to finish.
-par_print_before_halt_on_error	1	5	5
-par_print_before_halt_on_error	1	parallel: This job failed:
-par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 5
-par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 3 jobs to finish.
-par_print_before_halt_on_error	1	6	6
-par_print_before_halt_on_error	1	parallel: This job failed:
-par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 6
-par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 2 jobs to finish.
-par_print_before_halt_on_error	1	7	7
-par_print_before_halt_on_error	1	0	0
-par_print_before_halt_on_error	1	parallel: This job failed:
-par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 7
-par_print_before_halt_on_error	1	parallel: Starting no more jobs. Waiting for 1 jobs to finish.
-par_print_before_halt_on_error	1	8	8
-par_print_before_halt_on_error	1	parallel: This job failed:
-par_print_before_halt_on_error	1	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 8
+par_print_before_halt_on_error	1	perl -e sleep\ 1\;\ sleep\ \$ARGV\[0\]\;\ print\ STDERR\ \"\",@ARGV,\"\\n\"\;\ 1\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 3
 par_print_before_halt_on_error	2	exit code 1
-par_print_before_halt_on_error	2	0	0
+par_print_before_halt_on_error	2	0.1	0.1
 par_print_before_halt_on_error	2	parallel: This job failed:
-par_print_before_halt_on_error	2	perl -e sleep\ \$ARGV\[0\]\;print\ STDERR\ @ARGV,\"\\n\"\;\ 2\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 0.9; exit 1
-par_testhalt	0
-par_testhalt	### testhalt --halt now,fail=0
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.9; exit 1
-par_testhalt	0
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 0.9; exit 1
-par_testhalt	1
-par_testhalt	### testhalt --halt now,fail=1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.9; exit 1
-par_testhalt	1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 0.9; exit 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 1.5; exit 2
-par_testhalt	2
-par_testhalt	### testhalt --halt now,fail=2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.9; exit 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 4.5; exit 2
-par_testhalt	2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 0.9; exit 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 1.5; exit 2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 2.1; exit 3
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 2.7; exit 4
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.3; exit 5
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.9; exit 6
-par_testhalt	30
-par_testhalt	### testhalt --halt now,fail=30%
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.9; exit 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 4.5; exit 2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.1; exit 3
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.7; exit 4
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 6.3; exit 5
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 6.9; exit 6
-par_testhalt	30
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 0.9; exit 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 1.5; exit 2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 2.1; exit 3
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 2.7; exit 4
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.3; exit 5
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.9; exit 6
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 4.5; exit 7
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.1; exit 8
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.7; exit 9
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 6.3; exit 10
-par_testhalt	50
-par_testhalt	### testhalt --halt now,fail=70%
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.9; exit 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 4.5; exit 2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.1; exit 3
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.7; exit 4
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 6.3; exit 5
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 6.9; exit 6
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 7.5; exit 7
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 8.1; exit 8
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 8.7; exit 9
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 9.3; exit 10
-par_testhalt	50
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.6; exit 0
-par_testhalt	0
-par_testhalt	### testhalt --halt now,success=0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.6; exit 0
-par_testhalt	0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.6; exit 0
-par_testhalt	0
-par_testhalt	### testhalt --halt now,success=1
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.6; exit 0
-par_testhalt	0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.9; exit 0
-par_testhalt	0
-par_testhalt	### testhalt --halt now,success=2
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.9; exit 0
-par_testhalt	0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.9; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.2; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.5; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.8; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 5.1; exit 0
-par_testhalt	0
-par_testhalt	### testhalt --halt now,success=30%
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.9; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.2; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.5; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.8; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 2.1; exit 0
-par_testhalt	0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.9; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.2; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.5; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.8; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 5.1; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 5.4; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 5.7; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 6.3; exit 0
-par_testhalt	50
-par_testhalt	### testhalt --halt now,success=70%
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.9; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.2; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.5; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.8; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 2.1; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 2.4; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 2.7; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.3; exit 0
-par_testhalt	50
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 0.9; exit 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 1.5; exit 2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 2.1; exit 3
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 2.7; exit 4
-par_testhalt	0
-par_testhalt	### testhalt --halt soon,fail=0
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.9; exit 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 4.5; exit 2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.1; exit 3
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.7; exit 4
-par_testhalt	0
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 0.9; exit 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 1.5; exit 2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 2.1; exit 3
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 2.7; exit 4
-par_testhalt	1
-par_testhalt	### testhalt --halt soon,fail=1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.9; exit 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 4.5; exit 2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.1; exit 3
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.7; exit 4
-par_testhalt	1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 0.9; exit 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 1.5; exit 2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 2.1; exit 3
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 2.7; exit 4
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.3; exit 5
-par_testhalt	2
-par_testhalt	### testhalt --halt soon,fail=2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.9; exit 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 4.5; exit 2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.1; exit 3
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.7; exit 4
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 6.3; exit 5
-par_testhalt	2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 0.9; exit 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 1.5; exit 2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 2.1; exit 3
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 2.7; exit 4
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.3; exit 5
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.9; exit 6
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 4.5; exit 7
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.1; exit 8
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.7; exit 9
-par_testhalt	30
-par_testhalt	### testhalt --halt soon,fail=30%
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.9; exit 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 4.5; exit 2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.1; exit 3
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.7; exit 4
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 6.3; exit 5
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 6.9; exit 6
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 7.5; exit 7
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 8.1; exit 8
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 8.7; exit 9
-par_testhalt	30
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 0.9; exit 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 1.5; exit 2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 2.1; exit 3
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 2.7; exit 4
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.3; exit 5
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.9; exit 6
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 4.5; exit 7
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.1; exit 8
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.7; exit 9
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 6.3; exit 10
-par_testhalt	50
-par_testhalt	### testhalt --halt soon,fail=70%
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 3.9; exit 1
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 4.5; exit 2
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.1; exit 3
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 5.7; exit 4
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 6.3; exit 5
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 6.9; exit 6
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 7.5; exit 7
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 8.1; exit 8
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 8.7; exit 9
-par_testhalt	parallel: This job failed:
-par_testhalt	sleep 9.3; exit 10
-par_testhalt	50
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.9; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.2; exit 0
-par_testhalt	0
-par_testhalt	### testhalt --halt soon,success=0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.9; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.2; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.5; exit 0
-par_testhalt	0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.9; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.2; exit 0
-par_testhalt	0
-par_testhalt	### testhalt --halt soon,success=1
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.9; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.2; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.5; exit 0
-par_testhalt	0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.9; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.2; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.5; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.8; exit 0
-par_testhalt	0
-par_testhalt	### testhalt --halt soon,success=2
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.9; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.2; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.5; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.8; exit 0
-par_testhalt	0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.9; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.2; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.5; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.8; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 5.1; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 5.4; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 5.7; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 6; exit 0
-par_testhalt	0
-par_testhalt	### testhalt --halt soon,success=30%
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.9; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.2; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.5; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.8; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 2.1; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 2.4; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 2.7; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3; exit 0
-par_testhalt	0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.9; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.2; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.5; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 4.8; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 5.1; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 5.4; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 5.7; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 6.3; exit 0
-par_testhalt	50
-par_testhalt	### testhalt --halt soon,success=70%
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.6; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 0.9; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.2; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.5; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 1.8; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 2.1; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 2.4; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 2.7; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3; exit 0
-par_testhalt	parallel: This job succeeded:
-par_testhalt	sleep 3.3; exit 0
-par_testhalt	50
+par_print_before_halt_on_error	2	perl -e sleep\ 1\;\ sleep\ \$ARGV\[0\]\;\ print\ STDERR\ \"\",@ARGV,\"\\n\"\;\ 2\ \>\ 0\ \?\ exit\ shift\ :\ exit\ not\ shift\; 1
+par_testhalt	now fail 0 true	### testhalt --halt now,fail=0
+par_testhalt	now fail 0 true	job 1
+par_testhalt	now fail 0 true	parallel: This job failed:
+par_testhalt	now fail 0 true	echo job 1; sleep 0.9; exit 1
+par_testhalt	now fail 0 true	0
+par_testhalt	now fail 0 false	### testhalt --halt now,fail=0
+par_testhalt	now fail 0 false	job 1
+par_testhalt	now fail 0 false	job 2
+par_testhalt	now fail 0 false	job 3
+par_testhalt	now fail 0 false	job 4
+par_testhalt	now fail 0 false	job 5
+par_testhalt	now fail 0 false	job 6
+par_testhalt	now fail 0 false	job 7
+par_testhalt	now fail 0 false	job 8
+par_testhalt	now fail 0 false	job 9
+par_testhalt	now fail 0 false	job 10
+par_testhalt	now fail 0 false	job 11
+par_testhalt	now fail 0 false	parallel: This job failed:
+par_testhalt	now fail 0 false	echo job 11; sleep 3.9; exit 1
+par_testhalt	now fail 0 false	0
+par_testhalt	now fail 1 true	### testhalt --halt now,fail=1
+par_testhalt	now fail 1 true	job 1
+par_testhalt	now fail 1 true	parallel: This job failed:
+par_testhalt	now fail 1 true	echo job 1; sleep 0.9; exit 1
+par_testhalt	now fail 1 true	1
+par_testhalt	now fail 1 false	### testhalt --halt now,fail=1
+par_testhalt	now fail 1 false	job 1
+par_testhalt	now fail 1 false	job 2
+par_testhalt	now fail 1 false	job 3
+par_testhalt	now fail 1 false	job 4
+par_testhalt	now fail 1 false	job 5
+par_testhalt	now fail 1 false	job 6
+par_testhalt	now fail 1 false	job 7
+par_testhalt	now fail 1 false	job 8
+par_testhalt	now fail 1 false	job 9
+par_testhalt	now fail 1 false	job 10
+par_testhalt	now fail 1 false	job 11
+par_testhalt	now fail 1 false	parallel: This job failed:
+par_testhalt	now fail 1 false	echo job 11; sleep 3.9; exit 1
+par_testhalt	now fail 1 false	1
+par_testhalt	now fail 2 true	### testhalt --halt now,fail=2
+par_testhalt	now fail 2 true	job 1
+par_testhalt	now fail 2 true	parallel: This job failed:
+par_testhalt	now fail 2 true	echo job 1; sleep 0.9; exit 1
+par_testhalt	now fail 2 true	job 2
+par_testhalt	now fail 2 true	parallel: This job failed:
+par_testhalt	now fail 2 true	echo job 2; sleep 1.5; exit 2
+par_testhalt	now fail 2 true	2
+par_testhalt	now fail 2 false	### testhalt --halt now,fail=2
+par_testhalt	now fail 2 false	job 1
+par_testhalt	now fail 2 false	job 2
+par_testhalt	now fail 2 false	job 3
+par_testhalt	now fail 2 false	job 4
+par_testhalt	now fail 2 false	job 5
+par_testhalt	now fail 2 false	job 6
+par_testhalt	now fail 2 false	job 7
+par_testhalt	now fail 2 false	job 8
+par_testhalt	now fail 2 false	job 9
+par_testhalt	now fail 2 false	job 10
+par_testhalt	now fail 2 false	job 11
+par_testhalt	now fail 2 false	parallel: This job failed:
+par_testhalt	now fail 2 false	echo job 11; sleep 3.9; exit 1
+par_testhalt	now fail 2 false	job 12
+par_testhalt	now fail 2 false	parallel: This job failed:
+par_testhalt	now fail 2 false	echo job 12; sleep 4.5; exit 2
+par_testhalt	now fail 2 false	2
+par_testhalt	now fail 30% true	### testhalt --halt now,fail=30%
+par_testhalt	now fail 30% true	job 1
+par_testhalt	now fail 30% true	parallel: This job failed:
+par_testhalt	now fail 30% true	echo job 1; sleep 0.9; exit 1
+par_testhalt	now fail 30% true	job 2
+par_testhalt	now fail 30% true	parallel: This job failed:
+par_testhalt	now fail 30% true	echo job 2; sleep 1.5; exit 2
+par_testhalt	now fail 30% true	job 3
+par_testhalt	now fail 30% true	parallel: This job failed:
+par_testhalt	now fail 30% true	echo job 3; sleep 2.1; exit 3
+par_testhalt	now fail 30% true	job 4
+par_testhalt	now fail 30% true	parallel: This job failed:
+par_testhalt	now fail 30% true	echo job 4; sleep 2.7; exit 4
+par_testhalt	now fail 30% true	job 5
+par_testhalt	now fail 30% true	parallel: This job failed:
+par_testhalt	now fail 30% true	echo job 5; sleep 3.3; exit 5
+par_testhalt	now fail 30% true	job 6
+par_testhalt	now fail 30% true	parallel: This job failed:
+par_testhalt	now fail 30% true	echo job 6; sleep 3.9; exit 6
+par_testhalt	now fail 30% true	30
+par_testhalt	now fail 30% false	### testhalt --halt now,fail=30%
+par_testhalt	now fail 30% false	job 1
+par_testhalt	now fail 30% false	job 2
+par_testhalt	now fail 30% false	job 3
+par_testhalt	now fail 30% false	job 4
+par_testhalt	now fail 30% false	job 5
+par_testhalt	now fail 30% false	job 6
+par_testhalt	now fail 30% false	job 7
+par_testhalt	now fail 30% false	job 8
+par_testhalt	now fail 30% false	job 9
+par_testhalt	now fail 30% false	job 10
+par_testhalt	now fail 30% false	job 11
+par_testhalt	now fail 30% false	parallel: This job failed:
+par_testhalt	now fail 30% false	echo job 11; sleep 3.9; exit 1
+par_testhalt	now fail 30% false	job 12
+par_testhalt	now fail 30% false	parallel: This job failed:
+par_testhalt	now fail 30% false	echo job 12; sleep 4.5; exit 2
+par_testhalt	now fail 30% false	job 13
+par_testhalt	now fail 30% false	parallel: This job failed:
+par_testhalt	now fail 30% false	echo job 13; sleep 5.1; exit 3
+par_testhalt	now fail 30% false	job 14
+par_testhalt	now fail 30% false	parallel: This job failed:
+par_testhalt	now fail 30% false	echo job 14; sleep 5.7; exit 4
+par_testhalt	now fail 30% false	job 15
+par_testhalt	now fail 30% false	parallel: This job failed:
+par_testhalt	now fail 30% false	echo job 15; sleep 6.3; exit 5
+par_testhalt	now fail 30% false	job 16
+par_testhalt	now fail 30% false	parallel: This job failed:
+par_testhalt	now fail 30% false	echo job 16; sleep 6.9; exit 6
+par_testhalt	now fail 30% false	30
+par_testhalt	now fail 70% true	### testhalt --halt now,fail=70%
+par_testhalt	now fail 70% true	job 1
+par_testhalt	now fail 70% true	parallel: This job failed:
+par_testhalt	now fail 70% true	echo job 1; sleep 0.9; exit 1
+par_testhalt	now fail 70% true	job 2
+par_testhalt	now fail 70% true	parallel: This job failed:
+par_testhalt	now fail 70% true	echo job 2; sleep 1.5; exit 2
+par_testhalt	now fail 70% true	job 3
+par_testhalt	now fail 70% true	parallel: This job failed:
+par_testhalt	now fail 70% true	echo job 3; sleep 2.1; exit 3
+par_testhalt	now fail 70% true	job 4
+par_testhalt	now fail 70% true	parallel: This job failed:
+par_testhalt	now fail 70% true	echo job 4; sleep 2.7; exit 4
+par_testhalt	now fail 70% true	job 5
+par_testhalt	now fail 70% true	parallel: This job failed:
+par_testhalt	now fail 70% true	echo job 5; sleep 3.3; exit 5
+par_testhalt	now fail 70% true	job 6
+par_testhalt	now fail 70% true	parallel: This job failed:
+par_testhalt	now fail 70% true	echo job 6; sleep 3.9; exit 6
+par_testhalt	now fail 70% true	job 7
+par_testhalt	now fail 70% true	parallel: This job failed:
+par_testhalt	now fail 70% true	echo job 7; sleep 4.5; exit 7
+par_testhalt	now fail 70% true	job 8
+par_testhalt	now fail 70% true	parallel: This job failed:
+par_testhalt	now fail 70% true	echo job 8; sleep 5.1; exit 8
+par_testhalt	now fail 70% true	job 9
+par_testhalt	now fail 70% true	parallel: This job failed:
+par_testhalt	now fail 70% true	echo job 9; sleep 5.7; exit 9
+par_testhalt	now fail 70% true	job 10
+par_testhalt	now fail 70% true	job 11
+par_testhalt	now fail 70% true	parallel: This job failed:
+par_testhalt	now fail 70% true	echo job 10; sleep 6.3; exit 10
+par_testhalt	now fail 70% true	job 12
+par_testhalt	now fail 70% true	job 13
+par_testhalt	now fail 70% true	job 14
+par_testhalt	now fail 70% true	job 15
+par_testhalt	now fail 70% true	job 16
+par_testhalt	now fail 70% true	job 17
+par_testhalt	now fail 70% true	job 18
+par_testhalt	now fail 70% true	job 19
+par_testhalt	now fail 70% true	job 20
+par_testhalt	now fail 70% true	50
+par_testhalt	now fail 70% false	### testhalt --halt now,fail=70%
+par_testhalt	now fail 70% false	job 1
+par_testhalt	now fail 70% false	job 2
+par_testhalt	now fail 70% false	job 3
+par_testhalt	now fail 70% false	job 4
+par_testhalt	now fail 70% false	job 5
+par_testhalt	now fail 70% false	job 6
+par_testhalt	now fail 70% false	job 7
+par_testhalt	now fail 70% false	job 8
+par_testhalt	now fail 70% false	job 9
+par_testhalt	now fail 70% false	job 10
+par_testhalt	now fail 70% false	job 11
+par_testhalt	now fail 70% false	parallel: This job failed:
+par_testhalt	now fail 70% false	echo job 11; sleep 3.9; exit 1
+par_testhalt	now fail 70% false	job 12
+par_testhalt	now fail 70% false	parallel: This job failed:
+par_testhalt	now fail 70% false	echo job 12; sleep 4.5; exit 2
+par_testhalt	now fail 70% false	job 13
+par_testhalt	now fail 70% false	parallel: This job failed:
+par_testhalt	now fail 70% false	echo job 13; sleep 5.1; exit 3
+par_testhalt	now fail 70% false	job 14
+par_testhalt	now fail 70% false	parallel: This job failed:
+par_testhalt	now fail 70% false	echo job 14; sleep 5.7; exit 4
+par_testhalt	now fail 70% false	job 15
+par_testhalt	now fail 70% false	parallel: This job failed:
+par_testhalt	now fail 70% false	echo job 15; sleep 6.3; exit 5
+par_testhalt	now fail 70% false	job 16
+par_testhalt	now fail 70% false	parallel: This job failed:
+par_testhalt	now fail 70% false	echo job 16; sleep 6.9; exit 6
+par_testhalt	now fail 70% false	job 17
+par_testhalt	now fail 70% false	parallel: This job failed:
+par_testhalt	now fail 70% false	echo job 17; sleep 7.5; exit 7
+par_testhalt	now fail 70% false	job 18
+par_testhalt	now fail 70% false	parallel: This job failed:
+par_testhalt	now fail 70% false	echo job 18; sleep 8.1; exit 8
+par_testhalt	now fail 70% false	job 19
+par_testhalt	now fail 70% false	parallel: This job failed:
+par_testhalt	now fail 70% false	echo job 19; sleep 8.7; exit 9
+par_testhalt	now fail 70% false	job 20
+par_testhalt	now fail 70% false	parallel: This job failed:
+par_testhalt	now fail 70% false	echo job 20; sleep 9.3; exit 10
+par_testhalt	now fail 70% false	50
+par_testhalt	now success 0 true	### testhalt --halt now,success=0
+par_testhalt	now success 0 true	job 1
+par_testhalt	now success 0 true	job 2
+par_testhalt	now success 0 true	job 3
+par_testhalt	now success 0 true	job 4
+par_testhalt	now success 0 true	job 5
+par_testhalt	now success 0 true	job 6
+par_testhalt	now success 0 true	job 7
+par_testhalt	now success 0 true	job 8
+par_testhalt	now success 0 true	job 9
+par_testhalt	now success 0 true	parallel: This job succeeded:
+par_testhalt	now success 0 true	echo job 11; sleep 3.6; exit 0
+par_testhalt	now success 0 true	0
+par_testhalt	now success 0 false	### testhalt --halt now,success=0
+par_testhalt	now success 0 false	job 1
+par_testhalt	now success 0 false	parallel: This job succeeded:
+par_testhalt	now success 0 false	echo job 1; sleep 0.6; exit 0
+par_testhalt	now success 0 false	0
+par_testhalt	now success 1 true	### testhalt --halt now,success=1
+par_testhalt	now success 1 true	job 1
+par_testhalt	now success 1 true	job 2
+par_testhalt	now success 1 true	job 3
+par_testhalt	now success 1 true	job 4
+par_testhalt	now success 1 true	job 5
+par_testhalt	now success 1 true	job 6
+par_testhalt	now success 1 true	job 7
+par_testhalt	now success 1 true	job 8
+par_testhalt	now success 1 true	job 9
+par_testhalt	now success 1 true	parallel: This job succeeded:
+par_testhalt	now success 1 true	echo job 11; sleep 3.6; exit 0
+par_testhalt	now success 1 true	0
+par_testhalt	now success 1 false	### testhalt --halt now,success=1
+par_testhalt	now success 1 false	job 1
+par_testhalt	now success 1 false	parallel: This job succeeded:
+par_testhalt	now success 1 false	echo job 1; sleep 0.6; exit 0
+par_testhalt	now success 1 false	0
+par_testhalt	now success 2 true	### testhalt --halt now,success=2
+par_testhalt	now success 2 true	job 1
+par_testhalt	now success 2 true	job 2
+par_testhalt	now success 2 true	job 3
+par_testhalt	now success 2 true	job 4
+par_testhalt	now success 2 true	job 5
+par_testhalt	now success 2 true	job 6
+par_testhalt	now success 2 true	job 7
+par_testhalt	now success 2 true	job 8
+par_testhalt	now success 2 true	job 9
+par_testhalt	now success 2 true	parallel: This job succeeded:
+par_testhalt	now success 2 true	echo job 11; sleep 3.6; exit 0
+par_testhalt	now success 2 true	job 10
+par_testhalt	now success 2 true	job 11
+par_testhalt	now success 2 true	job 12
+par_testhalt	now success 2 true	parallel: This job succeeded:
+par_testhalt	now success 2 true	echo job 12; sleep 3.9; exit 0
+par_testhalt	now success 2 true	0
+par_testhalt	now success 2 false	### testhalt --halt now,success=2
+par_testhalt	now success 2 false	job 1
+par_testhalt	now success 2 false	parallel: This job succeeded:
+par_testhalt	now success 2 false	echo job 1; sleep 0.6; exit 0
+par_testhalt	now success 2 false	job 2
+par_testhalt	now success 2 false	parallel: This job succeeded:
+par_testhalt	now success 2 false	echo job 2; sleep 0.9; exit 0
+par_testhalt	now success 2 false	0
+par_testhalt	now success 30% true	### testhalt --halt now,success=30%
+par_testhalt	now success 30% true	job 1
+par_testhalt	now success 30% true	job 2
+par_testhalt	now success 30% true	job 3
+par_testhalt	now success 30% true	job 4
+par_testhalt	now success 30% true	job 5
+par_testhalt	now success 30% true	job 6
+par_testhalt	now success 30% true	job 7
+par_testhalt	now success 30% true	job 8
+par_testhalt	now success 30% true	job 9
+par_testhalt	now success 30% true	parallel: This job succeeded:
+par_testhalt	now success 30% true	echo job 11; sleep 3.6; exit 0
+par_testhalt	now success 30% true	job 10
+par_testhalt	now success 30% true	job 11
+par_testhalt	now success 30% true	job 12
+par_testhalt	now success 30% true	parallel: This job succeeded:
+par_testhalt	now success 30% true	echo job 12; sleep 3.9; exit 0
+par_testhalt	now success 30% true	job 13
+par_testhalt	now success 30% true	parallel: This job succeeded:
+par_testhalt	now success 30% true	echo job 13; sleep 4.2; exit 0
+par_testhalt	now success 30% true	job 14
+par_testhalt	now success 30% true	parallel: This job succeeded:
+par_testhalt	now success 30% true	echo job 14; sleep 4.5; exit 0
+par_testhalt	now success 30% true	job 15
+par_testhalt	now success 30% true	parallel: This job succeeded:
+par_testhalt	now success 30% true	echo job 15; sleep 4.8; exit 0
+par_testhalt	now success 30% true	job 16
+par_testhalt	now success 30% true	parallel: This job succeeded:
+par_testhalt	now success 30% true	echo job 16; sleep 5.1; exit 0
+par_testhalt	now success 30% true	0
+par_testhalt	now success 30% false	### testhalt --halt now,success=30%
+par_testhalt	now success 30% false	job 1
+par_testhalt	now success 30% false	parallel: This job succeeded:
+par_testhalt	now success 30% false	echo job 1; sleep 0.6; exit 0
+par_testhalt	now success 30% false	job 2
+par_testhalt	now success 30% false	parallel: This job succeeded:
+par_testhalt	now success 30% false	echo job 2; sleep 0.9; exit 0
+par_testhalt	now success 30% false	job 3
+par_testhalt	now success 30% false	parallel: This job succeeded:
+par_testhalt	now success 30% false	echo job 3; sleep 1.2; exit 0
+par_testhalt	now success 30% false	job 4
+par_testhalt	now success 30% false	parallel: This job succeeded:
+par_testhalt	now success 30% false	echo job 4; sleep 1.5; exit 0
+par_testhalt	now success 30% false	job 5
+par_testhalt	now success 30% false	parallel: This job succeeded:
+par_testhalt	now success 30% false	echo job 5; sleep 1.8; exit 0
+par_testhalt	now success 30% false	job 6
+par_testhalt	now success 30% false	parallel: This job succeeded:
+par_testhalt	now success 30% false	echo job 6; sleep 2.1; exit 0
+par_testhalt	now success 30% false	0
+par_testhalt	now success 70% true	### testhalt --halt now,success=70%
+par_testhalt	now success 70% true	job 1
+par_testhalt	now success 70% true	job 2
+par_testhalt	now success 70% true	job 3
+par_testhalt	now success 70% true	job 4
+par_testhalt	now success 70% true	job 5
+par_testhalt	now success 70% true	job 6
+par_testhalt	now success 70% true	job 7
+par_testhalt	now success 70% true	job 8
+par_testhalt	now success 70% true	job 9
+par_testhalt	now success 70% true	parallel: This job succeeded:
+par_testhalt	now success 70% true	echo job 11; sleep 3.6; exit 0
+par_testhalt	now success 70% true	job 10
+par_testhalt	now success 70% true	job 11
+par_testhalt	now success 70% true	job 12
+par_testhalt	now success 70% true	parallel: This job succeeded:
+par_testhalt	now success 70% true	echo job 12; sleep 3.9; exit 0
+par_testhalt	now success 70% true	job 13
+par_testhalt	now success 70% true	parallel: This job succeeded:
+par_testhalt	now success 70% true	echo job 13; sleep 4.2; exit 0
+par_testhalt	now success 70% true	job 14
+par_testhalt	now success 70% true	parallel: This job succeeded:
+par_testhalt	now success 70% true	echo job 14; sleep 4.5; exit 0
+par_testhalt	now success 70% true	job 15
+par_testhalt	now success 70% true	parallel: This job succeeded:
+par_testhalt	now success 70% true	echo job 15; sleep 4.8; exit 0
+par_testhalt	now success 70% true	job 16
+par_testhalt	now success 70% true	parallel: This job succeeded:
+par_testhalt	now success 70% true	echo job 16; sleep 5.1; exit 0
+par_testhalt	now success 70% true	job 17
+par_testhalt	now success 70% true	parallel: This job succeeded:
+par_testhalt	now success 70% true	echo job 17; sleep 5.4; exit 0
+par_testhalt	now success 70% true	job 18
+par_testhalt	now success 70% true	parallel: This job succeeded:
+par_testhalt	now success 70% true	echo job 18; sleep 5.7; exit 0
+par_testhalt	now success 70% true	job 19
+par_testhalt	now success 70% true	parallel: This job succeeded:
+par_testhalt	now success 70% true	echo job 19; sleep 6; exit 0
+par_testhalt	now success 70% true	job 20
+par_testhalt	now success 70% true	parallel: This job succeeded:
+par_testhalt	now success 70% true	echo job 20; sleep 6.3; exit 0
+par_testhalt	now success 70% true	50
+par_testhalt	now success 70% false	### testhalt --halt now,success=70%
+par_testhalt	now success 70% false	job 1
+par_testhalt	now success 70% false	parallel: This job succeeded:
+par_testhalt	now success 70% false	echo job 1; sleep 0.6; exit 0
+par_testhalt	now success 70% false	job 2
+par_testhalt	now success 70% false	parallel: This job succeeded:
+par_testhalt	now success 70% false	echo job 2; sleep 0.9; exit 0
+par_testhalt	now success 70% false	job 3
+par_testhalt	now success 70% false	parallel: This job succeeded:
+par_testhalt	now success 70% false	echo job 3; sleep 1.2; exit 0
+par_testhalt	now success 70% false	job 4
+par_testhalt	now success 70% false	parallel: This job succeeded:
+par_testhalt	now success 70% false	echo job 4; sleep 1.5; exit 0
+par_testhalt	now success 70% false	job 5
+par_testhalt	now success 70% false	parallel: This job succeeded:
+par_testhalt	now success 70% false	echo job 5; sleep 1.8; exit 0
+par_testhalt	now success 70% false	job 6
+par_testhalt	now success 70% false	parallel: This job succeeded:
+par_testhalt	now success 70% false	echo job 6; sleep 2.1; exit 0
+par_testhalt	now success 70% false	job 7
+par_testhalt	now success 70% false	parallel: This job succeeded:
+par_testhalt	now success 70% false	echo job 7; sleep 2.4; exit 0
+par_testhalt	now success 70% false	job 8
+par_testhalt	now success 70% false	parallel: This job succeeded:
+par_testhalt	now success 70% false	echo job 8; sleep 2.7; exit 0
+par_testhalt	now success 70% false	job 9
+par_testhalt	now success 70% false	parallel: This job succeeded:
+par_testhalt	now success 70% false	echo job 9; sleep 3; exit 0
+par_testhalt	now success 70% false	job 10
+par_testhalt	now success 70% false	parallel: This job succeeded:
+par_testhalt	now success 70% false	echo job 10; sleep 3.3; exit 0
+par_testhalt	now success 70% false	job 11
+par_testhalt	now success 70% false	job 12
+par_testhalt	now success 70% false	job 13
+par_testhalt	now success 70% false	job 14
+par_testhalt	now success 70% false	job 15
+par_testhalt	now success 70% false	job 16
+par_testhalt	now success 70% false	job 17
+par_testhalt	now success 70% false	job 18
+par_testhalt	now success 70% false	job 19
+par_testhalt	now success 70% false	job 20
+par_testhalt	now success 70% false	50
+par_testhalt	now done 0 true	### testhalt --halt now,done=0
+par_testhalt	now done 0 true	job 1
+par_testhalt	now done 0 true	parallel: This job finished:
+par_testhalt	now done 0 true	echo job 1; sleep 0.9; exit 1
+par_testhalt	now done 0 true	0
+par_testhalt	now done 0 false	### testhalt --halt now,done=0
+par_testhalt	now done 0 false	job 1
+par_testhalt	now done 0 false	parallel: This job finished:
+par_testhalt	now done 0 false	echo job 1; sleep 0.6; exit 0
+par_testhalt	now done 0 false	0
+par_testhalt	now done 1 true	### testhalt --halt now,done=1
+par_testhalt	now done 1 true	job 1
+par_testhalt	now done 1 true	parallel: This job finished:
+par_testhalt	now done 1 true	echo job 1; sleep 0.9; exit 1
+par_testhalt	now done 1 true	1
+par_testhalt	now done 1 false	### testhalt --halt now,done=1
+par_testhalt	now done 1 false	job 1
+par_testhalt	now done 1 false	parallel: This job finished:
+par_testhalt	now done 1 false	echo job 1; sleep 0.6; exit 0
+par_testhalt	now done 1 false	0
+par_testhalt	now done 2 true	### testhalt --halt now,done=2
+par_testhalt	now done 2 true	job 1
+par_testhalt	now done 2 true	parallel: This job finished:
+par_testhalt	now done 2 true	echo job 1; sleep 0.9; exit 1
+par_testhalt	now done 2 true	job 2
+par_testhalt	now done 2 true	parallel: This job finished:
+par_testhalt	now done 2 true	echo job 2; sleep 1.5; exit 2
+par_testhalt	now done 2 true	2
+par_testhalt	now done 2 false	### testhalt --halt now,done=2
+par_testhalt	now done 2 false	job 1
+par_testhalt	now done 2 false	parallel: This job finished:
+par_testhalt	now done 2 false	echo job 1; sleep 0.6; exit 0
+par_testhalt	now done 2 false	job 2
+par_testhalt	now done 2 false	parallel: This job finished:
+par_testhalt	now done 2 false	echo job 2; sleep 0.9; exit 0
+par_testhalt	now done 2 false	101
+par_testhalt	now done 30% true	### testhalt --halt now,done=30%
+par_testhalt	now done 30% true	job 1
+par_testhalt	now done 30% true	parallel: This job finished:
+par_testhalt	now done 30% true	echo job 1; sleep 0.9; exit 1
+par_testhalt	now done 30% true	job 2
+par_testhalt	now done 30% true	parallel: This job finished:
+par_testhalt	now done 30% true	echo job 2; sleep 1.5; exit 2
+par_testhalt	now done 30% true	job 3
+par_testhalt	now done 30% true	parallel: This job finished:
+par_testhalt	now done 30% true	echo job 3; sleep 2.1; exit 3
+par_testhalt	now done 30% true	job 4
+par_testhalt	now done 30% true	parallel: This job finished:
+par_testhalt	now done 30% true	echo job 4; sleep 2.7; exit 4
+par_testhalt	now done 30% true	job 5
+par_testhalt	now done 30% true	parallel: This job finished:
+par_testhalt	now done 30% true	echo job 5; sleep 3.3; exit 5
+par_testhalt	now done 30% true	job 6
+par_testhalt	now done 30% true	parallel: This job finished:
+par_testhalt	now done 30% true	echo job 6; sleep 3.9; exit 6
+par_testhalt	now done 30% true	30
+par_testhalt	now done 30% false	### testhalt --halt now,done=30%
+par_testhalt	now done 30% false	job 1
+par_testhalt	now done 30% false	parallel: This job finished:
+par_testhalt	now done 30% false	echo job 1; sleep 0.6; exit 0
+par_testhalt	now done 30% false	job 2
+par_testhalt	now done 30% false	parallel: This job finished:
+par_testhalt	now done 30% false	echo job 2; sleep 0.9; exit 0
+par_testhalt	now done 30% false	job 3
+par_testhalt	now done 30% false	parallel: This job finished:
+par_testhalt	now done 30% false	echo job 3; sleep 1.2; exit 0
+par_testhalt	now done 30% false	job 4
+par_testhalt	now done 30% false	parallel: This job finished:
+par_testhalt	now done 30% false	echo job 4; sleep 1.5; exit 0
+par_testhalt	now done 30% false	job 5
+par_testhalt	now done 30% false	parallel: This job finished:
+par_testhalt	now done 30% false	echo job 5; sleep 1.8; exit 0
+par_testhalt	now done 30% false	job 6
+par_testhalt	now done 30% false	parallel: This job finished:
+par_testhalt	now done 30% false	echo job 6; sleep 2.1; exit 0
+par_testhalt	now done 30% false	0
+par_testhalt	now done 70% true	### testhalt --halt now,done=70%
+par_testhalt	now done 70% true	job 1
+par_testhalt	now done 70% true	parallel: This job finished:
+par_testhalt	now done 70% true	echo job 1; sleep 0.9; exit 1
+par_testhalt	now done 70% true	job 2
+par_testhalt	now done 70% true	parallel: This job finished:
+par_testhalt	now done 70% true	echo job 2; sleep 1.5; exit 2
+par_testhalt	now done 70% true	job 3
+par_testhalt	now done 70% true	parallel: This job finished:
+par_testhalt	now done 70% true	echo job 3; sleep 2.1; exit 3
+par_testhalt	now done 70% true	job 4
+par_testhalt	now done 70% true	parallel: This job finished:
+par_testhalt	now done 70% true	echo job 4; sleep 2.7; exit 4
+par_testhalt	now done 70% true	job 5
+par_testhalt	now done 70% true	parallel: This job finished:
+par_testhalt	now done 70% true	echo job 5; sleep 3.3; exit 5
+par_testhalt	now done 70% true	job 6
+par_testhalt	now done 70% true	parallel: This job finished:
+par_testhalt	now done 70% true	echo job 6; sleep 3.9; exit 6
+par_testhalt	now done 70% true	job 7
+par_testhalt	now done 70% true	parallel: This job finished:
+par_testhalt	now done 70% true	echo job 7; sleep 4.5; exit 7
+par_testhalt	now done 70% true	job 8
+par_testhalt	now done 70% true	parallel: This job finished:
+par_testhalt	now done 70% true	echo job 8; sleep 5.1; exit 8
+par_testhalt	now done 70% true	job 9
+par_testhalt	now done 70% true	parallel: This job finished:
+par_testhalt	now done 70% true	echo job 9; sleep 5.7; exit 9
+par_testhalt	now done 70% true	parallel: This job finished:
+par_testhalt	now done 70% true	echo job 11; sleep 3.6; exit 0
+par_testhalt	now done 70% true	job 10
+par_testhalt	now done 70% true	job 11
+par_testhalt	now done 70% true	parallel: This job finished:
+par_testhalt	now done 70% true	echo job 10; sleep 6.3; exit 10
+par_testhalt	now done 70% true	job 12
+par_testhalt	now done 70% true	parallel: This job finished:
+par_testhalt	now done 70% true	echo job 12; sleep 3.9; exit 0
+par_testhalt	now done 70% true	job 13
+par_testhalt	now done 70% true	parallel: This job finished:
+par_testhalt	now done 70% true	echo job 13; sleep 4.2; exit 0
+par_testhalt	now done 70% true	job 14
+par_testhalt	now done 70% true	parallel: This job finished:
+par_testhalt	now done 70% true	echo job 14; sleep 4.5; exit 0
+par_testhalt	now done 70% true	50
+par_testhalt	now done 70% false	### testhalt --halt now,done=70%
+par_testhalt	now done 70% false	job 1
+par_testhalt	now done 70% false	parallel: This job finished:
+par_testhalt	now done 70% false	echo job 1; sleep 0.6; exit 0
+par_testhalt	now done 70% false	job 2
+par_testhalt	now done 70% false	parallel: This job finished:
+par_testhalt	now done 70% false	echo job 2; sleep 0.9; exit 0
+par_testhalt	now done 70% false	job 3
+par_testhalt	now done 70% false	parallel: This job finished:
+par_testhalt	now done 70% false	echo job 3; sleep 1.2; exit 0
+par_testhalt	now done 70% false	job 4
+par_testhalt	now done 70% false	parallel: This job finished:
+par_testhalt	now done 70% false	echo job 4; sleep 1.5; exit 0
+par_testhalt	now done 70% false	job 5
+par_testhalt	now done 70% false	parallel: This job finished:
+par_testhalt	now done 70% false	echo job 5; sleep 1.8; exit 0
+par_testhalt	now done 70% false	job 6
+par_testhalt	now done 70% false	parallel: This job finished:
+par_testhalt	now done 70% false	echo job 6; sleep 2.1; exit 0
+par_testhalt	now done 70% false	job 7
+par_testhalt	now done 70% false	parallel: This job finished:
+par_testhalt	now done 70% false	echo job 7; sleep 2.4; exit 0
+par_testhalt	now done 70% false	job 8
+par_testhalt	now done 70% false	parallel: This job finished:
+par_testhalt	now done 70% false	echo job 8; sleep 2.7; exit 0
+par_testhalt	now done 70% false	job 9
+par_testhalt	now done 70% false	parallel: This job finished:
+par_testhalt	now done 70% false	echo job 9; sleep 3; exit 0
+par_testhalt	now done 70% false	job 10
+par_testhalt	now done 70% false	parallel: This job finished:
+par_testhalt	now done 70% false	echo job 10; sleep 3.3; exit 0
+par_testhalt	now done 70% false	job 11
+par_testhalt	now done 70% false	parallel: This job finished:
+par_testhalt	now done 70% false	echo job 11; sleep 3.9; exit 1
+par_testhalt	now done 70% false	job 12
+par_testhalt	now done 70% false	parallel: This job finished:
+par_testhalt	now done 70% false	echo job 12; sleep 4.5; exit 2
+par_testhalt	now done 70% false	job 13
+par_testhalt	now done 70% false	parallel: This job finished:
+par_testhalt	now done 70% false	echo job 13; sleep 5.1; exit 3
+par_testhalt	now done 70% false	job 14
+par_testhalt	now done 70% false	parallel: This job finished:
+par_testhalt	now done 70% false	echo job 14; sleep 5.7; exit 4
+par_testhalt	now done 70% false	20
+par_testhalt	soon fail 0 true	### testhalt --halt soon,fail=0
+par_testhalt	soon fail 0 true	job 1
+par_testhalt	soon fail 0 true	parallel: This job failed:
+par_testhalt	soon fail 0 true	echo job 1; sleep 0.9; exit 1
+par_testhalt	soon fail 0 true	job 2
+par_testhalt	soon fail 0 true	parallel: This job failed:
+par_testhalt	soon fail 0 true	echo job 2; sleep 1.5; exit 2
+par_testhalt	soon fail 0 true	job 3
+par_testhalt	soon fail 0 true	parallel: This job failed:
+par_testhalt	soon fail 0 true	echo job 3; sleep 2.1; exit 3
+par_testhalt	soon fail 0 true	job 4
+par_testhalt	soon fail 0 true	parallel: This job failed:
+par_testhalt	soon fail 0 true	echo job 4; sleep 2.7; exit 4
+par_testhalt	soon fail 0 true	0
+par_testhalt	soon fail 0 false	### testhalt --halt soon,fail=0
+par_testhalt	soon fail 0 false	job 1
+par_testhalt	soon fail 0 false	job 2
+par_testhalt	soon fail 0 false	job 3
+par_testhalt	soon fail 0 false	job 4
+par_testhalt	soon fail 0 false	job 5
+par_testhalt	soon fail 0 false	job 6
+par_testhalt	soon fail 0 false	job 7
+par_testhalt	soon fail 0 false	job 8
+par_testhalt	soon fail 0 false	job 9
+par_testhalt	soon fail 0 false	job 10
+par_testhalt	soon fail 0 false	job 11
+par_testhalt	soon fail 0 false	parallel: This job failed:
+par_testhalt	soon fail 0 false	echo job 11; sleep 3.9; exit 1
+par_testhalt	soon fail 0 false	job 12
+par_testhalt	soon fail 0 false	parallel: This job failed:
+par_testhalt	soon fail 0 false	echo job 12; sleep 4.5; exit 2
+par_testhalt	soon fail 0 false	job 13
+par_testhalt	soon fail 0 false	parallel: This job failed:
+par_testhalt	soon fail 0 false	echo job 13; sleep 5.1; exit 3
+par_testhalt	soon fail 0 false	job 14
+par_testhalt	soon fail 0 false	parallel: This job failed:
+par_testhalt	soon fail 0 false	echo job 14; sleep 5.7; exit 4
+par_testhalt	soon fail 0 false	0
+par_testhalt	soon fail 1 true	### testhalt --halt soon,fail=1
+par_testhalt	soon fail 1 true	job 1
+par_testhalt	soon fail 1 true	parallel: This job failed:
+par_testhalt	soon fail 1 true	echo job 1; sleep 0.9; exit 1
+par_testhalt	soon fail 1 true	job 2
+par_testhalt	soon fail 1 true	parallel: This job failed:
+par_testhalt	soon fail 1 true	echo job 2; sleep 1.5; exit 2
+par_testhalt	soon fail 1 true	job 3
+par_testhalt	soon fail 1 true	parallel: This job failed:
+par_testhalt	soon fail 1 true	echo job 3; sleep 2.1; exit 3
+par_testhalt	soon fail 1 true	job 4
+par_testhalt	soon fail 1 true	parallel: This job failed:
+par_testhalt	soon fail 1 true	echo job 4; sleep 2.7; exit 4
+par_testhalt	soon fail 1 true	1
+par_testhalt	soon fail 1 false	### testhalt --halt soon,fail=1
+par_testhalt	soon fail 1 false	job 1
+par_testhalt	soon fail 1 false	job 2
+par_testhalt	soon fail 1 false	job 3
+par_testhalt	soon fail 1 false	job 4
+par_testhalt	soon fail 1 false	job 5
+par_testhalt	soon fail 1 false	job 6
+par_testhalt	soon fail 1 false	job 7
+par_testhalt	soon fail 1 false	job 8
+par_testhalt	soon fail 1 false	job 9
+par_testhalt	soon fail 1 false	job 10
+par_testhalt	soon fail 1 false	job 11
+par_testhalt	soon fail 1 false	parallel: This job failed:
+par_testhalt	soon fail 1 false	echo job 11; sleep 3.9; exit 1
+par_testhalt	soon fail 1 false	job 12
+par_testhalt	soon fail 1 false	parallel: This job failed:
+par_testhalt	soon fail 1 false	echo job 12; sleep 4.5; exit 2
+par_testhalt	soon fail 1 false	job 13
+par_testhalt	soon fail 1 false	parallel: This job failed:
+par_testhalt	soon fail 1 false	echo job 13; sleep 5.1; exit 3
+par_testhalt	soon fail 1 false	job 14
+par_testhalt	soon fail 1 false	parallel: This job failed:
+par_testhalt	soon fail 1 false	echo job 14; sleep 5.7; exit 4
+par_testhalt	soon fail 1 false	1
+par_testhalt	soon fail 2 true	### testhalt --halt soon,fail=2
+par_testhalt	soon fail 2 true	job 1
+par_testhalt	soon fail 2 true	parallel: This job failed:
+par_testhalt	soon fail 2 true	echo job 1; sleep 0.9; exit 1
+par_testhalt	soon fail 2 true	job 2
+par_testhalt	soon fail 2 true	parallel: This job failed:
+par_testhalt	soon fail 2 true	echo job 2; sleep 1.5; exit 2
+par_testhalt	soon fail 2 true	job 3
+par_testhalt	soon fail 2 true	parallel: This job failed:
+par_testhalt	soon fail 2 true	echo job 3; sleep 2.1; exit 3
+par_testhalt	soon fail 2 true	job 4
+par_testhalt	soon fail 2 true	parallel: This job failed:
+par_testhalt	soon fail 2 true	echo job 4; sleep 2.7; exit 4
+par_testhalt	soon fail 2 true	job 5
+par_testhalt	soon fail 2 true	parallel: This job failed:
+par_testhalt	soon fail 2 true	echo job 5; sleep 3.3; exit 5
+par_testhalt	soon fail 2 true	2
+par_testhalt	soon fail 2 false	### testhalt --halt soon,fail=2
+par_testhalt	soon fail 2 false	job 1
+par_testhalt	soon fail 2 false	job 2
+par_testhalt	soon fail 2 false	job 3
+par_testhalt	soon fail 2 false	job 4
+par_testhalt	soon fail 2 false	job 5
+par_testhalt	soon fail 2 false	job 6
+par_testhalt	soon fail 2 false	job 7
+par_testhalt	soon fail 2 false	job 8
+par_testhalt	soon fail 2 false	job 9
+par_testhalt	soon fail 2 false	job 10
+par_testhalt	soon fail 2 false	job 11
+par_testhalt	soon fail 2 false	parallel: This job failed:
+par_testhalt	soon fail 2 false	echo job 11; sleep 3.9; exit 1
+par_testhalt	soon fail 2 false	job 12
+par_testhalt	soon fail 2 false	parallel: This job failed:
+par_testhalt	soon fail 2 false	echo job 12; sleep 4.5; exit 2
+par_testhalt	soon fail 2 false	job 13
+par_testhalt	soon fail 2 false	parallel: This job failed:
+par_testhalt	soon fail 2 false	echo job 13; sleep 5.1; exit 3
+par_testhalt	soon fail 2 false	job 14
+par_testhalt	soon fail 2 false	parallel: This job failed:
+par_testhalt	soon fail 2 false	echo job 14; sleep 5.7; exit 4
+par_testhalt	soon fail 2 false	job 15
+par_testhalt	soon fail 2 false	parallel: This job failed:
+par_testhalt	soon fail 2 false	echo job 15; sleep 6.3; exit 5
+par_testhalt	soon fail 2 false	2
+par_testhalt	soon fail 30% true	### testhalt --halt soon,fail=30%
+par_testhalt	soon fail 30% true	job 1
+par_testhalt	soon fail 30% true	parallel: This job failed:
+par_testhalt	soon fail 30% true	echo job 1; sleep 0.9; exit 1
+par_testhalt	soon fail 30% true	job 2
+par_testhalt	soon fail 30% true	parallel: This job failed:
+par_testhalt	soon fail 30% true	echo job 2; sleep 1.5; exit 2
+par_testhalt	soon fail 30% true	job 3
+par_testhalt	soon fail 30% true	parallel: This job failed:
+par_testhalt	soon fail 30% true	echo job 3; sleep 2.1; exit 3
+par_testhalt	soon fail 30% true	job 4
+par_testhalt	soon fail 30% true	parallel: This job failed:
+par_testhalt	soon fail 30% true	echo job 4; sleep 2.7; exit 4
+par_testhalt	soon fail 30% true	job 5
+par_testhalt	soon fail 30% true	parallel: This job failed:
+par_testhalt	soon fail 30% true	echo job 5; sleep 3.3; exit 5
+par_testhalt	soon fail 30% true	job 6
+par_testhalt	soon fail 30% true	parallel: This job failed:
+par_testhalt	soon fail 30% true	echo job 6; sleep 3.9; exit 6
+par_testhalt	soon fail 30% true	job 7
+par_testhalt	soon fail 30% true	parallel: This job failed:
+par_testhalt	soon fail 30% true	echo job 7; sleep 4.5; exit 7
+par_testhalt	soon fail 30% true	job 8
+par_testhalt	soon fail 30% true	parallel: This job failed:
+par_testhalt	soon fail 30% true	echo job 8; sleep 5.1; exit 8
+par_testhalt	soon fail 30% true	job 9
+par_testhalt	soon fail 30% true	parallel: This job failed:
+par_testhalt	soon fail 30% true	echo job 9; sleep 5.7; exit 9
+par_testhalt	soon fail 30% true	30
+par_testhalt	soon fail 30% false	### testhalt --halt soon,fail=30%
+par_testhalt	soon fail 30% false	job 1
+par_testhalt	soon fail 30% false	job 2
+par_testhalt	soon fail 30% false	job 3
+par_testhalt	soon fail 30% false	job 4
+par_testhalt	soon fail 30% false	job 5
+par_testhalt	soon fail 30% false	job 6
+par_testhalt	soon fail 30% false	job 7
+par_testhalt	soon fail 30% false	job 8
+par_testhalt	soon fail 30% false	job 9
+par_testhalt	soon fail 30% false	job 10
+par_testhalt	soon fail 30% false	job 11
+par_testhalt	soon fail 30% false	parallel: This job failed:
+par_testhalt	soon fail 30% false	echo job 11; sleep 3.9; exit 1
+par_testhalt	soon fail 30% false	job 12
+par_testhalt	soon fail 30% false	parallel: This job failed:
+par_testhalt	soon fail 30% false	echo job 12; sleep 4.5; exit 2
+par_testhalt	soon fail 30% false	job 13
+par_testhalt	soon fail 30% false	parallel: This job failed:
+par_testhalt	soon fail 30% false	echo job 13; sleep 5.1; exit 3
+par_testhalt	soon fail 30% false	job 14
+par_testhalt	soon fail 30% false	parallel: This job failed:
+par_testhalt	soon fail 30% false	echo job 14; sleep 5.7; exit 4
+par_testhalt	soon fail 30% false	job 15
+par_testhalt	soon fail 30% false	parallel: This job failed:
+par_testhalt	soon fail 30% false	echo job 15; sleep 6.3; exit 5
+par_testhalt	soon fail 30% false	job 16
+par_testhalt	soon fail 30% false	parallel: This job failed:
+par_testhalt	soon fail 30% false	echo job 16; sleep 6.9; exit 6
+par_testhalt	soon fail 30% false	job 17
+par_testhalt	soon fail 30% false	parallel: This job failed:
+par_testhalt	soon fail 30% false	echo job 17; sleep 7.5; exit 7
+par_testhalt	soon fail 30% false	job 18
+par_testhalt	soon fail 30% false	parallel: This job failed:
+par_testhalt	soon fail 30% false	echo job 18; sleep 8.1; exit 8
+par_testhalt	soon fail 30% false	job 19
+par_testhalt	soon fail 30% false	parallel: This job failed:
+par_testhalt	soon fail 30% false	echo job 19; sleep 8.7; exit 9
+par_testhalt	soon fail 30% false	30
+par_testhalt	soon fail 70% true	### testhalt --halt soon,fail=70%
+par_testhalt	soon fail 70% true	job 1
+par_testhalt	soon fail 70% true	parallel: This job failed:
+par_testhalt	soon fail 70% true	echo job 1; sleep 0.9; exit 1
+par_testhalt	soon fail 70% true	job 2
+par_testhalt	soon fail 70% true	parallel: This job failed:
+par_testhalt	soon fail 70% true	echo job 2; sleep 1.5; exit 2
+par_testhalt	soon fail 70% true	job 3
+par_testhalt	soon fail 70% true	parallel: This job failed:
+par_testhalt	soon fail 70% true	echo job 3; sleep 2.1; exit 3
+par_testhalt	soon fail 70% true	job 4
+par_testhalt	soon fail 70% true	parallel: This job failed:
+par_testhalt	soon fail 70% true	echo job 4; sleep 2.7; exit 4
+par_testhalt	soon fail 70% true	job 5
+par_testhalt	soon fail 70% true	parallel: This job failed:
+par_testhalt	soon fail 70% true	echo job 5; sleep 3.3; exit 5
+par_testhalt	soon fail 70% true	job 6
+par_testhalt	soon fail 70% true	parallel: This job failed:
+par_testhalt	soon fail 70% true	echo job 6; sleep 3.9; exit 6
+par_testhalt	soon fail 70% true	job 7
+par_testhalt	soon fail 70% true	parallel: This job failed:
+par_testhalt	soon fail 70% true	echo job 7; sleep 4.5; exit 7
+par_testhalt	soon fail 70% true	job 8
+par_testhalt	soon fail 70% true	parallel: This job failed:
+par_testhalt	soon fail 70% true	echo job 8; sleep 5.1; exit 8
+par_testhalt	soon fail 70% true	job 9
+par_testhalt	soon fail 70% true	parallel: This job failed:
+par_testhalt	soon fail 70% true	echo job 9; sleep 5.7; exit 9
+par_testhalt	soon fail 70% true	job 10
+par_testhalt	soon fail 70% true	job 11
+par_testhalt	soon fail 70% true	parallel: This job failed:
+par_testhalt	soon fail 70% true	echo job 10; sleep 6.3; exit 10
+par_testhalt	soon fail 70% true	job 12
+par_testhalt	soon fail 70% true	job 13
+par_testhalt	soon fail 70% true	job 14
+par_testhalt	soon fail 70% true	job 15
+par_testhalt	soon fail 70% true	job 16
+par_testhalt	soon fail 70% true	job 17
+par_testhalt	soon fail 70% true	job 18
+par_testhalt	soon fail 70% true	job 19
+par_testhalt	soon fail 70% true	job 20
+par_testhalt	soon fail 70% true	50
+par_testhalt	soon fail 70% false	### testhalt --halt soon,fail=70%
+par_testhalt	soon fail 70% false	job 1
+par_testhalt	soon fail 70% false	job 2
+par_testhalt	soon fail 70% false	job 3
+par_testhalt	soon fail 70% false	job 4
+par_testhalt	soon fail 70% false	job 5
+par_testhalt	soon fail 70% false	job 6
+par_testhalt	soon fail 70% false	job 7
+par_testhalt	soon fail 70% false	job 8
+par_testhalt	soon fail 70% false	job 9
+par_testhalt	soon fail 70% false	job 10
+par_testhalt	soon fail 70% false	job 11
+par_testhalt	soon fail 70% false	parallel: This job failed:
+par_testhalt	soon fail 70% false	echo job 11; sleep 3.9; exit 1
+par_testhalt	soon fail 70% false	job 12
+par_testhalt	soon fail 70% false	parallel: This job failed:
+par_testhalt	soon fail 70% false	echo job 12; sleep 4.5; exit 2
+par_testhalt	soon fail 70% false	job 13
+par_testhalt	soon fail 70% false	parallel: This job failed:
+par_testhalt	soon fail 70% false	echo job 13; sleep 5.1; exit 3
+par_testhalt	soon fail 70% false	job 14
+par_testhalt	soon fail 70% false	parallel: This job failed:
+par_testhalt	soon fail 70% false	echo job 14; sleep 5.7; exit 4
+par_testhalt	soon fail 70% false	job 15
+par_testhalt	soon fail 70% false	parallel: This job failed:
+par_testhalt	soon fail 70% false	echo job 15; sleep 6.3; exit 5
+par_testhalt	soon fail 70% false	job 16
+par_testhalt	soon fail 70% false	parallel: This job failed:
+par_testhalt	soon fail 70% false	echo job 16; sleep 6.9; exit 6
+par_testhalt	soon fail 70% false	job 17
+par_testhalt	soon fail 70% false	parallel: This job failed:
+par_testhalt	soon fail 70% false	echo job 17; sleep 7.5; exit 7
+par_testhalt	soon fail 70% false	job 18
+par_testhalt	soon fail 70% false	parallel: This job failed:
+par_testhalt	soon fail 70% false	echo job 18; sleep 8.1; exit 8
+par_testhalt	soon fail 70% false	job 19
+par_testhalt	soon fail 70% false	parallel: This job failed:
+par_testhalt	soon fail 70% false	echo job 19; sleep 8.7; exit 9
+par_testhalt	soon fail 70% false	job 20
+par_testhalt	soon fail 70% false	parallel: This job failed:
+par_testhalt	soon fail 70% false	echo job 20; sleep 9.3; exit 10
+par_testhalt	soon fail 70% false	50
+par_testhalt	soon success 0 true	### testhalt --halt soon,success=0
+par_testhalt	soon success 0 true	job 1
+par_testhalt	soon success 0 true	job 2
+par_testhalt	soon success 0 true	job 3
+par_testhalt	soon success 0 true	job 4
+par_testhalt	soon success 0 true	job 5
+par_testhalt	soon success 0 true	job 6
+par_testhalt	soon success 0 true	job 7
+par_testhalt	soon success 0 true	job 8
+par_testhalt	soon success 0 true	job 9
+par_testhalt	soon success 0 true	parallel: This job succeeded:
+par_testhalt	soon success 0 true	echo job 11; sleep 3.6; exit 0
+par_testhalt	soon success 0 true	job 10
+par_testhalt	soon success 0 true	job 11
+par_testhalt	soon success 0 true	job 12
+par_testhalt	soon success 0 true	parallel: This job succeeded:
+par_testhalt	soon success 0 true	echo job 12; sleep 3.9; exit 0
+par_testhalt	soon success 0 true	job 13
+par_testhalt	soon success 0 true	parallel: This job succeeded:
+par_testhalt	soon success 0 true	echo job 13; sleep 4.2; exit 0
+par_testhalt	soon success 0 true	0
+par_testhalt	soon success 0 false	### testhalt --halt soon,success=0
+par_testhalt	soon success 0 false	job 1
+par_testhalt	soon success 0 false	parallel: This job succeeded:
+par_testhalt	soon success 0 false	echo job 1; sleep 0.6; exit 0
+par_testhalt	soon success 0 false	job 2
+par_testhalt	soon success 0 false	parallel: This job succeeded:
+par_testhalt	soon success 0 false	echo job 2; sleep 0.9; exit 0
+par_testhalt	soon success 0 false	job 3
+par_testhalt	soon success 0 false	parallel: This job succeeded:
+par_testhalt	soon success 0 false	echo job 3; sleep 1.2; exit 0
+par_testhalt	soon success 0 false	0
+par_testhalt	soon success 1 true	### testhalt --halt soon,success=1
+par_testhalt	soon success 1 true	job 1
+par_testhalt	soon success 1 true	job 2
+par_testhalt	soon success 1 true	job 3
+par_testhalt	soon success 1 true	job 4
+par_testhalt	soon success 1 true	job 5
+par_testhalt	soon success 1 true	job 6
+par_testhalt	soon success 1 true	job 7
+par_testhalt	soon success 1 true	job 8
+par_testhalt	soon success 1 true	job 9
+par_testhalt	soon success 1 true	parallel: This job succeeded:
+par_testhalt	soon success 1 true	echo job 11; sleep 3.6; exit 0
+par_testhalt	soon success 1 true	job 10
+par_testhalt	soon success 1 true	job 11
+par_testhalt	soon success 1 true	job 12
+par_testhalt	soon success 1 true	parallel: This job succeeded:
+par_testhalt	soon success 1 true	echo job 12; sleep 3.9; exit 0
+par_testhalt	soon success 1 true	job 13
+par_testhalt	soon success 1 true	parallel: This job succeeded:
+par_testhalt	soon success 1 true	echo job 13; sleep 4.2; exit 0
+par_testhalt	soon success 1 true	0
+par_testhalt	soon success 1 false	### testhalt --halt soon,success=1
+par_testhalt	soon success 1 false	job 1
+par_testhalt	soon success 1 false	parallel: This job succeeded:
+par_testhalt	soon success 1 false	echo job 1; sleep 0.6; exit 0
+par_testhalt	soon success 1 false	job 2
+par_testhalt	soon success 1 false	parallel: This job succeeded:
+par_testhalt	soon success 1 false	echo job 2; sleep 0.9; exit 0
+par_testhalt	soon success 1 false	job 3
+par_testhalt	soon success 1 false	parallel: This job succeeded:
+par_testhalt	soon success 1 false	echo job 3; sleep 1.2; exit 0
+par_testhalt	soon success 1 false	0
+par_testhalt	soon success 2 true	### testhalt --halt soon,success=2
+par_testhalt	soon success 2 true	job 1
+par_testhalt	soon success 2 true	job 2
+par_testhalt	soon success 2 true	job 3
+par_testhalt	soon success 2 true	job 4
+par_testhalt	soon success 2 true	job 5
+par_testhalt	soon success 2 true	job 6
+par_testhalt	soon success 2 true	job 7
+par_testhalt	soon success 2 true	job 8
+par_testhalt	soon success 2 true	job 9
+par_testhalt	soon success 2 true	parallel: This job succeeded:
+par_testhalt	soon success 2 true	echo job 11; sleep 3.6; exit 0
+par_testhalt	soon success 2 true	job 10
+par_testhalt	soon success 2 true	job 11
+par_testhalt	soon success 2 true	job 12
+par_testhalt	soon success 2 true	parallel: This job succeeded:
+par_testhalt	soon success 2 true	echo job 12; sleep 3.9; exit 0
+par_testhalt	soon success 2 true	job 13
+par_testhalt	soon success 2 true	parallel: This job succeeded:
+par_testhalt	soon success 2 true	echo job 13; sleep 4.2; exit 0
+par_testhalt	soon success 2 true	job 14
+par_testhalt	soon success 2 true	parallel: This job succeeded:
+par_testhalt	soon success 2 true	echo job 14; sleep 4.5; exit 0
+par_testhalt	soon success 2 true	job 15
+par_testhalt	soon success 2 true	parallel: This job succeeded:
+par_testhalt	soon success 2 true	echo job 15; sleep 4.8; exit 0
+par_testhalt	soon success 2 true	0
+par_testhalt	soon success 2 false	### testhalt --halt soon,success=2
+par_testhalt	soon success 2 false	job 1
+par_testhalt	soon success 2 false	parallel: This job succeeded:
+par_testhalt	soon success 2 false	echo job 1; sleep 0.6; exit 0
+par_testhalt	soon success 2 false	job 2
+par_testhalt	soon success 2 false	parallel: This job succeeded:
+par_testhalt	soon success 2 false	echo job 2; sleep 0.9; exit 0
+par_testhalt	soon success 2 false	job 3
+par_testhalt	soon success 2 false	parallel: This job succeeded:
+par_testhalt	soon success 2 false	echo job 3; sleep 1.2; exit 0
+par_testhalt	soon success 2 false	job 4
+par_testhalt	soon success 2 false	parallel: This job succeeded:
+par_testhalt	soon success 2 false	echo job 4; sleep 1.5; exit 0
+par_testhalt	soon success 2 false	job 5
+par_testhalt	soon success 2 false	parallel: This job succeeded:
+par_testhalt	soon success 2 false	echo job 5; sleep 1.8; exit 0
+par_testhalt	soon success 2 false	0
+par_testhalt	soon success 30% true	### testhalt --halt soon,success=30%
+par_testhalt	soon success 30% true	job 1
+par_testhalt	soon success 30% true	job 2
+par_testhalt	soon success 30% true	job 3
+par_testhalt	soon success 30% true	job 4
+par_testhalt	soon success 30% true	job 5
+par_testhalt	soon success 30% true	job 6
+par_testhalt	soon success 30% true	job 7
+par_testhalt	soon success 30% true	job 8
+par_testhalt	soon success 30% true	job 9
+par_testhalt	soon success 30% true	parallel: This job succeeded:
+par_testhalt	soon success 30% true	echo job 11; sleep 3.6; exit 0
+par_testhalt	soon success 30% true	job 10
+par_testhalt	soon success 30% true	job 11
+par_testhalt	soon success 30% true	job 12
+par_testhalt	soon success 30% true	parallel: This job succeeded:
+par_testhalt	soon success 30% true	echo job 12; sleep 3.9; exit 0
+par_testhalt	soon success 30% true	job 13
+par_testhalt	soon success 30% true	parallel: This job succeeded:
+par_testhalt	soon success 30% true	echo job 13; sleep 4.2; exit 0
+par_testhalt	soon success 30% true	job 14
+par_testhalt	soon success 30% true	parallel: This job succeeded:
+par_testhalt	soon success 30% true	echo job 14; sleep 4.5; exit 0
+par_testhalt	soon success 30% true	job 15
+par_testhalt	soon success 30% true	parallel: This job succeeded:
+par_testhalt	soon success 30% true	echo job 15; sleep 4.8; exit 0
+par_testhalt	soon success 30% true	job 16
+par_testhalt	soon success 30% true	parallel: This job succeeded:
+par_testhalt	soon success 30% true	echo job 16; sleep 5.1; exit 0
+par_testhalt	soon success 30% true	job 17
+par_testhalt	soon success 30% true	parallel: This job succeeded:
+par_testhalt	soon success 30% true	echo job 17; sleep 5.4; exit 0
+par_testhalt	soon success 30% true	job 18
+par_testhalt	soon success 30% true	parallel: This job succeeded:
+par_testhalt	soon success 30% true	echo job 18; sleep 5.7; exit 0
+par_testhalt	soon success 30% true	job 19
+par_testhalt	soon success 30% true	parallel: This job succeeded:
+par_testhalt	soon success 30% true	echo job 19; sleep 6; exit 0
+par_testhalt	soon success 30% true	0
+par_testhalt	soon success 30% false	### testhalt --halt soon,success=30%
+par_testhalt	soon success 30% false	job 1
+par_testhalt	soon success 30% false	parallel: This job succeeded:
+par_testhalt	soon success 30% false	echo job 1; sleep 0.6; exit 0
+par_testhalt	soon success 30% false	job 2
+par_testhalt	soon success 30% false	parallel: This job succeeded:
+par_testhalt	soon success 30% false	echo job 2; sleep 0.9; exit 0
+par_testhalt	soon success 30% false	job 3
+par_testhalt	soon success 30% false	parallel: This job succeeded:
+par_testhalt	soon success 30% false	echo job 3; sleep 1.2; exit 0
+par_testhalt	soon success 30% false	job 4
+par_testhalt	soon success 30% false	parallel: This job succeeded:
+par_testhalt	soon success 30% false	echo job 4; sleep 1.5; exit 0
+par_testhalt	soon success 30% false	job 5
+par_testhalt	soon success 30% false	parallel: This job succeeded:
+par_testhalt	soon success 30% false	echo job 5; sleep 1.8; exit 0
+par_testhalt	soon success 30% false	job 6
+par_testhalt	soon success 30% false	parallel: This job succeeded:
+par_testhalt	soon success 30% false	echo job 6; sleep 2.1; exit 0
+par_testhalt	soon success 30% false	job 7
+par_testhalt	soon success 30% false	parallel: This job succeeded:
+par_testhalt	soon success 30% false	echo job 7; sleep 2.4; exit 0
+par_testhalt	soon success 30% false	job 8
+par_testhalt	soon success 30% false	parallel: This job succeeded:
+par_testhalt	soon success 30% false	echo job 8; sleep 2.7; exit 0
+par_testhalt	soon success 30% false	job 9
+par_testhalt	soon success 30% false	parallel: This job succeeded:
+par_testhalt	soon success 30% false	echo job 9; sleep 3; exit 0
+par_testhalt	soon success 30% false	0
+par_testhalt	soon success 70% true	### testhalt --halt soon,success=70%
+par_testhalt	soon success 70% true	job 1
+par_testhalt	soon success 70% true	job 2
+par_testhalt	soon success 70% true	job 3
+par_testhalt	soon success 70% true	job 4
+par_testhalt	soon success 70% true	job 5
+par_testhalt	soon success 70% true	job 6
+par_testhalt	soon success 70% true	job 7
+par_testhalt	soon success 70% true	job 8
+par_testhalt	soon success 70% true	job 9
+par_testhalt	soon success 70% true	parallel: This job succeeded:
+par_testhalt	soon success 70% true	echo job 11; sleep 3.6; exit 0
+par_testhalt	soon success 70% true	job 10
+par_testhalt	soon success 70% true	job 11
+par_testhalt	soon success 70% true	job 12
+par_testhalt	soon success 70% true	parallel: This job succeeded:
+par_testhalt	soon success 70% true	echo job 12; sleep 3.9; exit 0
+par_testhalt	soon success 70% true	job 13
+par_testhalt	soon success 70% true	parallel: This job succeeded:
+par_testhalt	soon success 70% true	echo job 13; sleep 4.2; exit 0
+par_testhalt	soon success 70% true	job 14
+par_testhalt	soon success 70% true	parallel: This job succeeded:
+par_testhalt	soon success 70% true	echo job 14; sleep 4.5; exit 0
+par_testhalt	soon success 70% true	job 15
+par_testhalt	soon success 70% true	parallel: This job succeeded:
+par_testhalt	soon success 70% true	echo job 15; sleep 4.8; exit 0
+par_testhalt	soon success 70% true	job 16
+par_testhalt	soon success 70% true	parallel: This job succeeded:
+par_testhalt	soon success 70% true	echo job 16; sleep 5.1; exit 0
+par_testhalt	soon success 70% true	job 17
+par_testhalt	soon success 70% true	parallel: This job succeeded:
+par_testhalt	soon success 70% true	echo job 17; sleep 5.4; exit 0
+par_testhalt	soon success 70% true	job 18
+par_testhalt	soon success 70% true	parallel: This job succeeded:
+par_testhalt	soon success 70% true	echo job 18; sleep 5.7; exit 0
+par_testhalt	soon success 70% true	job 19
+par_testhalt	soon success 70% true	parallel: This job succeeded:
+par_testhalt	soon success 70% true	echo job 19; sleep 6; exit 0
+par_testhalt	soon success 70% true	job 20
+par_testhalt	soon success 70% true	parallel: This job succeeded:
+par_testhalt	soon success 70% true	echo job 20; sleep 6.3; exit 0
+par_testhalt	soon success 70% true	50
+par_testhalt	soon success 70% false	### testhalt --halt soon,success=70%
+par_testhalt	soon success 70% false	job 1
+par_testhalt	soon success 70% false	parallel: This job succeeded:
+par_testhalt	soon success 70% false	echo job 1; sleep 0.6; exit 0
+par_testhalt	soon success 70% false	job 2
+par_testhalt	soon success 70% false	parallel: This job succeeded:
+par_testhalt	soon success 70% false	echo job 2; sleep 0.9; exit 0
+par_testhalt	soon success 70% false	job 3
+par_testhalt	soon success 70% false	parallel: This job succeeded:
+par_testhalt	soon success 70% false	echo job 3; sleep 1.2; exit 0
+par_testhalt	soon success 70% false	job 4
+par_testhalt	soon success 70% false	parallel: This job succeeded:
+par_testhalt	soon success 70% false	echo job 4; sleep 1.5; exit 0
+par_testhalt	soon success 70% false	job 5
+par_testhalt	soon success 70% false	parallel: This job succeeded:
+par_testhalt	soon success 70% false	echo job 5; sleep 1.8; exit 0
+par_testhalt	soon success 70% false	job 6
+par_testhalt	soon success 70% false	parallel: This job succeeded:
+par_testhalt	soon success 70% false	echo job 6; sleep 2.1; exit 0
+par_testhalt	soon success 70% false	job 7
+par_testhalt	soon success 70% false	parallel: This job succeeded:
+par_testhalt	soon success 70% false	echo job 7; sleep 2.4; exit 0
+par_testhalt	soon success 70% false	job 8
+par_testhalt	soon success 70% false	parallel: This job succeeded:
+par_testhalt	soon success 70% false	echo job 8; sleep 2.7; exit 0
+par_testhalt	soon success 70% false	job 9
+par_testhalt	soon success 70% false	parallel: This job succeeded:
+par_testhalt	soon success 70% false	echo job 9; sleep 3; exit 0
+par_testhalt	soon success 70% false	job 10
+par_testhalt	soon success 70% false	parallel: This job succeeded:
+par_testhalt	soon success 70% false	echo job 10; sleep 3.3; exit 0
+par_testhalt	soon success 70% false	job 11
+par_testhalt	soon success 70% false	job 12
+par_testhalt	soon success 70% false	job 13
+par_testhalt	soon success 70% false	job 14
+par_testhalt	soon success 70% false	job 15
+par_testhalt	soon success 70% false	job 16
+par_testhalt	soon success 70% false	job 17
+par_testhalt	soon success 70% false	job 18
+par_testhalt	soon success 70% false	job 19
+par_testhalt	soon success 70% false	job 20
+par_testhalt	soon success 70% false	50
+par_testhalt	soon done 0 true	### testhalt --halt soon,done=0
+par_testhalt	soon done 0 true	job 1
+par_testhalt	soon done 0 true	parallel: This job finished:
+par_testhalt	soon done 0 true	echo job 1; sleep 0.9; exit 1
+par_testhalt	soon done 0 true	job 2
+par_testhalt	soon done 0 true	parallel: This job finished:
+par_testhalt	soon done 0 true	echo job 2; sleep 1.5; exit 2
+par_testhalt	soon done 0 true	job 3
+par_testhalt	soon done 0 true	parallel: This job finished:
+par_testhalt	soon done 0 true	echo job 3; sleep 2.1; exit 3
+par_testhalt	soon done 0 true	job 4
+par_testhalt	soon done 0 true	parallel: This job finished:
+par_testhalt	soon done 0 true	echo job 4; sleep 2.7; exit 4
+par_testhalt	soon done 0 true	0
+par_testhalt	soon done 0 false	### testhalt --halt soon,done=0
+par_testhalt	soon done 0 false	job 1
+par_testhalt	soon done 0 false	parallel: This job finished:
+par_testhalt	soon done 0 false	echo job 1; sleep 0.6; exit 0
+par_testhalt	soon done 0 false	job 2
+par_testhalt	soon done 0 false	parallel: This job finished:
+par_testhalt	soon done 0 false	echo job 2; sleep 0.9; exit 0
+par_testhalt	soon done 0 false	job 3
+par_testhalt	soon done 0 false	parallel: This job finished:
+par_testhalt	soon done 0 false	echo job 3; sleep 1.2; exit 0
+par_testhalt	soon done 0 false	0
+par_testhalt	soon done 1 true	### testhalt --halt soon,done=1
+par_testhalt	soon done 1 true	job 1
+par_testhalt	soon done 1 true	parallel: This job finished:
+par_testhalt	soon done 1 true	echo job 1; sleep 0.9; exit 1
+par_testhalt	soon done 1 true	job 2
+par_testhalt	soon done 1 true	parallel: This job finished:
+par_testhalt	soon done 1 true	echo job 2; sleep 1.5; exit 2
+par_testhalt	soon done 1 true	job 3
+par_testhalt	soon done 1 true	parallel: This job finished:
+par_testhalt	soon done 1 true	echo job 3; sleep 2.1; exit 3
+par_testhalt	soon done 1 true	job 4
+par_testhalt	soon done 1 true	parallel: This job finished:
+par_testhalt	soon done 1 true	echo job 4; sleep 2.7; exit 4
+par_testhalt	soon done 1 true	1
+par_testhalt	soon done 1 false	### testhalt --halt soon,done=1
+par_testhalt	soon done 1 false	job 1
+par_testhalt	soon done 1 false	parallel: This job finished:
+par_testhalt	soon done 1 false	echo job 1; sleep 0.6; exit 0
+par_testhalt	soon done 1 false	job 2
+par_testhalt	soon done 1 false	parallel: This job finished:
+par_testhalt	soon done 1 false	echo job 2; sleep 0.9; exit 0
+par_testhalt	soon done 1 false	job 3
+par_testhalt	soon done 1 false	parallel: This job finished:
+par_testhalt	soon done 1 false	echo job 3; sleep 1.2; exit 0
+par_testhalt	soon done 1 false	0
+par_testhalt	soon done 2 true	### testhalt --halt soon,done=2
+par_testhalt	soon done 2 true	job 1
+par_testhalt	soon done 2 true	parallel: This job finished:
+par_testhalt	soon done 2 true	echo job 1; sleep 0.9; exit 1
+par_testhalt	soon done 2 true	job 2
+par_testhalt	soon done 2 true	parallel: This job finished:
+par_testhalt	soon done 2 true	echo job 2; sleep 1.5; exit 2
+par_testhalt	soon done 2 true	job 3
+par_testhalt	soon done 2 true	parallel: This job finished:
+par_testhalt	soon done 2 true	echo job 3; sleep 2.1; exit 3
+par_testhalt	soon done 2 true	job 4
+par_testhalt	soon done 2 true	parallel: This job finished:
+par_testhalt	soon done 2 true	echo job 4; sleep 2.7; exit 4
+par_testhalt	soon done 2 true	job 5
+par_testhalt	soon done 2 true	parallel: This job finished:
+par_testhalt	soon done 2 true	echo job 5; sleep 3.3; exit 5
+par_testhalt	soon done 2 true	2
+par_testhalt	soon done 2 false	### testhalt --halt soon,done=2
+par_testhalt	soon done 2 false	job 1
+par_testhalt	soon done 2 false	parallel: This job finished:
+par_testhalt	soon done 2 false	echo job 1; sleep 0.6; exit 0
+par_testhalt	soon done 2 false	job 2
+par_testhalt	soon done 2 false	parallel: This job finished:
+par_testhalt	soon done 2 false	echo job 2; sleep 0.9; exit 0
+par_testhalt	soon done 2 false	job 3
+par_testhalt	soon done 2 false	parallel: This job finished:
+par_testhalt	soon done 2 false	echo job 3; sleep 1.2; exit 0
+par_testhalt	soon done 2 false	job 4
+par_testhalt	soon done 2 false	parallel: This job finished:
+par_testhalt	soon done 2 false	echo job 4; sleep 1.5; exit 0
+par_testhalt	soon done 2 false	job 5
+par_testhalt	soon done 2 false	parallel: This job finished:
+par_testhalt	soon done 2 false	echo job 5; sleep 1.8; exit 0
+par_testhalt	soon done 2 false	101
+par_testhalt	soon done 30% true	### testhalt --halt soon,done=30%
+par_testhalt	soon done 30% true	job 1
+par_testhalt	soon done 30% true	parallel: This job finished:
+par_testhalt	soon done 30% true	echo job 1; sleep 0.9; exit 1
+par_testhalt	soon done 30% true	job 2
+par_testhalt	soon done 30% true	parallel: This job finished:
+par_testhalt	soon done 30% true	echo job 2; sleep 1.5; exit 2
+par_testhalt	soon done 30% true	job 3
+par_testhalt	soon done 30% true	parallel: This job finished:
+par_testhalt	soon done 30% true	echo job 3; sleep 2.1; exit 3
+par_testhalt	soon done 30% true	job 4
+par_testhalt	soon done 30% true	parallel: This job finished:
+par_testhalt	soon done 30% true	echo job 4; sleep 2.7; exit 4
+par_testhalt	soon done 30% true	job 5
+par_testhalt	soon done 30% true	parallel: This job finished:
+par_testhalt	soon done 30% true	echo job 5; sleep 3.3; exit 5
+par_testhalt	soon done 30% true	job 6
+par_testhalt	soon done 30% true	parallel: This job finished:
+par_testhalt	soon done 30% true	echo job 6; sleep 3.9; exit 6
+par_testhalt	soon done 30% true	job 7
+par_testhalt	soon done 30% true	parallel: This job finished:
+par_testhalt	soon done 30% true	echo job 7; sleep 4.5; exit 7
+par_testhalt	soon done 30% true	job 8
+par_testhalt	soon done 30% true	parallel: This job finished:
+par_testhalt	soon done 30% true	echo job 8; sleep 5.1; exit 8
+par_testhalt	soon done 30% true	job 9
+par_testhalt	soon done 30% true	parallel: This job finished:
+par_testhalt	soon done 30% true	echo job 9; sleep 5.7; exit 9
+par_testhalt	soon done 30% true	30
+par_testhalt	soon done 30% false	### testhalt --halt soon,done=30%
+par_testhalt	soon done 30% false	job 1
+par_testhalt	soon done 30% false	parallel: This job finished:
+par_testhalt	soon done 30% false	echo job 1; sleep 0.6; exit 0
+par_testhalt	soon done 30% false	job 2
+par_testhalt	soon done 30% false	parallel: This job finished:
+par_testhalt	soon done 30% false	echo job 2; sleep 0.9; exit 0
+par_testhalt	soon done 30% false	job 3
+par_testhalt	soon done 30% false	parallel: This job finished:
+par_testhalt	soon done 30% false	echo job 3; sleep 1.2; exit 0
+par_testhalt	soon done 30% false	job 4
+par_testhalt	soon done 30% false	parallel: This job finished:
+par_testhalt	soon done 30% false	echo job 4; sleep 1.5; exit 0
+par_testhalt	soon done 30% false	job 5
+par_testhalt	soon done 30% false	parallel: This job finished:
+par_testhalt	soon done 30% false	echo job 5; sleep 1.8; exit 0
+par_testhalt	soon done 30% false	job 6
+par_testhalt	soon done 30% false	parallel: This job finished:
+par_testhalt	soon done 30% false	echo job 6; sleep 2.1; exit 0
+par_testhalt	soon done 30% false	job 7
+par_testhalt	soon done 30% false	parallel: This job finished:
+par_testhalt	soon done 30% false	echo job 7; sleep 2.4; exit 0
+par_testhalt	soon done 30% false	job 8
+par_testhalt	soon done 30% false	parallel: This job finished:
+par_testhalt	soon done 30% false	echo job 8; sleep 2.7; exit 0
+par_testhalt	soon done 30% false	job 9
+par_testhalt	soon done 30% false	parallel: This job finished:
+par_testhalt	soon done 30% false	echo job 9; sleep 3; exit 0
+par_testhalt	soon done 30% false	0
+par_testhalt	soon done 70% true	### testhalt --halt soon,done=70%
+par_testhalt	soon done 70% true	job 1
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 1; sleep 0.9; exit 1
+par_testhalt	soon done 70% true	job 2
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 2; sleep 1.5; exit 2
+par_testhalt	soon done 70% true	job 3
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 3; sleep 2.1; exit 3
+par_testhalt	soon done 70% true	job 4
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 4; sleep 2.7; exit 4
+par_testhalt	soon done 70% true	job 5
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 5; sleep 3.3; exit 5
+par_testhalt	soon done 70% true	job 6
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 6; sleep 3.9; exit 6
+par_testhalt	soon done 70% true	job 7
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 7; sleep 4.5; exit 7
+par_testhalt	soon done 70% true	job 8
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 8; sleep 5.1; exit 8
+par_testhalt	soon done 70% true	job 9
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 9; sleep 5.7; exit 9
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 11; sleep 3.6; exit 0
+par_testhalt	soon done 70% true	job 10
+par_testhalt	soon done 70% true	job 11
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 10; sleep 6.3; exit 10
+par_testhalt	soon done 70% true	job 12
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 12; sleep 3.9; exit 0
+par_testhalt	soon done 70% true	job 13
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 13; sleep 4.2; exit 0
+par_testhalt	soon done 70% true	job 14
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 14; sleep 4.5; exit 0
+par_testhalt	soon done 70% true	job 15
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 15; sleep 4.8; exit 0
+par_testhalt	soon done 70% true	job 16
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 16; sleep 5.1; exit 0
+par_testhalt	soon done 70% true	job 17
+par_testhalt	soon done 70% true	parallel: This job finished:
+par_testhalt	soon done 70% true	echo job 17; sleep 5.4; exit 0
+par_testhalt	soon done 70% true	50
+par_testhalt	soon done 70% false	### testhalt --halt soon,done=70%
+par_testhalt	soon done 70% false	job 1
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 1; sleep 0.6; exit 0
+par_testhalt	soon done 70% false	job 2
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 2; sleep 0.9; exit 0
+par_testhalt	soon done 70% false	job 3
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 3; sleep 1.2; exit 0
+par_testhalt	soon done 70% false	job 4
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 4; sleep 1.5; exit 0
+par_testhalt	soon done 70% false	job 5
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 5; sleep 1.8; exit 0
+par_testhalt	soon done 70% false	job 6
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 6; sleep 2.1; exit 0
+par_testhalt	soon done 70% false	job 7
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 7; sleep 2.4; exit 0
+par_testhalt	soon done 70% false	job 8
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 8; sleep 2.7; exit 0
+par_testhalt	soon done 70% false	job 9
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 9; sleep 3; exit 0
+par_testhalt	soon done 70% false	job 10
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 10; sleep 3.3; exit 0
+par_testhalt	soon done 70% false	job 11
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 11; sleep 3.9; exit 1
+par_testhalt	soon done 70% false	job 12
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 12; sleep 4.5; exit 2
+par_testhalt	soon done 70% false	job 13
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 13; sleep 5.1; exit 3
+par_testhalt	soon done 70% false	job 14
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 14; sleep 5.7; exit 4
+par_testhalt	soon done 70% false	job 15
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 15; sleep 6.3; exit 5
+par_testhalt	soon done 70% false	job 16
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 16; sleep 6.9; exit 6
+par_testhalt	soon done 70% false	job 17
+par_testhalt	soon done 70% false	parallel: This job finished:
+par_testhalt	soon done 70% false	echo job 17; sleep 7.5; exit 7
+par_testhalt	soon done 70% false	20

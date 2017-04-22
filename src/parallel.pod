@@ -760,10 +760,10 @@ I<when> can be 'now' which means kill all running jobs and halt
 immediately, or it can be 'soon' which means wait for all running jobs
 to complete, but start no new jobs.
 
-I<why> can be 'fail=X', 'fail=Y%', 'success=X', or 'success=Y%' where
-X is the number of jobs that has to fail or succeed before halting,
-and Y is the percentage of jobs that has to fail or succeed before
-halting.
+I<why> can be 'fail=X', 'fail=Y%', 'success=X', 'success=Y%',
+'done=X', or 'done=Y%' where X is the number of jobs that has to fail,
+succeed, or be done before halting, and Y is the percentage of jobs
+that has to fail, succeed, or be done before halting.
 
 Example:
 
@@ -792,6 +792,18 @@ exit when 3 jobs succeeds, but wait for running jobs to complete.
 =item Z<> --halt now,success=3%
 
 exit when 3% of the jobs have succeeded. Kill running jobs.
+
+=item Z<> --halt now,done=1
+
+exit when one of the jobs finishes. Kill running jobs.
+
+=item Z<> --halt soon,done=3
+
+exit when 3 jobs finishes, but wait for running jobs to complete.
+
+=item Z<> --halt now,done=3%
+
+exit when 3% of the jobs have finished. Kill running jobs.
 
 =back
 
@@ -2281,8 +2293,8 @@ Time out for command. If the command runs for longer than I<secs>
 seconds it will get killed as per B<--termseq>.
 
 If I<secs> is followed by a % then the timeout will dynamically be
-computed as a percentage of the median average runtime. Only values
-> 100% will make sense.
+computed as a percentage of the median average runtime of successful
+jobs. Only values > 100% will make sense.
 
 
 =item B<--verbose>

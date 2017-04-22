@@ -699,9 +699,12 @@ Seq	Host	Starttime	JobRuntime	Send	Receive	Exitval	Signal	Command
 9
 9
 9
+9
 parallel: This job failed:
 echo X; exit X
 parallel: Starting no more jobs. Waiting for 1 jobs to finish.
+parallel: This job failed:
+echo X; exit X
   parallel -j2 --halt now,fail=1 echo {}\; exit {} ::: 0 0 1 2 3
 9
 9
@@ -722,6 +725,8 @@ parallel: Starting no more jobs. Waiting for 1 jobs to finish.
 parallel: This job failed:
 echo X; exit X
   parallel -j2 --halt now,success=1 echo {}\; exit {} ::: 1 2 3 0 4 5 6
+9
+9
 9
 9
 9
