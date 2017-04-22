@@ -109,6 +109,9 @@ http://www.gnu.org/software/parallel/
 http://www.gnu.org/software/parallel/man.html
 http://www.gnu.org/software/parallel/sql.html
 http://www.gnu.org/software/parallel/sem.html
+http://www.gnu.org/software/parallel/env_parallel.html
+http://www.gnu.org/software/parallel/parset.html
+http://www.gnu.org/software/parallel/parcat.html
 http://www.gnu.org/software/parallel/niceload.html
 
 cp src/*.pdf src/*.html  ../parallel-web/parallel
@@ -195,7 +198,7 @@ to:parallel@gnu.org, bug-parallel@gnu.org
 
 Subject: GNU Parallel 20170422 ('Санкт-Петербу́рг') released <<[stable]>>
 
-GNU Parallel 20170422 ('Paris/Stockholm/London/Санкт-Петербу́рг') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
+GNU Parallel 20170422 ('Санкт-Петербу́рг') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 

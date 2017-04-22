@@ -1,3 +1,46 @@
+20170422
+
+* --halt supports done in addition to success and fail.
+
+* parset will set variables in parallel in Bash.
+
+* Perl 5.6 on Irix is no longer supported.
+
+* Vote for GNU Parallel's community ads on
+  http://meta.unix.stackexchange.com/a/4356/2972
+  http://meta.askubuntu.com/a/16750/22307
+  http://meta.serverfault.com/a/9040/45704
+
+* GNU Parallel was cited in: Halvade-RNA: Parallel variant calling
+  from transcriptomic data using MapReduce
+  http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0174575
+
+* GNU Parallel was cited in: StrAuto: automation and parallelization
+  of STRUCTURE analysis
+  http://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-017-1593-0
+
+* GNU Parallel was cited in: Trespassing the Boundaries: Labeling
+  Temporal Bounds for Object Interactions in Egocentric Video
+  https://128.84.21.199/pdf/1703.09026.pdf
+
+* GNU Parallel is used in: https://github.com/lucascbeyeler/zmbackup
+
+* Using GNU Parallel
+  https://wiki.ncsa.illinois.edu/display/ROGER/Using+GNU+Parallel
+
+* Find and xargs and parallel
+  http://helpful.knobs-dials.com/index.php/Find_and_xargs_and_parallel#Parallel
+
+* Quick Introduction to GNU Parallel
+  https://github.com/mlangill/microbiome_helper/wiki/Quick-Introduction-to-GNU-Parallel
+
+* Data science at the command line https://www.slideshare.net/sharatsc/data-science-at-the-command-line
+
+* Bedtools笔记 http://www.jianshu.com/p/67b0665490ac
+
+* Bug fixes and man page updates.
+
+
 20170322
 
 * --rpl can now take arguments by adding '(regexp)' in the replacement
