@@ -743,3 +743,11 @@ par_result_replace	/tmp/par__49983-baz C
 par_result_replace	/tmp/par__49983-baz C/seq
 par_result_replace	/tmp/par__49983-baz C/stderr
 par_result_replace	/tmp/par__49983-baz C/stdout
+par_sqlworker_hostname	bug #50901: --sqlworker should use hostname in the joblog instead of :
+par_sqlworker_hostname	1
+par_sqlworker_hostname	2
+par_sqlworker_hostname	3
+par_sqlworker_hostname	host
+par_sqlworker_hostname	aspire
+par_sqlworker_hostname	aspire
+par_sqlworker_hostname	aspire

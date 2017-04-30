@@ -233,6 +233,14 @@ line2"' 'echo "command2"'
 }
 
 
+par_sqlworker_hostname() {
+    echo 'bug #50901: --sqlworker should use hostname in the joblog instead of :'
+    parallel --sqlmaster :my/hostname echo  ::: 1 2 3
+    parallel -k --sqlworker :my/hostname
+    sql :my 'select host from hostname;'
+}
+
+
 export -f $(compgen -A function | grep par_)
 compgen -A function | grep par_ | sort |
     parallel -j6 --tag -k --joblog +/tmp/jl-`basename $0` '{} 2>&1'

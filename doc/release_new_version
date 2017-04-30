@@ -196,9 +196,9 @@ file:///home/tange/privat/parallel/doc/release_new_version
 from:tange@gnu.org
 to:parallel@gnu.org, bug-parallel@gnu.org
 
-Subject: GNU Parallel 20170422 ('Санкт-Петербу́рг') released <<[stable]>>
+Subject: GNU Parallel 20170522 ('') released <<[stable]>>
 
-GNU Parallel 20170422 ('Санкт-Петербу́рг') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
+GNU Parallel 20170522 ('') <<[stable]>> has been released. It is available for download at: http://ftpmirror.gnu.org/parallel/
 
 <<No new functionality was introduced so this is a good candidate for a stable release.>>
 
@@ -214,22 +214,26 @@ New in this release:
   http://meta.askubuntu.com/a/16750/22307
   http://meta.serverfault.com/a/9040/45704
 
-http://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-017-1593-0
+http://pubs.rsc.org/-/content/articlelanding/2017/cp/c7cp01662j#!divAbstract
 
-https://128.84.21.199/pdf/1703.09026.pdf
+ftp://frapftp.fire.ca.gov/outgoing/transfer/PUC_Map1/Utility%20Fire%20map%201%20final%20review%20and%20development%20report21616.pdf
 
-https://wiki.ncsa.illinois.edu/display/ROGER/Using+GNU+Parallel
+https://arxiv.org/pdf/1704.02257.pdf
 
-https://github.com/lucascbeyeler/zmbackup
-http://helpful.knobs-dials.com/index.php/Find_and_xargs_and_parallel#Parallel
+http://www.sciencedirect.com/science/article/pii/S0044848616312194
 
-https://github.com/mlangill/microbiome_helper/wiki/Quick-Introduction-to-GNU-Parallel
+https://www.aclweb.org/anthology/E/E17/E17-1050.pdf
 
-http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0174575
+http://www.atmos-meas-tech.net/10/1425/2017/amt-10-1425-2017.pdf
 
-https://www.slideshare.net/sharatsc/data-science-at-the-command-line
+http://amslaurea.unibo.it/12261/1/nurrito_eugenio_tesi_fisica_magistrale.pdf
 
-http://www.jianshu.com/p/67b0665490ac
+http://biorxiv.org/content/biorxiv/early/2017/04/27/131680.full.pdf
+
+http://www.nature.com/nprot/journal/v12/n5/full/nprot.2017.022.html?WT.feed_name=subjects_biotechnology
+
+
+* <<Citation needed: https://sdstrowes.co.uk/publications/sdstrowes-rdns-aaaa.pdf>>
 
 * <<Possibly http://link.springer.com/chapter/10.1007%2F978-3-319-22053-6_46>>
 

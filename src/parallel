@@ -266,7 +266,7 @@ sub pipe_tee_setup {
     }
     # cat foo | tee t1 t2 t3 t4 t5 > /dev/null
     if(not fork()){
-	# Let tee inheirit our stdin
+	# Let tee inherit our stdin
 	# and redirect stdout to null
 	open STDOUT, ">","/dev/null";
 	exec "tee",@fifos;
@@ -300,7 +300,8 @@ sub pipe_part_files {
     # Make @cat_prepends
     my @cat_prepends = ();
     for(my $i=0; $i<$#pos; $i++) {
-	push @cat_prepends, cat_partial($file, 0, length($header), $pos[$i], $pos[$i+1]);
+	push(@cat_prepends,
+	     cat_partial($file, 0, length($header), $pos[$i], $pos[$i+1]));
     }
     return @cat_prepends;
 }
@@ -487,7 +488,8 @@ sub spreadstdin {
 	  if($Global::max_number_of_args) {
 	      # -N => (start..*?end){n}
 	      # -L -N => (start..*?end){n*l}
-	      my $read_n_lines = $Global::max_number_of_args * ($Global::max_lines || 1);
+	      my $read_n_lines =
+		  $Global::max_number_of_args * ($Global::max_lines || 1);
 	      while($buf =~ s/((?:$recstart.*?$recend){$read_n_lines})($recstart.*)$/$2/os) {
 		  # Copy to modifiable variable
 		  my $b = $1;
@@ -510,7 +512,8 @@ sub spreadstdin {
 	  if($Global::max_number_of_args) {
 	      # -N => (start..*?end){n}
 	      my $i = 0;
-	      my $read_n_lines = $Global::max_number_of_args * ($Global::max_lines || 1);
+	      my $read_n_lines =
+		  $Global::max_number_of_args * ($Global::max_lines || 1);
 	      while(($i = nindex(\$buf,$recendrecstart,$read_n_lines)) != -1) {
 		  $i += length $recend; # find the actual splitting location
 		  $anything_written +=
@@ -547,7 +550,8 @@ sub spreadstdin {
     ::debug("init", "Done reading input\n");
 
     # If there is anything left in the buffer write it
-    write_record_to_pipe($chunk_number++,\$header,\$buf,$recstart,$recend,length $buf);
+    write_record_to_pipe($chunk_number++, \$header, \$buf, $recstart,
+			 $recend, length $buf);
 
     if($opt::retries) {
 	$Global::no_more_input = 1;
@@ -1099,7 +1103,8 @@ sub parse_options {
 
     if(@opt::v) { $Global::verbose = $#opt::v+1; } # Convert -v -v to v=2
     $Global::debug = $opt::D;
-    $Global::shell = $ENV{'PARALLEL_SHELL'} || parent_shell($$) || $ENV{'SHELL'} || "/bin/sh";
+    $Global::shell = $ENV{'PARALLEL_SHELL'} || parent_shell($$)
+	|| $ENV{'SHELL'} || "/bin/sh";
     $Global::cshell = $Global::shell =~ m:/csh:;
     if(defined $opt::X) { $Global::ContextReplace = 1; }
     if(defined $opt::silent) { $Global::verbose = 0; }
@@ -1114,7 +1119,9 @@ sub parse_options {
     if(defined $opt::verbose) { $Global::stderr_verbose = 1; }
     parse_replacement_string_options();
     if(defined $opt::eof) { $Global::end_of_file_string = $opt::eof; }
-    if(defined $opt::max_args) { $Global::max_number_of_args = $opt::max_args; }
+    if(defined $opt::max_args) {
+	$Global::max_number_of_args = $opt::max_args;
+    }
     if(defined $opt::timeout) {
 	$Global::timeoutq = TimeoutQueue->new($opt::timeout);
     }
@@ -1363,7 +1370,7 @@ sub check_invalid_option_combinations {
 
 sub init_globals {
     # Defaults:
-    $Global::version = 20170422;
+    $Global::version = 20170423;
     $Global::progname = 'parallel';
     $Global::infinity = 2**31;
     $Global::debug = 0;
@@ -1752,7 +1759,7 @@ sub open_csv {
 		::die_bug("Can't dup STDOUT in csv: $!");
 	    # Do not print any other output to STDOUT
 	    # by forcing all other output to /dev/null
-	    open my $fd, ">", "/dev/null"  or
+	    open my $fd, ">", "/dev/null" or
 		::die_bug("Can't >/dev/null in csv: $!");
 	    $Global::fd{1} = $fd;
 	    $Global::fd{2} = $fd;
@@ -1852,7 +1859,8 @@ sub read_options {
 	    }
 	    my $script = shell_quote_scalar(shift @ARGV);
 	    # exec myself to split $ARGV[0] into separate fields
-	    exec "$0 --internal-pipe-means-argfiles @options @parser $script ::: @ARGV";
+	    exec "$0 --internal-pipe-means-argfiles @options @parser $script ".
+		"::: @ARGV";
 	}
     }
     if($ARGV[0] =~ / --shebang(-?wrap)? /) {
@@ -1886,7 +1894,8 @@ sub read_options {
 	}
 	for my $profile (@profiles) {
 	    if(-r $profile) {
-		open (my $in_fh, "<", $profile) || ::die_bug("read-profile: $profile");
+		open (my $in_fh, "<", $profile) ||
+		    ::die_bug("read-profile: $profile");
 		while(<$in_fh>) {
 		    /^\s*\#/ and next;
 		    chomp;
@@ -2138,11 +2147,12 @@ sub shell_quote_scalar {
 }
 
 sub shell_quote_file {
-    # Quote the string so shell will not expand any special chars and prepend ./ if needed
+    # Quote the string so shell will not expand any special chars
+    # and prepend ./ if needed
     # Input:
     #   $filename = filename to be shell quoted
     # Returns:
-    #   $quoted_filename = filename quoted with \ as needed by the shell and ./ if needed
+    #   $quoted_filename = filename quoted with \ and ./ if needed
     my $a = shell_quote_scalar(shift);
     if(defined $a) {
 	if($a =~ m:^/: or $a =~ m:^\./:) {
@@ -2283,9 +2293,12 @@ sub set_fh_blocking {
     my $fh = shift;
     $Global::use{"Fcntl"} ||= eval "use Fcntl qw(:DEFAULT :flock); 1;";
     my $flags;
-    fcntl($fh, &F_GETFL, $flags) || die $!; # Get the current flags on the filehandle
-    $flags &= ~&O_NONBLOCK; # Remove non-blocking from the flags
-    fcntl($fh, &F_SETFL, $flags) || die $!; # Set the flags on the filehandle
+    # Get the current flags on the filehandle
+    fcntl($fh, &F_GETFL, $flags) || die $!;
+    # Remove non-blocking from the flags
+    $flags &= ~&O_NONBLOCK;
+    # Set the flags on the filehandle
+    fcntl($fh, &F_SETFL, $flags) || die $!;
 }
 
 sub set_fh_non_blocking {
@@ -2297,9 +2310,12 @@ sub set_fh_non_blocking {
     my $fh = shift;
     $Global::use{"Fcntl"} ||= eval "use Fcntl qw(:DEFAULT :flock); 1;";
     my $flags;
-    fcntl($fh, &F_GETFL, $flags) || die $!; # Get the current flags on the filehandle
-    $flags |= &O_NONBLOCK; # Add non-blocking to the flags
-    fcntl($fh, &F_SETFL, $flags) || die $!; # Set the flags on the filehandle
+    # Get the current flags on the filehandle
+    fcntl($fh, &F_GETFL, $flags) || die $!;
+    # Add non-blocking to the flags
+    $flags |= &O_NONBLOCK;
+    # Set the flags on the filehandle
+    fcntl($fh, &F_SETFL, $flags) || die $!;
 }
 
 
@@ -7032,7 +7048,8 @@ sub runtime {
     # Returns:
     #   Run time in seconds with 3 decimals
     my $self = shift;
-    return sprintf("%.3f",int(($self->endtime() - $self->starttime())*1000)/1000);
+    return sprintf("%.3f",
+		   int(($self->endtime() - $self->starttime())*1000)/1000);
 }
 
 sub endtime {
@@ -7330,9 +7347,15 @@ sub set_sshlogin {
     $self->{'sshlogin'} = $sshlogin;
     delete $self->{'sshlogin_wrap'}; # If sshlogin is changed the wrap is wrong
     delete $self->{'wrapped'};
-    $opt::sqlworker and
-	$Global::sql->update("SET Host = ? WHERE Seq = ".$self->seq(),
-			     $sshlogin->string());
+
+    if($opt::sqlworker) {
+	# Identify worker as --sqlworker often runs on different machines
+	my $host = $sshlogin->string();
+	if($host eq ":") {
+	    $host = ::hostname();
+	}
+	$Global::sql->update("SET Host = ? WHERE Seq = ".$self->seq(), $host);
+    }
 }
 
 sub sshlogin {
@@ -7536,7 +7559,8 @@ sub sshlogin_wrap {
 		push @vars, grep { not defined $ignore{$_} } keys %ENV;
 		@vars = grep { not /^_$/ } @vars;
 	    } else {
-		::error("Run '$Global::progname --record-env' in a clean environment first.");
+		::error("Run '$Global::progname --record-env' ".
+			"in a clean environment first.");
 		::wait_and_exit(255);
 	    }
 	}
@@ -7795,12 +7819,15 @@ sub sshreturn {
 	$nobasedir =~ s:.*/\./::;
 	$cd = ::shell_quote_file(::dirname($nobasedir));
 	my $rsync_cd = '--rsync-path='.::shell_quote_scalar("cd $wd$cd; rsync");
-	my $basename = ::shell_quote_scalar(::shell_quote_file(::basename($file)));
+	my $basename =
+	    ::shell_quote_scalar(::shell_quote_file(::basename($file)));
 	# --return
 	#   mkdir -p /home/tange/dir/subdir/;
-        #   rsync (--protocol 30) -rlDzR --rsync-path="cd /home/tange/dir/subdir/; rsync"
-        #   server:file.gz /home/tange/dir/subdir/
-	$pre .= "mkdir -p $basedir$cd && ".$sshlogin->rsync()." $rsync_cd $rsync_opt $serverlogin:".
+        #   rsync (--protocol 30) -rlDzR
+	#     --rsync-path="cd /home/tange/dir/subdir/; rsync"
+        #     server:file.gz /home/tange/dir/subdir/
+	$pre .= "mkdir -p $basedir$cd && ". $sshlogin->rsync().
+	    " $rsync_cd $rsync_opt $serverlogin:".
 	     $basename . " ".$basedir.$cd.";";
     }
     return $pre;
@@ -8998,7 +9025,8 @@ sub populate {
 
     if($opt::sqlmaster) {
 	# Insert the V1..Vn for this $seq in SQL table instead of generating one
-	$Global::sql->insert_records($self->seq(),$self->{'command'},$self->{'arg_list_flat_orig'});
+	$Global::sql->insert_records($self->seq(), $self->{'command'},
+				     $self->{'arg_list_flat_orig'});
     }
 }
 
@@ -9045,11 +9073,13 @@ sub pop {
 	if($perlexpr =~ /^(\d+) /) {
 	    # Positional
 	    defined($record->[$1-1]) or next;
-	    $self->{'len'}{$perlexpr} -= length $record->[$1-1]->replace($perlexpr,$quote_arg,$self);
+	    $self->{'len'}{$perlexpr} -=
+		length $record->[$1-1]->replace($perlexpr,$quote_arg,$self);
 	} else {
 	    for my $arg (@$record) {
 		if(defined $arg) {
-		    $self->{'len'}{$perlexpr} -= length $arg->replace($perlexpr,$quote_arg,$self);
+		    $self->{'len'}{$perlexpr} -=
+			length $arg->replace($perlexpr,$quote_arg,$self);
 		}
 	    }
 	}
@@ -9321,10 +9351,10 @@ sub replaced {
     my $context_replace;
     my $perl_expressions_as_re;
     my @arg;
-    my %words_containing_replacement_strings;
+    my %words_with_rpl_strings;
 
-    sub fish_out_words_containing_replacement_strings {
-	if(not $words_containing_replacement_strings{$context_replace,@target}) {
+    sub fish_out_words_with_rpl_strings {
+	if(not $words_with_rpl_strings{$context_replace,@target}) {
 	    my %word;
 	    for (@target) {
 		my $tt = $_;
@@ -9357,9 +9387,9 @@ sub replaced {
 		    }
 		}
 	    }
-	    @{$words_containing_replacement_strings{$context_replace,@target}} = keys %word
+	    @{$words_with_rpl_strings{$context_replace,@target}} = keys %word
 	}
-	return @{$words_containing_replacement_strings{$context_replace,@target}};
+	return @{$words_with_rpl_strings{$context_replace,@target}};
     }
 
     sub replace_placeholders {
@@ -9377,7 +9407,7 @@ sub replaced {
 	my $quote = shift;
 	my $quote_arg = shift;
 	my %replace;
-	# -X = context replace (fish_out_words_containing_replacement_strings)
+	# -X = context replace (fish_out_words_with_rpl_strings)
 	$context_replace = $self->{'context_replace'};
 	@target = @$targetref;
 	::debug("replace", "Replace @target\n");
@@ -9404,7 +9434,7 @@ sub replaced {
 	    join("|", map {s/^-?\d+//; "\Q$_\E"} keys %{$self->{'replacecount'}});
 	# Fish out the words that have replacement strings in them
 	for my $word (
-	    fish_out_words_containing_replacement_strings()) {
+	    fish_out_words_with_rpl_strings()) {
 	    # word = AB \257< perlexpr \257> CD \257< perlexpr \257> EF
 	    ::debug("replace", "Replacing in $word\n");
 	    my $normal_replace;
@@ -9505,7 +9535,8 @@ sub new {
 	$_ or next;
 	# Disallow \257 to avoid nested {= {= =} =}
 	if(/\257/) {
-	    ::error("Command cannot contain the character \257. Use a function for that.");
+	    ::error("Command cannot contain the character \257. ".
+		    "Use a function for that.");
 	    ::wait_and_exit(255);
 	}
 	# Needs to match rightmost left parens (Perl defaults to leftmost)
@@ -9525,7 +9556,8 @@ sub new {
 	    #
 	    # Replace $$1 in {= perl expr =} with groupings in short hand string
 	    #
-	    # ppar --rpl '{/(\.\S+)/(\.\S+)} s/$$1/$$2/g;' echo {/.tar/.gz} ::: UU.tar.gz
+	    #   --rpl '{/(\.\S+)/(\.\S+)} s/$$1/$$2/g;'
+	    #     echo {/.tar/.gz} ::: UU.tar.gz
 	    my ($prefix,$grp_regexp,$postfix) =
 		$rpl =~ /^( [^(]*  )    # Prefix - e.g. {%%
                           ( \(.*\) )?   # Group capture regexp - e.g (.*)
@@ -9533,7 +9565,8 @@ sub new {
                         /x;
 	    $grp_regexp ||= '';
 	    my $rplval = $Global::rpl{$rpl};
-	    while(s{( (?: ^|\257> ) [^\257]*? ) # Don't replace after \257 unless \257>
+	    while(s{( (?: ^|\257> ) [^\257]*? )
+                      # Don't replace after \257 unless \257>
                     \Q$prefix\E $grp_regexp \Q$postfix\E}
 		  {
 		      # The start remains the same
@@ -9876,7 +9909,7 @@ sub real_max_length {
     # Find the max_length of a command line
     # Returns:
     #   The maximal command line length
-    # Use an upper bound of 8 MB if the shell allows for for infinite long lengths
+    # Use an upper bound of 8 MB if the shell allows for infinite long lengths
     my $upper = 8_000_000;
     my $len = 8;
     do {
@@ -9938,7 +9971,8 @@ sub tmux_length {
 	my @out;
 	for my $l (1, 2020, 16320, 100000, $len) {
 	    my $tmpfile = ::tmpname("tms");
-	    my $tmuxcmd = $ENV{'PARALLEL_TMUX'}." -S $tmpfile new-session -d -n echo $l".
+	    my $tmuxcmd = $ENV{'PARALLEL_TMUX'}.
+		" -S $tmpfile new-session -d -n echo $l".
 		("x"x$l). " && echo $l; rm -f $tmpfile";
 	    push @out, ::qqx($tmuxcmd);
 	    ::rm($tmpfile);
@@ -10093,7 +10127,8 @@ sub unget {
 
 sub empty {
     my $self = shift;
-    my $empty = (not @{$self->{'unget'}} and $self->{'arg_sub_queue'}->empty());
+    my $empty = (not @{$self->{'unget'}} and
+		 $self->{'arg_sub_queue'}->empty());
     ::debug("run", "RecordColQueue->empty $empty");
     return $empty;
 }
@@ -10273,7 +10308,8 @@ sub nest_get {
 		     # Is input source --link'ed to the next?
 		     $opt::linkinputsource[$fhn+1]);
 	    }
-	    $combarg[2*$fhno] = [$len,$len]; # Find only combinations with this new entry
+	    # Find only combinations with this new entry
+	    $combarg[2*$fhno] = [$len,$len];
 	    # map combinations
 	    # [ 1, 3, 7 ], [ 2, 4, 1 ]
 	    # =>
@@ -10695,8 +10731,12 @@ sub get_alias {
 		  "$ENV{HOME}/.dburl.aliases", "/etc/sql/aliases",
 		  "$path/dburl.aliases", "$path/dburl.aliases.dist");
     for my $alias_file (@search) {
+	# local $/ needed if -0 set
+	local $/ = "\n";
 	if(-r $alias_file) {
-	    push @urlalias, `cat "$alias_file"`;
+	    open(my $in, "<", $alias_file) || die;
+	    push @urlalias, <$in>;
+	    close $in;
 	}
     }
     my ($alias_part,$rest) = $alias=~/(:\w*)(.*)/;
@@ -10743,7 +10783,7 @@ sub check_permissions {
 sub parse_dburl {
     my $url = shift;
     my %options = ();
-    # sql:mysql://[[user][:password]@][host][:port]/[database[/table][?sql query]]
+    # sql:mysql://[[user][:password]@][host][:port]/[database[/table][?query]]
 
     if($url=~m!(?:sql:)? # You can prefix with 'sql:'
                ((?:oracle|ora|mysql|pg|postgres|postgresql)(?:s|ssl|)|
@@ -10780,12 +10820,12 @@ sub parse_dburl {
 	$options{database} = ::undef_if_empty(uri_unescape($6));
 	$options{table} = ::undef_if_empty(uri_unescape($7));
 	$options{query} = ::undef_if_empty(uri_unescape($8));
-	::debug("sql","dburl $url\n");
-	::debug("sql","databasedriver ",$options{databasedriver}, " user ", $options{user},
-	      " password ", $options{password}, " host ", $options{host},
-	      " port ", $options{port}, " database ", $options{database},
-	      " table ",$options{table}," query ",$options{query}, "\n");
-
+	::debug("sql", "dburl $url\n");
+	::debug("sql", "databasedriver ", $options{databasedriver},
+		" user ", $options{user},
+		" password ", $options{password}, " host ", $options{host},
+		" port ", $options{port}, " database ", $options{database},
+		" table ", $options{table}, " query ", $options{query}, "\n");
     } else {
 	::error("$url is not a valid DBURL");
 	exit 255;
@@ -10848,7 +10888,7 @@ sub run {
 		last;
 	    }
 	    if($DBI::errstr =~ /locked/) {
-		::debug("sql","Lock retry: $lockretry");
+		::debug("sql", "Lock retry: $lockretry");
 		$lockretry++;
 		::usleep(rand()*300);
 	    } elsif(not $sth) {
@@ -10904,7 +10944,8 @@ sub output {
     my $self = shift;
     my $commandline = shift;
 
-    $self->update("SET Stdout = ?, Stderr = ? WHERE Seq = ".$commandline->seq(),
+    $self->update("SET Stdout = ?, Stderr = ? WHERE Seq = ".
+		  $commandline->seq(),
 		  join("",@{$commandline->{'output'}{1}}),
 		  join("",@{$commandline->{'output'}{2}}));
 }
@@ -11037,7 +11078,8 @@ sub finished {
     my $self = shift;
     if($opt::wait or $Global::start_sqlworker) {
 	my $table = $self->table();
-	my $rv = $self->get("select Seq,Exitval from $table where Exitval <= -1000 limit 1");
+	my $rv = $self->get("select Seq,Exitval from $table ".
+			    "where Exitval <= -1000 limit 1");
 	return not $rv->[0];
     } else {
 	return 1;
@@ -11251,7 +11293,8 @@ sub lock {
 	    }
 	} else {
 	    if($total_sleep/1000 > 30) {
-		::warning("Semaphore stuck for 30 seconds. Consider using --semaphoretimeout.");
+		::warning("Semaphore stuck for 30 seconds. ".
+			  "Consider using --semaphoretimeout.");
 	    }
 	}
     }

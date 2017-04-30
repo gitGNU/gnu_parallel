@@ -1,114 +1,43 @@
-#!/usr/bin/perl -w
-
-=encoding utf8
+#!/usr/bin/perl
 
 =head1 NAME
 
-parset - set shell variables in parallel
-
+parcat - cat files or fifos in parallel
 
 =head1 SYNOPSIS
 
-B<parset> I<variablename> [options for GNU Parallel]
-
+B<parcat> file(s)
 
 =head1 DESCRIPTION
 
-B<parset> is a shell function that puts the output from GNU
-B<parallel> into shell variables.
+GNU B<parcat> reads files or fifos in parallel. It writes full lines
+so there will be no problem with mixed-half-lines which you risk if
+you use:
 
-The B<parset> function is defined as part of B<env_parallel>.
-
-If I<variablename> is a single variable name, this will be treated as
-the destination variable and made to an array.
-
-If I<variablename> contains multiple names separated by ',' or space,
-the names will be the destination variables.
-
-B<parset> is not production ready and alpha quality.
+   (cat file1 & cat file2 &) | ...
 
 
-=head1 OPTIONS
+=head1 EXAMPLES
 
-Same as GNU B<parallel>, but they are put I<after> the destination
-variable.
+=head2 Do be done
 
+  mkfifo slot-{1..5}-digit-{0..9}
+  parallel -j5 'seq 100000 | grep {} > slot-{%}-digit-{}' ::: {0..9} &
+  parallel parcat slot-{1..5}-digit-{} '>' digit-{} ::: {0..9}
 
-=head1 SUPPORTED SHELLS
+=head1 REPORTING BUGS
 
-=head2 Bash
-
-=head3 Examples
-
-Put output into B<myarray>:
-
-  parset myarray seq 3 ::: 4 5 6
-  echo "${myarray[1]}"
-
-Put output into vars B<$seq, $pwd, $ls>:
-
-  parset "seq pwd ls" ::: "seq 10" pwd ls
-  echo "$ls"
-
-Put output into vars B<$seq, $pwd, $ls>:
-
-  into_vars=(seq pwd ls)
-  parset "${into_vars[*]}" ::: "seq 10" pwd ls
-  echo "$ls"
-  
-The commands to run can be an array:
-
-  cmd=("echo '<<joe  \"double  space\"  cartoon>>'" "pwd")
-  parset data ::: "${cmd[@]}"
-  echo "${data[0]}"
-  echo "${data[1]}"
-  
-You cannot pipe into B<parset>, but must use a tempfile:
-
-  seq 10 > parallel_input
-  parset res echo :::: parallel_input
-  echo "${res[0]}"
-  echo "${res[9]}"
-  
-
-=head3 Installation
-
-Put this in B<$HOME/.bashrc>:
-
-  . `which env_parallel.bash`
-
-E.g. by doing:
-
-  echo '. `which env_parallel.bash`' >> $HOME/.bashrc
-
-
-=head1 EXIT STATUS
-
-Same as GNU B<parallel>.
+GNU B<parcat> is part of GNU B<parallel>. Report bugs to <bug-parallel@gnu.org>.
 
 
 =head1 AUTHOR
 
-When using GNU B<parallel> for a publication please cite:
-
-O. Tange (2011): GNU Parallel - The Command-Line Power Tool, ;login:
-The USENIX Magazine, February 2011:42-47.
-
-This helps funding further development; and it won't cost you a cent.
-If you pay 10000 EUR you should feel free to use GNU Parallel without citing.
-
-Copyright (C) 2007-10-18 Ole Tange, http://ole.tange.dk
-
-Copyright (C) 2008,2009,2010 Ole Tange, http://ole.tange.dk
-
-Copyright (C) 2010,2011,2012,2013,2014,2015,2016,2017 Ole Tange,
-http://ole.tange.dk and Free Software Foundation, Inc.
-
+Copyright (C) 2016,2017 Ole Tange, http://ole.tange.dk and Free
+Software Foundation, Inc.
 
 =head1 LICENSE
 
-Copyright (C) 2016
-Ole Tange and Free Software Foundation, Inc.
+Copyright (C) 2007,2008,2009,2010,2011 Free Software Foundation, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -183,7 +112,7 @@ applicable law, that status is in no way affected by the license.
 
 In no way are any of the following rights affected by the license:
 
-=over 2
+=over 9
 
 =item *
 
@@ -201,10 +130,6 @@ how the work is used, such as publicity or privacy rights.
 
 =back
 
-=back
-
-=over 9
-
 =item B<Notice>
 
 For any reuse or distribution, you must make clear to others the
@@ -214,15 +139,13 @@ license terms of this work.
 
 A copy of the full license is included in the file as cc-by-sa.txt.
 
-
 =head1 DEPENDENCIES
 
-B<parset> uses GNU B<parallel>.
+GNU B<parcat> uses Perl.
 
 
 =head1 SEE ALSO
 
-B<parallel>(1), B<env_parallel>(1), B<bash>(1).
-
+B<cat>(1), B<parallel>(1)
 
 =cut

@@ -341,7 +341,7 @@ B<:::> and B<::::> can be mixed. So these are equivalent:
     ::: 1 2 3
 
 
-=item B<:::+> I<arguments>
+=item B<:::+> I<arguments> (alpha testing)
 
 Like B<:::> but linked like B<--link> to the previous input source.
 
@@ -362,7 +362,7 @@ B<:::> and B<::::> can be mixed.
 See B<-a>, B<:::> and B<--link>.
 
 
-=item B<::::+> I<argfiles>
+=item B<::::+> I<argfiles> (alpha testing)
 
 Like B<::::> but linked like B<--link> to the previous input source.
 
@@ -418,7 +418,7 @@ string that is not in the command line.
 See also: B<:::>.
 
 
-=item B<--bar>
+=item B<--bar> (alpha testing)
 
 Show progress as a progress bar. In the bar is shown: % of jobs
 completed, estimated seconds left, and number of jobs started.
@@ -656,7 +656,7 @@ variables, arrays, and functions) use B<env_parallel>.
 See also: B<--record-env>.
 
 
-=item B<--eta>
+=item B<--eta> (alpha testing)
 
 Show the estimated number of seconds before finishing. This forces GNU
 B<parallel> to read all jobs before starting to find the number of
@@ -744,9 +744,9 @@ See also: B<--line-buffer> B<--ungroup>
 Print a summary of the options to GNU B<parallel> and exit.
 
 
-=item B<--halt-on-error> I<val>
+=item B<--halt-on-error> I<val> (alpha testing)
 
-=item B<--halt> I<val>
+=item B<--halt> I<val> (alpha testing)
 
 When should GNU B<parallel> terminate? In some situations it makes no
 sense to run all jobs. GNU B<parallel> should simply give up as soon
@@ -891,7 +891,7 @@ specified, and for B<-I {}> otherwise.  This option is deprecated;
 use B<-I> instead.
 
 
-=item B<--joblog> I<logfile>
+=item B<--joblog> I<logfile> (alpha testing)
 
 Logfile for executed jobs. Save a list of the executed jobs to
 I<logfile> in the following TAB separated format: sequence number,
@@ -1076,7 +1076,7 @@ Arguments will be recycled if one input source has more arguments than the other
 See also B<--header>, B<:::+>, B<::::+>.
 
 
-=item B<--load> I<max-load>
+=item B<--load> I<max-load> (alpha testing)
 
 Do not start new jobs on a given computer unless the number of running
 processes on the computer is less than I<max-load>. I<max-load> uses
@@ -1254,7 +1254,7 @@ control on the command line (used by GNU B<parallel> internally when
 called with B<--sshlogin>).
 
 
-=item B<--plus> (alpha testing)
+=item B<--plus> (beta testing)
 
 Activate additional replacement strings: {+/} {+.} {+..} {+...} {..}
 {...} {/..} {/...} {##}. The idea being that '{+foo}' matches the opposite of
@@ -2061,6 +2061,9 @@ should be the same as given by B<--sqlmaster>.
 If you have more than one B<--sqlworker> jobs may be run more than
 once.
 
+If B<--sqlworker> runs on the local machine, the hostname in the SQL
+table will not be ':' but instead the hostname of the machine.
+
 
 =item B<--ssh> I<sshcommand>
 
@@ -2233,7 +2236,7 @@ B<{}>.
 B<--tagstring> is ignored when using B<-u>, B<--onall>, and B<--nonall>.
 
 
-=item B<--tee> (alpha testing)
+=item B<--tee> (beta testing)
 
 Pipe all data to all jobs. Used with B<--pipe>/B<--pipepart> and
 B<:::>.
@@ -2274,13 +2277,13 @@ different dir for the files. Setting B<--tmpdir> is equivalent to
 setting $TMPDIR.
 
 
-=item B<--tmux>
+=item B<--tmux> (alpha testing)
 
 Use B<tmux> for output. Start a B<tmux> session and run each job in a
 window in that session. No other output will be produced.
 
 
-=item B<--tmuxpane>
+=item B<--tmuxpane> (alpha testing)
 
 Use B<tmux> for output but put output into panes in the first window.
 Useful if you want to monitor the progress of less than 100 concurrent
